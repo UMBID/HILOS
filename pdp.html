@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flexo Slide — HILOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#140f0b;
+    --ink-2:#1f160e;
+    --sand:#f3ebda;
+    --sand-deep:#e6d8ba;
+    --sand-line:rgba(20,15,11,0.14);
+    --gold:#c69a58;
+    --gold-light:#e2c58c;
+    --gold-deep:#8a642f;
+    --paper:#faf6ee;
+    --on-dark-line:rgba(243,235,218,0.16);
+    --on-dark-muted:rgba(243,235,218,0.68);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  .photo{position:relative;overflow:hidden;background:var(--ink-2);}
+  .photo img{width:100%;height:100%;object-fit:cover;}
+
+  .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
+  .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
+  .ribbon-track span{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);padding:9px 22px;}
+  .ribbon-track span.dot{color:var(--on-dark-muted);padding:9px 0;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .nav{position:sticky;top:0;z-index:30;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);border-bottom:1px solid var(--on-dark-line);}
+  .logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.12em;color:var(--sand);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none;}
+  .nav-links a{color:var(--on-dark-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:6px;position:relative;transition:color 0.25s ease;}
+  .nav-links a:hover{color:var(--sand);}
+  .nav-links a.active{color:var(--sand);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
+  .btn span{position:relative;z-index:2;}
+  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
+  .btn-fill:hover::before{transform:translateY(0);}
+  .btn-fill:hover{transform:translateY(-2px);}
+  .btn-dark{background:var(--ink);color:var(--sand);}
+  .btn-dark:hover{transform:translateY(-2px);}
+
+  /* breadcrumb */
+  .breadcrumb{max-width:1360px;margin:0 auto;padding:20px clamp(20px,5vw,64px) 0;font-size:12.5px;color:#8a7c68;}
+  .breadcrumb a{color:#8a7c68;text-decoration:none;}
+  .breadcrumb a:hover{color:var(--gold-deep);}
+  .breadcrumb span.sep{margin:0 6px;}
+  .breadcrumb span.current{color:var(--ink);font-weight:600;}
+
+  /* pdp layout */
+  .pdp-layout{max-width:1360px;margin:0 auto;padding:24px clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:80px 1fr 1fr;gap:24px;}
+
+  .pdp-thumbs{display:flex;flex-direction:column;gap:10px;}
+  .pdp-thumb-btn{position:relative;width:100%;aspect-ratio:1/1;border:1px solid var(--sand-line);background:#fff;cursor:pointer;overflow:hidden;padding:0;}
+  .pdp-thumb-btn.active{border-color:var(--gold-deep);}
+  .pdp-thumb-btn img{width:100%;height:100%;object-fit:cover;}
+
+  .pdp-stage{position:relative;aspect-ratio:1/1;background:#fff;border:1px solid var(--sand-line);overflow:hidden;}
+  .pdp-stage img{width:100%;height:100%;object-fit:cover;transition:opacity 0.25s ease;}
+  .pdp-stage .tint{position:absolute;inset:0;mix-blend-mode:color;opacity:0.85;pointer-events:none;transition:background 0.25s ease;}
+  .pdp-badges{position:absolute;top:14px;left:14px;z-index:2;display:flex;gap:8px;}
+  .pdp-badge{padding:5px 12px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .badge-best{background:var(--gold);color:var(--ink);}
+  .badge-new{background:var(--ink);color:var(--sand);}
+  .wish-toggle{position:absolute;top:14px;right:14px;z-index:2;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);}
+  .wish-toggle.wishlisted{color:#c0392b;}
+  .wish-toggle svg{width:16px;height:16px;}
+
+  /* info column */
+  .pdp-info h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.4vw,30px);text-transform:uppercase;}
+  .pdp-model-tag{font-size:12.5px;color:#8a7c68;margin-top:4px;}
+  .pdp-rating{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;}
+  .pdp-rating .stars{color:var(--gold);letter-spacing:1px;}
+  .pdp-rating a{color:#8a7c68;text-decoration:underline;}
+  .pdp-price{margin-top:12px;font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--gold-deep);}
+  .pdp-desc{margin-top:16px;font-size:14px;line-height:1.75;color:#4a3f32;max-width:440px;}
+
+  .feature-strip{display:flex;flex-wrap:wrap;gap:18px;margin-top:20px;padding:16px 0;border-top:1px solid var(--sand-line);border-bottom:1px solid var(--sand-line);}
+  .feature-pill{display:flex;align-items:center;gap:7px;font-size:12px;color:#4a3f32;}
+  .feature-pill svg{width:16px;height:16px;color:var(--gold-deep);}
+
+  .option-block{margin-top:22px;}
+  .option-label{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8a7c68;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .option-label .value{color:var(--gold-deep);}
+
+  .swatch-row{display:flex;gap:10px;}
+  .color-swatch-btn{position:relative;width:52px;height:52px;border:2px solid transparent;cursor:pointer;padding:0;overflow:hidden;}
+  .color-swatch-btn.active{border-color:var(--gold-deep);}
+  .color-swatch-btn .photo{width:100%;height:100%;}
+  .color-swatch-btn .tint{position:absolute;inset:0;mix-blend-mode:color;opacity:0.85;}
+
+  .size-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .size-btn{width:44px;height:38px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--sand-line);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;transition:border-color 0.2s ease, background 0.2s ease, color 0.2s ease;}
+  .size-btn:hover{border-color:var(--gold-deep);}
+  .size-btn.active{border-color:var(--gold-deep);background:var(--gold-deep);color:var(--sand);}
+  .size-chart-link{margin-left:8px;font-size:12px;color:#8a7c68;text-decoration:underline;cursor:pointer;white-space:nowrap;}
+
+  .cta-row{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;}
+  .btn-shopee{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border:1px solid var(--ink);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;transition:background 0.25s ease, color 0.25s ease;}
+  .btn-shopee:hover{background:var(--ink);color:var(--sand);}
+  .btn-shopee svg{width:15px;height:15px;}
+
+  .trust-row{display:flex;flex-wrap:wrap;gap:18px;margin-top:24px;}
+  .trust-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#6b5d4c;}
+  .trust-item svg{width:17px;height:17px;color:var(--gold-deep);}
+
+  /* feature grid section */
+  .feature-section{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:1fr 320px;gap:40px;}
+  .feature-section h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;margin-bottom:26px;}
+  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .feature-card{text-align:left;}
+  .feature-icon{width:48px;height:48px;border:1px solid var(--sand-line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-deep);margin-bottom:14px;}
+  .feature-icon svg{width:22px;height:22px;}
+  .feature-card h4{font-size:13px;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;margin-bottom:6px;}
+  .feature-card p{font-size:12.5px;line-height:1.6;color:#6b5d4c;}
+
+  .spec-box{background:#fff;border:1px solid var(--sand-line);padding:24px;height:fit-content;}
+  .spec-box h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;margin-bottom:16px;}
+  .spec-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--sand-line);font-size:13px;}
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .k{color:#8a7c68;}
+  .spec-row .v{font-weight:600;text-align:right;}
+
+  /* variant grid (koleksi warna) */
+  .variant-section{background:#fff;border-top:1px solid var(--sand-line);padding:60px clamp(20px,5vw,64px);}
+  .variant-head{max-width:1360px;margin:0 auto 30px;text-align:center;}
+  .variant-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;}
+  .variant-head p{margin-top:8px;font-size:13.5px;color:#6b5d4c;}
+  .variant-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:18px;}
+  .variant-card{position:relative;border:1px solid var(--sand-line);cursor:pointer;transition:box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;}
+  .variant-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(20,15,11,0.1);}
+  .variant-card.active{border-color:var(--gold-deep);}
+  .variant-thumb{position:relative;aspect-ratio:1/1;overflow:hidden;}
+  .variant-thumb img{width:100%;height:100%;object-fit:cover;}
+  .variant-thumb .tint{position:absolute;inset:0;mix-blend-mode:color;opacity:0.85;}
+  .variant-badge{position:absolute;top:8px;left:8px;z-index:2;padding:3px 8px;font-size:9px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+  .variant-info{padding:12px;}
+  .variant-info .name{font-size:12.5px;font-weight:700;}
+  .variant-info .price{font-size:12px;color:var(--gold-deep);margin-top:3px;}
+
+  /* footer */
+  .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;margin-top:20px;}
+  .footer-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--on-dark-line);}
+  .footer-brand p{font-size:13px;line-height:1.7;max-width:280px;color:var(--on-dark-muted);margin-top:14px;}
+  .footer-col h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand);margin-bottom:18px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
+  .footer-col a:hover{color:var(--gold-light);}
+  .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
+
+  @media (max-width:1080px){
+    .pdp-layout{grid-template-columns:64px 1fr;}
+    .pdp-info{grid-column:1 / -1;}
+    .feature-section{grid-template-columns:1fr;}
+    .feature-grid{grid-template-columns:repeat(2,1fr);}
+    .variant-grid{grid-template-columns:repeat(3,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+    .pdp-layout{grid-template-columns:1fr;}
+    .pdp-thumbs{flex-direction:row;order:2;}
+    .pdp-thumb-btn{width:64px;flex-shrink:0;}
+    .pdp-stage{order:1;}
+  }
+  @media (max-width:560px){
+    .feature-grid{grid-template-columns:1fr 1fr;}
+    .variant-grid{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="tentang.html">Tentang Kami</a></li>
+    <li><a href="produk.html" class="active">Produk</a></li>
+    <li><a href="index.html">Teknologi</a></li>
+    <li><a href="kerjasama.html">Kerjasama</a></li>
+    <li><a href="index.html#review">Review</a></li>
+  </ul>
+  <a class="nav-cta" href="#" id="salesBtn">
+    Hubungi Sales
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Beranda</a><span class="sep">/</span><a href="produk.html">Produk</a><span class="sep">/</span><span class="current" id="crumbName">Flexo Slide</span>
+</div>
+
+<div class="pdp-layout">
+  <div class="pdp-thumbs" id="pdpThumbs"></div>
+
+  <div class="pdp-stage">
+    <div class="pdp-badges" id="pdpBadges"></div>
+    <button class="wish-toggle" id="pdpWish" aria-label="Wishlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg>
+    </button>
+    <img id="pdpMainImg" src="" alt="">
+    <div class="tint" id="pdpTint"></div>
+  </div>
+
+  <div class="pdp-info">
+    <h1 id="pdpName">Flexo Slide</h1>
+    <div class="pdp-model-tag" id="pdpModelTag">Lini Flexo</div>
+    <div class="pdp-rating">
+      <span class="stars">★★★★☆</span>
+      <span>4.5 (46 Ulasan)</span>
+      <a href="index.html#review">Lihat semua ulasan</a>
+    </div>
+    <div class="pdp-price" id="pdpPrice">Rp 159.000</div>
+    <p class="pdp-desc">Sandal dengan desain ergonomis dan material pilihan yang ringan, lentur, dan nyaman dipakai seharian, cocok untuk aktivitas indoor maupun outdoor.</p>
+
+    <div class="feature-strip">
+      <div class="feature-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 19a4.5 4.5 0 0 1-1-8.9A6 6 0 0 1 17 8.1a4.5 4.5 0 0 1-.5 8.9H6.5Z"/></svg>Ringan</div>
+      <div class="feature-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c3 3 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-7 6-10Z"/></svg>Empuk</div>
+      <div class="feature-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21c-4-3-8-6.5-8-11a4 4 0 0 1 8-1.2A4 4 0 0 1 20 10c0 4.5-4 8-8 11Z"/></svg>Anti-Slip</div>
+      <div class="feature-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg>Tahan Air</div>
+      <div class="feature-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20c2-6 4-9 8-9s6 3 8 9"/><circle cx="12" cy="7" r="3"/></svg>Ergonomis</div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">Pilih Warna — <span class="value" id="colorValue">Hitam</span></div>
+      <div class="swatch-row" id="swatchRow"></div>
+    </div>
+
+    <div class="option-block">
+      <div class="option-label">Pilih Ukuran — <span class="value" id="sizeValue">41</span> <span class="size-chart-link">Lihat Size Chart</span></div>
+      <div class="size-row" id="sizeRow"></div>
+    </div>
+
+    <div class="cta-row">
+      <a href="#" class="btn btn-fill" id="pdpSalesBtn"><span>Hubungi Sales</span></a>
+      <a href="https://shopee.co.id" target="_blank" rel="noopener" class="btn-shopee">
+        Beli di Shopee
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </a>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Garansi 30 Hari</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Pengiriman Cepat</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Pembayaran Aman</div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-section">
+  <div>
+    <h2>Fitur Unggulan</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-4-3-8-6.5-8-11a4 4 0 0 1 8-1.2A4 4 0 0 1 20 10c0 4.5-4 8-8 11Z"/></svg></div>
+        <h4>Sol Anti-Slip</h4>
+        <p>Cengkeraman kuat &amp; aman di berbagai permukaan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 3 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-7 6-10Z"/></svg></div>
+        <h4>Ringan &amp; Nyaman</h4>
+        <p>Material EVA premium yang ringan dan empuk.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></div>
+        <h4>Tahan Air</h4>
+        <p>Tidak mudah rusak meski sering terkena air.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20c2-6 4-9 8-9s6 3 8 9"/><circle cx="12" cy="7" r="3"/></svg></div>
+        <h4>Desain Ergonomis</h4>
+        <p>Menyesuaikan bentuk kaki untuk kenyamanan maksimal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-box">
+    <h3>Spesifikasi</h3>
+    <div class="spec-row"><span class="k">Material Upper</span><span class="v">EVA Premium</span></div>
+    <div class="spec-row"><span class="k">Material Outsole</span><span class="v">EVA High Density</span></div>
+    <div class="spec-row"><span class="k">Berat</span><span class="v">± 180 gram (uk. 40)</span></div>
+    <div class="spec-row"><span class="k">Tipe</span><span class="v">Slide Sandal</span></div>
+    <div class="spec-row"><span class="k">Penggunaan</span><span class="v">Indoor &amp; Outdoor</span></div>
+  </div>
+</div>
+
+<div class="variant-section">
+  <div class="variant-head">
+    <h2 id="variantTitle">Koleksi Warna Wave</h2>
+    <p>Model yang sama, pilih warna sesuai gaya Anda.</p>
+  </div>
+  <div class="variant-grid" id="variantGrid"></div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+      <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="produk.html">Best Seller</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="index.html">Teknologi</a></li><li><a href="#">Karir</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi Kami</h4>
+      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
+</footer>
+
+<script>
+  const topRibbonEl = document.querySelector('.ribbon');
+  const mainNavEl = document.querySelector('.nav');
+  function syncHeaderOffset(){
+    if (topRibbonEl && mainNavEl) mainNavEl.style.top = topRibbonEl.offsetHeight + 'px';
+  }
+  syncHeaderOffset();
+  window.addEventListener('resize', syncHeaderOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+  document.getElementById('pdpSalesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+
+  /* -----------------------------------------------------------
+     PDP DATA — this whole block would come from the product's
+     record (same shape as produk.html's generator). One line
+     ("Flexo") is shown here; swap this object for any product.
+     ----------------------------------------------------------- */
+  const baseImg = 'https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg';
+  const angleImgs = [
+    'https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg',
+    'https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg',
+    'https://images.pexels.com/photos/8528926/pexels-photo-8528926.jpeg',
+    'https://images.pexels.com/photos/1308324/pexels-photo-1308324.jpeg'
+  ];
+
+  const colorOptions = [
+    { name:'Cokelat', hex:'#a85c3c' },
+    { name:'Krem', hex:'#c9a876' },
+    { name:'Abu-abu', hex:'#8a8a86' }
+  ];
+
+  const product = {
+    name:'Flexo Slide',
+    model:'Flexo',
+    basePrice:159000,
+    badge:'new',
+    sizes:[36,37,38,39,40]
+  };
+
+  const variantPrices = { 'Cokelat':159000, 'Krem':159000, 'Abu-abu':149000 };
+  const variantBadges = { 'Cokelat':'new', 'Krem':null, 'Abu-abu':null };
+
+  function formatRupiah(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
+
+  let currentAngle = 0;
+  let currentColor = colorOptions[0];
+  let currentSize = product.sizes[3] || product.sizes[0];
+  let wishlisted = false;
+
+  /* thumbnails (angle shots, same across colors — placeholder until real per-color photography exists) */
+  document.getElementById('pdpThumbs').innerHTML = angleImgs.map((img, i) => `
+    <button class="pdp-thumb-btn ${i === 0 ? 'active' : ''}" data-index="${i}">
+      <img src="${img}?auto=compress&cs=tinysrgb&w=200" alt="Tampilan ${i+1}">
+    </button>
+  `).join('');
+
+  /* color swatches (photo + tint overlay to preview colorway on one base photo) */
+  document.getElementById('swatchRow').innerHTML = colorOptions.map((c, i) => `
+    <button class="color-swatch-btn ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-hex="${c.hex}">
+      <div class="photo"><img src="${baseImg}?auto=compress&cs=tinysrgb&w=150" alt="Warna ${c.name}"></div>
+      <div class="tint" style="background:${c.hex};"></div>
+    </button>
+  `).join('');
+
+  /* size buttons */
+  document.getElementById('sizeRow').innerHTML = product.sizes.map(s => `
+    <button class="size-btn ${s === currentSize ? 'active' : ''}" data-size="${s}">${s}</button>
+  `).join('') + '<span class="size-chart-link" id="sizeChartLink2"></span>';
+
+  function updateStage(){
+    document.getElementById('pdpMainImg').src = `${angleImgs[currentAngle]}?auto=compress&cs=tinysrgb&w=800`;
+    document.getElementById('pdpTint').style.background = currentColor.hex;
+    document.getElementById('colorValue').textContent = currentColor.name;
+    const price = variantPrices[currentColor.name] || product.basePrice;
+    document.getElementById('pdpPrice').textContent = formatRupiah(price);
+
+    const badge = variantBadges[currentColor.name];
+    document.getElementById('pdpBadges').innerHTML =
+      (badge === 'best' ? '<span class="pdp-badge badge-best">Best Seller</span>' : '') +
+      (badge === 'new' ? '<span class="pdp-badge badge-new">New</span>' : '');
+  }
+  updateStage();
+
+  /* thumbnail click -> change angle */
+  document.getElementById('pdpThumbs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.pdp-thumb-btn');
+    if (!btn) return;
+    document.querySelectorAll('.pdp-thumb-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentAngle = parseInt(btn.dataset.index, 10);
+    updateStage();
+  });
+
+  /* color swatch click -> retint stage + sync variant grid */
+  function selectColor(name){
+    currentColor = colorOptions.find(c => c.name === name) || colorOptions[0];
+    document.querySelectorAll('.color-swatch-btn').forEach(b => b.classList.toggle('active', b.dataset.color === name));
+    document.querySelectorAll('.variant-card').forEach(v => v.classList.toggle('active', v.dataset.color === name));
+    updateStage();
+  }
+  document.getElementById('swatchRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('.color-swatch-btn');
+    if (!btn) return;
+    selectColor(btn.dataset.color);
+  });
+
+  /* size selection */
+  document.getElementById('sizeRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('.size-btn');
+    if (!btn) return;
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSize = parseInt(btn.dataset.size, 10);
+    document.getElementById('sizeValue').textContent = currentSize;
+  });
+
+  /* wishlist toggle */
+  document.getElementById('pdpWish').addEventListener('click', () => {
+    wishlisted = !wishlisted;
+    document.getElementById('pdpWish').classList.toggle('wishlisted', wishlisted);
+    document.querySelector('#pdpWish svg').setAttribute('fill', wishlisted ? 'currentColor' : 'none');
+  });
+
+  /* variant grid (koleksi warna) — clicking switches the whole PDP to that colorway */
+  document.getElementById('variantTitle').textContent = `Koleksi Warna ${product.model}`;
+  document.getElementById('variantGrid').innerHTML = colorOptions.map(c => `
+    <div class="variant-card ${c.name === currentColor.name ? 'active' : ''}" data-color="${c.name}">
+      <div class="variant-thumb">
+        ${variantBadges[c.name] === 'best' ? '<span class="variant-badge badge-best">Best Seller</span>' : ''}
+        ${variantBadges[c.name] === 'new' ? '<span class="variant-badge badge-new">New</span>' : ''}
+        <img src="${baseImg}?auto=compress&cs=tinysrgb&w=400" alt="${product.name} ${c.name}">
+        <div class="tint" style="background:${c.hex};"></div>
+      </div>
+      <div class="variant-info">
+        <div class="name">${c.name}</div>
+        <div class="price">${formatRupiah(variantPrices[c.name] || product.basePrice)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('variantGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.variant-card');
+    if (!card) return;
+    selectColor(card.dataset.color);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>

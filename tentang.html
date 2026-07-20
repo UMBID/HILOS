@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tentang Kami — HILOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#140f0b;
+    --ink-2:#1f160e;
+    --sand:#f3ebda;
+    --sand-deep:#e6d8ba;
+    --sand-line:rgba(20,15,11,0.14);
+    --gold:#c69a58;
+    --gold-light:#e2c58c;
+    --gold-deep:#8a642f;
+    --paper:#faf6ee;
+    --on-dark-line:rgba(243,235,218,0.16);
+    --on-dark-muted:rgba(243,235,218,0.68);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  .photo{position:relative;overflow:hidden;background:var(--ink-2);}
+  .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(0.4) saturate(1.6) brightness(0.85) contrast(1.05);}
+  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(155deg, rgba(198,154,88,0.38), rgba(20,15,11,0.55));mix-blend-mode:multiply;}
+
+  .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
+  .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
+  .ribbon-track span{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);padding:9px 22px;}
+  .ribbon-track span.dot{color:var(--on-dark-muted);padding:9px 0;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .nav{position:sticky;top:0;z-index:30;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);border-bottom:1px solid var(--on-dark-line);}
+  .logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.12em;color:var(--sand);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none;}
+  .nav-links a{color:var(--on-dark-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:6px;position:relative;transition:color 0.25s ease;}
+  .nav-links a:hover{color:var(--sand);}
+  .nav-links a.active{color:var(--sand);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
+  .btn span{position:relative;z-index:2;}
+  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
+  .btn-fill:hover::before{transform:translateY(0);}
+  .btn-fill:hover{transform:translateY(-2px);}
+
+  /* reveal engine */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 0.8s cubic-bezier(.16,.84,.44,1), transform 0.8s cubic-bezier(.16,.84,.44,1);}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+  .reveal-scale{opacity:0;transform:scale(0.95);transition:opacity 0.9s ease, transform 0.9s cubic-bezier(.16,.84,.44,1);}
+  .reveal-scale.is-visible{opacity:1;transform:scale(1);}
+  @media (prefers-reduced-motion: reduce){ .reveal,.reveal-scale{opacity:1 !important;transform:none !important;transition:none !important;} }
+
+  /* page header */
+  .page-head{max-width:1360px;margin:0 auto;padding:50px clamp(20px,5vw,64px) 10px;}
+  .page-head .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-deep);}
+  .page-head .eyebrow::before{content:"";width:24px;height:1px;background:var(--gold-deep);}
+  .page-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,3.2vw,38px);text-transform:uppercase;margin-top:14px;}
+  .page-head p{margin-top:10px;font-size:14.5px;color:#5c4f40;max-width:560px;}
+
+  /* stat row (reused pattern) */
+  .stat-row{max-width:1360px;margin:0 auto;padding:30px clamp(20px,5vw,64px) 0;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .stat-card{border-top:1px solid var(--sand-line);padding-top:18px;}
+  .stat-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(20,15,11,0.16);border-radius:50%;color:var(--gold-deep);margin-bottom:14px;}
+  .stat-icon svg{width:19px;height:19px;}
+  .stat-number{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,2.2vw,30px);color:var(--ink);display:block;}
+  .stat-label{margin-top:6px;font-size:12.5px;color:#6b5d4c;}
+
+  /* facility photo band */
+  .facility-visual{max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);}
+  .facility-visual svg{width:100%;height:auto;display:block;border:1px solid var(--sand-line);}
+
+  /* process grid */
+  .process-section{max-width:1360px;margin:0 auto;padding:60px clamp(20px,5vw,64px);}
+  .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+  .proc-card .photo{aspect-ratio:1/1;margin-bottom:12px;}
+  .proc-card h4{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .proc-card p{font-size:12px;line-height:1.55;color:#6b5d4c;}
+
+  /* section band alternation */
+  .section-dark{background:var(--ink);color:var(--sand);}
+  .section-dark .section-head p{color:var(--on-dark-muted);}
+  .section-dark .proc-card h4{color:var(--sand);}
+  .section-dark .proc-card p{color:var(--on-dark-muted);}
+  .section-dark .stat-card{border-top-color:var(--on-dark-line);}
+  .section-dark .stat-icon{border-color:var(--on-dark-line);color:var(--gold-light);}
+  .section-dark .stat-number{color:var(--sand);}
+  .section-dark .stat-label{color:var(--on-dark-muted);}
+
+  .section-head{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 30px;}
+  .section-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;}
+  .section-head p{margin-top:8px;font-size:14px;color:#5c4f40;max-width:520px;}
+
+  /* outing collage */
+  .outing-section{padding:70px 0;}
+  .outing-grid{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px);display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  .outing-main .photo{aspect-ratio:4/3;}
+  .outing-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .outing-side .photo{aspect-ratio:1/1;}
+  .outing-video{grid-column:1/-1;position:relative;}
+  .outing-video .photo{aspect-ratio:3/1.1;}
+  .outing-video .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(20,15,11,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;cursor:pointer;}
+  .outing-video .play-btn svg{width:18px;height:18px;margin-left:2px;}
+  .outing-video:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
+  .outing-video .vlabel{position:absolute;left:20px;bottom:16px;z-index:2;color:var(--sand);font-family:'Archivo',sans-serif;}
+  .outing-video .vlabel strong{display:block;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;}
+  .outing-video .vlabel span{font-size:11.5px;color:var(--on-dark-muted);}
+
+  /* certifications */
+  .cert-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px) 90px;display:grid;grid-template-columns:1fr 320px;gap:36px;align-items:start;}
+  .cert-badges{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .cert-badge{background:#fff;border:1px solid var(--sand-line);padding:20px 12px;text-align:center;}
+  .cert-badge .mark{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;border:1.5px solid var(--gold-deep);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:var(--gold-deep);}
+  .cert-badge span{display:block;font-size:11.5px;font-weight:600;color:#4a3f32;}
+  .cert-badge small{display:block;font-size:10px;color:#8a7c68;margin-top:2px;}
+
+  .commit-card{background:var(--ink);color:var(--sand);padding:26px 24px;border-top:3px solid var(--gold);}
+  .commit-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;margin-bottom:14px;}
+  .commit-card ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .commit-card li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--on-dark-muted);}
+  .commit-card svg{width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--gold-light);}
+
+  /* footer */
+  .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;margin-top:0;}
+  .footer-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--on-dark-line);}
+  .footer-brand p{font-size:13px;line-height:1.7;max-width:280px;color:var(--on-dark-muted);margin-top:14px;}
+  .footer-col h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand);margin-bottom:18px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
+  .footer-col a:hover{color:var(--gold-light);}
+  .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
+
+  @media (max-width:1080px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .grid-5,.grid-4{grid-template-columns:repeat(3,1fr);}
+    .grid-6{grid-template-columns:repeat(3,1fr);}
+    .outing-grid{grid-template-columns:1fr;}
+    .cert-section{grid-template-columns:1fr;}
+    .cert-badges{grid-template-columns:repeat(3,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+  }
+  @media (max-width:560px){
+    .stat-row{grid-template-columns:1fr 1fr;}
+    .grid-5,.grid-4,.grid-6{grid-template-columns:1fr 1fr;}
+    .outing-side{grid-template-columns:1fr;}
+    .cert-badges{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="tentang.html" class="active">Tentang Kami</a></li>
+    <li><a href="produk.html">Produk</a></li>
+    <li><a href="index.html">Teknologi</a></li>
+    <li><a href="kerjasama.html">Kerjasama</a></li>
+    <li><a href="index.html#review">Review</a></li>
+  </ul>
+  <a class="nav-cta" href="#" id="salesBtn">
+    Hubungi Sales
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<!-- ============ PABRIK & OPERATIONAL ============ -->
+<div class="page-head">
+  <span class="eyebrow reveal">Internal — Company</span>
+  <h1 class="reveal">Pabrik &amp; Operational</h1>
+  <p class="reveal">Didukung fasilitas modern dan sistem produksi terintegrasi untuk menghasilkan sandal berkualitas tinggi secara konsisten.</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg></div>
+    <span class="stat-number">20.000+ m²</span>
+    <p class="stat-label">Luas Area Pabrik</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="M9 8.7 15 8.7M8.3 9.3 11 15M15.7 9.3 13 15"/></svg></div>
+    <span class="stat-number">15+</span>
+    <p class="stat-label">Produksi Line</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+    <span class="stat-number">500.000+</span>
+    <p class="stat-label">Pasang / Bulan</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <span class="stat-number">100%</span>
+    <p class="stat-label">Quality Control Standar</p>
+  </div>
+</div>
+
+<div class="facility-visual reveal-scale">
+  <svg viewBox="0 0 1200 340" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="skyGrad2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#dfe6e4"/>
+        <stop offset="100%" stop-color="#f4f0e8"/>
+      </linearGradient>
+      <linearGradient id="wallGrad2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#cfc6b6"/>
+        <stop offset="100%" stop-color="#a89d8b"/>
+      </linearGradient>
+    </defs>
+    <rect width="1200" height="340" fill="url(#skyGrad2)"/>
+    <rect y="280" width="1200" height="60" fill="#d9cfbd"/>
+    <rect x="150" y="130" width="900" height="160" fill="url(#wallGrad2)"/>
+    <rect x="150" y="130" width="900" height="8" fill="#8f8471"/>
+    <rect x="60" y="180" width="110" height="110" fill="#bdb2a0"/>
+    <rect x="1020" y="180" width="120" height="110" fill="#bdb2a0"/>
+    <g fill="#5b4636" opacity="0.55">
+      <rect x="200" y="165" width="55" height="35"/>
+      <rect x="275" y="165" width="55" height="35"/>
+      <rect x="350" y="165" width="55" height="35"/>
+      <rect x="425" y="165" width="55" height="35"/>
+      <rect x="700" y="165" width="55" height="35"/>
+      <rect x="775" y="165" width="55" height="35"/>
+      <rect x="850" y="165" width="55" height="35"/>
+      <rect x="925" y="165" width="55" height="35"/>
+    </g>
+    <rect x="555" y="215" width="90" height="75" fill="#2a2018"/>
+    <text x="600" y="112" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="30" fill="#2a2018">HILOS</text>
+    <rect x="495" y="90" width="210" height="4" fill="#b5946a"/>
+    <rect x="140" y="124" width="920" height="6" fill="#b5946a"/>
+  </svg>
+</div>
+
+<div class="process-section">
+  <div class="grid-5">
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Injection Molding"></div>
+      <h4>Injection Molding</h4>
+      <p>Teknologi injeksi modern untuk hasil presisi dan kuat.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/19316517/pexels-photo-19316517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="EVA Compounding"></div>
+      <h4>EVA Compounding</h4>
+      <p>Bahan baku berkualitas dengan formulasi khusus HILOS.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Automatic Production Line"></div>
+      <h4>Automatic Production Line</h4>
+      <p>Sistem otomatis untuk efisiensi dan konsistensi kualitas.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Quality Control"></div>
+      <h4>Quality Control</h4>
+      <p>Pengecekan ketat di setiap tahap produksi.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/4480982/pexels-photo-4480982.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Warehouse & Logistics"></div>
+      <h4>Warehouse &amp; Logistics</h4>
+      <p>Manajemen stok rapi dan pengiriman tepat waktu ke seluruh Indonesia.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KEBERSAMAAN DI LUAR KANTOR ============ -->
+<div class="outing-section">
+  <div class="section-head">
+    <h2 class="reveal">Kebersamaan di Luar Kantor</h2>
+    <p class="reveal">Kami percaya kebersamaan membangun tim yang kuat dan budaya kerja yang positif.</p>
+  </div>
+
+  <div class="outing-grid">
+    <div class="outing-main photo reveal-scale">
+      <img src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
+    </div>
+    <div class="outing-side">
+      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
+      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
+      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
+      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
+    </div>
+    <div class="outing-video reveal-scale" id="outingVideo">
+      <div class="photo"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
+      <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+      <div class="vlabel"><strong>Company Outing 2024</strong><span>Watch Video · 02:45</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OUR PEOPLE, OUR STRENGTH ============ -->
+<section class="section-dark">
+  <div class="section-head">
+    <h2 class="reveal">Our People, Our Strength</h2>
+    <p class="reveal">Lebih dari 300+ individu berdedikasi yang terus bertumbuh bersama HILOS.</p>
+  </div>
+
+  <div class="stat-row" style="padding-top:0;">
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="9" r="2.6"/><path d="M15.5 20a5 5 0 0 1 7-4.6"/></svg></div>
+      <span class="stat-number">300+</span>
+      <p class="stat-label">Karyawan</p>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="7"/><rect x="14" y="4" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <span class="stat-number">10+</span>
+      <p class="stat-label">Departemen</p>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg></div>
+      <span class="stat-number">50%</span>
+      <p class="stat-label">Perempuan</p>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <span class="stat-number">5+</span>
+      <p class="stat-label">Tahun Rata-rata Masa Kerja</p>
+    </div>
+  </div>
+
+  <div style="max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);">
+    <div class="photo reveal-scale" style="aspect-ratio:3/1;">
+      <img src="https://images.pexels.com/photos/7888680/pexels-photo-7888680.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Tim HILOS">
+    </div>
+  </div>
+
+  <div class="process-section">
+    <div class="grid-5">
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/7652049/pexels-photo-7652049.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Kolaborasi Tim"></div>
+        <h4>Kolaborasi Tim</h4>
+        <p>Kerja sama lintas departemen.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/29267512/pexels-photo-29267512.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Lingkungan Kerja Nyaman"></div>
+        <h4>Lingkungan Kerja Nyaman</h4>
+        <p>Ruang kerja modern &amp; kondusif.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/7438102/pexels-photo-7438102.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Learning & Development"></div>
+        <h4>Learning &amp; Development</h4>
+        <p>Pelatihan rutin untuk pengembangan diri.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/7868975/pexels-photo-7868975.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Employee Well-being"></div>
+        <h4>Employee Well-being</h4>
+        <p>Kesehatan &amp; kebahagiaan karyawan.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/32082430/pexels-photo-32082430.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Diversity & Inclusion"></div>
+        <h4>Diversity &amp; Inclusion</h4>
+        <p>Lingkungan kerja yang inklusif.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BEHIND THE SCENE ============ -->
+<div class="process-section">
+  <div class="section-head" style="padding-left:0;padding-right:0;">
+    <h2 class="reveal">Behind The Scene</h2>
+    <p class="reveal">Dedikasi di setiap proses untuk menghadirkan kenyamanan di setiap langkah.</p>
+  </div>
+  <div class="grid-6">
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/29267512/pexels-photo-29267512.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Desain & R&D"></div>
+      <h4>Desain &amp; R&amp;D</h4>
+      <p>Inovasi desain mengikuti tren.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Proses Cetak"></div>
+      <h4>Proses Cetak</h4>
+      <p>Presisi tinggi untuk bentuk sempurna.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Perakitan"></div>
+      <h4>Perakitan</h4>
+      <p>Setiap detail dirakit dengan teliti.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Finishing"></div>
+      <h4>Finishing</h4>
+      <p>Sentuhan akhir untuk kualitas terbaik.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Packing"></div>
+      <h4>Packing</h4>
+      <p>Pengemasan rapi dan aman.</p>
+    </div>
+    <div class="proc-card reveal">
+      <div class="photo"><img src="https://images.pexels.com/photos/4480982/pexels-photo-4480982.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Pengiriman"></div>
+      <h4>Pengiriman</h4>
+      <p>Siap melangkah ke seluruh Indonesia.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KOMITMEN KUALITAS & KEBERLANJUTAN ============ -->
+<div class="cert-section">
+  <div>
+    <div class="section-head" style="padding:0 0 24px;">
+      <h2 class="reveal">Komitmen Kualitas &amp; Keberlanjutan</h2>
+      <p class="reveal">Kami berkomitmen untuk kualitas, keamanan, dan kelestarian lingkungan.</p>
+    </div>
+    <div class="cert-badges">
+      <div class="cert-badge reveal"><div class="mark">ISO</div><span>ISO 9001</span><small>Quality Management</small></div>
+      <div class="cert-badge reveal"><div class="mark">BSCI</div><span>BSCI</span><small>Business Social Compliance</small></div>
+      <div class="cert-badge reveal"><div class="mark">REACH</div><span>REACH</span><small>EU Regulation Compliance</small></div>
+      <div class="cert-badge reveal"><div class="mark">RoHS</div><span>RoHS</span><small>Restriction of Hazardous Substances</small></div>
+      <div class="cert-badge reveal"><div class="mark" style="border-color:#5b7a4a;color:#5b7a4a;">🌱</div><span>Go Green</span><small>Sustainable Packaging</small></div>
+    </div>
+  </div>
+
+  <div class="commit-card reveal-scale">
+    <h3>Komitmen Kami</h3>
+    <ul>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bahan baku aman dan berkualitas</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Proses produksi ramah lingkungan</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Produk tahan lama dan nyaman digunakan</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kepuasan pelanggan adalah prioritas utama</li>
+    </ul>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+      <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="produk.html">Best Seller</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="index.html">Teknologi</a></li><li><a href="#">Karir</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi Kami</h4>
+      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
+</footer>
+
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const topRibbonEl = document.querySelector('.ribbon');
+  const mainNavEl = document.querySelector('.nav');
+  function syncHeaderOffset(){
+    if (topRibbonEl && mainNavEl) mainNavEl.style.top = topRibbonEl.offsetHeight + 'px';
+  }
+  syncHeaderOffset();
+  window.addEventListener('resize', syncHeaderOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  document.getElementById('salesBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open('https://wa.me/6281234567890', '_blank');
+  });
+
+  /* scroll reveal */
+  const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
+  if (prefersReducedMotion){
+    revealTargets.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
+    revealTargets.forEach(el => io.observe(el));
+  }
+
+  /* outing video placeholder modal (reuse simple alert-style overlay) */
+  document.getElementById('outingVideo').addEventListener('click', () => {
+    alert('Video Company Outing 2024 akan ditampilkan di sini — slot ini siap diisi video asli.');
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wave Pro — Detail Lengkap — HILOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#140f0b;
+    --ink-2:#1f160e;
+    --sand:#f3ebda;
+    --sand-deep:#e6d8ba;
+    --sand-line:rgba(20,15,11,0.14);
+    --gold:#c69a58;
+    --gold-light:#e2c58c;
+    --gold-deep:#8a642f;
+    --paper:#faf6ee;
+    --on-dark-line:rgba(243,235,218,0.16);
+    --on-dark-muted:rgba(243,235,218,0.68);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  /* ribbon + nav (shared brand header) */
+  .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
+  .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
+  .ribbon-track span{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);padding:9px 22px;}
+  .ribbon-track span.dot{color:var(--on-dark-muted);padding:9px 0;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .nav{position:sticky;top:0;z-index:30;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);border-bottom:1px solid var(--on-dark-line);}
+  .logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.12em;color:var(--sand);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none;}
+  .nav-links a{color:var(--on-dark-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:6px;position:relative;transition:color 0.25s ease;}
+  .nav-links a:hover{color:var(--sand);}
+  .nav-links a.active{color:var(--sand);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
+  .btn span{position:relative;z-index:2;}
+  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
+  .btn-fill:hover::before{transform:translateY(0);}
+  .btn-fill:hover{transform:translateY(-2px);}
+
+  /* breadcrumb (dark, since this page opens straight into the flagship dark card) */
+  .breadcrumb{max-width:1360px;margin:0 auto;padding:22px clamp(20px,5vw,64px) 0;font-size:12.5px;color:var(--on-dark-muted);background:var(--ink);}
+  .breadcrumb a{color:var(--on-dark-muted);text-decoration:none;}
+  .breadcrumb a:hover{color:var(--gold-light);}
+  .breadcrumb span.sep{margin:0 6px;}
+  .breadcrumb span.current{color:var(--sand);font-weight:600;}
+
+  /* ==================================================
+     FLAGSHIP DETAIL PRODUK
+     ================================================== */
+  .detail-produk{
+    position:relative;
+    background:var(--ink);
+    padding:30px clamp(20px,5vw,64px) 90px;
+    overflow:hidden;
+  }
+  .detail-produk::before{
+    content:"";
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 60% 50% at 85% 0%, rgba(198,154,88,0.08), transparent 60%);
+    pointer-events:none;
+  }
+
+  .flagship-tag{
+    position:relative;z-index:2;
+    max-width:1360px;margin:0 auto 18px;
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-light);
+  }
+  .flagship-tag::before{content:"";width:20px;height:1px;background:var(--gold);}
+
+  .product-card{
+    position:relative;z-index:2;
+    max-width:1360px;margin:0 auto;
+    background:var(--ink-2);
+    border:1px solid var(--on-dark-line);
+    padding:clamp(20px,3vw,36px);
+  }
+
+  .detail-grid{
+    display:grid;
+    grid-template-columns:84px minmax(300px,1fr) minmax(300px,360px) minmax(190px,220px);
+    gap:22px;
+  }
+
+  .thumb-rail{display:flex;flex-direction:column;gap:10px;}
+  .thumb-btn{position:relative;width:100%;aspect-ratio:1/1;background:var(--ink);border:1px solid var(--on-dark-line);padding:0;cursor:pointer;overflow:hidden;transition:border-color 0.25s ease;}
+  .thumb-btn img{width:100%;height:100%;object-fit:cover;}
+  .thumb-btn.active{border-color:var(--gold);}
+  .thumb-btn:hover{border-color:var(--gold-light);}
+
+  .stage-wrap{display:flex;flex-direction:column;gap:14px;}
+  .stage{position:relative;background:var(--ink);border:1px solid var(--on-dark-line);aspect-ratio:4/5;overflow:hidden;cursor:default;}
+  .stage-media{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity 0.35s ease;}
+  .stage-media img{width:100%;height:100%;object-fit:cover;}
+  .stage-media.hidden{opacity:0;pointer-events:none;position:absolute;}
+
+  .stage-3d{
+    position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    background:
+      linear-gradient(var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
+      var(--ink);
+    perspective:900px;cursor:grab;
+  }
+  .stage-3d.visible{display:flex;}
+  .stage-3d:active{cursor:grabbing;}
+  .stage-3d-inner{width:60%;transform-style:preserve-3d;transform:rotateY(0deg);}
+  .stage-3d-inner.spin{animation:spin360 6s linear infinite;}
+  @keyframes spin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
+  .stage-3d-inner svg{width:100%;height:auto;overflow:visible;}
+  .stage-3d-label{position:absolute;top:16px;left:16px;font-family:'Archivo',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:8px;}
+  .stage-3d-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
+
+  .zoom-lens{position:absolute;inset:0;background-repeat:no-repeat;background-size:220%;opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:3;}
+  .zoom-lens.active{opacity:1;}
+
+  .stage-toolbar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+  .tool-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid var(--on-dark-line);background:transparent;color:var(--on-dark-muted);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:border-color 0.25s ease, color 0.25s ease, background 0.25s ease;}
+  .tool-btn svg{width:14px;height:14px;}
+  .tool-btn:hover{border-color:var(--gold);color:var(--sand);}
+  .tool-btn.active{border-color:var(--gold);color:var(--gold-light);background:rgba(198,154,88,0.08);}
+
+  .product-info .badges{display:flex;gap:8px;margin-bottom:12px;}
+  .pdp-badge{padding:5px 12px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .badge-best{background:var(--gold);color:var(--ink);}
+  .badge-new{background:var(--sand);color:var(--ink);}
+
+  .product-info h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2vw,28px);text-transform:uppercase;color:var(--sand);}
+  .pdp-rating{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--on-dark-muted);}
+  .pdp-rating .stars{color:var(--gold-light);letter-spacing:1px;}
+  .pdp-rating a{color:var(--gold-light);text-decoration:underline;}
+  .product-price{margin-top:10px;font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:var(--gold-light);}
+  .product-info > p.desc{margin-top:16px;font-size:14px;line-height:1.75;color:var(--on-dark-muted);max-width:340px;}
+
+  .feature-list{list-style:none;margin-top:20px;display:flex;flex-direction:column;gap:9px;}
+  .feature-list li{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:var(--sand);}
+  .feature-list svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--gold);}
+
+  .option-block{margin-top:24px;}
+  .option-label{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--on-dark-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .option-label .value{color:var(--gold-light);}
+
+  .color-row{display:flex;gap:10px;}
+  .color-dot{width:28px;height:28px;border-radius:50%;border:2px solid transparent;padding:2px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;}
+  .color-dot span{width:100%;height:100%;border-radius:50%;display:block;}
+  .color-dot.active{border-color:var(--gold);}
+
+  .size-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .size-btn{width:42px;height:38px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--on-dark-line);color:var(--sand);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;transition:border-color 0.2s ease, color 0.2s ease, background 0.2s ease;}
+  .size-btn:hover{border-color:var(--gold-light);}
+  .size-btn.active{border-color:var(--gold);color:var(--gold-light);background:rgba(198,154,88,0.08);}
+
+  .cta-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
+  .cta-row .btn{padding:14px 22px;font-size:11.5px;}
+  .btn-shopee{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border:1px solid var(--on-dark-line);color:var(--sand);font-size:11.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;transition:border-color 0.25s ease, color 0.25s ease;}
+  .btn-shopee:hover{border-color:#f36f21;color:#f9a367;}
+  .btn-shopee svg{width:15px;height:15px;}
+
+  .trust-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid var(--on-dark-line);}
+  .trust-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--on-dark-muted);}
+  .trust-item svg{width:15px;height:15px;color:var(--gold-light);}
+
+  .side-stack{display:flex;flex-direction:column;gap:16px;}
+  .side-card{position:relative;aspect-ratio:1/0.9;background:var(--ink);border:1px solid var(--on-dark-line);overflow:hidden;cursor:pointer;display:flex;align-items:flex-end;}
+  .side-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.55;}
+  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(20,15,11,0.1), rgba(20,15,11,0.85));}
+  .side-card .side-label{position:relative;z-index:2;padding:14px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sand);}
+  .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(20,15,11,0.6);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;}
+  .play-btn svg{width:16px;height:16px;margin-left:2px;}
+  .side-card:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
+  .wire-thumb{width:70%;}
+
+  .modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(10,8,6,0.82);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--ink-2);border:1px solid var(--on-dark-line);border-top:2px solid var(--gold);max-width:440px;width:100%;padding:36px 30px;text-align:center;}
+  .modal-box .play-btn{position:static;transform:none;margin:0 auto 18px;width:56px;height:56px;background:var(--gold);color:var(--ink);}
+  .modal-box h4{font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:0.04em;color:var(--sand);margin-bottom:10px;}
+  .modal-box p{font-size:13.5px;line-height:1.7;color:var(--on-dark-muted);margin-bottom:22px;}
+  .modal-close{display:inline-flex;padding:10px 22px;border:1px solid var(--on-dark-line);color:var(--sand);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:transparent;cursor:pointer;transition:border-color 0.25s ease;}
+  .modal-close:hover{border-color:var(--gold);}
+
+  /* ---- feature grid + spec (light section below the flagship card) ---- */
+  .feature-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:1fr 320px;gap:40px;}
+  .feature-section h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;margin-bottom:26px;}
+  .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .feature-icon{width:48px;height:48px;border:1px solid var(--sand-line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-deep);margin-bottom:14px;}
+  .feature-icon svg{width:22px;height:22px;}
+  .feature-card h4{font-size:13px;font-weight:700;letter-spacing:0.02em;text-transform:uppercase;margin-bottom:6px;}
+  .feature-card p{font-size:12.5px;line-height:1.6;color:#6b5d4c;}
+
+  .spec-box{background:#fff;border:1px solid var(--sand-line);padding:24px;height:fit-content;}
+  .spec-box h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;margin-bottom:16px;}
+  .spec-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--sand-line);font-size:13px;}
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .k{color:#8a7c68;}
+  .spec-row .v{font-weight:600;text-align:right;}
+
+  /* footer */
+  .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;margin-top:20px;}
+  .footer-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--on-dark-line);}
+  .footer-brand p{font-size:13px;line-height:1.7;max-width:280px;color:var(--on-dark-muted);margin-top:14px;}
+  .footer-col h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand);margin-bottom:18px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
+  .footer-col a:hover{color:var(--gold-light);}
+  .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
+
+  @media (max-width:1080px){
+    .detail-grid{grid-template-columns:70px minmax(260px,1fr) minmax(260px,320px);}
+    .side-stack{grid-column:1 / -1;flex-direction:row;}
+    .side-card{aspect-ratio:1.6/1;}
+    .feature-section{grid-template-columns:1fr;}
+    .feature-grid{grid-template-columns:repeat(2,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+    .detail-grid{grid-template-columns:1fr;}
+    .thumb-rail{flex-direction:row;overflow-x:auto;}
+    .thumb-btn{width:64px;flex-shrink:0;}
+    .side-stack{flex-direction:column;}
+  }
+  @media (max-width:560px){
+    .feature-grid{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="tentang.html">Tentang Kami</a></li>
+    <li><a href="produk.html" class="active">Produk</a></li>
+    <li><a href="index.html">Teknologi</a></li>
+    <li><a href="kerjasama.html">Kerjasama</a></li>
+    <li><a href="index.html#review">Review</a></li>
+  </ul>
+  <a class="nav-cta" href="#" id="salesBtn">
+    Hubungi Sales
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Beranda</a><span class="sep">/</span><a href="produk.html">Produk</a><span class="sep">/</span><span class="current">Wave Pro</span>
+</div>
+
+<section class="detail-produk" id="produk">
+  <span class="flagship-tag">Produk Andalan</span>
+
+  <div class="product-card">
+    <div class="detail-grid">
+
+      <div class="thumb-rail">
+        <button class="thumb-btn active" data-img="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" aria-label="Tampilan 1">
+          <img src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=200" alt="HILOS Wave Pro tampilan 1">
+        </button>
+        <button class="thumb-btn" data-img="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=900" aria-label="Tampilan 2">
+          <img src="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=200" alt="HILOS Wave Pro tampilan atas">
+        </button>
+        <button class="thumb-btn" data-img="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=900" aria-label="Tampilan 3">
+          <img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=200" alt="HILOS Wave Pro detail">
+        </button>
+        <button class="thumb-btn" data-img="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=900" aria-label="Tampilan 4">
+          <img src="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=200" alt="HILOS Wave Pro dipakai">
+        </button>
+      </div>
+
+      <div class="stage-wrap">
+        <div class="stage" id="mainStage">
+          <div class="stage-media" id="stageMedia">
+            <img id="mainImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="HILOS Wave Pro">
+            <div class="zoom-lens" id="zoomLens"></div>
+          </div>
+
+          <div class="stage-3d" id="stage3d">
+            <span class="stage-3d-label">3D Preview</span>
+            <div class="stage-3d-inner" id="stage3dInner">
+              <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke="#e2c58c" stroke-width="1.4" opacity="0.9">
+                  <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
+                  <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
+                  <rect x="168" y="108" width="70" height="26" rx="4"/>
+                  <path d="M60 70 L60 90 M80 60 L80 85 M100 55 L100 82 M60 170 L60 195 M85 185 L85 210 M115 200 L115 222"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-toolbar">
+          <button class="tool-btn" id="btn3d">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05M12 22.08V12"/></svg>
+            3D Viewer
+          </button>
+          <button class="tool-btn" id="btnSpin">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+            Putar 360°
+          </button>
+          <button class="tool-btn" id="btnZoom">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            Zoom
+          </button>
+        </div>
+      </div>
+
+      <div class="product-info">
+        <div class="badges">
+          <span class="pdp-badge badge-best">Best Seller</span>
+        </div>
+        <h3>HILOS Wave Pro</h3>
+        <div class="pdp-rating">
+          <span class="stars">★★★★★</span>
+          <span>4.8 (128 Ulasan)</span>
+          <a href="index.html#review">Lihat semua ulasan</a>
+        </div>
+        <div class="product-price">Rp 189.000</div>
+        <p class="desc">Sandal dengan desain ergonomis dan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
+
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sol empuk &amp; anti-slip</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ringan dan fleksibel</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tahan air &amp; mudah dibersihkan</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Desain modern &amp; minimalis</li>
+        </ul>
+
+        <div class="option-block">
+          <div class="option-label">Pilih Warna — <span class="value" id="colorValue">Hitam</span></div>
+          <div class="color-row">
+            <button class="color-dot active" data-color="Hitam" style="border-color:var(--gold);"><span style="background:#1c1a18;"></span></button>
+            <button class="color-dot" data-color="Abu Tua"><span style="background:#6b6b68;"></span></button>
+            <button class="color-dot" data-color="Olive"><span style="background:#55613f;"></span></button>
+            <button class="color-dot" data-color="Biru Slate"><span style="background:#5b6b7a;"></span></button>
+            <button class="color-dot" data-color="Terracotta"><span style="background:#a85c3c;"></span></button>
+          </div>
+        </div>
+
+        <div class="option-block">
+          <div class="option-label">Pilih Ukuran — <span class="value" id="sizeValue">41</span></div>
+          <div class="size-row">
+            <button class="size-btn">38</button>
+            <button class="size-btn">39</button>
+            <button class="size-btn">40</button>
+            <button class="size-btn active">41</button>
+            <button class="size-btn">42</button>
+            <button class="size-btn">43</button>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <a href="#" class="btn btn-fill" id="salesBtn2"><span>Hubungi Sales</span></a>
+          <a href="https://shopee.co.id" target="_blank" rel="noopener" class="btn-shopee">
+            Beli di Shopee
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          </a>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg>100% Original</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Garansi 30 Hari</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Bayar Aman</div>
+        </div>
+      </div>
+
+      <div class="side-stack">
+        <div class="side-card" id="videoCard">
+          <img src="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Video produk HILOS">
+          <div class="side-scrim"></div>
+          <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+          <span class="side-label">Video Produk</span>
+        </div>
+        <div class="side-card" id="view3dCard">
+          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(20,15,11,0.2), rgba(20,15,11,0.9));"></div>
+          <svg class="wire-thumb" style="position:absolute;top:8%;left:15%;" viewBox="0 0 400 260">
+            <g fill="none" stroke="#8a642f" stroke-width="1.4" opacity="0.8">
+              <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
+              <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
+            </g>
+          </svg>
+          <span class="side-label">3D Animation</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="feature-section">
+  <div>
+    <h2>Fitur Unggulan</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-4-3-8-6.5-8-11a4 4 0 0 1 8-1.2A4 4 0 0 1 20 10c0 4.5-4 8-8 11Z"/></svg></div>
+        <h4>Sol Anti-Slip</h4>
+        <p>Cengkeraman kuat &amp; aman di berbagai permukaan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 3 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-7 6-10Z"/></svg></div>
+        <h4>Ringan &amp; Nyaman</h4>
+        <p>Material EVA premium yang ringan dan empuk.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></div>
+        <h4>Tahan Air</h4>
+        <p>Tidak mudah rusak meski sering terkena air.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20c2-6 4-9 8-9s6 3 8 9"/><circle cx="12" cy="7" r="3"/></svg></div>
+        <h4>Desain Ergonomis</h4>
+        <p>Menyesuaikan bentuk kaki untuk kenyamanan maksimal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-box">
+    <h3>Spesifikasi</h3>
+    <div class="spec-row"><span class="k">Material Upper</span><span class="v">EVA Premium</span></div>
+    <div class="spec-row"><span class="k">Material Outsole</span><span class="v">EVA High Density</span></div>
+    <div class="spec-row"><span class="k">Berat</span><span class="v">± 180 gram (uk. 40)</span></div>
+    <div class="spec-row"><span class="k">Tipe</span><span class="v">Slide Sandal</span></div>
+    <div class="spec-row"><span class="k">Penggunaan</span><span class="v">Indoor &amp; Outdoor</span></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="videoModal">
+  <div class="modal-box">
+    <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+    <h4>Video Produk HILOS Wave Pro</h4>
+    <p>Slot video produk akan ditampilkan di sini. Placeholder ini siap diganti dengan video asli (MP4/embed) saat materi produksi tersedia.</p>
+    <button class="modal-close" id="closeModal">Tutup</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+      <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="produk.html">Best Seller</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="index.html">Teknologi</a></li><li><a href="#">Karir</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi Kami</h4>
+      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
+</footer>
+
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const topRibbonEl = document.querySelector('.ribbon');
+  const mainNavEl = document.querySelector('.nav');
+  function syncHeaderOffset(){
+    if (topRibbonEl && mainNavEl) mainNavEl.style.top = topRibbonEl.offsetHeight + 'px';
+  }
+  syncHeaderOffset();
+  window.addEventListener('resize', syncHeaderOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+  document.getElementById('salesBtn2').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+
+  /* ---- gallery thumbnail swap ---- */
+  const thumbBtns = document.querySelectorAll('.thumb-btn');
+  const mainImg = document.getElementById('mainImg');
+  const zoomLens = document.getElementById('zoomLens');
+  mainImg.style.transition = 'opacity 0.18s ease';
+
+  thumbBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      thumbBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      mainImg.style.opacity = '0';
+      setTimeout(() => {
+        mainImg.src = btn.dataset.img;
+        mainImg.style.opacity = '1';
+      }, 180);
+    });
+  });
+
+  /* ---- zoom lens ---- */
+  const btnZoom = document.getElementById('btnZoom');
+  const stageMedia = document.getElementById('stageMedia');
+  let zoomActive = false;
+
+  btnZoom.addEventListener('click', () => {
+    zoomActive = !zoomActive;
+    btnZoom.classList.toggle('active', zoomActive);
+    zoomLens.classList.toggle('active', zoomActive);
+    if (zoomActive) zoomLens.style.backgroundImage = `url(${mainImg.src})`;
+  });
+
+  stageMedia.addEventListener('mousemove', (e) => {
+    if (!zoomActive) return;
+    const rect = stageMedia.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    zoomLens.style.backgroundPosition = `${x}% ${y}%`;
+  });
+
+  const galleryObserver = new MutationObserver(() => {
+    if (zoomActive) zoomLens.style.backgroundImage = `url(${mainImg.src})`;
+  });
+  galleryObserver.observe(mainImg, { attributes:true, attributeFilter:['src'] });
+
+  /* ---- 3D viewer toggle + drag rotate + auto-spin ---- */
+  const btn3d = document.getElementById('btn3d');
+  const btnSpin = document.getElementById('btnSpin');
+  const stage3d = document.getElementById('stage3d');
+  const stage3dInner = document.getElementById('stage3dInner');
+  let is3dMode = false;
+  let isSpinning = false;
+  let dragging = false;
+  let lastX = 0;
+  let currentRotation = 0;
+
+  function set3dMode(on){
+    is3dMode = on;
+    btn3d.classList.toggle('active', on);
+    stageMedia.classList.toggle('hidden', on);
+    stage3d.classList.toggle('visible', on);
+    if (!on){
+      isSpinning = false;
+      btnSpin.classList.remove('active');
+      stage3dInner.classList.remove('spin');
+    }
+  }
+
+  btn3d.addEventListener('click', () => set3dMode(!is3dMode));
+
+  btnSpin.addEventListener('click', () => {
+    if (!is3dMode) set3dMode(true);
+    isSpinning = !isSpinning;
+    btnSpin.classList.toggle('active', isSpinning);
+    stage3dInner.classList.toggle('spin', isSpinning);
+    if (isSpinning) stage3dInner.style.transform = '';
+  });
+
+  stage3d.addEventListener('mousedown', (e) => {
+    if (!is3dMode || prefersReducedMotion) return;
+    dragging = true;
+    lastX = e.clientX;
+    isSpinning = false;
+    btnSpin.classList.remove('active');
+    stage3dInner.classList.remove('spin');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const delta = e.clientX - lastX;
+    currentRotation += delta * 0.5;
+    stage3dInner.style.transform = `rotateY(${currentRotation}deg)`;
+    lastX = e.clientX;
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  /* ---- color selection ---- */
+  const colorDots = document.querySelectorAll('.color-dot');
+  const colorValue = document.getElementById('colorValue');
+  colorDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      colorDots.forEach(d => { d.classList.remove('active'); d.style.borderColor = 'transparent'; });
+      dot.classList.add('active');
+      dot.style.borderColor = 'var(--gold)';
+      colorValue.textContent = dot.dataset.color;
+    });
+  });
+
+  /* ---- size selection ---- */
+  const sizeBtns = document.querySelectorAll('.size-btn');
+  const sizeValue = document.getElementById('sizeValue');
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sizeValue.textContent = btn.textContent;
+    });
+  });
+
+  /* ---- video modal ---- */
+  const videoModal = document.getElementById('videoModal');
+  document.getElementById('videoCard').addEventListener('click', () => videoModal.classList.add('open'));
+  document.getElementById('closeModal').addEventListener('click', () => videoModal.classList.remove('open'));
+  videoModal.addEventListener('click', (e) => { if (e.target === videoModal) videoModal.classList.remove('open'); });
+
+  /* ---- 3D card in side stack triggers stage 3D mode ---- */
+  document.getElementById('view3dCard').addEventListener('click', () => {
+    document.getElementById('mainStage').scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
+    set3dMode(true);
+  });
+</script>
+
+</body>
+</html>

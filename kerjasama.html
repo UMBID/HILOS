@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerjasama — HILOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#140f0b;
+    --ink-2:#1f160e;
+    --sand:#f3ebda;
+    --sand-deep:#e6d8ba;
+    --sand-line:rgba(20,15,11,0.14);
+    --gold:#c69a58;
+    --gold-light:#e2c58c;
+    --gold-deep:#8a642f;
+    --paper:#faf6ee;
+    --on-dark-line:rgba(243,235,218,0.16);
+    --on-dark-muted:rgba(243,235,218,0.68);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  .photo{position:relative;overflow:hidden;background:var(--ink-2);}
+  .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(0.4) saturate(1.6) brightness(0.85) contrast(1.05);}
+  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(155deg, rgba(198,154,88,0.38), rgba(20,15,11,0.55));mix-blend-mode:multiply;}
+
+  .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
+  .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
+  .ribbon-track span{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);padding:9px 22px;}
+  .ribbon-track span.dot{color:var(--on-dark-muted);padding:9px 0;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .nav{position:sticky;top:0;z-index:30;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);border-bottom:1px solid var(--on-dark-line);}
+  .logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.12em;color:var(--sand);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none;}
+  .nav-links a{color:var(--on-dark-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:6px;position:relative;transition:color 0.25s ease;}
+  .nav-links a:hover{color:var(--sand);}
+  .nav-links a.active{color:var(--sand);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
+  .btn span{position:relative;z-index:2;}
+  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
+  .btn-fill:hover::before{transform:translateY(0);}
+  .btn-fill:hover{transform:translateY(-2px);}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 0.8s cubic-bezier(.16,.84,.44,1), transform 0.8s cubic-bezier(.16,.84,.44,1);}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+  .reveal-scale{opacity:0;transform:scale(0.95);transition:opacity 0.9s ease, transform 0.9s cubic-bezier(.16,.84,.44,1);}
+  .reveal-scale.is-visible{opacity:1;transform:scale(1);}
+  @media (prefers-reduced-motion: reduce){ .reveal,.reveal-scale{opacity:1 !important;transform:none !important;transition:none !important;} }
+
+  /* ============ HERO ============ */
+  .kerjasama-hero{position:relative;min-height:64vh;display:flex;align-items:flex-end;overflow:hidden;}
+  .kerjasama-hero .photo{position:absolute;inset:0;}
+  .kerjasama-hero-scrim{position:absolute;inset:0;background:linear-gradient(0deg, var(--ink) 5%, rgba(20,15,11,0.4) 55%, rgba(20,15,11,0.6) 100%);}
+  .kerjasama-hero-body{position:relative;z-index:2;max-width:1360px;margin:0 auto;width:100%;padding:80px clamp(20px,5vw,64px) 50px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:end;}
+  .kerjasama-hero-copy h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,4vw,48px);text-transform:uppercase;line-height:1.1;color:var(--sand);}
+  .kerjasama-hero-copy h1 em{font-style:normal;color:var(--gold-light);}
+  .kerjasama-hero-copy p{margin-top:14px;font-size:14.5px;line-height:1.7;color:var(--on-dark-muted);max-width:420px;}
+  .kerjasama-hero-copy .btn{margin-top:24px;}
+
+  .hero-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--on-dark-line);border:1px solid var(--on-dark-line);min-width:280px;}
+  .hero-stat{background:var(--ink-2);padding:20px;}
+  .hero-stat strong{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;color:var(--gold-light);}
+  .hero-stat span{font-size:11px;color:var(--on-dark-muted);text-transform:uppercase;letter-spacing:0.04em;}
+
+  /* ============ SKEMA KERJASAMA ============ */
+  .scheme-section{background:var(--paper);padding:80px clamp(20px,5vw,64px);}
+  .section-head-center{max-width:700px;margin:0 auto 40px;text-align:center;}
+  .section-head-center h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;}
+  .section-head-center p{margin-top:8px;font-size:14px;color:#5c4f40;}
+
+  .scheme-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .scheme-card{background:#fff;border:1px solid var(--sand-line);padding:28px 22px;text-align:left;}
+  .scheme-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(20,15,11,0.16);border-radius:50%;color:var(--gold-deep);margin-bottom:16px;}
+  .scheme-icon svg{width:22px;height:22px;}
+  .scheme-card h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:8px;}
+  .scheme-card p{font-size:12.5px;line-height:1.6;color:#6b5d4c;margin-bottom:12px;}
+  .scheme-card a{font-size:12px;color:var(--gold-deep);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+  .scheme-card a:hover{text-decoration:underline;}
+
+  .benefit-strip{max-width:1360px;margin:30px auto 0;background:var(--sand-deep);padding:22px clamp(16px,3vw,32px);display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;}
+  .benefit-strip-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);flex-shrink:0;}
+  .benefit-items{display:flex;flex-wrap:wrap;gap:22px;}
+  .benefit-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#4a3f32;}
+  .benefit-item svg{width:16px;height:16px;color:var(--gold-deep);}
+
+  /* ============ TESTIMONIAL & REVIEW ============ */
+  .review-section{background:var(--ink);color:var(--sand);padding:80px clamp(20px,5vw,64px);}
+  .review-section .section-head-center p{color:var(--on-dark-muted);}
+  .review-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:0.85fr 1.6fr;gap:24px;}
+
+  .video-review-card{position:relative;background:var(--ink-2);border:1px solid var(--on-dark-line);padding:20px;}
+  .video-review-card .photo{aspect-ratio:1/0.85;margin-bottom:16px;}
+  .video-review-card .play-btn{position:absolute;top:28%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:rgba(20,15,11,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;cursor:pointer;transition:background 0.25s ease, transform 0.25s ease;}
+  .video-review-card .play-btn svg{width:18px;height:18px;margin-left:2px;}
+  .video-review-card:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
+  .video-review-card .vlabel{font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:10px;}
+  .video-review-card h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .video-review-card .loc{font-size:12px;color:var(--on-dark-muted);margin-bottom:10px;}
+  .video-review-card p.quote{font-size:12.5px;line-height:1.7;color:var(--on-dark-muted);font-style:italic;}
+  .video-review-card .stars{color:var(--gold-light);letter-spacing:2px;margin-top:10px;display:block;}
+
+  .testimonial-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-content:start;}
+  .testimonial-card{background:var(--ink-2);border:1px solid var(--on-dark-line);padding:22px;display:flex;flex-direction:column;}
+  .testimonial-card .stars{color:var(--gold-light);letter-spacing:2px;font-size:13px;margin-bottom:12px;}
+  .testimonial-person{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .testimonial-person .photo{width:42px;height:42px;border-radius:50%;flex-shrink:0;}
+  .testimonial-person strong{display:block;font-size:13px;color:var(--sand);}
+  .testimonial-person span{font-size:11.5px;color:var(--on-dark-muted);}
+  .testimonial-card p{font-size:13px;line-height:1.7;color:var(--on-dark-muted);flex:1;margin-bottom:14px;}
+  .testimonial-card .shop-photo{aspect-ratio:2/1;}
+
+  .mitra-stat-row{max-width:1360px;margin:36px auto 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:30px;padding-top:30px;border-top:1px solid var(--on-dark-line);}
+  .mitra-stat{text-align:center;}
+  .mitra-stat strong{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:24px;color:var(--gold-light);}
+  .mitra-stat span{font-size:11.5px;color:var(--on-dark-muted);}
+  .mitra-stat-row a{font-size:12.5px;color:var(--gold-light);text-decoration:underline;}
+
+  /* ============ CONTACT & CTA ============ */
+  .contact-section{background:var(--paper);padding:80px clamp(20px,5vw,64px);}
+  .contact-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:0.85fr 1.3fr 0.9fr;gap:20px;align-items:stretch;}
+
+  .contact-cta{background:var(--ink);color:var(--sand);padding:30px 26px;display:flex;flex-direction:column;justify-content:center;}
+  .contact-cta h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;line-height:1.2;margin-bottom:10px;}
+  .contact-cta p{font-size:13px;color:var(--on-dark-muted);line-height:1.6;margin-bottom:20px;}
+  .contact-cta .hint{font-size:11.5px;color:var(--on-dark-muted);margin-top:14px;}
+
+  .contact-form{background:#fff;border:1px solid var(--sand-line);padding:26px;}
+  .contact-form h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .contact-form input, .contact-form select, .contact-form textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--sand-line);background:var(--paper);
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);
+  }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus{outline:none;border-color:var(--gold-deep);}
+  .contact-form textarea{min-height:90px;resize:vertical;margin-bottom:16px;}
+  .form-success{display:none;margin-top:14px;padding:12px 14px;background:#eef6ec;border:1px solid #b9dcae;color:#3a6b2e;font-size:12.5px;}
+  .form-success.show{display:block;}
+
+  .info-card{background:#fff;border:1px solid var(--sand-line);padding:26px;display:flex;flex-direction:column;gap:18px;}
+  .info-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
+  .info-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#4a3f32;line-height:1.5;}
+  .info-row svg{width:16px;height:16px;color:var(--gold-deep);flex-shrink:0;margin-top:1px;}
+  .info-photo{position:relative;aspect-ratio:16/10;}
+  .info-pin{position:absolute;left:14px;bottom:12px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.92);padding:8px 12px;font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;}
+  .info-pin svg{width:13px;height:13px;color:var(--gold-deep);}
+
+  /* ============ MARKETPLACE BANNER ============ */
+  .market-banner{background:var(--sand-deep);padding:40px clamp(20px,5vw,64px);}
+  .market-inner{max-width:1360px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px;}
+  .market-trust{display:flex;flex-wrap:wrap;gap:20px;}
+  .market-trust-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#4a3f32;}
+  .market-trust-item svg{width:17px;height:17px;color:var(--gold-deep);}
+  .market-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+  .market-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-decoration:none;color:#fff;}
+  .market-btn svg{width:16px;height:16px;}
+  .market-btn.shopee{background:#ee4d2d;}
+  .market-btn.tokopedia{background:#03ac0e;}
+  .market-btn.tiktok{background:#111;}
+
+  /* footer */
+  .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;}
+  .footer-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--on-dark-line);}
+  .footer-brand p{font-size:13px;line-height:1.7;max-width:280px;color:var(--on-dark-muted);margin-top:14px;}
+  .footer-col h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand);margin-bottom:18px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
+  .footer-col a:hover{color:var(--gold-light);}
+  .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
+
+  @media (max-width:1080px){
+    .scheme-grid{grid-template-columns:repeat(2,1fr);}
+    .review-grid{grid-template-columns:1fr;}
+    .testimonial-row{grid-template-columns:repeat(3,1fr);}
+    .contact-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+    .kerjasama-hero-body{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+  }
+  @media (max-width:640px){
+    .scheme-grid{grid-template-columns:1fr;}
+    .testimonial-row{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+    .market-inner{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="tentang.html">Tentang Kami</a></li>
+    <li><a href="produk.html">Produk</a></li>
+    <li><a href="index.html">Teknologi</a></li>
+    <li><a href="kerjasama.html" class="active">Kerjasama</a></li>
+    <li><a href="index.html#review">Review</a></li>
+  </ul>
+  <a class="nav-cta" href="#" id="salesBtn">
+    Hubungi Sales
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="kerjasama-hero">
+  <div class="photo"><img src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Sandal HILOS"></div>
+  <div class="kerjasama-hero-scrim"></div>
+  <div class="kerjasama-hero-body">
+    <div class="kerjasama-hero-copy">
+      <h1 class="reveal">Tumbuh Bersama<br><em>HILOS</em></h1>
+      <p class="reveal">Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.</p>
+      <a href="#skema" class="btn btn-fill reveal"><span>Lihat Skema Kerjasama</span></a>
+    </div>
+    <div class="hero-stat-grid reveal-scale">
+      <div class="hero-stat"><strong>1000+</strong><span>Mitra Aktif</span></div>
+      <div class="hero-stat"><strong>34</strong><span>Provinsi Terjangkau</span></div>
+      <div class="hero-stat"><strong>98%</strong><span>Tingkat Kepuasan</span></div>
+      <div class="hero-stat"><strong>Ribuan+</strong><span>Produk Terjual / Hari</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKEMA KERJASAMA ============ -->
+<section class="scheme-section" id="skema">
+  <div class="section-head-center">
+    <h2 class="reveal">Skema Kerjasama</h2>
+    <p class="reveal">Pilih skema yang paling sesuai dengan kebutuhan bisnis Anda.</p>
+  </div>
+
+  <div class="scheme-grid">
+    <div class="scheme-card reveal">
+      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+      <h3>Distributor</h3>
+      <p>Dapatkan harga khusus dan margin kompetitif untuk penjualan di wilayah Anda.</p>
+      <a href="#kontak">Selengkapnya →</a>
+    </div>
+    <div class="scheme-card reveal">
+      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="9" r="2.6"/><path d="M15.5 20a5 5 0 0 1 7-4.6"/></svg></div>
+      <h3>Reseller</h3>
+      <p>Modal lebih fleksibel dengan keuntungan menarik dan stok yang variatif.</p>
+      <a href="#kontak">Selengkapnya →</a>
+    </div>
+    <div class="scheme-card reveal">
+      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="14" height="11" rx="1"/><path d="M7 8V6a3 3 0 0 1 3-3h1"/><circle cx="19" cy="15" r="3"/></svg></div>
+      <h3>Grosir</h3>
+      <p>Pembelian dalam jumlah besar dengan harga lebih hemat.</p>
+      <a href="#kontak">Selengkapnya →</a>
+    </div>
+    <div class="scheme-card reveal">
+      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/></svg></div>
+      <h3>Custom Branding</h3>
+      <p>Wujudkan brand sendiri dengan kualitas produksi dari HILOS.</p>
+      <a href="#kontak">Selengkapnya →</a>
+    </div>
+  </div>
+
+  <div class="benefit-strip reveal-scale">
+    <span class="benefit-strip-title">Keuntungan Mitra HILOS</span>
+    <div class="benefit-items">
+      <div class="benefit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg>Produk Berkualitas Tinggi</div>
+      <div class="benefit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>Harga Kompetitif dan Stabil</div>
+      <div class="benefit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Stok Aman &amp; Pengiriman Cepat</div>
+      <div class="benefit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l18-7-7 18-3-8-8-3Z"/></svg>Dukungan Marketing &amp; Promosi</div>
+      <div class="benefit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg>Layanan After Sales Terbaik</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIAL & REVIEW MITRA ============ -->
+<section class="review-section">
+  <div class="section-head-center">
+    <h2 class="reveal">Apa Kata Mitra Kami?</h2>
+    <p class="reveal">Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.</p>
+  </div>
+
+  <div class="review-grid">
+    <div class="video-review-card reveal-scale" id="mitraVideo">
+      <div class="photo"><img src="https://images.pexels.com/photos/7289741/pexels-photo-7289741.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Video review mitra"></div>
+      <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+      <div class="vlabel">Video Review</div>
+      <h4>Toko Abadi Jaya — Surabaya</h4>
+      <div class="loc">Distributor sejak 2019</div>
+      <p class="quote">"Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS."</p>
+      <span class="stars">★★★★★</span>
+    </div>
+
+    <div class="testimonial-row">
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-person">
+          <div class="photo"><img src="https://images.pexels.com/photos/3791554/pexels-photo-3791554.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Linda Wijaya"></div>
+          <div><strong>Linda Wijaya</strong><span>Mitra Reseller · Jakarta</span></div>
+        </div>
+        <p>"Pelayanan tim HILOS sangat responsif, pengiriman cepat dan produk selalu ready stok. Sangat membantu bisnis kami."</p>
+        <div class="photo shop-photo"><img src="https://images.pexels.com/photos/19294576/pexels-photo-19294576.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Toko mitra"></div>
+      </div>
+
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-person">
+          <div class="photo"><img src="https://images.pexels.com/photos/19456424/pexels-photo-19456424.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Hendra Gunawan"></div>
+          <div><strong>Hendra Gunawan</strong><span>Distributor · Medan</span></div>
+        </div>
+        <p>"Margin keuntungan sangat menguntungkan, dukungan promosi yang diberikan juga sangat membantu penjualan di daerah kami."</p>
+        <div class="photo shop-photo"><img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Gudang mitra"></div>
+      </div>
+
+      <div class="testimonial-card reveal">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-person">
+          <div class="photo"><img src="https://images.pexels.com/photos/2324638/pexels-photo-2324638.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Yuni Astuti"></div>
+          <div><strong>Yuni Astuti</strong><span>Grosir · Makassar</span></div>
+        </div>
+        <p>"Produk HILOS diminati semua kalangan, dari anak-anak sampai dewasa. Kualitas bagus, harga bersaing!"</p>
+        <div class="photo shop-photo"><img src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Gudang grosir mitra"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mitra-stat-row">
+    <div class="mitra-stat"><strong>4.8/5</strong><span>Rating Mitra</span></div>
+    <div class="mitra-stat"><strong>500+</strong><span>Testimonial Positif</span></div>
+    <div class="mitra-stat"><strong>98%</strong><span>Mitra Puas</span></div>
+    <a href="index.html#review">Lihat Semua Review →</a>
+  </div>
+</section>
+
+<!-- ============ CONTACT & CTA ============ -->
+<section class="contact-section" id="kontak">
+  <div class="contact-grid">
+    <div class="contact-cta reveal">
+      <h2>Siap Memulai Kerjasama?</h2>
+      <p>Hubungi tim sales kami sekarang untuk informasi lebih lanjut dan dapatkan penawaran terbaik!</p>
+      <a href="#" class="btn btn-fill" id="waBtn"><span>Chat via WhatsApp</span></a>
+      <span class="hint">Atau isi formulir di samping</span>
+    </div>
+
+    <div class="contact-form reveal">
+      <h3>Kirim Pesan</h3>
+      <form id="kerjasamaForm">
+        <div class="form-row">
+          <input type="text" placeholder="Nama Lengkap" required>
+          <input type="text" placeholder="Nama Perusahaan">
+        </div>
+        <div class="form-row">
+          <input type="tel" placeholder="Nomor WhatsApp" required>
+          <input type="email" placeholder="Email">
+        </div>
+        <select style="margin-bottom:12px;">
+          <option value="">Jenis Kerjasama yang Diminati</option>
+          <option>Distributor</option>
+          <option>Reseller</option>
+          <option>Grosir</option>
+          <option>Custom Branding</option>
+        </select>
+        <textarea placeholder="Pesan"></textarea>
+        <button type="submit" class="btn btn-fill" style="width:100%;"><span>Kirim Pesan</span></button>
+      </form>
+      <div class="form-success" id="formSuccess">Terima kasih! Pesan Anda sudah kami terima, tim kami akan segera menghubungi Anda.</div>
+    </div>
+
+    <div class="info-card reveal">
+      <div>
+        <h3>Informasi Kontak</h3>
+        <div class="info-row" style="margin-top:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>PT. HILOS Footwear Indonesia<br>Jl. Raya Industri No. 88, Cikupa, Tangerang, Banten - Indonesia</div>
+        <div class="info-row" style="margin-top:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"/></svg>0812-3456-7890</div>
+        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>sales@hilos.co.id</div>
+        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>www.hilos.co.id</div>
+      </div>
+      <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
+        <h3>Jam Operasional</h3>
+        <p style="font-size:12.5px;color:#4a3f32;margin-top:8px;">Senin – Sabtu<br>08.00 – 17.00 WIB</p>
+      </div>
+      <div class="info-photo photo">
+        <img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Lokasi pabrik HILOS">
+        <a href="https://maps.google.com" target="_blank" rel="noopener" class="info-pin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Lihat Lokasi Kami
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARKETPLACE BANNER ============ -->
+<div class="market-banner">
+  <div class="market-inner">
+    <div class="market-trust">
+      <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg>100% Original</div>
+      <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Garansi Produk</div>
+      <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Pengiriman Cepat</div>
+    </div>
+    <div class="market-buttons">
+      <a href="https://shopee.co.id" target="_blank" rel="noopener" class="market-btn shopee">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 6 4.5 6 8H4a1 1 0 0 0-1 1l-1 12a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1L21 9a1 1 0 0 0-1-1h-2c0-3.5-2-6-6-6Zm0 2c2.8 0 4 1.8 4 4H8c0-2.2 1.2-4 4-4Z"/></svg>
+        Shopee
+      </a>
+      <a href="https://tokopedia.com" target="_blank" rel="noopener" class="market-btn tokopedia">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+        Tokopedia
+      </a>
+      <a href="https://tiktok.com/shop" target="_blank" rel="noopener" class="market-btn tiktok">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M15 3a5 5 0 0 0 5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        TikTok Shop
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+      <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="produk.html">Best Seller</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="index.html">Teknologi</a></li><li><a href="#">Karir</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi Kami</h4>
+      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
+</footer>
+
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const topRibbonEl = document.querySelector('.ribbon');
+  const mainNavEl = document.querySelector('.nav');
+  function syncHeaderOffset(){
+    if (topRibbonEl && mainNavEl) mainNavEl.style.top = topRibbonEl.offsetHeight + 'px';
+  }
+  syncHeaderOffset();
+  window.addEventListener('resize', syncHeaderOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+  document.getElementById('waBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+
+  /* scroll reveal */
+  const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
+  if (prefersReducedMotion){
+    revealTargets.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
+    revealTargets.forEach(el => io.observe(el));
+  }
+
+  /* contact form (static demo — no real backend, shows a success message) */
+  document.getElementById('kerjasamaForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('formSuccess').classList.add('show');
+    e.target.reset();
+  });
+
+  /* mitra video placeholder */
+  document.getElementById('mitraVideo').addEventListener('click', () => {
+    alert('Video review mitra akan ditampilkan di sini — slot ini siap diisi video asli.');
+  });
+</script>
+
+</body>
+</html>
