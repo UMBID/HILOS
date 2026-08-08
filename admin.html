@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Produk — HILOS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
+<style>
+  :root{
+    --ink:#140f0b; --ink-2:#1f160e;
+    --sand:#f3ebda; --sand-deep:#e6d8ba; --sand-line:rgba(20,15,11,0.14);
+    --gold:#c69a58; --gold-light:#e2c58c; --gold-deep:#8a642f;
+    --paper:#faf6ee; --danger:#9c4726;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Archivo',sans-serif;}
+  img{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select{font-family:inherit;}
+
+  /* ---------- login screen ---------- */
+  .login-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:var(--ink); padding:24px;
+  }
+  .login-box{
+    width:100%; max-width:360px;
+    background:var(--paper); border-radius:10px; padding:40px 32px;
+  }
+  .login-box .logo{ font-weight:800; font-size:22px; letter-spacing:0.1em; margin-bottom:6px; }
+  .login-box p.sub{ color:#6b6058; font-size:13px; margin-bottom:28px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:#6b6058; text-transform:uppercase; letter-spacing:0.04em; }
+  .field input, .field select{
+    width:100%; padding:12px 14px; border:1px solid var(--sand-line); border-radius:6px;
+    background:#fff; font-size:14px; color:var(--ink);
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:13px 22px; border-radius:6px; border:none;
+    background:var(--ink); color:var(--sand);
+    font-weight:700; font-size:13px; letter-spacing:0.03em; text-transform:uppercase;
+  }
+  .btn:hover{ background:var(--ink-2); }
+  .btn-gold{ background:var(--gold); color:var(--ink); }
+  .btn-gold:hover{ background:var(--gold-light); }
+  .btn-outline{ background:transparent; border:1px solid var(--sand-line); color:var(--ink); }
+  .btn-danger{ background:transparent; border:1px solid var(--danger); color:var(--danger); }
+  .btn-danger:hover{ background:var(--danger); color:#fff; }
+  .btn-block{ width:100%; }
+  .error-msg{ color:var(--danger); font-size:13px; margin-top:10px; display:none; }
+
+  /* ---------- app shell ---------- */
+  #app{ display:none; }
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px clamp(20px,4vw,48px); background:var(--ink); color:var(--sand);
+    position:sticky; top:0; z-index:10;
+  }
+  .topbar .logo{ font-weight:800; letter-spacing:0.1em; font-size:18px; }
+  .topbar .logo span{ color:var(--gold-light); }
+
+  .wrap{ max-width:1100px; margin:0 auto; padding:36px clamp(20px,4vw,48px) 80px; }
+  .page-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-head h1{ font-size:24px; }
+  .page-head p{ color:#6b6058; font-size:13px; margin-top:4px; }
+
+  /* ---------- product table ---------- */
+  .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
+  .p-row{
+    display:grid; grid-template-columns:56px 2fr 1fr 1fr 1fr auto;
+    align-items:center; gap:16px; padding:14px 20px;
+    border-bottom:1px solid var(--sand-line); font-size:13.5px;
+  }
+  .p-row:last-child{ border-bottom:none; }
+  .p-row.head{ background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
+  .p-thumb{ width:44px; height:44px; border-radius:6px; overflow:hidden; background:var(--sand); }
+  .p-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .p-name{ font-weight:600; }
+  .p-model{ color:#6b6058; font-size:12px; }
+  .badge-tag{ display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:100px; background:var(--gold-light); color:var(--gold-deep); text-transform:uppercase; }
+  .row-actions{ display:flex; gap:8px; justify-self:end; }
+  .icon-btn{ border:1px solid var(--sand-line); background:#fff; border-radius:6px; padding:7px 12px; font-size:12px; }
+  .icon-btn:hover{ background:var(--sand); }
+  .empty-state{ padding:48px 20px; text-align:center; color:#6b6058; }
+
+  /* ---------- modal form ---------- */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(20,15,11,0.6);
+    align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; z-index:50;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{ background:#fff; border-radius:12px; width:100%; max-width:640px; padding:32px; }
+  .modal h2{ font-size:20px; margin-bottom:20px; }
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .hint{ font-size:11.5px; color:#8a8078; margin-top:4px; }
+
+  .color-list, .thumb-list{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+  .color-chip{ display:flex; align-items:center; gap:8px; border:1px solid var(--sand-line); border-radius:100px; padding:5px 10px 5px 6px; font-size:12px; }
+  .color-chip .swatch{ width:16px; height:16px; border-radius:50%; flex-shrink:0; }
+  .color-chip button{ border:none; background:none; color:#9c4726; font-weight:700; padding:0 2px; }
+  .add-color-row{ display:flex; gap:8px; margin-top:10px; align-items:center; }
+  .add-color-row input[type="color"]{ width:38px; height:38px; padding:2px; border:1px solid var(--sand-line); border-radius:6px; }
+  .add-color-row input[type="text"]{ flex:1; padding:9px 10px; border:1px solid var(--sand-line); border-radius:6px; }
+
+  .img-thumb{ position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; background:var(--sand); }
+  .img-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .img-thumb button{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
+    border:none; background:rgba(20,15,11,0.75); color:#fff; font-size:11px; line-height:1;
+  }
+  .upload-drop{
+    border:1.5px dashed var(--sand-line); border-radius:8px; padding:20px; text-align:center;
+    color:#8a8078; font-size:13px; margin-top:8px; cursor:pointer;
+  }
+  .upload-drop:hover{ border-color:var(--gold); color:var(--gold-deep); }
+
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:26px; }
+  .toast{
+    position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--sand);
+    padding:14px 20px; border-radius:8px; font-size:13px; z-index:60; display:none;
+  }
+  .toast.show{ display:block; }
+
+  @media (max-width:720px){
+    .p-row{ grid-template-columns:44px 1fr auto; }
+    .p-row .col-category, .p-row .col-price, .p-row.head .col-category, .p-row.head .col-price{ display:none; }
+    .grid-2{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="logo">HILOS</div>
+    <p class="sub">Admin Produk — khusus internal</p>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@hilos.id">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+    </div>
+    <button class="btn btn-gold btn-block" id="loginBtn">Masuk</button>
+    <p class="error-msg" id="loginError">Email atau password salah.</p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <div class="topbar">
+    <div class="logo">HILOS <span>ADMIN</span></div>
+    <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(243,235,218,0.3);">Keluar</button>
+  </div>
+
+  <div class="wrap">
+    <div class="page-head">
+      <div>
+        <h1>Kelola Produk</h1>
+        <p>Perubahan di sini langsung tampil di halaman Produk publik.</p>
+      </div>
+      <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
+    </div>
+
+    <div class="table-card">
+      <div class="p-row head">
+        <span></span>
+        <span>Nama Produk</span>
+        <span class="col-category">Kategori</span>
+        <span class="col-price">Harga</span>
+        <span>Badge</span>
+        <span></span>
+      </div>
+      <div id="productList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">Belum ada produk. Klik "Tambah Produk" untuk mulai.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL FORM ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Tambah Produk</h2>
+    <input type="hidden" id="fId">
+
+    <div class="field">
+      <label>Nama Produk</label>
+      <input type="text" id="fName" placeholder="Contoh: Wave Pro">
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Model / Lini</label>
+        <input type="text" id="fModel" placeholder="Contoh: Wave">
+      </div>
+      <div class="field">
+        <label>Kategori</label>
+        <select id="fCategory">
+          <option value="pria">Pria</option>
+          <option value="wanita">Wanita</option>
+          <option value="anak">Anak</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Harga (Rp)</label>
+        <input type="number" id="fPrice" placeholder="189000">
+      </div>
+      <div class="field">
+        <label>Badge</label>
+        <select id="fBadge">
+          <option value="">Tidak ada</option>
+          <option value="best">Best Seller</option>
+          <option value="new">Baru</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Ukuran tersedia</label>
+      <input type="text" id="fSizes" placeholder="38,39,40,41,42">
+      <p class="hint">Pisahkan dengan koma.</p>
+    </div>
+
+    <div class="field">
+      <label>Warna</label>
+      <div class="color-list" id="colorList"></div>
+      <div class="add-color-row">
+        <input type="color" id="fColorHex" value="#1c1a18">
+        <input type="text" id="fColorName" placeholder="Nama warna, contoh: Hitam">
+        <button class="btn btn-outline" type="button" id="addColorBtn">Tambah</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Foto Produk</label>
+      <div class="thumb-list" id="imgList"></div>
+      <label class="upload-drop" for="fImages">Klik untuk pilih foto (bisa lebih dari satu)</label>
+      <input type="file" id="fImages" accept="image/*" multiple style="display:none;">
+      <p class="hint" id="uploadStatus"></p>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="cancelBtn">Batal</button>
+      <button class="btn btn-gold" id="saveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const sb = window.getSupabaseClient();
+
+  const loginWrap = document.getElementById('loginWrap');
+  const app = document.getElementById('app');
+  const productList = document.getElementById('productList');
+  const emptyState = document.getElementById('emptyState');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const toast = document.getElementById('toast');
+
+  let currentColors = [];   // [{hex,name}]
+  let currentImages = [];   // [url, ...]
+  let editingId = null;
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+  function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
+
+  /* ---------------- AUTH ---------------- */
+  async function checkSession(){
+    const { data } = await sb.auth.getSession();
+    if (data.session){
+      loginWrap.style.display = 'none';
+      app.style.display = 'block';
+      loadProducts();
+    } else {
+      loginWrap.style.display = 'flex';
+      app.style.display = 'none';
+    }
+  }
+
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error){
+      errEl.textContent = error.message;
+      errEl.style.display = 'block';
+      return;
+    }
+    checkSession();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    checkSession();
+  });
+
+  /* ---------------- LOAD & RENDER ---------------- */
+  async function loadProducts(){
+    const { data, error } = await sb
+      .from('products')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
+
+    if (error){ showToast('Gagal memuat produk: ' + error.message); return; }
+
+    productList.innerHTML = '';
+    emptyState.style.display = data.length ? 'none' : 'block';
+
+    data.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'p-row';
+      const thumb = (p.images && p.images[0]) ? p.images[0] : '';
+      row.innerHTML = `
+        <div class="p-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>
+        <div>
+          <div class="p-name">${p.name}</div>
+          <div class="p-model">${p.model}</div>
+        </div>
+        <div class="col-category">${p.category}</div>
+        <div class="col-price">${formatRupiah(p.price)}</div>
+        <div>${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
+        <div class="row-actions">
+          <button class="icon-btn" data-edit="${p.id}">Edit</button>
+          <button class="icon-btn" data-del="${p.id}">Hapus</button>
+        </div>
+      `;
+      productList.appendChild(row);
+    });
+
+    productList.querySelectorAll('[data-edit]').forEach(btn => {
+      btn.addEventListener('click', () => openEdit(btn.dataset.edit, data));
+    });
+    productList.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', () => deleteProduct(btn.dataset.del));
+    });
+  }
+
+  async function deleteProduct(id){
+    if (!confirm('Hapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error){ showToast('Gagal hapus: ' + error.message); return; }
+    showToast('Produk dihapus.');
+    loadProducts();
+  }
+
+  /* ---------------- MODAL FORM ---------------- */
+  function resetForm(){
+    editingId = null;
+    currentColors = [];
+    currentImages = [];
+    document.getElementById('modalTitle').textContent = 'Tambah Produk';
+    document.getElementById('fId').value = '';
+    document.getElementById('fName').value = '';
+    document.getElementById('fModel').value = '';
+    document.getElementById('fCategory').value = 'pria';
+    document.getElementById('fPrice').value = '';
+    document.getElementById('fBadge').value = '';
+    document.getElementById('fSizes').value = '';
+    document.getElementById('uploadStatus').textContent = '';
+    renderColorList();
+    renderImgList();
+  }
+
+  function openAdd(){
+    resetForm();
+    modalOverlay.classList.add('open');
+  }
+
+  function openEdit(id, data){
+    const p = data.find(x => x.id === id);
+    if (!p) return;
+    resetForm();
+    editingId = id;
+    document.getElementById('modalTitle').textContent = 'Edit Produk';
+    document.getElementById('fId').value = p.id;
+    document.getElementById('fName').value = p.name;
+    document.getElementById('fModel').value = p.model;
+    document.getElementById('fCategory').value = p.category;
+    document.getElementById('fPrice').value = p.price;
+    document.getElementById('fBadge').value = p.badge || '';
+    document.getElementById('fSizes').value = (p.sizes || []).join(',');
+    currentColors = Array.isArray(p.colors) ? [...p.colors] : [];
+    currentImages = Array.isArray(p.images) ? [...p.images] : [];
+    renderColorList();
+    renderImgList();
+    modalOverlay.classList.add('open');
+  }
+
+  function closeModal(){ modalOverlay.classList.remove('open'); }
+
+  document.getElementById('addProductBtn').addEventListener('click', openAdd);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+  /* ---- colors ---- */
+  function renderColorList(){
+    const wrap = document.getElementById('colorList');
+    wrap.innerHTML = currentColors.map((c, i) => `
+      <span class="color-chip">
+        <span class="swatch" style="background:${c.hex}"></span>
+        ${c.name}
+        <button type="button" data-remove-color="${i}">×</button>
+      </span>
+    `).join('');
+    wrap.querySelectorAll('[data-remove-color]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentColors.splice(Number(btn.dataset.removeColor), 1);
+        renderColorList();
+      });
+    });
+  }
+
+  document.getElementById('addColorBtn').addEventListener('click', () => {
+    const hex = document.getElementById('fColorHex').value;
+    const name = document.getElementById('fColorName').value.trim();
+    if (!name) { showToast('Isi nama warna dulu.'); return; }
+    currentColors.push({ hex, name });
+    document.getElementById('fColorName').value = '';
+    renderColorList();
+  });
+
+  /* ---- images ---- */
+  function renderImgList(){
+    const wrap = document.getElementById('imgList');
+    wrap.innerHTML = currentImages.map((url, i) => `
+      <div class="img-thumb">
+        <img src="${url}" alt="">
+        <button type="button" data-remove-img="${i}">×</button>
+      </div>
+    `).join('');
+    wrap.querySelectorAll('[data-remove-img]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentImages.splice(Number(btn.dataset.removeImg), 1);
+        renderImgList();
+      });
+    });
+  }
+
+  document.getElementById('fImages').addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const statusEl = document.getElementById('uploadStatus');
+    statusEl.textContent = `Mengunggah ${files.length} foto...`;
+
+    for (const file of files){
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+      const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
+      if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
+      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
+      currentImages.push(pub.publicUrl);
+    }
+    statusEl.textContent = '';
+    e.target.value = '';
+    renderImgList();
+  });
+
+  /* ---- save (insert / update) ---- */
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const name = document.getElementById('fName').value.trim();
+    const model = document.getElementById('fModel').value.trim();
+    const category = document.getElementById('fCategory').value;
+    const price = parseInt(document.getElementById('fPrice').value, 10) || 0;
+    const badge = document.getElementById('fBadge').value || null;
+    const sizes = document.getElementById('fSizes').value
+      .split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+
+    if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
+
+    const payload = { name, model, category, price, badge, sizes, colors: currentColors, images: currentImages };
+
+    let error;
+    if (editingId){
+      ({ error } = await sb.from('products').update(payload).eq('id', editingId));
+    } else {
+      ({ error } = await sb.from('products').insert(payload));
+    }
+
+    if (error){ showToast('Gagal simpan: ' + error.message); return; }
+    showToast(editingId ? 'Produk diperbarui.' : 'Produk ditambahkan.');
+    closeModal();
+    loadProducts();
+  });
+
+  checkSession();
+</script>
+</body>
+</html>
