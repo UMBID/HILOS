@@ -215,6 +215,8 @@
     .footer-grid{grid-template-columns:1fr;}
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
 </head>
 <body>
 
@@ -440,52 +442,56 @@
   });
 
   /* ---------------------------------------------------------
-     PRODUCT GENERATOR — simulates a large real-world catalog
-     (swap this block for a real API/CMS feed later)
+     PRODUCT SOURCE — dibaca dari Supabase (diisi lewat admin.html)
+     Fallback ke 3 contoh dummy kalau Supabase kosong/belum di-setup.
      --------------------------------------------------------- */
-  const lines = [
-    { line:'Wave',  category:'pria',   base:189000, img:'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg' },
-    { line:'Navy',  category:'pria',   base:179000, img:'https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg' },
-    { line:'Cloud', category:'pria',   base:169000, img:'https://images.pexels.com/photos/7872865/pexels-photo-7872865.jpeg' },
-    { line:'Flexo', category:'wanita', base:159000, img:'https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg' },
-    { line:'Zen',   category:'wanita', base:149000, img:'https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg' },
-    { line:'Terra', category:'wanita', base:174000, img:'https://images.pexels.com/photos/8528926/pexels-photo-8528926.jpeg' },
-    { line:'Kidz',  category:'anak',   base:129000, img:'https://images.pexels.com/photos/35903658/pexels-photo-35903658.jpeg' }
-  ];
-  const suffixes = ['Pro','Lite','Classic','Max','Comfort','Glide'];
-  const palette = ['#1c1a18','#3a3a38','#6b6b68','#a85c3c','#8a5c3c','#8a8a86','#55613f','#5b6b7a','#c9a876'];
-  const adultSizes = [38,39,40,41,42,43];
-  const kidSizes = [28,29,30,31,32];
+  const sb = window.getSupabaseClient();
 
-  let uid = 1;
-  const products = [];
-  lines.forEach(ln => {
-    suffixes.forEach((suf, i) => {
-      const price = Math.round((ln.base + (i - 2.5) * 8000) / 1000) * 1000;
-      const colorCount = 2 + (i % 3);
-      const colors = [];
-      for (let c = 0; c < colorCount; c++) colors.push(palette[(i + c + ln.line.length) % palette.length]);
-      products.push({
-        id: uid,
-        name: `${ln.line} ${suf}`,
-        model: ln.line,
-        category: ln.category,
-        price: price,
-        img: `${ln.img}?auto=compress&cs=tinysrgb&w=500`,
-        colors: colors,
-        sizes: ln.category === 'anak' ? kidSizes : adultSizes,
-        badge: uid % 7 === 0 ? 'best' : (uid % 4 === 0 ? 'new' : null)
-      });
-      uid++;
-    });
-  });
+  function fallbackProducts(){
+    return [
+      { id:'demo-1', name:'Wave Pro', model:'Wave', category:'pria', price:189000, img:'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500', colors:['#1c1a18','#3a3a38'], colorNamesMap:{'#1c1a18':'Hitam','#3a3a38':'Abu Gelap'}, sizes:[38,39,40,41,42], badge:'best' },
+      { id:'demo-2', name:'Flexo Slide', model:'Flexo', category:'wanita', price:159000, img:'https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=500', colors:['#a85c3c','#8a8a86'], colorNamesMap:{'#a85c3c':'Cokelat','#8a8a86':'Abu Muda'}, sizes:[38,39,40,41], badge:'new' },
+      { id:'demo-3', name:'Kidz Comfort', model:'Kidz', category:'anak', price:129000, img:'https://images.pexels.com/photos/35903658/pexels-photo-35903658.jpeg?auto=compress&cs=tinysrgb&w=500', colors:['#c9a876'], colorNamesMap:{'#c9a876':'Krem'}, sizes:[28,29,30,31,32], badge:null }
+    ];
+  }
+
+  let products = [];
+
+  async function loadProducts(){
+    const { data, error } = await sb
+      .from('products')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0){
+      products = fallbackProducts();
+    } else {
+      products = data.map(p => ({
+        id: p.id,
+        name: p.name,
+        model: p.model,
+        category: p.category,
+        price: p.price,
+        img: (p.images && p.images[0]) ? p.images[0] : 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500',
+        colors: (p.colors || []).map(c => c.hex),
+        colorNamesMap: (p.colors || []).reduce((acc, c) => { acc[c.hex] = c.name; return acc; }, {}),
+        sizes: p.sizes || [],
+        badge: p.badge || null
+      }));
+    }
+    initCatalog();
+  }
+
+  function initCatalog(){
 
   const priceValues = products.map(p => p.price);
   const PRICE_MIN = Math.min(...priceValues);
   const PRICE_MAX = Math.max(...priceValues);
   const PAGE_SIZE = 12;
 
-  const colorNames = { '#1c1a18':'Hitam', '#3a3a38':'Abu Gelap', '#6b6b68':'Abu-abu', '#a85c3c':'Cokelat', '#8a5c3c':'Cokelat Tua', '#8a8a86':'Abu Muda', '#55613f':'Olive', '#5b6b7a':'Biru Slate', '#c9a876':'Krem' };
+  const colorNames = {};
+  products.forEach(p => Object.assign(colorNames, p.colorNamesMap || {}));
 
   const wishlist = new Set();
   const state = {
@@ -792,15 +798,15 @@
   document.getElementById('productGrid').addEventListener('click', (e) => {
     const qvBtn = e.target.closest('.qv-btn');
     const wishBtn = e.target.closest('.wish-btn');
-    if (qvBtn){ openQuickView(parseInt(qvBtn.dataset.id, 10)); return; }
+    if (qvBtn){ openQuickView(qvBtn.dataset.id); return; }
     if (wishBtn){
-      const id = parseInt(wishBtn.dataset.id, 10);
+      const id = wishBtn.dataset.id;
       if (wishlist.has(id)) wishlist.delete(id); else wishlist.add(id);
       renderGrid();
       return;
     }
     const card = e.target.closest('.product-card');
-    if (card) openQuickView(parseInt(card.dataset.id, 10));
+    if (card) openQuickView(card.dataset.id);
   });
 
   document.getElementById('qvClose').addEventListener('click', () => qvModal.classList.remove('open'));
@@ -826,6 +832,9 @@
   });
 
   renderGrid();
+  }
+
+  loadProducts();
 </script>
 
 </body>
