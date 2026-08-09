@@ -74,10 +74,12 @@
   /* ---------- product table ---------- */
   .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
   .p-row{
-    display:grid; grid-template-columns:56px 2fr 1fr 1fr 1fr auto;
+    display:grid; grid-template-columns:56px minmax(160px,2fr) 100px 120px 100px auto;
     align-items:center; gap:16px; padding:14px 20px;
     border-bottom:1px solid var(--sand-line); font-size:13.5px;
   }
+  .p-row .col-category, .p-row .col-price{ text-align:center; }
+  .p-row > div:nth-child(5){ text-align:center; }
   .p-row:last-child{ border-bottom:none; }
   .p-row.head{ background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
   .sku-tag{ font-family:'Inter',monospace; font-size:11px; color:var(--gold-deep); background:var(--sand); padding:1px 7px; border-radius:4px; display:inline-block; margin-top:2px; }
