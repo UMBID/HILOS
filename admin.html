@@ -80,6 +80,20 @@
   }
   .p-row:last-child{ border-bottom:none; }
   .p-row.head{ background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
+  .sku-tag{ font-family:'Inter',monospace; font-size:11px; color:var(--gold-deep); background:var(--sand); padding:1px 7px; border-radius:4px; display:inline-block; margin-top:2px; }
+
+  /* ---------- toolbar: search + filter ---------- */
+  .toolbar{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    margin-bottom:16px; padding:16px; background:#fff; border:1px solid var(--sand-line); border-radius:10px;
+  }
+  .toolbar input[type="search"]{
+    flex:1; min-width:180px; padding:10px 14px; border:1px solid var(--sand-line); border-radius:6px; font-size:13.5px;
+  }
+  .toolbar select{
+    padding:10px 12px; border:1px solid var(--sand-line); border-radius:6px; font-size:13px; background:#fff; color:var(--ink);
+  }
+  .toolbar .result-count{ font-size:12px; color:#6b6058; white-space:nowrap; }
   .p-thumb{ width:44px; height:44px; border-radius:6px; overflow:hidden; background:var(--sand); }
   .p-thumb img{ width:100%; height:100%; object-fit:cover; }
   .p-name{ font-weight:600; }
@@ -171,10 +185,33 @@
       <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
     </div>
 
+    <div class="toolbar">
+      <input type="search" id="searchInput" placeholder="Cari nama atau kode produk...">
+      <select id="filterCategory">
+        <option value="">Semua Kategori</option>
+        <option value="pria">Pria</option>
+        <option value="wanita">Wanita</option>
+        <option value="anak">Anak</option>
+      </select>
+      <select id="filterBadge">
+        <option value="">Semua Badge</option>
+        <option value="best">Best Seller</option>
+        <option value="new">Baru</option>
+        <option value="none">Tidak ada badge</option>
+      </select>
+      <select id="sortBy">
+        <option value="created_desc">Terbaru</option>
+        <option value="name_asc">Nama A-Z</option>
+        <option value="price_asc">Harga Terendah</option>
+        <option value="price_desc">Harga Tertinggi</option>
+      </select>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+
     <div class="table-card">
       <div class="p-row head">
         <span></span>
-        <span>Nama Produk</span>
+        <span>Nama &amp; Kode Produk</span>
         <span class="col-category">Kategori</span>
         <span class="col-price">Harga</span>
         <span>Badge</span>
@@ -195,6 +232,12 @@
     <div class="field">
       <label>Nama Produk</label>
       <input type="text" id="fName" placeholder="Contoh: Wave Pro">
+    </div>
+
+    <div class="field">
+      <label>Kode Produk (SKU)</label>
+      <input type="text" id="fSku" placeholder="Contoh: WV-PRO-BLK">
+      <p class="hint">Kode internal, harus unik — tidak boleh sama dengan produk lain.</p>
     </div>
 
     <div class="grid-2">
@@ -314,6 +357,8 @@
   });
 
   /* ---------------- LOAD & RENDER ---------------- */
+  let allProducts = [];
+
   async function loadProducts(){
     const { data, error } = await sb
       .from('products')
@@ -322,11 +367,42 @@
       .order('created_at', { ascending: false });
 
     if (error){ showToast('Gagal memuat produk: ' + error.message); return; }
+    allProducts = data;
+    renderTable();
+  }
+
+  function renderTable(){
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const catFilter = document.getElementById('filterCategory').value;
+    const badgeFilter = document.getElementById('filterBadge').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    let list = allProducts.filter(p => {
+      const matchesQuery = !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.sku && p.sku.toLowerCase().includes(q));
+      const matchesCategory = !catFilter || p.category === catFilter;
+      const matchesBadge = !badgeFilter ||
+        (badgeFilter === 'none' ? !p.badge : p.badge === badgeFilter);
+      return matchesQuery && matchesCategory && matchesBadge;
+    });
+
+    list.sort((a, b) => {
+      if (sortBy === 'name_asc') return a.name.localeCompare(b.name);
+      if (sortBy === 'price_asc') return a.price - b.price;
+      if (sortBy === 'price_desc') return b.price - a.price;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    document.getElementById('resultCount').textContent = `${list.length} dari ${allProducts.length} produk`;
 
     productList.innerHTML = '';
-    emptyState.style.display = data.length ? 'none' : 'block';
+    emptyState.style.display = list.length ? 'none' : 'block';
+    emptyState.textContent = allProducts.length
+      ? 'Tidak ada produk yang cocok dengan pencarian/filter.'
+      : 'Belum ada produk. Klik "Tambah Produk" untuk mulai.';
 
-    data.forEach(p => {
+    list.forEach(p => {
       const row = document.createElement('div');
       row.className = 'p-row';
       const thumb = (p.images && p.images[0]) ? p.images[0] : '';
@@ -335,6 +411,7 @@
         <div>
           <div class="p-name">${p.name}</div>
           <div class="p-model">${p.model}</div>
+          ${p.sku ? `<span class="sku-tag">${p.sku}</span>` : ''}
         </div>
         <div class="col-category">${p.category}</div>
         <div class="col-price">${formatRupiah(p.price)}</div>
@@ -348,12 +425,15 @@
     });
 
     productList.querySelectorAll('[data-edit]').forEach(btn => {
-      btn.addEventListener('click', () => openEdit(btn.dataset.edit, data));
+      btn.addEventListener('click', () => openEdit(btn.dataset.edit));
     });
     productList.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', () => deleteProduct(btn.dataset.del));
     });
   }
+
+  ['searchInput'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
+  ['filterCategory','filterBadge','sortBy'].forEach(id => document.getElementById(id).addEventListener('change', renderTable));
 
   async function deleteProduct(id){
     if (!confirm('Hapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
@@ -371,6 +451,7 @@
     document.getElementById('modalTitle').textContent = 'Tambah Produk';
     document.getElementById('fId').value = '';
     document.getElementById('fName').value = '';
+    document.getElementById('fSku').value = '';
     document.getElementById('fModel').value = '';
     document.getElementById('fCategory').value = 'pria';
     document.getElementById('fPrice').value = '';
@@ -386,14 +467,15 @@
     modalOverlay.classList.add('open');
   }
 
-  function openEdit(id, data){
-    const p = data.find(x => x.id === id);
+  function openEdit(id){
+    const p = allProducts.find(x => x.id === id);
     if (!p) return;
     resetForm();
     editingId = id;
     document.getElementById('modalTitle').textContent = 'Edit Produk';
     document.getElementById('fId').value = p.id;
     document.getElementById('fName').value = p.name;
+    document.getElementById('fSku').value = p.sku || '';
     document.getElementById('fModel').value = p.model;
     document.getElementById('fCategory').value = p.category;
     document.getElementById('fPrice').value = p.price;
@@ -477,6 +559,7 @@
   /* ---- save (insert / update) ---- */
   document.getElementById('saveBtn').addEventListener('click', async () => {
     const name = document.getElementById('fName').value.trim();
+    const sku = document.getElementById('fSku').value.trim() || null;
     const model = document.getElementById('fModel').value.trim();
     const category = document.getElementById('fCategory').value;
     const price = parseInt(document.getElementById('fPrice').value, 10) || 0;
@@ -486,7 +569,7 @@
 
     if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
 
-    const payload = { name, model, category, price, badge, sizes, colors: currentColors, images: currentImages };
+    const payload = { name, sku, model, category, price, badge, sizes, colors: currentColors, images: currentImages };
 
     let error;
     if (editingId){
@@ -495,7 +578,14 @@
       ({ error } = await sb.from('products').insert(payload));
     }
 
-    if (error){ showToast('Gagal simpan: ' + error.message); return; }
+    if (error){
+      if (error.code === '23505'){
+        showToast('Kode produk sudah dipakai produk lain. Ganti dengan kode lain.');
+      } else {
+        showToast('Gagal simpan: ' + error.message);
+      }
+      return;
+    }
     showToast(editingId ? 'Produk diperbarui.' : 'Produk ditambahkan.');
     closeModal();
     loadProducts();
