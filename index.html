@@ -312,6 +312,21 @@
   .hero-slide-nav .dot.active{background:var(--gold);transform:scale(1.35);}
 
   /* ============ PROFILE (Section 2) ============ */
+  .top10-teaser{max-width:1360px;margin:0 auto;padding:20px clamp(20px,5vw,64px) 60px;}
+  .top10-teaser-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;}
+  .top10-teaser-head h2{font-size:clamp(22px,2.6vw,30px);margin:4px 0 0;}
+  .top10-teaser-row{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;}
+  .top10-teaser-row::-webkit-scrollbar{height:6px;}
+  .top10-teaser-row::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:100px;}
+  .t10t-card{position:relative;flex:0 0 190px;background:#fff;border:1px solid var(--sand-line);text-decoration:none;color:inherit;}
+  .t10t-rank{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;z-index:2;}
+  .t10t-thumb{aspect-ratio:4/5;overflow:hidden;background:var(--sand);}
+  .t10t-thumb img{width:100%;height:100%;object-fit:cover;}
+  .t10t-info{padding:10px 12px 14px;}
+  .t10t-info h4{font-size:13px;margin:0 0 4px;line-height:1.3;}
+  .t10t-info .price{font-size:12.5px;color:var(--gold-deep);font-weight:700;}
+  @media (max-width:640px){ .t10t-card{flex:0 0 150px;} }
+
   .profile{
     position:relative;
     background:var(--paper);
@@ -1160,6 +1175,8 @@
     .footer-grid{grid-template-columns:1fr;}
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
 </head>
 <body>
 
@@ -1303,6 +1320,17 @@
       <p class="stat-label">Kualitas Terjamin</p>
     </div>
   </div>
+</section>
+
+<section class="top10-teaser" id="top10Teaser" style="display:none;">
+  <div class="top10-teaser-head">
+    <div>
+      <span class="eyebrow reveal">Sorotan</span>
+      <h2 class="reveal" id="top10TeaserTitle">Top 10 Bulan Ini</h2>
+    </div>
+    <a href="produk.html#top10Section" class="btn btn-fill"><span>Lihat Semua</span></a>
+  </div>
+  <div class="top10-teaser-row" id="top10TeaserRow"></div>
 </section>
 
 <section class="detail-produk" id="produk">
@@ -1938,6 +1966,47 @@
     document.getElementById('mainStage').scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
     set3dMode(true);
   });
+
+  /* ---- Top 10 teaser ---- */
+  (async function initTop10Teaser(){
+    const sb = window.getSupabaseClient();
+    const monthsRes = await sb.from('top10_rankings').select('month');
+    if (monthsRes.error || !monthsRes.data || monthsRes.data.length === 0) return;
+
+    const months = [...new Set(monthsRes.data.map(r => r.month))].sort().reverse();
+    const currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2,'0');
+    const month = months.includes(currentMonth) ? currentMonth : months[0];
+
+    const { data, error } = await sb
+      .from('top10_rankings')
+      .select('rank, products(id,name,price,images)')
+      .eq('month', month)
+      .order('rank', { ascending: true })
+      .limit(5);
+
+    if (error || !data || data.length === 0) return;
+
+    document.getElementById('top10TeaserTitle').textContent =
+      month === currentMonth ? 'Top 10 Bulan Ini' : 'Top 10 Terbaru';
+
+    const row = document.getElementById('top10TeaserRow');
+    row.innerHTML = data.filter(r => r.products).map(r => {
+      const p = r.products;
+      const img = (p.images && p.images[0]) ? p.images[0] : '';
+      return `
+        <a href="produk.html#top10Section" class="t10t-card">
+          <span class="t10t-rank">#${r.rank}</span>
+          <div class="t10t-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
+          <div class="t10t-info">
+            <h4>${p.name}</h4>
+            <div class="price">Rp ${Number(p.price || 0).toLocaleString('id-ID')}</div>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    document.getElementById('top10Teaser').style.display = 'block';
+  })();
 </script>
 
 </body>
