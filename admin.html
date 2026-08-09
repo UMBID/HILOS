@@ -71,6 +71,43 @@
   .page-head h1{ font-size:24px; }
   .page-head p{ color:#6b6058; font-size:13px; margin-top:4px; }
 
+  /* ---------- tab nav ---------- */
+  .tab-nav{ display:flex; gap:8px; margin-bottom:28px; border-bottom:1px solid var(--sand-line); }
+  .tab-nav-btn{
+    padding:12px 4px; margin-right:24px; border:none; background:none;
+    font-family:'Archivo',sans-serif; font-weight:700; font-size:14px; color:#8a8078;
+    border-bottom:2px solid transparent; cursor:pointer;
+  }
+  .tab-nav-btn.active{ color:var(--ink); border-bottom-color:var(--gold); }
+
+  /* ---------- top 10 list ---------- */
+  .top10-list{ display:flex; flex-direction:column; gap:10px; }
+  .top10-row{
+    display:flex; align-items:center; gap:16px;
+    background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:12px 16px;
+  }
+  .top10-rank{
+    width:36px; height:36px; border-radius:50%; background:var(--sand);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; color:var(--gold-deep); flex-shrink:0;
+  }
+  .top10-thumb{ width:44px; height:44px; border-radius:6px; overflow:hidden; background:var(--sand); flex-shrink:0; }
+  .top10-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .top10-info{ flex:1; min-width:0; }
+  .top10-info .name{ font-weight:600; font-size:13.5px; }
+  .top10-info .empty{ color:#8a8078; font-size:13.5px; font-style:italic; }
+  .top10-actions{ display:flex; gap:8px; flex-shrink:0; }
+
+  /* ---------- picker list ---------- */
+  .picker-item{
+    display:flex; align-items:center; gap:12px; padding:10px 8px; border-radius:6px; cursor:pointer;
+  }
+  .picker-item:hover{ background:var(--sand); }
+  .picker-thumb{ width:36px; height:36px; border-radius:6px; overflow:hidden; background:var(--sand); flex-shrink:0; }
+  .picker-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .picker-info .name{ font-size:13.5px; font-weight:600; }
+  .picker-info .sub{ font-size:11.5px; color:#8a8078; }
+
   /* ---------- product table ---------- */
   .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
   .p-grid{
@@ -179,6 +216,12 @@
   </div>
 
   <div class="wrap">
+    <div class="tab-nav">
+      <button class="tab-nav-btn active" data-view="produkView">Kelola Produk</button>
+      <button class="tab-nav-btn" data-view="top10View">Top 10 Produk</button>
+    </div>
+
+    <div id="produkView" class="view">
     <div class="page-head">
       <div>
         <h1>Kelola Produk</h1>
@@ -221,6 +264,36 @@
         <div id="productList" style="display:contents;"></div>
       </div>
       <div class="empty-state" id="emptyState" style="display:none;">Belum ada produk. Klik "Tambah Produk" untuk mulai.</div>
+    </div>
+    </div>
+    <!-- /produkView -->
+
+    <div id="top10View" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Top 10 Produk</h1>
+          <p>Pilih 10 produk untuk dijadikan sorotan di halaman Produk publik, per bulan.</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="month" id="top10Month">
+          <button class="btn btn-gold" id="saveTop10Btn">Simpan Top 10</button>
+        </div>
+      </div>
+
+      <div class="top10-list" id="top10List"></div>
+    </div>
+    <!-- /top10View -->
+  </div>
+</div>
+
+<!-- ============ PRODUCT PICKER (untuk Top 10) ============ -->
+<div class="modal-overlay" id="pickerOverlay">
+  <div class="modal">
+    <h2>Pilih Produk untuk Rank <span id="pickerRankLabel"></span></h2>
+    <input type="search" id="pickerSearch" placeholder="Cari nama atau kode produk..." style="width:100%; padding:12px 14px; border:1px solid var(--sand-line); border-radius:6px; font-size:14px; margin-bottom:16px;">
+    <div id="pickerList" style="max-height:360px; overflow-y:auto;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="pickerCancelBtn">Batal</button>
     </div>
   </div>
 </div>
@@ -588,6 +661,146 @@
     showToast(editingId ? 'Produk diperbarui.' : 'Produk ditambahkan.');
     closeModal();
     loadProducts();
+  });
+
+  /* ---------------- TAB NAV ---------------- */
+  document.querySelectorAll('.tab-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.view').forEach(v => v.style.display = (v.id === btn.dataset.view) ? '' : 'none');
+      if (btn.dataset.view === 'top10View') loadTop10();
+    });
+  });
+
+  /* ---------------- TOP 10 ---------------- */
+  const top10Assignments = new Array(10).fill(null); // index 0-9 => product object or null
+  let pickerTargetRank = null;
+
+  function currentMonthStr(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+  document.getElementById('top10Month').value = currentMonthStr();
+  document.getElementById('top10Month').addEventListener('change', loadTop10);
+
+  async function loadTop10(){
+    const month = document.getElementById('top10Month').value;
+    if (!month) return;
+
+    top10Assignments.fill(null);
+
+    const { data, error } = await sb
+      .from('top10_rankings')
+      .select('rank, product_id')
+      .eq('month', month);
+
+    if (error){ showToast('Gagal memuat Top 10: ' + error.message); return; }
+
+    data.forEach(row => {
+      const p = allProducts.find(x => x.id === row.product_id);
+      if (p) top10Assignments[row.rank - 1] = p;
+    });
+
+    renderTop10();
+  }
+
+  function renderTop10(){
+    const list = document.getElementById('top10List');
+    list.innerHTML = '';
+    for (let i = 0; i < 10; i++){
+      const p = top10Assignments[i];
+      const thumb = p && p.images && p.images[0] ? p.images[0] : '';
+      const row = document.createElement('div');
+      row.className = 'top10-row';
+      row.innerHTML = `
+        <div class="top10-rank">#${i + 1}</div>
+        ${p ? `<div class="top10-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>` : ''}
+        <div class="top10-info">
+          ${p ? `<div class="name">${p.name}</div>` : `<div class="empty">Belum diisi</div>`}
+        </div>
+        <div class="top10-actions">
+          <button class="icon-btn" data-pick="${i}">${p ? 'Ganti' : 'Pilih Produk'}</button>
+          ${p ? `<button class="icon-btn" data-clear="${i}">Hapus</button>` : ''}
+        </div>
+      `;
+      list.appendChild(row);
+    }
+    list.querySelectorAll('[data-pick]').forEach(btn => {
+      btn.addEventListener('click', () => openPicker(Number(btn.dataset.pick)));
+    });
+    list.querySelectorAll('[data-clear]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        top10Assignments[Number(btn.dataset.clear)] = null;
+        renderTop10();
+      });
+    });
+  }
+
+  function openPicker(rankIndex){
+    pickerTargetRank = rankIndex;
+    document.getElementById('pickerRankLabel').textContent = '#' + (rankIndex + 1);
+    document.getElementById('pickerSearch').value = '';
+    renderPickerList('');
+    document.getElementById('pickerOverlay').classList.add('open');
+  }
+
+  function renderPickerList(query){
+    const q = query.trim().toLowerCase();
+    const already = top10Assignments.filter(Boolean).map(p => p.id);
+    const results = allProducts.filter(p => {
+      const matches = !q || p.name.toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q));
+      return matches;
+    });
+    const listEl = document.getElementById('pickerList');
+    listEl.innerHTML = results.map(p => {
+      const thumb = p.images && p.images[0] ? p.images[0] : '';
+      const takenElsewhere = already.includes(p.id) && top10Assignments[pickerTargetRank]?.id !== p.id;
+      return `
+        <div class="picker-item" data-id="${p.id}" style="${takenElsewhere ? 'opacity:0.4;' : ''}">
+          <div class="picker-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>
+          <div class="picker-info">
+            <div class="name">${p.name}${takenElsewhere ? ' (sudah dipakai rank lain)' : ''}</div>
+            <div class="sub">${p.sku || p.model}</div>
+          </div>
+        </div>
+      `;
+    }).join('') || '<p style="padding:12px; color:#8a8078; font-size:13px;">Tidak ada produk cocok.</p>';
+
+    listEl.querySelectorAll('.picker-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const p = allProducts.find(x => x.id === item.dataset.id);
+        if (!p) return;
+        // lepas dari slot lain kalau produk ini sudah dipakai di rank berbeda
+        const prevIndex = top10Assignments.findIndex(x => x && x.id === p.id);
+        if (prevIndex !== -1) top10Assignments[prevIndex] = null;
+        top10Assignments[pickerTargetRank] = p;
+        renderTop10();
+        document.getElementById('pickerOverlay').classList.remove('open');
+      });
+    });
+  }
+
+  document.getElementById('pickerSearch').addEventListener('input', (e) => renderPickerList(e.target.value));
+  document.getElementById('pickerCancelBtn').addEventListener('click', () => {
+    document.getElementById('pickerOverlay').classList.remove('open');
+  });
+
+  document.getElementById('saveTop10Btn').addEventListener('click', async () => {
+    const month = document.getElementById('top10Month').value;
+    if (!month){ showToast('Pilih bulan dulu.'); return; }
+
+    const { error: delError } = await sb.from('top10_rankings').delete().eq('month', month);
+    if (delError){ showToast('Gagal simpan: ' + delError.message); return; }
+
+    const rows = top10Assignments
+      .map((p, i) => p ? { month, rank: i + 1, product_id: p.id } : null)
+      .filter(Boolean);
+
+    if (rows.length){
+      const { error: insError } = await sb.from('top10_rankings').insert(rows);
+      if (insError){ showToast('Gagal simpan: ' + insError.message); return; }
+    }
+    showToast('Top 10 bulan ' + month + ' disimpan.');
   });
 
   checkSession();
