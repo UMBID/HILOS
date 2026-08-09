@@ -73,13 +73,12 @@
 
   /* ---------- product table ---------- */
   .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
-  .p-row{
+  .p-grid{
     display:grid; grid-template-columns:56px minmax(160px,2fr) 100px 120px 100px auto;
-    align-items:center; gap:16px; padding:14px 20px;
-    border-bottom:1px solid var(--sand-line); font-size:13.5px;
+    column-gap:16px; align-items:center;
   }
-  .p-row:last-child{ border-bottom:none; }
-  .p-row.head{ background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
+  .p-cell{ padding:14px 20px; border-top:1px solid var(--sand-line); font-size:13.5px; }
+  .p-cell.head{ border-top:none; background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
   .sku-tag{ font-family:'Inter',monospace; font-size:11px; color:var(--gold-deep); background:var(--sand); padding:1px 7px; border-radius:4px; display:inline-block; margin-top:2px; }
 
   /* ---------- toolbar: search + filter ---------- */
@@ -143,8 +142,8 @@
   .toast.show{ display:block; }
 
   @media (max-width:720px){
-    .p-row{ grid-template-columns:44px 1fr auto; }
-    .p-row .col-category, .p-row .col-price, .p-row.head .col-category, .p-row.head .col-price{ display:none; }
+    .p-grid{ grid-template-columns:44px 1fr auto; }
+    .p-cell.col-category, .p-cell.col-price{ display:none; }
     .grid-2{ grid-template-columns:1fr; }
   }
 </style>
@@ -209,15 +208,15 @@
     </div>
 
     <div class="table-card">
-      <div class="p-row head">
-        <span></span>
-        <span>Nama &amp; Kode Produk</span>
-        <span class="col-category">Kategori</span>
-        <span class="col-price">Harga</span>
-        <span>Badge</span>
-        <span></span>
+      <div class="p-grid">
+        <span class="p-cell head"></span>
+        <span class="p-cell head">Nama &amp; Kode Produk</span>
+        <span class="p-cell head col-category">Kategori</span>
+        <span class="p-cell head col-price">Harga</span>
+        <span class="p-cell head">Badge</span>
+        <span class="p-cell head"></span>
+        <div id="productList" style="display:contents;"></div>
       </div>
-      <div id="productList"></div>
       <div class="empty-state" id="emptyState" style="display:none;">Belum ada produk. Klik "Tambah Produk" untuk mulai.</div>
     </div>
   </div>
@@ -403,25 +402,22 @@
       : 'Belum ada produk. Klik "Tambah Produk" untuk mulai.';
 
     list.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'p-row';
       const thumb = (p.images && p.images[0]) ? p.images[0] : '';
-      row.innerHTML = `
-        <div class="p-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div>
-        <div>
+      productList.insertAdjacentHTML('beforeend', `
+        <div class="p-cell"><div class="p-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div></div>
+        <div class="p-cell">
           <div class="p-name">${p.name}</div>
           <div class="p-model">${p.model}</div>
           ${p.sku ? `<span class="sku-tag">${p.sku}</span>` : ''}
         </div>
-        <div class="col-category">${p.category}</div>
-        <div class="col-price">${formatRupiah(p.price)}</div>
-        <div>${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
-        <div class="row-actions">
+        <div class="p-cell col-category">${p.category}</div>
+        <div class="p-cell col-price">${formatRupiah(p.price)}</div>
+        <div class="p-cell">${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
+        <div class="p-cell row-actions">
           <button class="icon-btn" data-edit="${p.id}">Edit</button>
           <button class="icon-btn" data-del="${p.id}">Hapus</button>
         </div>
-      `;
-      productList.appendChild(row);
+      `);
     });
 
     productList.querySelectorAll('[data-edit]').forEach(btn => {
