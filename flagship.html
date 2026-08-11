@@ -196,6 +196,22 @@
 
   /* ---- feature grid + spec (light section below the flagship card) ---- */
   .feature-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:1fr 320px;gap:40px;}
+
+  .others-section{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 70px;}
+  .others-section h2{font-size:clamp(20px,2.4vw,26px);margin-bottom:20px;}
+  .others-grid{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;}
+  .others-grid::-webkit-scrollbar{height:6px;}
+  .others-grid::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:100px;}
+  .other-card{flex:0 0 190px;background:#fff;border:1px solid var(--sand-line);text-decoration:none;color:var(--ink);position:relative;transition:box-shadow .25s ease, transform .25s ease;}
+  .other-card:hover{box-shadow:0 14px 28px rgba(20,15,11,0.12);transform:translateY(-3px);}
+  .other-rank{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;z-index:2;}
+  .other-rank.is-top3{background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));color:var(--ink);}
+  .other-thumb{aspect-ratio:4/5;overflow:hidden;background:var(--sand);}
+  .other-thumb img{width:100%;height:100%;object-fit:cover;}
+  .other-info{padding:10px 12px 14px;}
+  .other-info h4{font-size:13px;margin:0 0 4px;line-height:1.3;}
+  .other-info .price{font-size:12.5px;color:var(--gold-deep);font-weight:700;}
+  @media (max-width:640px){ .other-card{flex:0 0 150px;} }
   .feature-section h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;margin-bottom:26px;}
   .feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
   .feature-icon{width:48px;height:48px;border:1px solid var(--sand-line);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold-deep);margin-bottom:14px;}
@@ -241,6 +257,8 @@
     .footer-grid{grid-template-columns:1fr;}
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
 </head>
 <body>
 
@@ -459,6 +477,11 @@
   </div>
 </div>
 
+<div class="others-section" id="othersSection">
+  <h2 id="othersTitle">Top 10 Lainnya</h2>
+  <div class="others-grid" id="othersGrid"></div>
+</div>
+
 <div class="modal-overlay" id="videoModal">
   <div class="modal-box">
     <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
@@ -501,6 +524,94 @@
   syncHeaderOffset();
   window.addEventListener('resize', syncHeaderOffset);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  /* -----------------------------------------------------------
+     FLAGSHIP DATA — produk rank #1 Top 10 bulan berjalan (Supabase)
+     ----------------------------------------------------------- */
+  const sb = window.getSupabaseClient();
+  const FALLBACK_IMG = 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900';
+  function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
+
+  async function loadFlagshipProduct(){
+    const requestedRank = parseInt(new URLSearchParams(location.search).get('rank'), 10) || 1;
+
+    const { data: monthsData } = await sb.from('top10_rankings').select('month');
+    if (!monthsData || monthsData.length === 0) return null;
+    const months = [...new Set(monthsData.map(r => r.month))].sort().reverse();
+    const currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
+    const month = months.includes(currentMonth) ? currentMonth : months[0];
+
+    const { data, error } = await sb
+      .from('top10_rankings')
+      .select('rank, products(id,name,model,price,images,colors,sizes,badge)')
+      .eq('month', month)
+      .order('rank', { ascending: true });
+
+    if (error || !data || data.length === 0) return null;
+
+    const rows = data.filter(r => r.products);
+    const current = rows.find(r => r.rank === requestedRank) || rows[0];
+    const others = rows.filter(r => r.rank !== current.rank);
+    return { current, others };
+  }
+
+  function applyFlagshipProduct(current, others){
+    const p = current.products;
+    const rank = current.rank;
+    const images = (p.images && p.images.length) ? p.images : [FALLBACK_IMG];
+    const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
+    const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
+
+    document.querySelector('.flagship-tag').textContent = rank === 1 ? 'Produk Andalan' : `Top 10 — Rank #${rank}`;
+
+    document.querySelector('.thumb-rail').innerHTML = images.map((img, i) => `
+      <button class="thumb-btn ${i === 0 ? 'active' : ''}" data-img="${img}" aria-label="Tampilan ${i+1}">
+        <img src="${img}" alt="${p.name} tampilan ${i+1}">
+      </button>
+    `).join('');
+    document.getElementById('mainImg').src = images[0];
+    document.getElementById('mainImg').alt = p.name;
+
+    document.querySelector('.product-info h3').textContent = p.name;
+    document.querySelector('.product-price').textContent = formatRupiah(p.price);
+    document.querySelector('.badges').innerHTML =
+      (p.badge === 'best' ? '<span class="pdp-badge badge-best">Best Seller</span>' : '') +
+      (p.badge === 'new' ? '<span class="pdp-badge badge-new">New</span>' : '') +
+      `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 10</span>`;
+
+    document.querySelector('.color-row').innerHTML = colors.map((c, i) => `
+      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
+    `).join('');
+    document.getElementById('colorValue').textContent = colors[0].name;
+
+    document.querySelector('.size-row').innerHTML = sizes.map((s, i) => `
+      <button class="size-btn ${i === Math.floor(sizes.length/2) ? 'active' : ''}">${s}</button>
+    `).join('');
+    document.getElementById('sizeValue').textContent = sizes[Math.floor(sizes.length/2)];
+
+    /* grid navigasi ke rank lain */
+    document.getElementById('othersGrid').innerHTML = others.map(o => {
+      const op = o.products;
+      const img = (op.images && op.images[0]) ? op.images[0] : FALLBACK_IMG;
+      return `
+        <a class="other-card" href="flagship.html?rank=${o.rank}">
+          <span class="other-rank${o.rank <= 3 ? ' is-top3' : ''}">#${o.rank}</span>
+          <div class="other-thumb"><img src="${img}" alt="${op.name}" loading="lazy"></div>
+          <div class="other-info">
+            <h4>${op.name}</h4>
+            <div class="price">${formatRupiah(op.price)}</div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  loadFlagshipProduct().then(result => {
+    if (result) applyFlagshipProduct(result.current, result.others);
+    initFlagshipInteractions();
+  });
+
+  function initFlagshipInteractions(){
 
   document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
   document.getElementById('salesBtn2').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
@@ -632,6 +743,8 @@
     document.getElementById('mainStage').scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
     set3dMode(true);
   });
+
+  } // /initFlagshipInteractions
 </script>
 
 </body>
