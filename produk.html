@@ -70,7 +70,7 @@
   .top10-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
   .top10-scroll::-webkit-scrollbar{height:6px;}
   .top10-scroll::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:100px;}
-  .top10-card{position:relative;flex:0 0 190px;scroll-snap-align:start;background:#fff;border:1px solid var(--sand-line);cursor:pointer;transition:box-shadow .25s ease, transform .25s ease;}
+  .top10-card{display:block;position:relative;flex:0 0 190px;scroll-snap-align:start;background:#fff;border:1px solid var(--sand-line);cursor:pointer;text-decoration:none;color:var(--ink);transition:box-shadow .25s ease, transform .25s ease;}
   .top10-card:hover{box-shadow:0 14px 28px rgba(20,15,11,0.1);transform:translateY(-2px);}
   .top10-rank-badge{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;z-index:2;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,0.25);}
   .top10-rank-badge.is-top3{background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));color:var(--ink);}
@@ -421,7 +421,7 @@
       <div class="qv-colors" id="qvSizes"></div>
       <div class="qv-actions">
         <a href="#" class="btn btn-fill" id="qvSalesBtn"><span>Hubungi Sales</span></a>
-        <a href="pdp.html" style="display:inline-flex;align-items:center;padding:14px 22px;border:1px solid var(--sand-line);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Lihat Detail Lengkap →</a>
+        <a href="flagship.html" id="qvDetailLink" style="display:none;align-items:center;padding:14px 22px;border:1px solid var(--sand-line);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Lihat Detail Lengkap →</a>
       </div>
     </div>
   </div>
@@ -822,6 +822,16 @@
     document.getElementById('qvPrice').textContent = formatRupiah(p.price);
     document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}"></span>`).join('');
     document.getElementById('qvSizes').innerHTML = p.sizes.map((s,i) => `<span style="background:transparent;border:1px solid var(--sand-line);width:auto;padding:0 10px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:0;font-size:11px;${i===0 ? 'border-color:var(--gold-deep);color:var(--gold-deep);' : ''}" data-size="${s}">${s}</span>`).join('');
+
+    const detailLink = document.getElementById('qvDetailLink');
+    const rank = top10RankCache[id];
+    if (rank){
+      detailLink.href = rank === 1 ? 'flagship.html' : `flagship.html?rank=${rank}`;
+      detailLink.style.display = 'inline-flex';
+    } else {
+      detailLink.style.display = 'none';
+    }
+
     qvModal.classList.add('open');
   }
 
@@ -862,6 +872,7 @@
   });
 
   /* ---------- Top 10 Produk ---------- */
+  let top10RankCache = {};
   const MONTH_NAMES_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   function monthLabel(m){
     const [y, mm] = m.split('-');
@@ -898,27 +909,28 @@
     const grid = document.getElementById('top10Grid');
     if (error || !data || data.length === 0){
       grid.innerHTML = '<p style="color:#8a8078;font-size:13px;">Belum ada data Top 10 untuk bulan ini.</p>';
+      top10RankCache = {};
       return;
     }
+
+    top10RankCache = {};
+    data.forEach(r => { if (r.products) top10RankCache[r.products.id] = r.rank; });
 
     grid.innerHTML = data.filter(r => r.products).map(r => {
       const p = r.products;
       const img = (p.images && p.images[0]) ? p.images[0] : '';
+      const href = r.rank === 1 ? 'flagship.html' : `flagship.html?rank=${r.rank}`;
       return `
-        <div class="top10-card" data-id="${p.id}">
+        <a class="top10-card" href="${href}">
           <span class="top10-rank-badge${r.rank <= 3 ? ' is-top3' : ''}">#${r.rank}</span>
           <div class="top10-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
           <div class="top10-info">
             <h4>${p.name}</h4>
             <div class="price">${formatRupiah(p.price)}</div>
           </div>
-        </div>
+        </a>
       `;
     }).join('');
-
-    grid.querySelectorAll('.top10-card').forEach(card => {
-      card.addEventListener('click', () => openQuickView(card.dataset.id));
-    });
   }
 
   initTop10();
