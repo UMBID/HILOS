@@ -1995,8 +1995,9 @@
     row.innerHTML = data.filter(r => r.products).map(r => {
       const p = r.products;
       const img = (p.images && p.images[0]) ? p.images[0] : '';
+      const href = r.rank === 1 ? 'flagship.html' : `flagship.html?rank=${r.rank}`;
       return `
-        <a href="produk.html#top10Section" class="t10t-card">
+        <a href="${href}" class="t10t-card">
           <span class="t10t-rank${r.rank <= 3 ? ' is-top3' : ''}">#${r.rank}</span>
           <div class="t10t-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
           <div class="t10t-info">
