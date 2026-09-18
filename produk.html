@@ -360,6 +360,7 @@
       <div class="swatch-toggle-row" id="colorSwatches"></div>
     </div>
 
+    <!-- HARGA DINONAKTIFKAN — uncomment blok ini kalau harga dipakai lagi:
     <div class="filter-block price-range">
       <h4>Rentang Harga</h4>
       <div class="range-values" id="rangeValues"></div>
@@ -370,6 +371,7 @@
         <input type="range" id="priceMax" min="100000" max="200000" step="5000">
       </div>
     </div>
+    -->
 
     <button class="reset-filters" id="resetFilters">Hapus Semua Filter</button>
   </aside>
@@ -382,8 +384,10 @@
       <div style="display:flex;align-items:center;gap:14px;">
         <select class="filter-select" id="sortBy">
           <option value="terbaru">Terbaru</option>
+          <!-- HARGA DINONAKTIFKAN:
           <option value="lowest">Harga Terendah</option>
           <option value="highest">Harga Tertinggi</option>
+          -->
         </select>
         <div class="view-toggle">
           <button class="active" id="gridViewBtn" aria-label="Tampilan grid">
@@ -414,7 +418,7 @@
     <div class="qv-image photo"><img id="qvImage" src="" alt=""></div>
     <div class="qv-body">
       <h3 id="qvName"></h3>
-      <div class="price" id="qvPrice"></div>
+      <!-- HARGA DINONAKTIFKAN: <div class="price" id="qvPrice"></div> -->
       <div class="qv-label">Pilih Warna</div>
       <div class="qv-colors" id="qvColors"></div>
       <div class="qv-label">Pilih Ukuran</div>
@@ -552,19 +556,21 @@
     <button class="swatch-toggle" data-filter="color" value="${c}" style="background:${c}" title="${colorNames[c] || ''}"></button>
   `).join('');
 
-  document.getElementById('priceMin').min = PRICE_MIN; document.getElementById('priceMin').max = PRICE_MAX; document.getElementById('priceMin').value = PRICE_MIN;
-  document.getElementById('priceMax').min = PRICE_MIN; document.getElementById('priceMax').max = PRICE_MAX; document.getElementById('priceMax').value = PRICE_MAX;
+  // HARGA DINONAKTIFKAN — uncomment 2 baris ini kalau harga dipakai lagi:
+  // document.getElementById('priceMin').min = PRICE_MIN; document.getElementById('priceMin').max = PRICE_MAX; document.getElementById('priceMin').value = PRICE_MIN;
+  // document.getElementById('priceMax').min = PRICE_MIN; document.getElementById('priceMax').max = PRICE_MAX; document.getElementById('priceMax').value = PRICE_MAX;
   updateRangeUI();
 
   function updateRangeUI(){
-    const min = parseInt(document.getElementById('priceMin').value, 10);
-    const max = parseInt(document.getElementById('priceMax').value, 10);
-    document.getElementById('rangeValues').textContent = `${formatRupiah(min)} — ${formatRupiah(max)}`;
-    const pctMin = ((min - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
-    const pctMax = ((max - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
-    const fill = document.getElementById('rangeTrackFill');
-    fill.style.left = pctMin + '%';
-    fill.style.width = (pctMax - pctMin) + '%';
+    // HARGA DINONAKTIFKAN — isi asli fungsi ini (uncomment kalau harga dipakai lagi):
+    // const min = parseInt(document.getElementById('priceMin').value, 10);
+    // const max = parseInt(document.getElementById('priceMax').value, 10);
+    // document.getElementById('rangeValues').textContent = `${formatRupiah(min)} — ${formatRupiah(max)}`;
+    // const pctMin = ((min - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+    // const pctMax = ((max - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+    // const fill = document.getElementById('rangeTrackFill');
+    // fill.style.left = pctMin + '%';
+    // fill.style.width = (pctMax - pctMin) + '%';
   }
 
   /* ---------- filtering + sorting ---------- */
@@ -575,11 +581,12 @@
       if (state.models.size && !state.models.has(p.model)) return false;
       if (state.sizes.size && !p.sizes.some(s => state.sizes.has(String(s)))) return false;
       if (state.colors.size && !p.colors.some(c => state.colors.has(c))) return false;
-      if (p.price < state.priceMin || p.price > state.priceMax) return false;
+      // HARGA DINONAKTIFKAN: if (p.price < state.priceMin || p.price > state.priceMax) return false;
       return true;
     });
-    if (state.sort === 'lowest') list = [...list].sort((a,b) => a.price - b.price);
-    if (state.sort === 'highest') list = [...list].sort((a,b) => b.price - a.price);
+    // HARGA DINONAKTIFKAN — uncomment 2 baris ini kalau harga dipakai lagi:
+    // if (state.sort === 'lowest') list = [...list].sort((a,b) => a.price - b.price);
+    // if (state.sort === 'highest') list = [...list].sort((a,b) => b.price - a.price);
     return list;
   }
 
@@ -590,9 +597,10 @@
     state.models.forEach(v => chips.push({ type:'model', value:v, label:v }));
     state.sizes.forEach(v => chips.push({ type:'size', value:v, label:'Ukuran ' + v }));
     state.colors.forEach(v => chips.push({ type:'color', value:v, label:colorNames[v] || 'Warna' }));
-    if (state.priceMin !== PRICE_MIN || state.priceMax !== PRICE_MAX){
-      chips.push({ type:'price', value:'price', label:formatRupiah(state.priceMin) + ' – ' + formatRupiah(state.priceMax) });
-    }
+    // HARGA DINONAKTIFKAN — uncomment blok ini kalau harga dipakai lagi:
+    // if (state.priceMin !== PRICE_MIN || state.priceMax !== PRICE_MAX){
+    //   chips.push({ type:'price', value:'price', label:formatRupiah(state.priceMin) + ' – ' + formatRupiah(state.priceMax) });
+    // }
     if (state.search) chips.push({ type:'search', value:'search', label:'"' + state.search + '"' });
 
     const wrap = document.getElementById('activeChips');
@@ -621,7 +629,7 @@
     if (type === 'model') state.models.delete(value);
     if (type === 'size') state.sizes.delete(value);
     if (type === 'color') state.colors.delete(value);
-    if (type === 'price'){ state.priceMin = PRICE_MIN; state.priceMax = PRICE_MAX; document.getElementById('priceMin').value = PRICE_MIN; document.getElementById('priceMax').value = PRICE_MAX; updateRangeUI(); }
+    // HARGA DINONAKTIFKAN: if (type === 'price'){ state.priceMin = PRICE_MIN; state.priceMax = PRICE_MAX; document.getElementById('priceMin').value = PRICE_MIN; document.getElementById('priceMax').value = PRICE_MAX; updateRangeUI(); }
     if (type === 'search'){ state.search=''; document.getElementById('filterSearch').value=''; }
     syncCheckboxUI();
     state.visibleCount = PAGE_SIZE;
@@ -637,10 +645,12 @@
 
   function resetAllFilters(){
     state.search=''; state.categories.clear(); state.models.clear(); state.sizes.clear(); state.colors.clear();
-    state.priceMin = PRICE_MIN; state.priceMax = PRICE_MAX; state.visibleCount = PAGE_SIZE;
+    // HARGA DINONAKTIFKAN — uncomment 3 baris ini kalau harga dipakai lagi:
+    // state.priceMin = PRICE_MIN; state.priceMax = PRICE_MAX;
+    state.visibleCount = PAGE_SIZE;
     document.getElementById('filterSearch').value = '';
-    document.getElementById('priceMin').value = PRICE_MIN;
-    document.getElementById('priceMax').value = PRICE_MAX;
+    // document.getElementById('priceMin').value = PRICE_MIN;
+    // document.getElementById('priceMax').value = PRICE_MAX;
     updateRangeUI();
     syncCheckboxUI();
     renderAll();
@@ -696,7 +706,7 @@
         <div class="product-info">
           <h4>${p.name}</h4>
           <div class="model-tag">Lini ${p.model}</div>
-          <div class="price">${formatRupiah(p.price)}</div>
+          <!-- HARGA DINONAKTIFKAN: <div class="price">${formatRupiah(p.price)}</div> -->
           <div class="product-colors">${p.colors.map(c => `<span style="background:${c}"></span>`).join('')}</div>
         </div>
       </div>
@@ -750,7 +760,9 @@
     renderAll();
   });
 
-  /* ---------- price range sliders ---------- */
+  /* ---------- price range sliders ----------
+     HARGA DINONAKTIFKAN — uncomment blok ini kalau harga dipakai lagi
+     (jangan lupa uncomment juga elemen HTML #priceMin/#priceMax di sidebar):
   const minSlider = document.getElementById('priceMin');
   const maxSlider = document.getElementById('priceMax');
   let priceDebounce = null;
@@ -767,6 +779,7 @@
   }
   minSlider.addEventListener('input', handleRangeInput);
   maxSlider.addEventListener('input', handleRangeInput);
+  */
 
   /* ---------- search (debounced) ---------- */
   let searchDebounce = null;
@@ -819,7 +832,7 @@
     if (!p) return;
     document.getElementById('qvImage').src = p.img.replace('w=500','w=700');
     document.getElementById('qvName').textContent = p.name;
-    document.getElementById('qvPrice').textContent = formatRupiah(p.price);
+    // HARGA DINONAKTIFKAN: document.getElementById('qvPrice').textContent = formatRupiah(p.price);
     document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}"></span>`).join('');
     document.getElementById('qvSizes').innerHTML = p.sizes.map((s,i) => `<span style="background:transparent;border:1px solid var(--sand-line);width:auto;padding:0 10px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:0;font-size:11px;${i===0 ? 'border-color:var(--gold-deep);color:var(--gold-deep);' : ''}" data-size="${s}">${s}</span>`).join('');
 
@@ -926,7 +939,7 @@
           <div class="top10-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
           <div class="top10-info">
             <h4>${p.name}</h4>
-            <div class="price">${formatRupiah(p.price)}</div>
+            <!-- HARGA DINONAKTIFKAN: <div class="price">${formatRupiah(p.price)}</div> -->
           </div>
         </a>
       `;
