@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --ink:#140f0b; --ink-2:#1f160e;
@@ -111,7 +112,10 @@
   /* ---------- product table ---------- */
   .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
   .p-grid{
-    display:grid; grid-template-columns:56px minmax(160px,2fr) 100px 120px 100px auto;
+    display:grid;
+    /* HARGA DINONAKTIFKAN — grid asli 6 kolom (thumb,nama,kategori,HARGA,badge,aksi):
+    grid-template-columns:56px minmax(160px,2fr) 100px 120px 100px auto; */
+    grid-template-columns:56px minmax(160px,2fr) 100px 100px auto;
     column-gap:0;
   }
   .p-cell{
@@ -227,7 +231,13 @@
         <h1>Kelola Produk</h1>
         <p>Perubahan di sini langsung tampil di halaman Produk publik.</p>
       </div>
-      <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-outline" id="templateExcelBtn">Download Template</button>
+        <button class="btn btn-outline" id="importExcelBtn">Import dari Excel</button>
+        <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+        <button class="btn btn-outline" id="exportExcelBtn">Export ke Excel</button>
+        <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
+      </div>
     </div>
 
     <div class="toolbar">
@@ -247,8 +257,10 @@
       <select id="sortBy">
         <option value="created_desc">Terbaru</option>
         <option value="name_asc">Nama A-Z</option>
+        <!-- HARGA DINONAKTIFKAN — uncomment 2 baris ini kalau harga dipakai lagi:
         <option value="price_asc">Harga Terendah</option>
         <option value="price_desc">Harga Tertinggi</option>
+        -->
       </select>
       <span class="result-count" id="resultCount"></span>
     </div>
@@ -258,7 +270,7 @@
         <span class="p-cell head"></span>
         <span class="p-cell head">Nama &amp; Kode Produk</span>
         <span class="p-cell head col-category">Kategori</span>
-        <span class="p-cell head col-price">Harga</span>
+        <!-- HARGA DINONAKTIFKAN: <span class="p-cell head col-price">Harga</span> -->
         <span class="p-cell head">Badge</span>
         <span class="p-cell head"></span>
         <div id="productList" style="display:contents;"></div>
@@ -298,6 +310,34 @@
   </div>
 </div>
 
+<!-- ============ MODAL PREVIEW IMPORT ============ -->
+<div class="modal-overlay" id="importPreviewOverlay">
+  <div class="modal" style="max-width:900px;">
+    <h2>Preview Import</h2>
+    <p style="font-size:13px; color:#6b6058; margin-bottom:16px;" id="importSummary"></p>
+    <div style="max-height:420px; overflow:auto; border:1px solid var(--sand-line); border-radius:6px;">
+      <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+        <thead>
+          <tr style="background:var(--sand); text-align:left;">
+            <th style="padding:8px 10px;">Status</th>
+            <th style="padding:8px 10px;">SKU</th>
+            <th style="padding:8px 10px;">Nama</th>
+            <th style="padding:8px 10px;">Kategori</th>
+            <th style="padding:8px 10px;">Ukuran</th>
+            <th style="padding:8px 10px;">Warna</th>
+            <th style="padding:8px 10px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="importPreviewBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="importCancelBtn">Batal</button>
+      <button class="btn btn-gold" id="importConfirmBtn">Konfirmasi Import</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ MODAL FORM ============ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -331,10 +371,12 @@
     </div>
 
     <div class="grid-2">
+      <!-- HARGA DINONAKTIFKAN — uncomment blok ini kalau harga dipakai lagi:
       <div class="field">
         <label>Harga (Rp)</label>
         <input type="number" id="fPrice" placeholder="189000">
       </div>
+      -->
       <div class="field">
         <label>Badge</label>
         <select id="fBadge">
@@ -464,8 +506,9 @@
 
     list.sort((a, b) => {
       if (sortBy === 'name_asc') return a.name.localeCompare(b.name);
-      if (sortBy === 'price_asc') return a.price - b.price;
-      if (sortBy === 'price_desc') return b.price - a.price;
+      // HARGA DINONAKTIFKAN — uncomment 2 baris ini kalau harga dipakai lagi:
+      // if (sortBy === 'price_asc') return a.price - b.price;
+      // if (sortBy === 'price_desc') return b.price - a.price;
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
@@ -487,7 +530,7 @@
           ${p.sku ? `<span class="sku-tag">${p.sku}</span>` : ''}
         </div>
         <div class="p-cell col-category">${p.category}</div>
-        <div class="p-cell col-price">${formatRupiah(p.price)}</div>
+        <!-- HARGA DINONAKTIFKAN: <div class="p-cell col-price">${formatRupiah(p.price)}</div> -->
         <div class="p-cell">${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
         <div class="p-cell row-actions">
           <button class="icon-btn" data-edit="${p.id}">Edit</button>
@@ -526,7 +569,7 @@
     document.getElementById('fSku').value = '';
     document.getElementById('fModel').value = '';
     document.getElementById('fCategory').value = 'pria';
-    document.getElementById('fPrice').value = '';
+    // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = '';
     document.getElementById('fBadge').value = '';
     document.getElementById('fSizes').value = '';
     document.getElementById('uploadStatus').textContent = '';
@@ -550,7 +593,7 @@
     document.getElementById('fSku').value = p.sku || '';
     document.getElementById('fModel').value = p.model;
     document.getElementById('fCategory').value = p.category;
-    document.getElementById('fPrice').value = p.price;
+    // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = p.price;
     document.getElementById('fBadge').value = p.badge || '';
     document.getElementById('fSizes').value = (p.sizes || []).join(',');
     currentColors = Array.isArray(p.colors) ? [...p.colors] : [];
@@ -563,6 +606,203 @@
   function closeModal(){ modalOverlay.classList.remove('open'); }
 
   document.getElementById('addProductBtn').addEventListener('click', openAdd);
+
+  /* ---------------- EXPORT KE EXCEL ---------------- */
+  document.getElementById('exportExcelBtn').addEventListener('click', () => {
+    if (!allProducts.length){ showToast('Belum ada produk untuk di-export.'); return; }
+
+    const rows = allProducts.map(p => ({
+      'SKU': p.sku || '-',
+      'Nama Produk': p.name,
+      'Model / Lini': p.model,
+      'Kategori': p.category,
+      'Badge': p.badge === 'best' ? 'Best Seller' : (p.badge === 'new' ? 'Baru' : '-'),
+      'Ukuran Tersedia': (p.sizes || []).join(', '),
+      'Warna': (p.colors || []).map(c => c.name).join(', '),
+      'Kode Warna (Hex)': (p.colors || []).map(c => c.hex).join(', '),
+      'Jumlah Foto': (p.images || []).length,
+      'Link Foto Utama': (p.images && p.images[0]) || '-',
+      'Tanggal Dibuat': new Date(p.created_at).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' })
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [
+      { wch:16 }, { wch:26 }, { wch:16 }, { wch:12 }, { wch:12 },
+      { wch:18 }, { wch:20 }, { wch:20 }, { wch:12 }, { wch:44 }, { wch:18 }
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Produk HILOS');
+
+    const today = new Date().toISOString().slice(0,10);
+    XLSX.writeFile(wb, `HILOS-Produk-${today}.xlsx`);
+    showToast(`Berhasil export ${rows.length} produk.`);
+  });
+
+  /* ---------------- IMPORT DARI EXCEL ---------------- */
+  const IMPORT_HEADERS = ['SKU','Nama Produk','Model / Lini','Kategori','Badge','Ukuran Tersedia','Warna','Kode Warna (Hex)','Link Foto'];
+
+  document.getElementById('templateExcelBtn').addEventListener('click', () => {
+    const sample = [{
+      'SKU':'WV-PRO-BLK', 'Nama Produk':'Wave Pro', 'Model / Lini':'Wave', 'Kategori':'pria', 'Badge':'best',
+      'Ukuran Tersedia':'39,40,41,42,43', 'Warna':'Hitam,Cokelat', 'Kode Warna (Hex)':'#1c1a18,#a85c3c',
+      'Link Foto':'https://contoh.com/foto1.jpg,https://contoh.com/foto2.jpg'
+    }];
+    const ws = XLSX.utils.json_to_sheet(sample, { header: IMPORT_HEADERS });
+    ws['!cols'] = [{wch:16},{wch:24},{wch:16},{wch:12},{wch:10},{wch:18},{wch:20},{wch:22},{wch:44}];
+
+    const noteRows = [
+      ['PETUNJUK PENGISIAN'],
+      ['- SKU: opsional. Kalau SKU sama dengan produk yang sudah ada, produk itu akan DIPERBARUI (bukan dobel). Kalau kosong/beda, jadi produk baru.'],
+      ['- Kategori: wajib salah satu dari: pria, wanita, anak'],
+      ['- Badge: isi best / new / kosongkan kalau tidak ada'],
+      ['- Ukuran Tersedia: angka dipisah koma, contoh: 39,40,41,42'],
+      ['- Warna & Kode Warna (Hex): dipisah koma, URUTANNYA HARUS SAMA. Contoh: Warna="Hitam,Cokelat" & Hex="#1c1a18,#a85c3c"'],
+      ['- Link Foto: opsional, dipisah koma kalau lebih dari 1 foto. Kosongkan kalau belum ada, bisa upload manual nanti.'],
+      ['- Jangan ubah nama baris header (baris pertama sheet "Produk HILOS").'],
+      [''],
+      ['Hapus baris contoh di sheet "Produk HILOS" sebelum diisi data asli, atau timpa langsung.']
+    ];
+    const wsNote = XLSX.utils.aoa_to_sheet(noteRows);
+    wsNote['!cols'] = [{ wch:100 }];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Produk HILOS');
+    XLSX.utils.book_append_sheet(wb, wsNote, 'Petunjuk');
+    XLSX.writeFile(wb, 'HILOS-Template-Import-Produk.xlsx');
+  });
+
+  document.getElementById('importExcelBtn').addEventListener('click', () => {
+    document.getElementById('importFileInput').click();
+  });
+
+  let pendingImportRows = []; // hasil parsing yang sudah divalidasi, siap dikonfirmasi
+
+  document.getElementById('importFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const wb = XLSX.read(evt.target.result, { type:'binary' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' });
+        processImportRows(rawRows);
+      } catch (err){
+        showToast('Gagal membaca file: ' + err.message);
+      }
+      e.target.value = '';
+    };
+    reader.readAsBinaryString(file);
+  });
+
+  function processImportRows(rawRows){
+    const validCategories = ['pria','wanita','anak'];
+    const skusInFile = new Set();
+
+    pendingImportRows = rawRows.map((row, i) => {
+      const errors = [];
+
+      const name = String(row['Nama Produk'] || '').trim();
+      const model = String(row['Model / Lini'] || '').trim();
+      const categoryRaw = String(row['Kategori'] || '').trim().toLowerCase();
+      const skuRaw = String(row['SKU'] || '').trim();
+      const sku = (skuRaw && skuRaw !== '-') ? skuRaw : null;
+      const badgeRaw = String(row['Badge'] || '').trim().toLowerCase();
+      const sizesRaw = String(row['Ukuran Tersedia'] || '').trim();
+      const colorNamesRaw = String(row['Warna'] || '').trim();
+      const colorHexRaw = String(row['Kode Warna (Hex)'] || '').trim();
+      const imagesRaw = String(row['Link Foto'] || '').trim();
+
+      if (!name) errors.push('Nama Produk kosong');
+      if (!model) errors.push('Model / Lini kosong');
+      if (!validCategories.includes(categoryRaw)) errors.push('Kategori harus pria/wanita/anak');
+
+      let badge = null;
+      if (badgeRaw === 'best' || badgeRaw === 'best seller') badge = 'best';
+      else if (badgeRaw === 'new' || badgeRaw === 'baru') badge = 'new';
+      else if (badgeRaw && badgeRaw !== '-') errors.push('Badge harus best/new/kosong');
+
+      const sizes = sizesRaw ? sizesRaw.split(',').map(s => parseInt(s.trim(),10)).filter(n => !isNaN(n)) : [];
+
+      const colorNames = colorNamesRaw ? colorNamesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const colorHexes = colorHexRaw ? colorHexRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+      if (colorNames.length !== colorHexes.length) errors.push('Jumlah Warna & Kode Warna (Hex) tidak sama');
+      const colors = colorNames.map((n, idx) => ({ name:n, hex: colorHexes[idx] || '#8a8a86' }));
+
+      const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+      if (sku){
+        if (skusInFile.has(sku)) errors.push('SKU dobel di dalam file ini');
+        skusInFile.add(sku);
+      }
+
+      const existing = sku ? allProducts.find(p => p.sku && p.sku.toLowerCase() === sku.toLowerCase()) : null;
+
+      return {
+        rowNum: i + 2, // +2: baris 1 header, data mulai baris 2 di Excel
+        valid: errors.length === 0,
+        errors,
+        action: existing ? 'update' : 'insert',
+        existingId: existing ? existing.id : null,
+        data: { sku, name, model, category: categoryRaw, badge, sizes, colors, images }
+      };
+    });
+
+    renderImportPreview();
+    document.getElementById('importPreviewOverlay').classList.add('open');
+  }
+
+  function renderImportPreview(){
+    const validCount = pendingImportRows.filter(r => r.valid).length;
+    const errorCount = pendingImportRows.length - validCount;
+    document.getElementById('importSummary').textContent =
+      `${pendingImportRows.length} baris terbaca — ${validCount} valid, ${errorCount} error (baris error akan dilewati).`;
+
+    document.getElementById('importPreviewBody').innerHTML = pendingImportRows.map(r => `
+      <tr style="border-top:1px solid var(--sand-line); ${r.valid ? '' : 'background:#fdf1ee;'}">
+        <td style="padding:8px 10px;">${r.valid ? '✅' : '❌'} Baris ${r.rowNum}</td>
+        <td style="padding:8px 10px;">${r.data.sku || '-'}</td>
+        <td style="padding:8px 10px;">${r.data.name || '-'}</td>
+        <td style="padding:8px 10px;">${r.data.category || '-'}</td>
+        <td style="padding:8px 10px;">${(r.data.sizes||[]).join(',') || '-'}</td>
+        <td style="padding:8px 10px;">${(r.data.colors||[]).map(c=>c.name).join(', ') || '-'}</td>
+        <td style="padding:8px 10px; font-size:11.5px; color:#9c4726;">
+          ${r.valid ? (r.action === 'update' ? 'Update produk existing' : 'Produk baru') : r.errors.join('; ')}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('importCancelBtn').addEventListener('click', () => {
+    document.getElementById('importPreviewOverlay').classList.remove('open');
+    pendingImportRows = [];
+  });
+
+  document.getElementById('importConfirmBtn').addEventListener('click', async () => {
+    const validRows = pendingImportRows.filter(r => r.valid);
+    if (!validRows.length){ showToast('Tidak ada baris valid untuk di-import.'); return; }
+
+    let inserted = 0, updated = 0, failed = 0;
+
+    for (const r of validRows){
+      let error;
+      if (r.action === 'update'){
+        ({ error } = await sb.from('products').update(r.data).eq('id', r.existingId));
+        if (!error) updated++;
+      } else {
+        ({ error } = await sb.from('products').insert(r.data));
+        if (!error) inserted++;
+      }
+      if (error) failed++;
+    }
+
+    document.getElementById('importPreviewOverlay').classList.remove('open');
+    pendingImportRows = [];
+    showToast(`Import selesai — ${inserted} baru, ${updated} diperbarui${failed ? `, ${failed} gagal` : ''}.`);
+    loadProducts();
+  });
+
   document.getElementById('cancelBtn').addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
@@ -634,14 +874,16 @@
     const sku = document.getElementById('fSku').value.trim() || null;
     const model = document.getElementById('fModel').value.trim();
     const category = document.getElementById('fCategory').value;
-    const price = parseInt(document.getElementById('fPrice').value, 10) || 0;
+    // HARGA DINONAKTIFKAN — uncomment baris ini kalau harga dipakai lagi:
+    // const price = parseInt(document.getElementById('fPrice').value, 10) || 0;
     const badge = document.getElementById('fBadge').value || null;
     const sizes = document.getElementById('fSizes').value
       .split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
 
     if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
 
-    const payload = { name, sku, model, category, price, badge, sizes, colors: currentColors, images: currentImages };
+    // HARGA DINONAKTIFKAN: payload asli menyertakan `price,` setelah `category,` — data harga lama di DB tidak akan berubah karena kolom ini tidak disertakan.
+    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages };
 
     let error;
     if (editingId){
