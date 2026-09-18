@@ -369,7 +369,7 @@
           <span>4.8 (128 Ulasan)</span>
           <a href="index.html#review">Lihat semua ulasan</a>
         </div>
-        <div class="product-price">Rp 189.000</div>
+        <!-- HARGA DINONAKTIFKAN: <div class="product-price">Rp 189.000</div> -->
         <p class="desc">Sandal dengan desain ergonomis dan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
 
         <ul class="feature-list">
@@ -573,7 +573,7 @@
     document.getElementById('mainImg').alt = p.name;
 
     document.querySelector('.product-info h3').textContent = p.name;
-    document.querySelector('.product-price').textContent = formatRupiah(p.price);
+    // HARGA DINONAKTIFKAN: document.querySelector('.product-price').textContent = formatRupiah(p.price);
     document.querySelector('.badges').innerHTML =
       (p.badge === 'best' ? '<span class="pdp-badge badge-best">Best Seller</span>' : '') +
       (p.badge === 'new' ? '<span class="pdp-badge badge-new">New</span>' : '') +
@@ -599,7 +599,7 @@
           <div class="other-thumb"><img src="${img}" alt="${op.name}" loading="lazy"></div>
           <div class="other-info">
             <h4>${op.name}</h4>
-            <div class="price">${formatRupiah(op.price)}</div>
+            <!-- HARGA DINONAKTIFKAN: <div class="price">${formatRupiah(op.price)}</div> -->
           </div>
         </a>
       `;
