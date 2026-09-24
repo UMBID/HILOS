@@ -489,10 +489,6 @@
   .testimonial-card.reveal:nth-child(2){transition-delay:0.12s;}
   .testimonial-card.reveal:nth-child(3){transition-delay:0.24s;}
 
-  .scheme-card.reveal:nth-child(1){transition-delay:0s;}
-  .scheme-card.reveal:nth-child(2){transition-delay:0.1s;}
-  .scheme-card.reveal:nth-child(3){transition-delay:0.2s;}
-  .scheme-card.reveal:nth-child(4){transition-delay:0.3s;}
 
   @media (prefers-reduced-motion: reduce){
     .reveal,.reveal-scale{opacity:1 !important;transform:none !important;transition:none !important;}
@@ -940,121 +936,55 @@
      SECTION 5 — SKEMA KERJASAMA
      ================================================== */
 
-  .partnership-section{
-    position:relative;
-    background:var(--ink);
-    color:var(--sand);
-    padding:110px clamp(20px,5vw,64px);
-  }
-
-  .partnership-head{
-    max-width:1360px;margin:0 auto 46px;
-    text-align:center;
-  }
-  .partnership-head h2{
-    font-family:'Archivo',sans-serif;font-weight:800;
-    font-size:clamp(24px,2.8vw,32px);
-    text-transform:uppercase;letter-spacing:0.02em;
-    color:var(--sand);
-  }
-  .partnership-head p{margin-top:10px;font-size:14.5px;color:var(--on-dark-muted);}
-
-  .partnership-grid{
-    max-width:1360px;margin:0 auto;
-    display:grid;
-    grid-template-columns:repeat(4,1fr) minmax(230px,280px);
-    gap:18px;
-    align-items:stretch;
-  }
-
-  .scheme-card{
-    background:var(--ink-2);
-    border:1px solid var(--on-dark-line);
-    padding:28px 22px;
-    text-align:center;
-  }
-  .scheme-icon{
-    width:52px;height:52px;margin:0 auto 18px;
-    display:flex;align-items:center;justify-content:center;
-    border:1px solid var(--on-dark-line);border-radius:50%;
-    color:var(--gold-light);
-  }
-  .scheme-icon svg{width:24px;height:24px;}
-  .scheme-card h3{
-    font-family:'Archivo',sans-serif;font-weight:700;
-    font-size:13.5px;text-transform:uppercase;letter-spacing:0.04em;
-    margin-bottom:8px;
-    color:var(--sand);
-  }
-  .scheme-card p{font-size:12.5px;line-height:1.6;color:var(--on-dark-muted);}
-
-  .partnership-cta{
-    background:var(--gold);
-    color:var(--ink);
-    padding:28px 24px;
-    display:flex;flex-direction:column;justify-content:center;
-    border-top:3px solid var(--gold-light);
-  }
-  .partnership-cta h3{
-    font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;
-    color:var(--ink);
-  }
-  .partnership-cta p{font-size:12.5px;color:rgba(13,27,42,0.75);line-height:1.6;margin-bottom:18px;}
-  .partnership-cta .btn-fill{background:var(--ink);color:var(--sand);border:1px solid var(--ink);}
-  .partnership-cta .btn-fill::before{background:var(--ink-2);}
-
-  @media (max-width:1080px){
-    .partnership-grid{grid-template-columns:repeat(2,1fr);}
-    .partnership-cta{grid-column:1 / -1;}
-  }
-  @media (max-width:560px){
-    .partnership-grid{grid-template-columns:1fr;}
-  }
-
   /* ==================================================
-     SECTION 6 — REDIRECT SHOPEE + FOOTER
+     SECTION 6 — JARINGAN DISTRIBUSI (peta) + SOCMED
      ================================================== */
 
-  .shopee-banner{
-    position:relative;
-    background:linear-gradient(115deg, #ee4d2d 0%, #f36f21 100%);
-    color:#fff;
-    padding:70px clamp(20px,5vw,64px);
-    overflow:hidden;
-  }
-  .shopee-grid{
-    max-width:1360px;margin:0 auto;
-    display:grid;
-    grid-template-columns:1.2fr 1fr;
-    gap:40px;
-    align-items:center;
-  }
-  .shopee-badge{
-    display:inline-flex;align-items:center;gap:8px;
-    font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;
-    letter-spacing:0.04em;margin-bottom:16px;
-  }
-  .shopee-badge svg{width:22px;height:22px;}
-  .shopee-copy h2{
-    font-family:'Archivo',sans-serif;font-weight:800;
-    font-size:clamp(24px,3vw,36px);line-height:1.2;
-    text-transform:uppercase;
-  }
-  .btn-white{
-    display:inline-flex;align-items:center;gap:8px;
-    margin-top:26px;padding:15px 28px;
-    background:#fff;color:#ee4d2d;
-    font-size:12px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;
-    text-decoration:none;
-    transition:transform 0.25s ease;
-  }
-  .btn-white:hover{transform:translateY(-2px);}
+  .map-wrap{position:relative;max-width:960px;margin:40px auto 0;}
+  .id-map{width:100%;height:auto;display:block;}
+  .id-map .island-shapes{fill:var(--sand-deep);}
+  .id-map .island-shapes path{stroke:none;}
 
-  .shopee-visual{
-    position:relative;
-    display:flex;align-items:center;justify-content:center;
-    height:280px;
+  .map-pin{cursor:pointer;}
+  .map-pin .pin-dot{fill:var(--gold-deep);stroke:#fff;stroke-width:2;}
+  .map-pin .pin-ping{fill:var(--gold);opacity:0.55;transform-box:fill-box;transform-origin:center;animation:mapPing 2.2s ease-out infinite;}
+  .map-pin:nth-child(2) .pin-ping{ animation-delay:.3s; }
+  .map-pin:nth-child(3) .pin-ping{ animation-delay:.6s; }
+  .map-pin:nth-child(4) .pin-ping{ animation-delay:.9s; }
+  .map-pin:nth-child(5) .pin-ping{ animation-delay:1.2s; }
+  .map-pin:nth-child(6) .pin-ping{ animation-delay:1.5s; }
+  @keyframes mapPing{
+    0%{ transform:scale(0.4); opacity:0.65; }
+    100%{ transform:scale(2.2); opacity:0; }
   }
+  .map-pin:hover .pin-dot{ fill:var(--ink); }
+
+  .map-popup{
+    position:absolute; top:16px; left:16px; width:190px;
+    background:var(--ink); color:var(--sand);
+    padding:16px 18px; box-shadow:0 16px 34px rgba(0,0,0,0.28);
+    opacity:0; transform:translateY(8px); pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .map-popup.open{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .map-popup-close{
+    position:absolute; top:8px; right:10px; background:none; border:none; cursor:pointer;
+    color:var(--on-dark-muted); font-size:16px; line-height:1;
+  }
+  .map-popup h4{ font-family:'Archivo',sans-serif; font-size:15px; margin-bottom:4px; }
+  .map-popup p{ font-size:12.5px; color:var(--on-dark-muted); }
+  @media (max-width:640px){ .map-popup{ width:calc(100% - 32px); } }
+
+  .socmed-section{max-width:1360px;margin:0 auto;padding:90px clamp(20px,5vw,64px);}
+  .socmed-grid{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;margin-top:20px;}
+  .socmed-card{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;}
+  .socmed-card .phone-mock{transition:transform .3s ease;}
+  .socmed-card:hover .phone-mock{transform:translateY(-6px);}
+  .socmed-label{display:flex;align-items:center;gap:10px;margin-top:20px;}
+  .socmed-label svg{width:24px;height:24px;color:var(--gold-deep);flex-shrink:0;}
+  .socmed-label strong{display:block;font-family:'Archivo',sans-serif;font-size:14px;}
+  .socmed-label span{font-size:12.5px;color:var(--ink);opacity:0.65;}
+
   .phone-mock{
     position:relative;
     width:150px;height:270px;
@@ -1063,7 +993,6 @@
     border:4px solid #1c140f;
     box-shadow:0 30px 50px rgba(0,0,0,0.3);
     overflow:hidden;
-    z-index:2;
   }
   .phone-mock .screen{
     position:absolute;inset:0;
@@ -1071,34 +1000,15 @@
     display:flex;flex-direction:column;
   }
   .phone-mock .screen-head{
-    background:#ee4d2d;color:#fff;font-size:8px;font-weight:700;
-    padding:8px 10px;letter-spacing:0.04em;text-transform:uppercase;
+    display:flex;align-items:center;gap:5px;
+    color:#fff;font-size:8px;font-weight:700;
+    padding:8px 10px;letter-spacing:0.02em;
   }
+  .phone-mock .screen-head svg{width:11px;height:11px;flex-shrink:0;}
+  .socmed-head-ig{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);}
+  .socmed-head-tiktok{background:#000;}
   .phone-mock .screen-body{flex:1;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
   .phone-mock .screen-body .photo{border-radius:4px;aspect-ratio:1/1;}
-
-  .shopee-thumb{
-    position:absolute;
-    width:120px;height:120px;
-    border-radius:8px;
-    border:4px solid #fff;
-    box-shadow:0 16px 30px rgba(0,0,0,0.25);
-    z-index:1;
-  }
-  .shopee-thumb.left{left:-10px;bottom:10px;transform:rotate(-8deg);}
-  .shopee-thumb.right{right:-6px;top:6px;transform:rotate(7deg);width:100px;height:100px;}
-
-  .shopee-bag{
-    position:absolute;
-    right:6%;bottom:0;
-    width:70px;height:80px;
-    z-index:3;
-  }
-
-  @media (max-width:900px){
-    .shopee-grid{grid-template-columns:1fr;}
-    .shopee-visual{margin-top:20px;}
-  }
 
   /* trust badge strip */
   .trust-strip{
@@ -1205,7 +1115,7 @@
     <li><a href="produk.html">Produk</a></li>
     <li><a href="#teknologi">Teknologi</a></li>
     <li><a href="kerjasama.html">Kerjasama</a></li>
-    <li><a href="#review">Review</a></li>
+    <li><a href="#distribusi">Distribusi</a></li>
   </ul>
   <a class="nav-cta" href="#" id="salesBtn">
     Hubungi Sales
@@ -1266,60 +1176,60 @@
 </section>
 
 <section class="profile" id="tentang">
-  <span class="ghost-text">SEJAK 2014</span>
+  <span class="ghost-text">PEDULI SESAMA</span>
 
   <div class="profile-top">
     <div class="profile-copy">
-      <span class="eyebrow reveal">Tentang HILOS</span>
-      <h2 class="reveal">Kualitas premium dari <em>pengalaman</em> dan komitmen</h2>
-      <p class="reveal">HILOS adalah brand sandal terkemuka di Indonesia dengan komitmen menghadirkan produk berkualitas tinggi, desain inovatif, dan kenyamanan maksimal. Diproduksi dengan teknologi modern dan standar kualitas internasional, dari bahan baku hingga jahitan akhir.</p>
+      <span class="eyebrow reveal">Charity HILOS</span>
+      <h2 class="reveal">Berbagi kebaikan lewat <em>program sosial</em> yang berkelanjutan</h2>
+      <p class="reveal">Selain memproduksi sandal berkualitas, HILOS punya komitmen untuk berkontribusi ke masyarakat sekitar — mulai dari bakti sosial, donor darah, penghijauan, sampai bantuan bencana. Ini beberapa dokumentasi kegiatan yang sudah kami jalankan bersama tim.</p>
       <a href="tentang.html" class="btn-line reveal">Selengkapnya</a>
     </div>
 
     <div class="profile-collage reveal-scale" id="collage">
       <div class="collage-item collage-1 photo" data-depth="16">
-        <img src="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Sandal pria HILOS">
+        <img src="https://images.pexels.com/photos/6647037/pexels-photo-6647037.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Bakti sosial HILOS">
       </div>
       <div class="collage-item collage-2 photo" data-depth="26">
-        <img src="https://images.pexels.com/photos/1308324/pexels-photo-1308324.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Sandal wanita HILOS">
+        <img src="https://images.pexels.com/photos/6647483/pexels-photo-6647483.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Donor darah karyawan HILOS">
       </div>
       <div class="collage-item collage-3 photo" data-depth="34">
-        <img src="https://images.pexels.com/photos/35903658/pexels-photo-35903658.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Sandal anak HILOS">
+        <img src="https://images.pexels.com/photos/7728087/pexels-photo-7728087.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Penanaman pohon HILOS">
       </div>
       <div class="collage-badge">
-        <strong>10+</strong>
-        <span>Tahun Berkarya</span>
+        <strong>25+</strong>
+        <span>Program Sosial</span>
       </div>
     </div>
   </div>
 
   <div class="stat-row">
     <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-      <span class="stat-number" data-target="10" data-suffix="+">0</span>
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg></div>
+      <span class="stat-number" data-target="25" data-suffix="+">0</span>
       <div class="stat-underline"></div>
-      <p class="stat-label">Tahun Pengalaman</p>
+      <p class="stat-label">Program CSR Berjalan</p>
     </div>
 
     <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></div>
-      <span class="stat-number" data-target="100" data-suffix="+">0</span>
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+      <span class="stat-number" data-target="12" data-suffix="+">0</span>
       <div class="stat-underline"></div>
-      <p class="stat-label">Model Produk</p>
+      <p class="stat-label">Panti &amp; Yayasan Dibantu</p>
     </div>
 
     <div class="stat-card reveal">
       <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1Z"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M12 7V4"/><path d="M9 4h6"/></svg></div>
-      <span class="stat-number reveal" data-static="Jutaan">0</span>
+      <span class="stat-number reveal" data-static="Ribuan">0</span>
       <div class="stat-underline"></div>
-      <p class="stat-label">Pasang Terjual Setiap Tahun</p>
+      <p class="stat-label">Liter Darah Terkumpul</p>
     </div>
 
     <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
-      <span class="stat-number" data-target="100" data-suffix="%">0</span>
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+      <span class="stat-number" data-target="1000" data-suffix="+">0</span>
       <div class="stat-underline"></div>
-      <p class="stat-label">Kualitas Terjamin</p>
+      <p class="stat-label">Pohon Ditanam</p>
     </div>
   </div>
 </section>
@@ -1469,121 +1379,67 @@
   </div>
 </section>
 
-<section class="review-section" id="review">
+<section class="review-section" id="distribusi">
   <div class="review-head">
-    <span class="eyebrow reveal">Apa Kata Mereka?</span>
-    <h2 class="reveal">Kepercayaan pelanggan adalah prioritas kami</h2>
+    <span class="eyebrow reveal">Jangkauan Kami</span>
+    <h2 class="reveal">Jaringan distribusi HILOS di seluruh Indonesia</h2>
   </div>
 
-  <div class="review-grid">
-    <div class="testimonial-row">
-      <div class="testimonial-card reveal">
-        <div class="stars">★★★★☆</div>
-        <p>"Nyaman banget dipakai seharian, solnya empuk dan tidak licin."</p>
-        <div class="testimonial-person">
-          <div class="photo"><img src="https://images.pexels.com/photos/19456424/pexels-photo-19456424.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Andi Pratama"></div>
-          <div>
-            <strong>Andi Pratama</strong>
-            <span>Jakarta</span>
-          </div>
-        </div>
-      </div>
+  <div class="map-wrap reveal-scale">
+    <svg viewBox="0 0 1774 887" class="id-map" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(0,887) scale(0.1,-0.1)" class="island-shapes">
+        <path d="M328 7689 c-26 -15 -22 -46 8 -66 23 -15 29 -15 52 -2 37 21 37 36 0 59 -38 23 -37 23 -60 9z M8181 7594 c-13 -9 -29 -31 -36 -48 -7 -17 -27 -48 -44 -70 -17 -21 -31 -43 -31 -47 0 -5 -17 -17 -37 -26 -34 -16 -39 -23 -46 -68 -5 -28 -8 -67 -8 -89 1 -35 -7 -47 -80 -125 -44 -47 -97 -95 -117 -106 -23 -12 -38 -29 -40 -43 -2 -13 -19 -33 -43 -47 -21 -14 -41 -36 -45 -50 -7 -30 -65 -77 -163 -135 -64 -38 -77 -50 -96 -94 -37 -82 -71 -108 -152 -113 -77 -6 -212 18 -228 40 -28 39 -129 50 -190 22 -43 -21 -87 -68 -100 -107 -6 -22 -23 -40 -50 -55 -36 -20 -86 -76 -101 -113 -3 -8 -10 -25 -15 -37 -6 -15 -17 -23 -34 -23 -17 0 -29 -9 -40 -29 -13 -26 -21 -30 -77 -35 -120 -12 -133 -11 -163 12 -37 29 -82 28 -145 -5 -29 -15 -73 -28 -103 -31 -50 -3 -54 -2 -107 43 -109 92 -167 157 -214 237 -15 27 -32 50 -36 53 -11 7 -110 -97 -132 -139 -9 -17 -28 -58 -42 -91 -15 -33 -42 -90 -61 -126 -22 -42 -35 -81 -35 -105 0 -22 -7 -48 -15 -59 -11 -13 -13 -32 -9 -65 3 -27 -1 -68 -10 -105 -25 -92 -22 -114 17 -130 40 -17 63 -55 72 -122 7 -51 6 -52 -25 -68 -34 -18 -40 -60 -10 -76 46 -23 122 -38 139 -27 61 38 118 -64 113 -198 -3 -60 16 -89 55 -81 54 10 96 -89 71 -165 -9 -25 -12 -51 -7 -63 13 -33 10 -84 -6 -115 -20 -38 -10 -79 21 -90 36 -14 57 -54 52 -98 -6 -47 23 -136 46 -140 9 -2 28 3 41 12 28 18 71 21 81 5 18 -30 74 -40 150 -28 65 11 78 11 109 -4 20 -9 56 -17 80 -17 83 0 148 -96 130 -192 -11 -60 14 -68 90 -29 35 18 83 35 107 38 23 2 75 20 115 40 82 40 93 38 153 -30 33 -36 39 -39 71 -33 21 4 52 22 77 46 52 50 81 52 119 6 43 -51 63 -58 141 -48 106 14 136 0 177 -85 24 -48 27 -64 22 -117 -7 -91 5 -104 68 -70 124 66 211 105 255 115 31 7 77 28 114 54 33 23 73 45 87 48 31 8 83 86 93 141 4 20 21 52 38 71 27 31 30 40 24 76 -8 53 10 82 69 110 36 17 46 28 59 66 l16 46 -35 38 c-39 44 -42 58 -20 119 13 38 13 46 -1 75 -23 49 -15 86 23 110 17 11 38 36 46 57 17 41 81 88 122 88 30 0 62 30 71 67 4 16 37 58 73 94 105 105 121 127 121 168 0 48 -20 84 -50 91 -14 3 -31 18 -39 32 -17 29 -6 92 30 173 10 23 16 51 12 63 -13 50 46 142 91 142 28 0 56 29 56 57 0 52 21 65 63 39 29 -18 222 -37 258 -24 39 13 56 51 41 92 -7 18 -12 46 -12 64 0 39 -30 62 -81 62 -38 0 -66 19 -170 113 -86 80 -98 125 -39 146 38 13 39 42 5 107 -14 26 -25 52 -25 59 0 11 -22 38 -124 157 -40 46 -47 65 -35 91 17 38 6 57 -35 57 -53 0 -90 54 -67 98 5 9 12 25 15 35 4 11 16 17 38 17 18 0 38 4 44 8 35 23 37 89 4 127 -39 44 -26 92 28 109 21 7 46 52 37 67 -4 5 -20 9 -37 9 -18 0 -42 10 -60 26 -19 15 -37 23 -47 19 -68 -27 -119 -17 -148 29 -37 58 -74 71 -155 56 -52 -10 -74 -11 -93 -2 -35 16 -56 15 -84 -4z M284 7533 c-8 -30 77 -203 171 -348 73 -111 217 -251 270 -260 61 -11 76 -26 125 -119 47 -91 87 -138 166 -189 26 -18 59 -51 73 -73 15 -23 40 -61 56 -85 27 -38 30 -49 27 -109 -2 -74 6 -88 65 -108 17 -6 58 -31 90 -56 116 -92 113 -89 113 -144 0 -40 10 -74 48 -154 57 -122 86 -201 102 -282 11 -53 18 -64 86 -131 41 -40 74 -78 74 -85 0 -6 9 -23 20 -37 11 -14 20 -35 20 -47 0 -12 7 -31 15 -43 9 -12 22 -41 31 -65 9 -27 33 -59 69 -90 54 -49 68 -75 80 -155 4 -23 19 -59 34 -80 44 -61 79 -126 102 -189 12 -32 46 -87 74 -122 29 -35 68 -91 86 -125 18 -34 66 -104 108 -156 42 -51 82 -103 90 -115 8 -11 25 -32 37 -46 13 -14 32 -58 43 -97 24 -88 24 -89 64 -110 55 -28 106 -74 154 -140 25 -35 49 -63 53 -63 4 0 43 -35 86 -78 43 -42 93 -89 109 -103 17 -14 40 -37 50 -51 11 -13 41 -38 65 -53 25 -16 84 -67 131 -114 47 -47 106 -100 130 -116 24 -17 45 -40 47 -50 5 -27 122 -135 147 -135 27 0 61 38 69 78 7 31 9 32 49 26 23 -3 59 -18 81 -33 87 -59 85 -59 107 -32 11 14 19 38 19 61 0 108 61 137 111 52 41 -68 49 -75 70 -56 50 45 99 377 70 473 -8 26 -7 45 4 77 15 44 12 64 -18 134 -25 59 -31 151 -13 195 22 52 20 79 -9 113 -30 36 -33 92 -6 130 44 63 47 125 8 149 -7 4 -26 38 -41 75 -37 88 -71 120 -139 129 -90 13 -180 37 -188 51 -5 7 -9 30 -9 51 0 34 -4 40 -35 52 -42 18 -58 46 -61 105 -1 25 -9 83 -18 130 -19 95 -38 120 -90 120 -56 0 -176 33 -197 54 -117 122 -124 145 -63 204 41 40 41 42 9 76 -33 36 -32 40 20 90 51 50 50 46 29 106 -25 72 -73 110 -141 110 -19 0 -43 5 -54 10 -25 14 -25 61 1 83 16 14 18 21 10 36 -15 28 -13 33 10 26 24 -8 50 10 50 34 0 9 -14 37 -30 64 -25 38 -35 47 -59 47 -47 0 -61 10 -61 41 0 37 -31 58 -90 59 -25 0 -63 1 -85 2 -22 0 -51 -3 -66 -7 -21 -6 -32 1 -71 41 l-47 48 20 27 c42 60 14 115 -72 141 -35 10 -42 9 -62 -10 -30 -28 -55 -28 -66 1 -12 30 -91 117 -108 117 -7 0 -19 -16 -27 -35 -8 -19 -19 -35 -23 -34 -25 2 -69 40 -77 65 -18 61 -27 75 -53 86 -43 18 -63 39 -63 66 0 42 -58 130 -113 171 -31 23 -87 50 -136 66 -88 29 -128 60 -212 165 -22 27 -61 59 -97 78 -45 24 -62 40 -71 64 -24 66 -38 83 -81 106 -60 31 -87 58 -101 99 -11 34 -98 113 -122 113 -7 -1 -23 -7 -37 -15 -36 -20 -91 -18 -120 5 -34 26 -78 25 -120 -3 -78 -53 -238 -42 -356 24 -67 37 -81 41 -117 35 -55 -9 -101 -8 -133 4 -49 19 -83 13 -90 -17z M5001 7321 c-17 -21 -31 -43 -31 -49 0 -15 -25 -21 -41 -11 -28 18 -59 11 -59 -14 0 -29 61 -97 87 -97 25 0 51 20 55 45 2 13 14 22 37 26 29 6 70 40 71 59 0 9 -69 80 -79 80 -5 0 -23 -18 -40 -39z M12257 7263 c-18 -18 1 -73 25 -73 14 0 38 47 32 64 -6 16 -44 22 -57 9z M12107 7182 c-9 -10 -17 -24 -17 -30 0 -6 -12 -17 -27 -24 -50 -24 -57 -108 -10 -128 12 -6 30 -15 39 -22 31 -22 68 5 68 48 0 21 7 46 17 56 15 17 15 23 2 66 -17 53 -43 66 -72 34z M5217 6983 c-16 -15 -5 -43 23 -63 56 -40 82 -4 32 43 -28 27 -43 33 -55 20z M4290 6965 c-25 -30 35 -90 65 -65 22 18 18 46 -7 64 -28 20 -42 20 -58 1z M11588 6913 c-25 -29 -30 -59 -12 -74 32 -26 81 43 54 76 -16 19 -24 19 -42 -2z M4110 6849 c-10 -17 -9 -24 3 -37 23 -22 49 -8 45 25 -4 35 -33 42 -48 12z M11680 6690 c-13 -8 -13 -11 1 -25 13 -14 17 -14 27 -2 16 19 -7 40 -28 27z M4073 6633 c-17 -6 -16 -50 1 -56 15 -6 36 11 36 29 0 16 -22 32 -37 27z M12796 6599 c-63 -75 -69 -189 -9 -189 42 0 67 62 76 185 3 44 -32 46 -67 4z M438 6613 c-9 -2 -23 -18 -31 -36 -19 -39 -2 -80 45 -105 17 -10 54 -35 82 -57 83 -65 163 -115 186 -115 30 0 36 27 13 58 -11 15 -23 37 -27 49 -4 13 -21 33 -39 45 -17 12 -59 50 -93 84 -59 59 -94 85 -111 83 -4 -1 -15 -3 -25 -6z M11667 6519 c-10 -6 -32 -40 -48 -75 -17 -35 -40 -71 -53 -79 -12 -8 -32 -33 -45 -55 -19 -35 -42 -63 -92 -116 -40 -43 -128 -106 -160 -115 -49 -15 -162 0 -312 40 -84 23 -136 32 -180 30 -39 -2 -83 4 -120 16 -51 17 -62 17 -90 5 -18 -7 -52 -15 -78 -17 -41 -4 -50 -1 -97 36 -93 74 -144 69 -199 -18 -48 -75 -104 -121 -149 -121 -18 0 -36 5 -39 10 -10 16 -55 11 -89 -9 -18 -12 -45 -46 -65 -84 -23 -43 -43 -67 -61 -74 -29 -11 -85 -98 -93 -144 -3 -14 -17 -49 -31 -77 -30 -59 -32 -85 -11 -135 9 -22 12 -49 9 -69 -9 -47 -46 -110 -61 -104 -19 8 -49 -38 -73 -108 -11 -35 -32 -74 -46 -87 -40 -37 -52 -69 -60 -155 -4 -43 -14 -99 -24 -124 -66 -169 -85 -208 -131 -256 -54 -58 -69 -100 -68 -194 1 -79 -12 -117 -46 -130 -50 -19 -38 -103 26 -171 39 -42 57 -37 126 37 l62 66 36 -12 c41 -13 44 -19 74 -141 27 -111 27 -192 1 -241 -24 -45 -50 -155 -50 -211 0 -27 -16 -81 -45 -151 -59 -142 -60 -185 -7 -235 21 -20 46 -48 55 -63 32 -51 99 -46 162 13 39 37 105 59 163 56 42 -2 47 0 56 26 7 20 6 41 -4 75 -20 69 -19 307 2 347 23 44 18 567 -6 613 -35 68 -16 112 76 176 93 64 218 52 218 -21 0 -13 5 -33 11 -44 18 -35 0 -123 -37 -181 -38 -58 -41 -82 -19 -135 19 -45 109 -138 147 -152 15 -6 42 -16 59 -23 61 -23 59 -55 -13 -203 -55 -112 -8 -153 161 -141 75 6 100 21 114 73 8 32 31 65 82 120 71 76 71 76 104 65 62 -22 92 20 67 93 -10 30 -23 45 -50 57 -24 12 -37 27 -41 45 -9 43 -20 58 -46 61 -51 8 -80 59 -54 98 9 15 13 34 9 49 -5 20 -1 26 20 35 29 11 35 44 12 69 -8 9 -24 40 -35 69 -12 30 -39 75 -61 100 -22 26 -61 83 -87 127 -34 57 -58 86 -84 99 -39 21 -79 71 -79 99 0 13 9 17 38 17 48 0 54 5 84 65 18 37 32 52 54 59 16 4 45 15 64 23 19 9 54 16 78 18 44 2 106 42 127 81 6 11 20 36 33 55 12 20 22 47 22 59 0 13 15 37 37 57 33 31 40 34 77 29 45 -7 54 -3 79 34 39 56 11 112 -64 131 -41 11 -54 10 -128 -14 -68 -22 -101 -27 -190 -27 -143 0 -226 -33 -275 -108 -11 -17 -32 -37 -47 -46 -42 -25 -76 -70 -94 -128 -25 -75 -39 -88 -95 -88 -57 0 -90 29 -90 79 0 53 -33 97 -78 105 -46 7 -62 24 -92 93 -19 45 -22 66 -18 145 5 114 46 206 125 279 64 60 106 74 178 59 46 -10 64 -9 112 5 83 24 353 24 525 0 89 -12 96 -12 167 11 92 30 100 30 173 -3 56 -25 63 -26 121 -15 34 7 96 17 137 22 88 12 114 28 155 98 16 28 42 62 57 75 14 14 31 41 37 62 5 20 21 47 35 60 17 16 26 35 26 54 0 22 7 35 28 48 42 27 51 44 52 94 0 25 7 54 15 65 45 59 -16 149 -78 113z M12615 6452 c-5 -4 -31 -32 -56 -62 -119 -144 -156 -242 -126 -344 16 -59 15 -79 -11 -108 -24 -29 -17 -77 16 -107 26 -24 29 -35 35 -106 3 -46 1 -98 -5 -122 -13 -53 -6 -83 30 -125 16 -18 41 -55 57 -83 60 -104 123 -174 158 -175 31 0 20 51 -29 125 -26 39 -60 98 -77 133 -29 62 -29 67 -23 160 8 107 19 137 44 126 9 -4 42 -10 72 -15 30 -4 80 -17 111 -28 77 -26 86 -15 48 59 -28 55 -33 59 -84 76 -73 22 -82 50 -35 99 18 18 43 36 55 39 27 7 54 46 67 95 5 20 14 53 19 75 26 103 -48 117 -146 26 -16 -15 -40 -33 -52 -39 -14 -7 -23 -21 -23 -35 0 -25 -88 -139 -114 -149 -43 -17 -36 65 10 111 65 65 96 157 74 223 -13 37 -12 44 10 83 30 55 14 97 -25 68z M3518 6083 c-21 -14 -38 -32 -38 -39 0 -27 24 -65 44 -70 13 -3 31 -25 46 -57 31 -63 71 -88 100 -62 31 28 33 62 5 120 -14 30 -25 61 -25 69 0 22 -51 66 -75 65 -11 0 -37 -12 -57 -26z M900 6084 c-8 -8 -25 -14 -39 -12 -21 2 -27 -2 -29 -22 -4 -33 69 -192 108 -237 17 -18 30 -42 30 -52 0 -10 7 -24 16 -32 9 -7 23 -29 32 -48 12 -26 24 -37 44 -39 37 -4 49 23 55 122 5 70 3 88 -16 124 -12 23 -25 42 -30 42 -20 0 -72 54 -89 93 -31 70 -59 90 -82 61z M9672 6054 c-56 -63 -37 -104 28 -59 44 30 58 59 40 80 -19 23 -34 18 -68 -21z M3390 6065 c-7 -8 -18 -15 -26 -15 -18 0 -27 -36 -14 -60 15 -27 51 -25 84 5 30 28 31 33 10 63 -18 26 -36 28 -54 7z M13684 5845 c-8 -20 4 -35 26 -35 25 0 35 17 20 35 -16 19 -39 19 -46 0z M3490 5765 c-17 -20 -4 -66 31 -114 32 -45 62 -53 79 -22 17 33 -53 151 -91 151 -4 0 -12 -7 -19 -15z M13678 5692 c-23 -14 -31 -15 -48 -4 -28 17 -71 -3 -84 -39 -12 -37 -2 -59 29 -59 30 0 30 -1 6 -41 -36 -58 15 -97 57 -44 12 15 30 25 45 25 15 0 33 10 45 25 13 17 30 25 50 25 52 0 72 60 27 84 -11 5 -32 18 -47 28 -32 21 -44 21 -80 0z M14330 5677 c-20 -6 -59 -35 -91 -69 -65 -67 -89 -78 -168 -78 -71 0 -121 -29 -133 -76 -4 -18 -23 -43 -43 -58 -43 -33 -62 -89 -40 -123 8 -12 15 -32 15 -43 0 -41 19 -59 82 -77 71 -21 118 -72 118 -127 0 -36 32 -94 58 -103 9 -4 30 -17 46 -30 18 -15 37 -22 49 -19 11 3 41 0 66 -6 41 -9 55 -7 124 17 95 33 327 43 354 16 19 -19 11 -70 -19 -129 -38 -73 -50 -75 -105 -15 -27 28 -58 54 -70 57 -31 10 -81 -19 -101 -57 -47 -90 -107 -115 -182 -77 -44 22 -101 26 -149 9 -35 -12 -66 -68 -55 -101 7 -23 49 -41 75 -33 28 9 101 -28 129 -65 14 -19 37 -48 53 -66 42 -49 45 -84 10 -125 -33 -38 -32 -72 5 -113 11 -11 28 -36 38 -54 19 -33 53 -50 73 -37 6 3 26 1 45 -6 30 -11 38 -10 72 11 69 41 154 131 154 162 0 39 20 34 52 -12 15 -21 42 -47 60 -56 18 -9 42 -25 54 -36 12 -10 54 -28 95 -39 41 -11 90 -24 111 -29 20 -6 69 -35 108 -66 103 -79 135 -93 258 -113 125 -20 144 -30 227 -116 47 -50 68 -65 100 -71 22 -4 56 -18 75 -30 19 -13 41 -24 50 -24 52 -2 210 -131 210 -172 0 -6 12 -27 27 -47 15 -19 35 -49 43 -66 27 -49 117 -198 138 -225 10 -14 26 -45 36 -69 9 -25 28 -58 42 -74 13 -16 24 -39 24 -52 0 -35 19 -75 53 -112 l30 -32 -26 -12 c-34 -15 -35 -45 -4 -87 27 -36 70 -72 86 -72 6 0 11 -5 11 -10 0 -6 20 -19 45 -30 53 -23 57 -41 13 -61 -27 -11 -37 -25 -54 -74 -17 -50 -53 -112 -118 -200 -16 -21 1 -44 39 -51 28 -5 47 0 90 21 46 24 60 27 97 19 24 -4 103 -7 176 -5 130 3 135 3 183 34 42 26 52 28 60 16 5 -8 6 -21 2 -29 -3 -8 -13 -35 -22 -58 l-16 -44 43 -38 c23 -21 49 -54 57 -74 19 -44 132 -159 183 -185 20 -10 48 -31 61 -45 14 -14 28 -26 33 -26 4 0 8 174 8 388 l0 387 -26 83 -27 83 23 97 c13 53 23 115 23 137 -1 22 -1 67 0 100 0 33 0 85 -1 115 -1 30 -1 111 -1 180 0 69 -2 401 -6 738 l-7 613 -46 26 c-31 19 -61 27 -99 28 -49 2 -57 6 -88 42 -29 34 -42 41 -84 46 -45 5 -68 14 -135 55 -13 8 -38 10 -66 7 -48 -7 -57 -2 -156 79 -25 20 -43 26 -81 26 -42 0 -57 6 -94 35 -24 19 -55 35 -69 35 -14 0 -63 18 -110 40 -105 49 -117 49 -193 3 -190 -113 -197 -119 -197 -174 0 -57 -12 -74 -84 -114 -47 -26 -75 -35 -109 -35 -57 0 -87 -25 -87 -72 0 -19 -11 -45 -27 -67 -16 -20 -36 -54 -46 -76 -23 -51 -90 -121 -142 -147 -22 -11 -52 -30 -67 -41 -23 -17 -36 -19 -84 -13 -71 8 -109 31 -166 99 -75 88 -89 119 -97 207 -5 56 -12 85 -24 97 -28 28 -51 6 -55 -51 -4 -56 -14 -58 -47 -8 -35 52 -64 140 -74 221 -5 38 -14 77 -20 89 -14 27 -14 87 1 129 9 25 9 46 -1 95 -6 35 -14 80 -18 101 -7 49 -92 107 -202 137 -23 6 -62 28 -84 48 -49 44 -117 82 -145 82 -11 0 -36 7 -55 15 -20 8 -38 15 -39 14 -2 -1 -19 -6 -38 -12z M12295 5566 c-17 -25 -7 -66 15 -66 17 0 42 48 35 70 -9 27 -31 25 -50 -4z M3608 5499 c-27 -28 -48 -57 -48 -64 0 -7 18 -36 40 -64 45 -57 78 -66 104 -30 15 22 35 23 101 4 82 -22 56 102 -28 136 -18 7 -41 23 -52 35 -38 44 -65 40 -117 -17z M9533 5523 c-29 -25 -36 -55 -19 -79 20 -25 47 -9 60 35 13 45 -11 71 -41 44z M1352 5518 c-24 -24 -13 -45 29 -57 62 -19 96 19 47 53 -27 19 -59 21 -76 4z M15351 5508 c-5 -13 -18 -32 -30 -42 -32 -29 -27 -69 14 -104 30 -27 38 -30 67 -22 39 11 78 52 78 83 0 26 -77 107 -102 107 -10 0 -22 -10 -27 -22z M12361 5431 c-19 -14 -24 -27 -23 -57 1 -23 -7 -51 -19 -71 -38 -61 7 -116 55 -68 14 14 20 14 65 -2 41 -14 52 -15 65 -4 25 21 19 42 -20 77 -34 32 -35 33 -19 58 16 24 16 26 -15 56 -35 35 -55 37 -89 11z M1181 5427 c-20 -25 -18 -132 2 -155 24 -26 39 -20 60 24 22 45 21 56 -3 104 -21 41 -40 50 -59 27z M15580 5395 c-30 -10 -36 -17 -41 -51 -11 -62 -2 -68 111 -83 89 -12 104 -11 117 1 12 13 11 19 -13 48 -16 18 -43 39 -60 46 -18 8 -35 18 -39 24 -13 22 -41 27 -75 15z M5417 5333 c-13 -13 -7 -34 17 -56 15 -14 26 -37 28 -57 3 -40 35 -53 58 -25 22 26 19 114 -4 131 -20 14 -87 19 -99 7z M13483 5223 c-21 -21 -66 -59 -101 -85 -99 -76 -82 -99 72 -104 94 -4 106 -2 137 19 28 19 35 30 37 63 3 39 -8 60 -68 132 -18 20 -37 14 -77 -25z M10956 5171 c-39 -26 -66 -71 -60 -97 3 -12 -2 -36 -11 -54 -23 -44 -17 -75 15 -75 19 0 30 10 45 37 13 25 27 38 41 38 32 0 51 21 63 75 12 48 12 50 -14 72 -32 28 -42 28 -79 4z M1342 5147 c-6 -7 -12 -47 -13 -89 -3 -83 -9 -68 84 -209 20 -30 37 -61 37 -67 0 -23 72 -112 95 -118 84 -21 85 54 4 216 -20 41 -49 100 -63 130 -23 49 -57 103 -86 138 -14 16 -45 16 -58 -1z M15336 5099 c-14 -17 -26 -34 -26 -38 0 -20 44 -61 64 -61 12 0 40 -13 62 -30 47 -35 61 -36 114 -9 37 20 45 20 104 8 63 -12 66 -12 120 16 36 18 56 34 54 43 -4 19 -155 57 -282 72 -48 6 -96 15 -106 20 -37 20 -77 12 -104 -21z M11102 5088 c-14 -18 -52 -104 -52 -119 0 -17 82 -2 98 18 36 49 -8 147 -46 101z M12440 5075 c-5 -14 -26 -35 -45 -46 -31 -19 -35 -25 -35 -64 0 -54 17 -69 67 -61 21 4 74 10 118 14 93 9 105 14 105 48 0 19 -11 31 -46 52 -25 15 -62 39 -81 55 -45 34 -71 35 -83 2z M4178 4979 c-10 -5 -18 -21 -18 -35 l0 -25 -29 20 c-16 12 -36 21 -44 21 -25 0 -47 -41 -47 -88 0 -41 -2 -43 -44 -62 -106 -45 -81 -130 37 -130 81 0 119 -29 145 -109 23 -74 57 -99 100 -77 58 30 97 8 113 -64 14 -60 33 -80 80 -80 29 0 46 8 74 34 36 34 36 35 19 61 -16 25 -16 28 4 64 19 34 20 40 7 65 -20 37 -53 64 -96 76 -65 18 -109 92 -109 182 0 64 -20 93 -91 129 -63 32 -75 34 -101 18z M11513 4956 c-38 -33 -41 -108 -5 -137 21 -17 27 -17 60 -5 59 23 87 26 121 16 30 -8 36 -6 63 20 33 34 44 36 84 16 27 -15 50 -14 127 5 39 10 49 32 20 44 -44 17 -151 18 -174 1 -22 -15 -24 -14 -50 10 -55 53 -199 71 -246 30z M11108 4884 c-41 -22 -32 -74 12 -74 26 0 62 39 58 63 -4 27 -33 32 -70 11z M13135 4840 c-15 -16 -15 -22 -5 -35 28 -34 88 -7 75 35 -8 26 -46 26 -70 0z M13390 4821 c-82 -12 -89 -30 -31 -78 73 -61 145 -71 180 -27 45 57 21 86 -89 108 -8 2 -35 0 -60 -3z M11940 4651 c-15 -29 -12 -46 10 -72 20 -24 20 -24 35 -5 20 27 19 59 -3 79 -24 22 -29 21 -42 -2z M1697 4585 c-9 -9 -17 -23 -17 -30 0 -22 21 -63 35 -69 39 -15 51 52 17 94 -17 21 -19 21 -35 5z M12586 4527 c-13 -13 -28 -41 -32 -62 -4 -24 -14 -39 -28 -45 -24 -9 -72 -120 -63 -144 9 -24 34 -19 53 9 9 13 25 27 37 31 12 4 34 20 49 36 34 37 55 32 110 -28 46 -50 89 -59 108 -24 14 26 48 25 77 -2 31 -29 108 -40 152 -22 43 18 70 18 117 -2 40 -17 129 -98 148 -135 6 -12 20 -27 30 -33 11 -6 27 -19 37 -28 10 -9 35 -20 55 -24 45 -8 64 11 64 64 0 18 5 42 10 52 16 30 2 66 -46 115 -32 32 -44 52 -44 74 0 36 -34 66 -86 76 -46 8 -135 47 -176 77 -30 21 -41 22 -247 23 -119 1 -235 5 -258 10 -37 6 -45 4 -67 -18z M4913 4516 c-52 -43 -64 -81 -47 -145 18 -72 30 -84 73 -77 46 8 59 8 98 0 28 -5 39 0 82 37 28 23 51 47 51 54 0 11 -16 50 -39 95 -12 24 -81 53 -136 58 -44 4 -55 0 -82 -22z M1786 4471 c-24 -27 -20 -42 27 -96 24 -28 65 -85 93 -129 51 -82 70 -98 85 -75 36 57 -69 256 -160 303 -26 14 -30 14 -45 -3z M12130 4440 c-8 -5 -42 -10 -74 -10 -48 0 -67 -5 -98 -26 -38 -27 -78 -94 -78 -132 0 -41 114 -143 182 -163 39 -11 136 24 171 62 29 32 35 76 15 109 -10 15 -10 26 0 53 18 50 15 64 -21 91 -35 27 -71 33 -97 16z M8236 4269 c-16 -18 -26 -43 -26 -61 0 -20 -11 -43 -30 -65 -23 -26 -29 -40 -24 -56 4 -12 8 -49 8 -82 1 -54 3 -60 23 -63 56 -8 123 87 123 175 0 30 7 53 20 70 28 35 25 54 -11 86 -40 34 -51 34 -83 -4z M12594 4231 c-29 -13 -43 -27 -48 -46 -12 -46 24 -59 67 -25 14 11 32 20 40 20 26 0 52 37 37 55 -16 20 -46 19 -96 -4z M10651 4206 c-16 -20 3 -56 29 -56 23 0 36 36 20 55 -16 19 -34 19 -49 1z M12387 4152 c-36 -40 -5 -82 34 -46 23 20 22 57 -2 62 -8 1 -23 -6 -32 -16z M13496 3988 c-36 -51 -2 -105 36 -59 25 32 24 81 -1 81 -11 0 -27 -10 -35 -22z M13717 3975 c-9 -9 -17 -25 -17 -36 0 -11 -7 -34 -16 -50 -19 -38 -4 -65 27 -48 41 22 62 98 36 133 -13 17 -14 17 -30 1z M10867 3942 c-23 -25 -21 -58 3 -82 28 -28 44 -25 74 11 28 33 33 58 14 77 -18 18 -73 14 -91 -6z M13782 3828 c-59 -75 -37 -156 27 -97 15 15 21 28 17 43 -3 11 -6 31 -6 44 0 24 -21 30 -38 10z M2137 3773 c-14 -13 -6 -50 14 -69 38 -34 79 18 43 57 -17 19 -45 25 -57 12z M10824 3755 c-20 -20 -24 -34 -24 -87 0 -35 -5 -79 -10 -98 -5 -19 -13 -52 -18 -72 -5 -20 -19 -50 -31 -66 -11 -17 -21 -45 -21 -64 0 -18 -7 -42 -15 -52 -50 -66 33 -111 107 -59 31 21 38 32 38 58 0 33 19 57 48 61 8 2 25 12 36 24 19 19 20 22 6 47 -9 15 -26 30 -40 33 -27 6 -28 10 -17 53 4 15 9 37 12 50 2 13 16 29 30 35 36 17 33 54 -10 107 -46 56 -60 60 -91 30z M10666 3653 c-20 -26 -36 -58 -36 -72 0 -14 -8 -40 -19 -56 -10 -17 -21 -61 -25 -97 -7 -60 -5 -69 14 -88 25 -25 35 -20 84 38 26 31 36 54 36 78 0 19 11 49 26 71 22 33 25 45 19 87 -13 100 -43 111 -99 39z M14853 3668 c-35 -39 -51 -71 -57 -120 -9 -59 -38 -98 -75 -98 -48 0 -84 -36 -79 -79 6 -47 -8 -97 -39 -137 -13 -18 -25 -44 -27 -58 -3 -28 -23 -56 -40 -56 -20 -1 -64 -44 -75 -73 -17 -45 -13 -65 19 -94 34 -30 36 -45 15 -95 -25 -61 18 -158 70 -158 59 0 196 143 166 173 -25 25 -6 77 29 77 27 0 48 32 56 80 4 25 11 50 16 57 5 7 8 25 7 42 -3 21 3 34 21 49 22 17 25 28 25 80 0 32 5 65 11 73 28 34 43 88 33 121 -7 25 -4 47 13 96 22 65 22 65 2 101 -24 45 -60 52 -91 19z M13973 3628 c-11 -13 -24 -34 -28 -48 -4 -14 -16 -37 -26 -52 -37 -51 -14 -114 30 -86 21 13 25 25 22 60 -1 11 9 23 24 30 28 12 38 39 33 84 -4 36 -28 41 -55 12z M2424 3545 c-12 -29 7 -65 47 -92 75 -50 102 13 32 75 -39 34 -70 41 -79 17z M10355 3494 c-30 -33 -32 -68 -5 -112 26 -42 47 -50 71 -26 37 37 24 130 -21 154 -17 9 -25 6 -45 -16z M14155 3461 c-17 -29 -55 -146 -55 -171 0 -36 22 -40 38 -7 19 40 42 120 42 148 0 29 -14 46 -25 30z M14026 3325 c-9 -9 -16 -19 -16 -23 0 -4 -5 -37 -10 -74 -10 -70 -6 -98 15 -98 36 0 68 88 53 152 -12 54 -21 64 -42 43z M6485 3289 c-10 -30 18 -58 43 -43 9 6 17 22 17 35 0 34 -50 41 -60 8z M11066 3273 c-9 -24 32 -65 63 -61 39 5 51 35 22 59 -29 24 -76 25 -85 2z M9810 3136 c-10 -32 -1 -140 15 -166 18 -29 41 4 54 77 18 92 -42 169 -69 89z M14969 3153 c-25 -31 -49 -80 -49 -100 0 -32 34 -57 59 -44 50 27 69 111 33 144 -23 21 -26 21 -43 0z M4408 3114 c-50 -60 -69 -66 -123 -38 -41 21 -65 12 -117 -43 -37 -40 -47 -59 -57 -111 -17 -86 -42 -142 -97 -213 -41 -54 -49 -60 -74 -54 -32 7 -60 -15 -60 -47 0 -32 70 -93 126 -108 47 -13 50 -13 104 16 61 34 70 33 169 -14 30 -15 65 -25 78 -24 33 3 30 -31 -7 -70 -80 -83 -48 -132 99 -149 42 -5 110 -13 151 -18 41 -5 111 -23 155 -40 95 -37 154 -40 215 -12 58 27 134 27 185 1 55 -28 124 -26 186 6 83 41 150 27 339 -76 72 -38 307 -130 334 -130 12 0 48 -7 80 -15 31 -8 90 -17 131 -19 54 -4 86 -12 124 -32 43 -22 60 -25 99 -20 26 3 70 8 97 12 32 4 72 0 111 -10 34 -9 86 -16 115 -16 53 0 59 2 148 62 31 21 87 23 121 3 14 -8 42 -14 63 -15 47 0 77 -15 77 -38 0 -27 20 -42 57 -42 19 0 44 -6 56 -14 12 -8 49 -19 81 -25 33 -6 69 -18 80 -26 112 -82 121 -84 184 -40 28 19 55 35 60 35 17 0 42 37 42 63 0 18 16 45 50 82 28 30 50 64 50 75 0 11 14 35 30 53 17 19 30 43 30 52 0 31 -39 82 -76 100 -19 9 -50 29 -68 45 -55 49 -80 54 -134 25 -100 -52 -185 -36 -284 53 -37 34 -43 35 -105 34 -69 -2 -136 13 -154 34 -6 7 -12 33 -13 58 l-3 46 54 0 c48 0 57 4 88 34 19 19 50 40 70 47 50 19 45 41 -17 68 -80 35 -105 36 -182 7 -76 -29 -133 -33 -174 -12 -15 7 -54 16 -87 18 -33 3 -76 15 -95 26 -19 11 -60 22 -90 25 -31 3 -71 14 -90 25 -19 11 -46 23 -60 27 -14 4 -40 23 -58 41 -66 68 -162 64 -200 -8 -9 -18 -33 -50 -53 -70 -35 -37 -39 -38 -105 -38 -47 0 -83 7 -113 20 -24 11 -63 20 -88 20 -31 0 -55 8 -81 25 -45 31 -48 31 -114 0 -68 -32 -163 -34 -249 -5 -33 11 -74 20 -92 19 -70 -5 -147 42 -176 105 -22 51 -68 80 -166 103 -57 14 -87 16 -178 12 -29 -1 -50 6 -85 31 -43 30 -49 32 -79 21 -46 -17 -85 -6 -140 40 -51 42 -75 48 -95 23z M2920 2990 c-34 -34 -23 -62 49 -114 72 -53 121 -46 121 17 0 33 -46 82 -97 103 -43 18 -49 18 -73 -6z M7161 2976 c-26 -31 14 -71 45 -45 8 7 14 22 12 33 -4 26 -40 33 -57 12z M7511 2976 c-16 -19 -11 -46 11 -60 26 -16 68 26 52 52 -14 22 -48 27 -63 8z M13924 2945 c-10 -24 12 -42 34 -29 24 16 21 38 -6 42 -13 2 -25 -3 -28 -13z M7895 2920 c-45 -49 17 -96 63 -47 26 28 27 31 6 51 -21 22 -47 20 -69 -4z M14869 2909 c-30 -30 -23 -93 11 -97 33 -4 73 37 73 74 0 46 -48 59 -84 23z M9904 2885 c-4 -8 -1 -22 6 -30 16 -19 40 -2 40 26 0 23 -38 26 -46 4z M13690 2823 c-87 -61 -76 -148 13 -112 36 14 97 73 97 93 0 19 -34 46 -56 45 -10 0 -35 -12 -54 -26z M9889 2664 c-11 -13 -11 -20 1 -41 24 -41 48 -52 66 -29 19 27 18 42 -6 66 -24 24 -43 25 -61 4z M16314 2630 c-27 -11 -151 -95 -183 -123 -43 -40 -72 -98 -120 -238 -26 -77 -46 -141 -43 -143 8 -8 147 7 176 19 20 9 41 9 70 3 61 -14 113 4 133 47 9 19 29 39 45 46 32 13 48 36 48 68 0 12 15 38 33 58 44 50 71 122 58 156 -13 33 -67 74 -131 98 -56 21 -56 21 -86 9z M13565 2601 c-3 -5 -22 -15 -43 -22 -20 -7 -53 -24 -72 -38 -19 -14 -37 -26 -39 -28 -2 -1 -11 -26 -21 -56 -15 -46 -16 -60 -5 -102 6 -27 18 -51 25 -53 15 -5 187 172 196 202 4 11 16 33 27 48 17 22 18 30 7 43 -14 16 -65 21 -75 6z M3696 2583 c-10 -25 29 -61 52 -47 22 14 28 44 10 55 -22 14 -55 10 -62 -8z M13147 2573 c-14 -13 -6 -33 13 -33 13 0 20 7 20 20 0 19 -20 27 -33 13z M12345 2510 c-19 -22 -60 -26 -110 -11 -48 13 -70 -1 -89 -59 -20 -60 -11 -80 36 -80 16 0 43 -7 60 -16 40 -21 74 -7 139 58 27 27 57 48 69 48 32 0 80 32 80 52 0 27 -29 34 -62 15 -27 -15 -32 -15 -51 -2 -29 20 -50 19 -72 -5z M12923 2440 c-40 -16 -39 -90 1 -90 7 0 22 -11 34 -25 29 -33 65 -32 87 1 25 39 13 67 -42 95 -61 31 -54 29 -80 19z M11822 2292 c-23 -20 -42 -42 -42 -49 0 -19 33 -33 53 -22 12 7 29 6 52 -2 31 -12 38 -11 62 8 40 29 39 48 -4 77 -50 34 -70 32 -121 -12z M12687 2287 c-8 -22 9 -39 38 -39 32 0 50 15 42 36 -8 20 -73 22 -80 3z M13316 2244 c-20 -19 -20 -30 -2 -37 21 -8 50 17 43 37 -8 20 -21 20 -41 0z M11398 2239 c-10 -5 -18 -16 -18 -23 0 -22 -35 -46 -68 -46 -21 0 -35 -7 -42 -21 -25 -45 16 -66 61 -30 18 14 46 19 116 23 98 4 133 20 133 60 0 38 -135 65 -182 37z M11140 2228 c-14 -6 -39 -10 -57 -9 -17 1 -35 -3 -38 -9 -14 -23 -55 -30 -85 -15 -46 24 -86 19 -107 -11 -10 -15 -40 -51 -66 -80 -69 -75 -53 -87 63 -46 25 9 55 22 68 30 19 12 27 13 47 2 13 -7 34 -10 47 -7 125 31 157 45 200 89 34 35 35 42 3 56 -31 14 -42 14 -75 0z M8664 2209 c-18 -5 -43 -25 -58 -44 -24 -31 -41 -42 -118 -73 -41 -17 -60 -62 -51 -119 11 -64 42 -83 103 -63 37 12 44 12 71 -4 34 -20 86 -12 159 25 34 17 74 24 115 20 11 0 27 -14 36 -30 28 -48 190 -63 309 -28 76 22 92 35 120 91 35 74 26 98 -55 140 -58 30 -75 31 -130 7 -36 -16 -43 -16 -79 -2 -36 14 -41 14 -78 -8 -48 -28 -90 -22 -133 20 -56 52 -155 85 -211 68z M8092 2113 c-22 -21 -48 -44 -56 -51 -28 -23 -19 -58 19 -81 51 -30 43 -64 -15 -73 -42 -5 -34 -43 10 -43 19 0 48 -9 64 -20 28 -19 29 -19 65 2 30 18 36 27 34 51 -2 24 4 35 31 55 63 49 54 117 -22 167 -59 39 -81 38 -130 -7z M10355 2139 c-11 -6 -36 -22 -55 -34 -35 -23 -36 -23 -215 -13 -172 11 -182 10 -225 -9 -25 -11 -58 -24 -75 -27 -35 -9 -121 -70 -136 -98 -17 -31 -3 -67 29 -73 15 -3 42 -10 60 -15 19 -5 40 -6 47 -4 7 3 48 0 91 -6 65 -9 84 -15 109 -40 36 -34 67 -38 110 -12 17 10 58 22 93 25 44 5 73 14 95 31 53 40 86 49 134 35 59 -16 126 3 156 44 12 16 43 40 68 53 57 28 65 47 38 85 -28 39 -85 41 -135 3 -43 -33 -84 -27 -84 12 0 19 -8 28 -35 40 -41 17 -44 17 -70 3z M12572 2101 c-19 -10 -37 -23 -42 -31 -25 -41 59 -72 122 -46 72 30 72 66 -1 86 -42 12 -37 12 -79 -9z M11730 2083 c-28 -11 -50 -36 -50 -60 0 -19 5 -23 33 -23 63 0 103 55 58 80 -11 5 -21 10 -23 9 -2 0 -10 -3 -18 -6z M12195 2023 c-10 -3 -28 -11 -40 -18 -21 -13 -119 -25 -240 -28 -69 -2 -72 -3 -147 -59 -97 -74 -120 -127 -78 -181 11 -14 20 -39 20 -56 0 -46 37 -67 87 -50 41 13 107 52 118 69 3 5 13 10 21 10 21 0 153 97 204 150 25 26 59 55 75 63 109 59 96 129 -20 100z M9537 1962 c-38 -42 -5 -93 44 -69 27 14 37 51 19 73 -17 19 -44 18 -63 -4z M8385 1910 c-53 -21 -57 -70 -6 -70 48 0 77 40 49 68 -14 14 -16 14 -43 2z M11391 1854 c-40 -13 -83 -31 -94 -39 -12 -8 -43 -15 -70 -15 -69 0 -163 -48 -202 -102 -44 -61 -64 -100 -65 -125 0 -13 -14 -35 -30 -50 -22 -19 -30 -35 -28 -53 3 -22 9 -26 53 -30 28 -3 61 -12 74 -19 21 -11 30 -10 78 15 51 25 59 27 99 16 24 -7 51 -12 58 -12 17 0 99 77 116 109 7 13 32 49 56 78 24 30 44 60 44 67 0 7 11 39 25 70 52 118 28 137 -114 90z M12454 1855 c-8 -21 3 -45 20 -45 18 0 40 36 31 50 -9 15 -45 12 -51 -5z M7730 1737 c-86 -42 -44 -86 52 -54 54 19 71 42 44 63 -26 19 -43 17 -96 -9z M9375 1697 c-16 -7 -44 -20 -62 -30 -18 -9 -38 -17 -45 -17 -7 0 -46 -17 -86 -37 -125 -62 -120 -127 13 -172 22 -8 53 -24 68 -37 16 -13 38 -24 49 -24 11 0 33 -14 49 -31 23 -25 35 -30 56 -26 21 4 41 -4 83 -34 32 -22 75 -42 102 -47 25 -5 58 -19 73 -31 33 -26 71 -27 106 -3 15 9 45 29 67 44 44 30 72 64 72 88 0 15 -26 55 -104 160 -30 40 -54 59 -95 77 -31 14 -69 35 -86 47 -93 70 -194 99 -260 73z M10873 1387 c-27 -12 -75 -91 -67 -112 19 -48 127 -27 191 37 34 34 34 35 15 58 -20 24 -100 35 -139 17z M10324 1248 c-15 -13 -42 -27 -59 -33 -40 -13 -75 -75 -56 -99 20 -24 55 -20 124 16 94 48 120 91 75 122 -31 22 -50 20 -84 -6z M10724 1141 c-17 -9 -50 -34 -74 -54 -24 -20 -49 -37 -56 -37 -13 0 -54 -46 -54 -61 0 -30 142 30 219 91 45 37 51 54 22 70 -24 12 -19 13 -57 -9z"/>
+      </g>
 
-      <div class="testimonial-card reveal">
-        <div class="stars">★★★★★</div>
-        <p>"Desainnya keren dan kualitasnya memang juara! Worth it banget untuk dipakai sehari-hari."</p>
-        <div class="testimonial-person">
-          <div class="photo"><img src="https://images.pexels.com/photos/2324638/pexels-photo-2324638.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Kevin Sanjaya"></div>
-          <div>
-            <strong>Kevin Sanjaya</strong>
-            <span>Surabaya</span>
-          </div>
-        </div>
-      </div>
+        <g class="map-pin" data-city="medan" transform="translate(130,190)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+        <g class="map-pin" data-city="jakarta" transform="translate(430,605)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+        <g class="map-pin" data-city="surabaya" transform="translate(728,622)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+        <g class="map-pin" data-city="balikpapan" transform="translate(850,310)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+        <g class="map-pin" data-city="makassar" transform="translate(1022,518)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+        <g class="map-pin" data-city="denpasar" transform="translate(952,725)">
+          <circle r="14" class="pin-ping"/>
+          <circle r="6" class="pin-dot"/>
+        </g>
+    </svg>
 
-      <div class="testimonial-card reveal">
-        <div class="stars">★★★★★</div>
-        <p>"Sudah repeat order beberapa kali. HILOS memang terbaik untuk kualitas dan kenyamanan."</p>
-        <div class="testimonial-person">
-          <div class="photo"><img src="https://images.pexels.com/photos/3791554/pexels-photo-3791554.jpeg?auto=compress&cs=tinysrgb&w=120" alt="Lina"></div>
-          <div>
-            <strong>Lina</strong>
-            <span>Bandung</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="review-gallery reveal-scale">
-        <div class="photo"><img src="https://images.pexels.com/photos/7872865/pexels-photo-7872865.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pelanggan HILOS"></div>
-        <div class="photo" id="reviewVideoThumb" style="cursor:pointer;">
-          <img src="https://images.pexels.com/photos/8250260/pexels-photo-8250260.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Video review pelanggan">
-          <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-        </div>
-        <div class="photo"><img src="https://images.pexels.com/photos/1308324/pexels-photo-1308324.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pelanggan HILOS"></div>
-        <div class="photo"><img src="https://images.pexels.com/photos/35903658/pexels-photo-35903658.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pelanggan HILOS"></div>
-      </div>
-      <a href="#review" class="btn-line-dark reveal">Lihat Semua Review</a>
+    <div class="map-popup" id="mapPopup">
+      <button class="map-popup-close" id="mapPopupClose">&times;</button>
+      <h4 id="mapPopupCity">Kota</h4>
+      <p id="mapPopupCount">0 Distributor</p>
     </div>
   </div>
 </section>
 
-<section class="partnership-section" id="kerjasama">
-  <div class="partnership-head">
-    <h2 class="reveal">Bentuk Kerjasama</h2>
-    <p class="reveal">Bersama HILOS, Tumbuh &amp; Sukses Bersama</p>
+<section class="socmed-section">
+  <div class="review-head">
+    <span class="eyebrow reveal">Terhubung Dengan Kami</span>
+    <h2 class="reveal">Visit our SocMed</h2>
+    <p class="reveal">Ikuti keseharian, promo, dan produk terbaru HILOS di media sosial.</p>
   </div>
 
-  <div class="partnership-grid">
-    <div class="scheme-card reveal">
-      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
-      <h3>Distributor</h3>
-      <p>Jadi distributor resmi di wilayah Anda</p>
-    </div>
-    <div class="scheme-card reveal">
-      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M7 14h4"/></svg></div>
-      <h3>E-Commerce</h3>
-      <p>Jual di marketplace dengan dukungan penuh</p>
-    </div>
-    <div class="scheme-card reveal">
-      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="14" height="11" rx="1"/><path d="M7 8V6a3 3 0 0 1 3-3h1"/><circle cx="19" cy="15" r="3"/></svg></div>
-      <h3>Wholesale</h3>
-      <p>Stok lengkap, harga semakin hemat</p>
-    </div>
-    <div class="scheme-card reveal">
-      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/></svg></div>
-      <h3>Manufacture Partner</h3>
-      <p>Produksi brand sendiri dengan kualitas HILOS</p>
-    </div>
-
-    <div class="partnership-cta reveal-scale">
-      <h3>Tertarik Bekerjasama?</h3>
-      <p>Hubungi tim kami untuk informasi lebih lanjut dan penawaran terbaik.</p>
-      <a href="#" class="btn btn-fill" id="salesBtn3" style="align-self:flex-start;"><span>Hubungi Sales</span></a>
-      <a href="kerjasama.html" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--ink);text-decoration:underline;">Lihat Selengkapnya →</a>
-    </div>
-  </div>
-</section>
-
-<section class="shopee-banner" id="shopee">
-  <div class="shopee-grid">
-    <div class="shopee-copy reveal">
-      <div class="shopee-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 6 4.5 6 8H4a1 1 0 0 0-1 1l-1 12a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1L21 9a1 1 0 0 0-1-1h-2c0-3.5-2-6-6-6Zm0 2c2.8 0 4 1.8 4 4H8c0-2.2 1.2-4 4-4Z"/></svg>
-        Shopee
-      </div>
-      <h2>Beli Produk HILOS<br>di Official Store Shopee</h2>
-      <a href="https://shopee.co.id" target="_blank" rel="noopener" class="btn-white">
-        Kunjungi Toko
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-
-    <div class="shopee-visual reveal-scale">
+  <div class="socmed-grid">
+    <a href="https://instagram.com/hilos.id.official" target="_blank" rel="noopener" class="socmed-card reveal-scale">
       <div class="phone-mock">
         <div class="screen">
-          <div class="screen-head">HILOS Official Store</div>
+          <div class="screen-head socmed-head-ig">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            hilos.id.official
+          </div>
           <div class="screen-body">
             <div class="photo"><img src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
             <div class="photo"><img src="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
@@ -1592,9 +1448,32 @@
           </div>
         </div>
       </div>
-      <img class="shopee-thumb left" src="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Produk HILOS">
-      <img class="shopee-thumb right" src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Produk HILOS">
-    </div>
+      <div class="socmed-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        <div><strong>Instagram</strong><span>@hilos.id.official</span></div>
+      </div>
+    </a>
+
+    <a href="https://tiktok.com/@hilosofficial" target="_blank" rel="noopener" class="socmed-card reveal-scale">
+      <div class="phone-mock">
+        <div class="screen">
+          <div class="screen-head socmed-head-tiktok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
+            hilosofficial
+          </div>
+          <div class="screen-body">
+            <div class="photo"><img src="https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
+            <div class="photo"><img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
+            <div class="photo"><img src="https://images.pexels.com/photos/7872865/pexels-photo-7872865.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
+            <div class="photo"><img src="https://images.pexels.com/photos/8250260/pexels-photo-8250260.jpeg?auto=compress&cs=tinysrgb&w=200" alt=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="socmed-label">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
+        <div><strong>TikTok</strong><span>@hilosofficial</span></div>
+      </div>
+    </a>
   </div>
 </section>
 
@@ -1953,14 +1832,36 @@
   document.getElementById('closeModal').addEventListener('click', () => videoModal.classList.remove('open'));
   videoModal.addEventListener('click', (e) => { if (e.target === videoModal) videoModal.classList.remove('open'); });
 
-  document.getElementById('salesBtn3').addEventListener('click', (e) => {
-    e.preventDefault();
-    window.open('https://wa.me/6281234567890', '_blank');
-  });
-
   const reviewVideoThumb = document.getElementById('reviewVideoThumb');
   if (reviewVideoThumb){
     reviewVideoThumb.addEventListener('click', () => videoModal.classList.add('open'));
+  }
+
+  /* ---- peta jaringan distribusi ---- */
+  const cityData = {
+    medan: { name:'Medan', count:'1 Distributor' },
+    jakarta: { name:'Jakarta', count:'3 Distributor' },
+    surabaya: { name:'Surabaya', count:'2 Distributor' },
+    balikpapan: { name:'Balikpapan', count:'1 Distributor' },
+    makassar: { name:'Makassar', count:'1 Distributor' },
+    denpasar: { name:'Denpasar', count:'1 Distributor' }
+  };
+  const mapPopup = document.getElementById('mapPopup');
+  if (mapPopup){
+    document.querySelectorAll('.map-pin').forEach(pin => {
+      pin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const data = cityData[pin.dataset.city];
+        if (!data) return;
+        document.getElementById('mapPopupCity').textContent = data.name;
+        document.getElementById('mapPopupCount').textContent = data.count;
+        mapPopup.classList.add('open');
+      });
+    });
+    document.getElementById('mapPopupClose').addEventListener('click', () => mapPopup.classList.remove('open'));
+    document.addEventListener('click', (e) => {
+      if (!mapPopup.contains(e.target) && !e.target.closest('.map-pin')){ mapPopup.classList.remove('open'); }
+    });
   }
 
   /* ---- 3D card in side stack triggers stage 3D mode ---- */
