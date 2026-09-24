@@ -9,17 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#140f0b;
-    --ink-2:#1f160e;
-    --sand:#f3ebda;
-    --sand-deep:#e6d8ba;
-    --sand-line:rgba(20,15,11,0.14);
-    --gold:#c69a58;
-    --gold-light:#e2c58c;
-    --gold-deep:#8a642f;
-    --paper:#faf6ee;
-    --on-dark-line:rgba(243,235,218,0.16);
-    --on-dark-muted:rgba(243,235,218,0.68);
+    --ink:#0d1b2a;
+    --ink-2:#16283d;
+    --sand:#eaf1f8;
+    --sand-deep:#cddfec;
+    --sand-line:rgba(13,27,42,0.14);
+    --gold:#2f6fb0;
+    --gold-light:#6fa3d4;
+    --gold-deep:#1c4a73;
+    --paper:#f5f9fc;
+    --on-dark-line:rgba(234,241,248,0.16);
+    --on-dark-muted:rgba(234,241,248,0.68);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
@@ -40,7 +40,7 @@
   .nav-links a:hover{color:var(--sand);}
   .nav-links a.active{color:var(--sand);}
   .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
-  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(234,241,248,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
   .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
   .nav-cta svg{width:14px;height:14px;}
   .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
@@ -178,9 +178,9 @@
   .side-stack{display:flex;flex-direction:column;gap:16px;}
   .side-card{position:relative;aspect-ratio:1/0.9;background:var(--ink);border:1px solid var(--on-dark-line);overflow:hidden;cursor:pointer;display:flex;align-items:flex-end;}
   .side-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.55;}
-  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(20,15,11,0.1), rgba(20,15,11,0.85));}
+  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(13,27,42,0.1), rgba(13,27,42,0.85));}
   .side-card .side-label{position:relative;z-index:2;padding:14px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sand);}
-  .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(20,15,11,0.6);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;}
+  .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:rgba(13,27,42,0.6);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;}
   .play-btn svg{width:16px;height:16px;margin-left:2px;}
   .side-card:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
   .wire-thumb{width:70%;}
@@ -203,7 +203,7 @@
   .others-grid::-webkit-scrollbar{height:6px;}
   .others-grid::-webkit-scrollbar-thumb{background:var(--sand-deep);border-radius:100px;}
   .other-card{flex:0 0 190px;background:#fff;border:1px solid var(--sand-line);text-decoration:none;color:var(--ink);position:relative;transition:box-shadow .25s ease, transform .25s ease;}
-  .other-card:hover{box-shadow:0 14px 28px rgba(20,15,11,0.12);transform:translateY(-3px);}
+  .other-card:hover{box-shadow:0 14px 28px rgba(13,27,42,0.12);transform:translateY(-3px);}
   .other-rank{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;z-index:2;}
   .other-rank.is-top3{background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));color:var(--ink);}
   .other-thumb{aspect-ratio:4/5;overflow:hidden;background:var(--sand);}
@@ -332,7 +332,7 @@
             <span class="stage-3d-label">3D Preview</span>
             <div class="stage-3d-inner" id="stage3dInner">
               <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-                <g fill="none" stroke="#e2c58c" stroke-width="1.4" opacity="0.9">
+                <g fill="none" stroke="#6fa3d4" stroke-width="1.4" opacity="0.9">
                   <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
                   <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
                   <rect x="168" y="108" width="70" height="26" rx="4"/>
@@ -425,9 +425,9 @@
           <span class="side-label">Video Produk</span>
         </div>
         <div class="side-card" id="view3dCard">
-          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(20,15,11,0.2), rgba(20,15,11,0.9));"></div>
+          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(13,27,42,0.2), rgba(13,27,42,0.9));"></div>
           <svg class="wire-thumb" style="position:absolute;top:8%;left:15%;" viewBox="0 0 400 260">
-            <g fill="none" stroke="#8a642f" stroke-width="1.4" opacity="0.8">
+            <g fill="none" stroke="#1c4a73" stroke-width="1.4" opacity="0.8">
               <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
               <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
             </g>
@@ -747,5 +747,27 @@
   } // /initFlagshipInteractions
 </script>
 
+
+<style>
+  .wa-float{
+    position:fixed; right:22px; bottom:22px; z-index:999;
+    width:58px; height:58px; border-radius:50%;
+    background:#25D366; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    transition:transform .2s ease, box-shadow .2s ease;
+    text-decoration:none;
+  }
+  .wa-float:hover{ transform:scale(1.08); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+  .wa-float svg{ width:29px; height:29px; }
+  @media (max-width:640px){
+    .wa-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .wa-float svg{ width:25px; height:25px; }
+  }
+</style>
+<a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-float" aria-label="Chat via WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+</a>
 </body>
+
 </html>
