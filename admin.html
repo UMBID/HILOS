@@ -13,10 +13,10 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
-    --ink:#140f0b; --ink-2:#1f160e;
-    --sand:#f3ebda; --sand-deep:#e6d8ba; --sand-line:rgba(20,15,11,0.14);
-    --gold:#c69a58; --gold-light:#e2c58c; --gold-deep:#8a642f;
-    --paper:#faf6ee; --danger:#9c4726;
+    --ink:#0d1b2a; --ink-2:#16283d;
+    --sand:#eaf1f8; --sand-deep:#cddfec; --sand-line:rgba(13,27,42,0.14);
+    --gold:#2f6fb0; --gold-light:#6fa3d4; --gold-deep:#1c4a73;
+    --paper:#f5f9fc; --danger:#9c4726;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
@@ -149,7 +149,7 @@
 
   /* ---------- modal form ---------- */
   .modal-overlay{
-    display:none; position:fixed; inset:0; background:rgba(20,15,11,0.6);
+    display:none; position:fixed; inset:0; background:rgba(13,27,42,0.6);
     align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; z-index:50;
   }
   .modal-overlay.open{ display:flex; }
@@ -170,7 +170,7 @@
   .img-thumb img{ width:100%; height:100%; object-fit:cover; }
   .img-thumb button{
     position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%;
-    border:none; background:rgba(20,15,11,0.75); color:#fff; font-size:11px; line-height:1;
+    border:none; background:rgba(13,27,42,0.75); color:#fff; font-size:11px; line-height:1;
   }
   .upload-drop{
     border:1.5px dashed var(--sand-line); border-radius:8px; padding:20px; text-align:center;
@@ -216,7 +216,7 @@
 <div id="app">
   <div class="topbar">
     <div class="logo">HILOS <span>ADMIN</span></div>
-    <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(243,235,218,0.3);">Keluar</button>
+    <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Keluar</button>
   </div>
 
   <div class="wrap">
