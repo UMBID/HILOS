@@ -9,17 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#140f0b;
-    --ink-2:#1f160e;
-    --sand:#f3ebda;
-    --sand-deep:#e6d8ba;
-    --sand-line:rgba(20,15,11,0.14);
-    --gold:#c69a58;
-    --gold-light:#e2c58c;
-    --gold-deep:#8a642f;
-    --paper:#faf6ee;
-    --on-dark-line:rgba(243,235,218,0.16);
-    --on-dark-muted:rgba(243,235,218,0.68);
+    --ink:#0d1b2a;
+    --ink-2:#16283d;
+    --sand:#eaf1f8;
+    --sand-deep:#cddfec;
+    --sand-line:rgba(13,27,42,0.14);
+    --gold:#2f6fb0;
+    --gold-light:#6fa3d4;
+    --gold-deep:#1c4a73;
+    --paper:#f5f9fc;
+    --on-dark-line:rgba(234,241,248,0.16);
+    --on-dark-muted:rgba(234,241,248,0.68);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
@@ -28,7 +28,7 @@
 
   .photo{position:relative;overflow:hidden;background:var(--ink-2);}
   .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(0.4) saturate(1.6) brightness(0.85) contrast(1.05);}
-  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(155deg, rgba(198,154,88,0.38), rgba(20,15,11,0.55));mix-blend-mode:multiply;}
+  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(155deg, rgba(198,154,88,0.38), rgba(13,27,42,0.55));mix-blend-mode:multiply;}
 
   .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
   .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
@@ -43,7 +43,7 @@
   .nav-links a:hover{color:var(--sand);}
   .nav-links a.active{color:var(--sand);}
   .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
-  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(234,241,248,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
   .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
   .nav-cta svg{width:14px;height:14px;}
   .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
@@ -72,12 +72,59 @@
   /* stat row (reused pattern) */
   .stat-row{max-width:1360px;margin:0 auto;padding:30px clamp(20px,5vw,64px) 0;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
   .stat-card{border-top:1px solid var(--sand-line);padding-top:18px;}
-  .stat-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(20,15,11,0.16);border-radius:50%;color:var(--gold-deep);margin-bottom:14px;}
+  .stat-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(13,27,42,0.16);border-radius:50%;color:var(--gold-deep);margin-bottom:14px;}
   .stat-icon svg{width:19px;height:19px;}
   .stat-number{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,2.2vw,30px);color:var(--ink);display:block;}
   .stat-label{margin-top:6px;font-size:12.5px;color:#6b5d4c;}
 
   /* facility photo band */
+  .about-hero-banner{max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);}
+  .hero-slideshow{position:relative;width:100%;aspect-ratio:21/8;overflow:hidden;}
+  .hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;}
+  .hero-slide.active{opacity:1;}
+  .hero-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-slide-dots{display:flex;justify-content:center;gap:8px;margin-top:14px;}
+  .hero-slide-dots .dot{width:8px;height:8px;border-radius:50%;border:none;background:var(--sand-line);cursor:pointer;padding:0;}
+  .hero-slide-dots .dot.active{background:var(--gold-deep);}
+
+  .about-video-wrap{max-width:1000px;margin:48px auto 0;padding:0 clamp(20px,5vw,64px);text-align:center;}
+  .about-video-embed{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;}
+  .about-video-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .about-video-caption{margin-top:14px;font-size:13px;color:var(--ink);opacity:0.65;}
+
+  .vision-mission-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px);}
+
+  .about-social-strip{
+    margin-top:40px;padding:24px clamp(20px,5vw,64px);background:#fff;border:1px solid var(--sand-line);
+    display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;text-align:center;
+  }
+  .about-social-strip > span{font-size:13.5px;color:var(--ink);opacity:0.75;}
+  .about-social-icons{display:flex;gap:12px;}
+  .about-social-icons a{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--sand-line);
+    display:flex;align-items:center;justify-content:center;color:var(--gold-deep);
+  }
+  .about-social-icons svg{width:18px;height:18px;}
+  .about-social-more{font-size:12.5px;color:var(--gold-deep);text-decoration:underline;}
+
+  .kebersamaan-tabs{display:flex;gap:8px;max-width:1360px;margin:0 auto 28px;padding:0 clamp(20px,5vw,64px);flex-wrap:wrap;}
+  .tab-btn{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;
+    padding:10px 22px;border:1px solid var(--sand-line);background:#fff;color:var(--ink);
+    cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;
+  }
+  .tab-btn:hover{border-color:var(--gold-deep);}
+  .tab-btn.active{background:var(--ink);border-color:var(--ink);color:var(--sand);}
+  .kebersamaan-panel{display:none;}
+  .kebersamaan-panel.active{display:block;}
+  .vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .vm-card{background:#fff;border:1px solid var(--sand-line);padding:32px 28px;}
+  .vm-label{display:inline-block;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px;}
+  .vm-card p{font-size:14.5px;line-height:1.7;}
+  .vm-card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;}
+  .vm-card li{font-size:14px;line-height:1.6;}
+  @media (max-width:760px){ .vm-grid{grid-template-columns:1fr;} }
+
   .facility-visual{max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);}
   .facility-visual svg{width:100%;height:auto;display:block;border:1px solid var(--sand-line);}
 
@@ -112,7 +159,7 @@
   .outing-side .photo{aspect-ratio:1/1;}
   .outing-video{grid-column:1/-1;position:relative;}
   .outing-video .photo{aspect-ratio:3/1.1;}
-  .outing-video .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(20,15,11,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;cursor:pointer;}
+  .outing-video .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(13,27,42,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;cursor:pointer;}
   .outing-video .play-btn svg{width:18px;height:18px;margin-left:2px;}
   .outing-video:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
   .outing-video .vlabel{position:absolute;left:20px;bottom:16px;z-index:2;color:var(--sand);font-family:'Archivo',sans-serif;}
@@ -201,10 +248,59 @@
   </button>
 </nav>
 
-<!-- ============ PABRIK & OPERATIONAL ============ -->
+<!-- ============ HERO: BANNER SANDAL + VIDEO PROFIL ============ -->
 <div class="page-head">
-  <span class="eyebrow reveal">Internal — Company</span>
-  <h1 class="reveal">Pabrik &amp; Operational</h1>
+  <span class="eyebrow reveal">Tentang HILOS</span>
+  <h1 class="reveal">Cerita di Balik Setiap Langkah</h1>
+  <p class="reveal">Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.</p>
+</div>
+
+<div class="about-hero-banner reveal-scale">
+  <div class="hero-slideshow" id="heroSlideshow">
+    <div class="hero-slide active"><img src="https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 1"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/1904770/pexels-photo-1904770.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 2"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 3"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/1478442/pexels-photo-1478442.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 4"></div>
+  </div>
+  <div class="hero-slide-dots" id="heroSlideDots">
+    <button class="dot active" data-i="0" aria-label="Slide 1"></button>
+    <button class="dot" data-i="1" aria-label="Slide 2"></button>
+    <button class="dot" data-i="2" aria-label="Slide 3"></button>
+    <button class="dot" data-i="3" aria-label="Slide 4"></button>
+  </div>
+</div>
+
+<!-- GANTI src iframe di bawah dengan video profil perusahaan HILOS yang asli -->
+<div class="about-video-wrap reveal-scale">
+  <div class="about-video-embed">
+    <iframe src="https://www.youtube.com/embed/aqz-KE-bpKQ" title="Profil Perusahaan HILOS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <p class="about-video-caption">Video Profil Perusahaan HILOS</p>
+</div>
+
+<!-- ============ VISI & MISI ============ -->
+<div class="vision-mission-section">
+  <div class="vm-grid">
+    <div class="vm-card reveal">
+      <span class="vm-label">Visi</span>
+      <p>Menjadi produsen alas kaki terpercaya di Indonesia yang mengutamakan kenyamanan, kualitas, dan keberlanjutan bagi setiap langkah pelanggan.</p>
+    </div>
+    <div class="vm-card reveal">
+      <span class="vm-label">Misi</span>
+      <ul>
+        <li>Menghadirkan produk berkualitas tinggi dengan harga yang kompetitif.</li>
+        <li>Mengembangkan inovasi desain secara berkelanjutan mengikuti kebutuhan pasar.</li>
+        <li>Memberdayakan tenaga kerja lokal dan mendukung pertumbuhan ekonomi daerah.</li>
+        <li>Menjaga kelestarian lingkungan di setiap tahap proses produksi.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PABRIK & MESIN PRODUKSI ============ -->
+<div class="page-head" style="padding-top:0;">
+  <span class="eyebrow reveal">Fasilitas</span>
+  <h2 class="reveal">Pabrik &amp; Mesin Produksi</h2>
   <p class="reveal">Didukung fasilitas modern dan sistem produksi terintegrasi untuk menghasilkan sandal berkualitas tinggi secara konsisten.</p>
 </div>
 
@@ -231,40 +327,7 @@
   </div>
 </div>
 
-<div class="facility-visual reveal-scale">
-  <svg viewBox="0 0 1200 340" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="skyGrad2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#dfe6e4"/>
-        <stop offset="100%" stop-color="#f4f0e8"/>
-      </linearGradient>
-      <linearGradient id="wallGrad2" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#cfc6b6"/>
-        <stop offset="100%" stop-color="#a89d8b"/>
-      </linearGradient>
-    </defs>
-    <rect width="1200" height="340" fill="url(#skyGrad2)"/>
-    <rect y="280" width="1200" height="60" fill="#d9cfbd"/>
-    <rect x="150" y="130" width="900" height="160" fill="url(#wallGrad2)"/>
-    <rect x="150" y="130" width="900" height="8" fill="#8f8471"/>
-    <rect x="60" y="180" width="110" height="110" fill="#bdb2a0"/>
-    <rect x="1020" y="180" width="120" height="110" fill="#bdb2a0"/>
-    <g fill="#5b4636" opacity="0.55">
-      <rect x="200" y="165" width="55" height="35"/>
-      <rect x="275" y="165" width="55" height="35"/>
-      <rect x="350" y="165" width="55" height="35"/>
-      <rect x="425" y="165" width="55" height="35"/>
-      <rect x="700" y="165" width="55" height="35"/>
-      <rect x="775" y="165" width="55" height="35"/>
-      <rect x="850" y="165" width="55" height="35"/>
-      <rect x="925" y="165" width="55" height="35"/>
-    </g>
-    <rect x="555" y="215" width="90" height="75" fill="#2a2018"/>
-    <text x="600" y="112" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="900" font-size="30" fill="#2a2018">HILOS</text>
-    <rect x="495" y="90" width="210" height="4" fill="#b5946a"/>
-    <rect x="140" y="124" width="920" height="6" fill="#b5946a"/>
-  </svg>
-</div>
+
 
 <div class="process-section">
   <div class="grid-5">
@@ -296,137 +359,94 @@
   </div>
 </div>
 
-<!-- ============ KEBERSAMAAN DI LUAR KANTOR ============ -->
-<div class="outing-section">
+<!-- ============ KEBERSAMAAN ============ -->
+<div class="process-section" id="kebersamaanSection">
   <div class="section-head">
-    <h2 class="reveal">Kebersamaan di Luar Kantor</h2>
-    <p class="reveal">Kami percaya kebersamaan membangun tim yang kuat dan budaya kerja yang positif.</p>
+    <h2 class="reveal">Kebersamaan</h2>
+    <p class="reveal">Momen kebersamaan HILOS — dari acara yang kami ikuti, kegiatan sosial, sampai kebersamaan tim.</p>
   </div>
 
-  <div class="outing-grid">
-    <div class="outing-main photo reveal-scale">
-      <img src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
-    </div>
-    <div class="outing-side">
-      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
-      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
-      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
-      <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
-    </div>
-    <div class="outing-video reveal-scale" id="outingVideo">
-      <div class="photo"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
-      <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-      <div class="vlabel"><strong>Company Outing 2024</strong><span>Watch Video · 02:45</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ OUR PEOPLE, OUR STRENGTH ============ -->
-<section class="section-dark">
-  <div class="section-head">
-    <h2 class="reveal">Our People, Our Strength</h2>
-    <p class="reveal">Lebih dari 300+ individu berdedikasi yang terus bertumbuh bersama HILOS.</p>
+  <div class="kebersamaan-tabs">
+    <button class="tab-btn active" data-tab="event">Event</button>
+    <button class="tab-btn" data-tab="csr">CSR</button>
+    <button class="tab-btn" data-tab="outing">Outing</button>
   </div>
 
-  <div class="stat-row" style="padding-top:0;">
-    <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="9" r="2.6"/><path d="M15.5 20a5 5 0 0 1 7-4.6"/></svg></div>
-      <span class="stat-number">300+</span>
-      <p class="stat-label">Karyawan</p>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="7" height="7"/><rect x="14" y="4" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
-      <span class="stat-number">10+</span>
-      <p class="stat-label">Departemen</p>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg></div>
-      <span class="stat-number">50%</span>
-      <p class="stat-label">Perempuan</p>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-      <span class="stat-number">5+</span>
-      <p class="stat-label">Tahun Rata-rata Masa Kerja</p>
+  <div class="kebersamaan-panel active" id="panel-event">
+    <div class="grid-4">
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/7551659/pexels-photo-7551659.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pameran INAFOOTWEAR"></div>
+        <h4>Pameran INAFOOTWEAR 2025</h4>
+        <p>HILOS turut serta memamerkan koleksi terbaru.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/8007127/pexels-photo-8007127.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Sponsor Turnamen Futsal"></div>
+        <h4>Sponsor Turnamen Futsal</h4>
+        <p>Mendukung komunitas olahraga di sekitar pabrik.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/6157228/pexels-photo-6157228.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Gathering Reseller & Distributor"></div>
+        <h4>Gathering Mitra</h4>
+        <p>Silaturahmi tahunan bersama reseller &amp; distributor.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img src="https://images.pexels.com/photos/1595391/pexels-photo-1595391.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Peluncuran Koleksi Baru"></div>
+        <h4>Peluncuran Koleksi Baru</h4>
+        <p>Perkenalan lini produk terbaru ke publik.</p>
+      </div>
     </div>
   </div>
 
-  <div style="max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);">
-    <div class="photo reveal-scale" style="aspect-ratio:3/1;">
-      <img src="https://images.pexels.com/photos/7888680/pexels-photo-7888680.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Tim HILOS">
-    </div>
-  </div>
-
-  <div class="process-section">
+  <div class="kebersamaan-panel" id="panel-csr" hidden>
     <div class="grid-5">
       <div class="proc-card reveal">
-        <div class="photo"><img src="https://images.pexels.com/photos/7652049/pexels-photo-7652049.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Kolaborasi Tim"></div>
-        <h4>Kolaborasi Tim</h4>
-        <p>Kerja sama lintas departemen.</p>
+        <div class="photo"><img src="https://images.pexels.com/photos/6647037/pexels-photo-6647037.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Bakti Sosial Panti Asuhan"></div>
+        <h4>Bakti Sosial Panti Asuhan</h4>
+        <p>Donasi sandal &amp; kebutuhan pokok untuk anak panti asuhan.</p>
       </div>
       <div class="proc-card reveal">
-        <div class="photo"><img src="https://images.pexels.com/photos/29267512/pexels-photo-29267512.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Lingkungan Kerja Nyaman"></div>
-        <h4>Lingkungan Kerja Nyaman</h4>
-        <p>Ruang kerja modern &amp; kondusif.</p>
+        <div class="photo"><img src="https://images.pexels.com/photos/6647483/pexels-photo-6647483.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Donor Darah Karyawan"></div>
+        <h4>Donor Darah Karyawan</h4>
+        <p>Kegiatan rutin donor darah bersama PMI setiap kuartal.</p>
       </div>
       <div class="proc-card reveal">
-        <div class="photo"><img src="https://images.pexels.com/photos/7438102/pexels-photo-7438102.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Learning & Development"></div>
-        <h4>Learning &amp; Development</h4>
-        <p>Pelatihan rutin untuk pengembangan diri.</p>
+        <div class="photo"><img src="https://images.pexels.com/photos/7728087/pexels-photo-7728087.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Penanaman 1000 Pohon"></div>
+        <h4>Penanaman 1000 Pohon</h4>
+        <p>Program penghijauan di sekitar area pabrik.</p>
       </div>
       <div class="proc-card reveal">
-        <div class="photo"><img src="https://images.pexels.com/photos/7868975/pexels-photo-7868975.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Employee Well-being"></div>
-        <h4>Employee Well-being</h4>
-        <p>Kesehatan &amp; kebahagiaan karyawan.</p>
+        <div class="photo"><img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Bantuan Bencana Alam"></div>
+        <h4>Bantuan Bencana Alam</h4>
+        <p>Penggalangan &amp; distribusi bantuan untuk korban bencana.</p>
       </div>
       <div class="proc-card reveal">
-        <div class="photo"><img src="https://images.pexels.com/photos/32082430/pexels-photo-32082430.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Diversity & Inclusion"></div>
-        <h4>Diversity &amp; Inclusion</h4>
-        <p>Lingkungan kerja yang inklusif.</p>
+        <div class="photo"><img src="https://images.pexels.com/photos/8617815/pexels-photo-8617815.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Beasiswa Anak Karyawan"></div>
+        <h4>Beasiswa Anak Karyawan</h4>
+        <p>Dukungan pendidikan untuk putra-putri karyawan berprestasi.</p>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ============ BEHIND THE SCENE ============ -->
-<div class="process-section">
-  <div class="section-head" style="padding-left:0;padding-right:0;">
-    <h2 class="reveal">Behind The Scene</h2>
-    <p class="reveal">Dedikasi di setiap proses untuk menghadirkan kenyamanan di setiap langkah.</p>
-  </div>
-  <div class="grid-6">
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/29267512/pexels-photo-29267512.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Desain & R&D"></div>
-      <h4>Desain &amp; R&amp;D</h4>
-      <p>Inovasi desain mengikuti tren.</p>
-    </div>
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Proses Cetak"></div>
-      <h4>Proses Cetak</h4>
-      <p>Presisi tinggi untuk bentuk sempurna.</p>
-    </div>
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Perakitan"></div>
-      <h4>Perakitan</h4>
-      <p>Setiap detail dirakit dengan teliti.</p>
-    </div>
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/8989596/pexels-photo-8989596.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Finishing"></div>
-      <h4>Finishing</h4>
-      <p>Sentuhan akhir untuk kualitas terbaik.</p>
-    </div>
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Packing"></div>
-      <h4>Packing</h4>
-      <p>Pengemasan rapi dan aman.</p>
-    </div>
-    <div class="proc-card reveal">
-      <div class="photo"><img src="https://images.pexels.com/photos/4480982/pexels-photo-4480982.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Pengiriman"></div>
-      <h4>Pengiriman</h4>
-      <p>Siap melangkah ke seluruh Indonesia.</p>
+  <div class="kebersamaan-panel" id="panel-outing" hidden>
+    <div class="outing-grid">
+      <div class="outing-main photo reveal-scale">
+        <img src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
+      </div>
+      <div class="outing-side">
+        <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
+        <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
+        <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
+        <div class="photo reveal-scale"><img src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
+      </div>
+      <div class="outing-video reveal-scale" id="outingVideo">
+        <div class="photo"><img src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+        <div class="vlabel"><strong>Company Outing 2024</strong><span>Watch Video · 02:45</span></div>
+      </div>
     </div>
   </div>
 </div>
+
 
 <!-- ============ KOMITMEN KUALITAS & KEBERLANJUTAN ============ -->
 <div class="cert-section">
@@ -452,6 +472,19 @@
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Produk tahan lama dan nyaman digunakan</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kepuasan pelanggan adalah prioritas utama</li>
     </ul>
+  </div>
+</div>
+
+<!-- ============ SELINGAN SOCIAL MEDIA ============ -->
+<div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 70px;">
+  <div class="about-social-strip reveal">
+    <span>Ikuti keseharian &amp; kegiatan HILOS lainnya:</span>
+    <div class="about-social-icons">
+      <a href="#" aria-label="Instagram HILOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+      <a href="#" aria-label="TikTok HILOS"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg></a>
+      <a href="#" aria-label="Facebook HILOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a4 4 0 0 0-4 4v2H7v3h3v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1Z"/></svg></a>
+    </div>
+    <a href="kontak.html" class="about-social-more">Selengkapnya di halaman Contact Us →</a>
   </div>
 </div>
 
@@ -514,7 +547,157 @@
   document.getElementById('outingVideo').addEventListener('click', () => {
     alert('Video Company Outing 2024 akan ditampilkan di sini — slot ini siap diisi video asli.');
   });
+
+  /* ---- tab switching: Event / CSR / Outing ---- */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.kebersamaan-panel').forEach(panel => {
+        const isTarget = panel.id === 'panel-' + target;
+        panel.classList.toggle('active', isTarget);
+        panel.hidden = !isTarget;
+      });
+    });
+  });
+
+  /* ---- hero slideshow auto-rotate ---- */
+  (function(){
+    const slides = document.querySelectorAll('#heroSlideshow .hero-slide');
+    const dots = document.querySelectorAll('#heroSlideDots .dot');
+    if (!slides.length) return;
+    let current = 0;
+
+    function show(i){
+      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+      current = i;
+    }
+    dots.forEach(dot => dot.addEventListener('click', () => show(Number(dot.dataset.i))));
+
+    setInterval(() => { show((current + 1) % slides.length); }, 4500);
+  })();
 </script>
 
+
+<style>
+  .wa-widget{ position:fixed; right:22px; bottom:22px; z-index:999; }
+
+  .wa-float{
+    width:58px; height:58px; border-radius:50%;
+    background:#25D366; color:#fff; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    transition:transform .2s ease, box-shadow .2s ease;
+    position:relative;
+  }
+  .wa-float:hover{ transform:scale(1.08); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+  .wa-float svg{ width:29px; height:29px; }
+  .wa-float .wa-ping{
+    position:absolute; top:-2px; right:-2px; width:14px; height:14px; border-radius:50%;
+    background:var(--gold); border:2px solid #fff;
+  }
+  .wa-float .wa-ping::after{
+    content:''; position:absolute; inset:0; border-radius:50%; background:var(--gold);
+    animation:waPing 1.8s ease-out infinite;
+  }
+  @keyframes waPing{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(2.4); opacity:0; } }
+
+  .wa-popup{
+    position:absolute; right:0; bottom:74px; width:280px;
+    background:var(--ink); color:var(--sand);
+    box-shadow:0 20px 45px rgba(0,0,0,0.35);
+    padding:20px 20px 18px;
+    opacity:0; transform:translateY(14px) scale(0.97); pointer-events:none;
+    transition:opacity .22s ease, transform .22s ease;
+    transform-origin:bottom right;
+  }
+  .wa-popup.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .wa-popup::after{
+    content:''; position:absolute; right:24px; bottom:-8px;
+    width:16px; height:16px; background:var(--ink); transform:rotate(45deg);
+  }
+  .wa-popup-close{
+    position:absolute; top:10px; right:12px; background:none; border:none; cursor:pointer;
+    color:var(--on-dark-muted); font-size:18px; line-height:1; padding:4px;
+  }
+  .wa-popup-close:hover{ color:var(--sand); }
+  .wa-popup-header{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .wa-avatar{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:var(--ink);
+  }
+  .wa-popup-header strong{ display:block; font-family:'Archivo',sans-serif; font-size:14px; }
+  .wa-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:var(--on-dark-muted); }
+  .wa-status i{ width:6px; height:6px; border-radius:50%; background:#3ecf6a; display:inline-block; }
+  .wa-popup-msg{ font-size:13px; line-height:1.55; color:var(--on-dark-muted); margin-bottom:16px; }
+  .wa-popup-msg strong{ color:var(--sand); }
+  .wa-popup-cta{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#25D366; color:#fff; text-decoration:none;
+    padding:11px 14px; font-size:13px; font-weight:700;
+    transition:background .2s ease;
+  }
+  .wa-popup-cta:hover{ background:#1fb959; }
+  .wa-popup-cta svg{ width:17px; height:17px; }
+
+  @media (max-width:640px){
+    .wa-widget{ right:16px; bottom:16px; }
+    .wa-float{ width:52px; height:52px; }
+    .wa-float svg{ width:25px; height:25px; }
+    .wa-popup{ width:calc(100vw - 32px); right:-4px; }
+  }
+</style>
+
+<div class="wa-widget">
+  <div class="wa-popup" id="waPopup">
+    <button class="wa-popup-close" id="waPopupClose" aria-label="Tutup">&times;</button>
+    <div class="wa-popup-header">
+      <div class="wa-avatar">H</div>
+      <div>
+        <strong>HILOS Care</strong>
+        <span class="wa-status"><i></i>Biasanya balas dalam beberapa menit</span>
+      </div>
+    </div>
+    <p class="wa-popup-msg">Halo! 👋 Ada pertanyaan soal produk HILOS atau mau tanya soal kerjasama? Langsung chat aja, kami bantu sampai jelas.</p>
+    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-popup-cta">
+      <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+      Mulai Chat di WhatsApp
+    </a>
+  </div>
+
+  <button class="wa-float" id="waFloatBtn" aria-label="Chat via WhatsApp" aria-expanded="false">
+    <span class="wa-ping"></span>
+    <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+  </button>
+</div>
+
+<script>
+  (function(){
+    var btn = document.getElementById('waFloatBtn');
+    var popup = document.getElementById('waPopup');
+    var closeBtn = document.getElementById('waPopupClose');
+
+    function togglePopup(open){
+      popup.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(!popup.classList.contains('open'));
+    });
+    closeBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(false);
+    });
+    document.addEventListener('click', function(e){
+      if (!popup.contains(e.target) && e.target !== btn){ togglePopup(false); }
+    });
+  })();
+</script>
 </body>
+
 </html>
