@@ -9,19 +9,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#140f0b;
-    --ink-2:#1f160e;
-    --ink-soft:#2a1f15;
-    --sand:#f3ebda;
-    --sand-deep:#e6d8ba;
-    --sand-line:rgba(20,15,11,0.14);
-    --gold:#c69a58;
-    --gold-light:#e2c58c;
-    --gold-deep:#8a642f;
+    --ink:#0d1b2a;
+    --ink-2:#16283d;
+    --ink-soft:#1c3350;
+    --sand:#eaf1f8;
+    --sand-deep:#cddfec;
+    --sand-line:rgba(13,27,42,0.14);
+    --gold:#2f6fb0;
+    --gold-light:#6fa3d4;
+    --gold-deep:#1c4a73;
     --rust:#9c4726;
-    --paper:#faf6ee;
-    --on-dark-line:rgba(243,235,218,0.16);
-    --on-dark-muted:rgba(243,235,218,0.68);
+    --paper:#f5f9fc;
+    --on-dark-line:rgba(234,241,248,0.16);
+    --on-dark-muted:rgba(234,241,248,0.68);
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -55,7 +55,7 @@
   .photo::after{
     content:"";
     position:absolute;inset:0;
-    background:linear-gradient(155deg, rgba(198,154,88,0.42), rgba(20,15,11,0.72));
+    background:linear-gradient(155deg, rgba(198,154,88,0.42), rgba(13,27,42,0.72));
     mix-blend-mode:multiply;
   }
   .photo::before{
@@ -122,7 +122,7 @@
     border-bottom:1px solid transparent;
   }
   .nav.scrolled{
-    background:rgba(20,15,11,0.82);
+    background:rgba(13,27,42,0.82);
     backdrop-filter:blur(14px);
     padding-top:14px;
     padding-bottom:14px;
@@ -148,7 +148,7 @@
   .nav-cta{
     display:flex;align-items:center;gap:8px;
     padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;
-    background:rgba(243,235,218,0.04);color:var(--sand);text-decoration:none;
+    background:rgba(234,241,248,0.04);color:var(--sand);text-decoration:none;
     font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
     white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;
   }
@@ -173,7 +173,7 @@
     position:absolute;inset:0;z-index:1;
     background:
       radial-gradient(ellipse 60% 50% at var(--mx,70%) var(--my,40%), rgba(198,154,88,0.16), transparent 60%),
-      linear-gradient(0deg, var(--ink) 4%, rgba(20,15,11,0.35) 42%, rgba(20,15,11,0.55) 100%);
+      linear-gradient(0deg, var(--ink) 4%, rgba(13,27,42,0.35) 42%, rgba(13,27,42,0.55) 100%);
   }
 
   .hero-body{
@@ -244,7 +244,7 @@
   .btn-outline{color:var(--sand);border:1px solid var(--on-dark-line);}
   .btn-outline::before{
     content:"";position:absolute;inset:0;z-index:1;
-    background:rgba(243,235,218,0.08);
+    background:rgba(234,241,248,0.08);
     transform:scaleX(0);transform-origin:left;
     transition:transform 0.35s ease;
   }
@@ -257,7 +257,7 @@
     align-items:flex-end;
   }
   .proof-card{
-    background:rgba(20,15,11,0.55);
+    background:rgba(13,27,42,0.55);
     backdrop-filter:blur(16px);
     border:1px solid var(--on-dark-line);
     border-top:2px solid var(--gold);
@@ -306,7 +306,7 @@
   }
   .hero-slide-nav .dot{
     width:8px;height:8px;border-radius:50%;
-    background:rgba(243,235,218,0.3);border:none;padding:0;cursor:pointer;
+    background:rgba(234,241,248,0.3);border:none;padding:0;cursor:pointer;
     transition:background 0.3s ease, transform 0.3s ease;
   }
   .hero-slide-nav .dot.active{background:var(--gold);transform:scale(1.35);}
@@ -345,7 +345,7 @@
     font-weight:900;
     font-size:clamp(90px,16vw,220px);
     color:transparent;
-    -webkit-text-stroke:1px rgba(20,15,11,0.06);
+    -webkit-text-stroke:1px rgba(13,27,42,0.06);
     letter-spacing:0.04em;
     white-space:nowrap;
     z-index:0;
@@ -403,7 +403,7 @@
   .collage-item{
     position:absolute;
     border:6px solid var(--paper);
-    box-shadow:0 24px 50px rgba(20,15,11,0.22);
+    box-shadow:0 24px 50px rgba(13,27,42,0.22);
     transition:transform 0.35s ease;
     will-change:transform;
   }
@@ -419,7 +419,7 @@
     color:var(--sand);
     padding:22px 26px;
     border-top:3px solid var(--gold);
-    box-shadow:0 20px 40px rgba(20,15,11,0.3);
+    box-shadow:0 20px 40px rgba(13,27,42,0.3);
   }
   .collage-badge strong{
     display:block;
@@ -446,7 +446,7 @@
   .stat-icon{
     width:44px;height:44px;
     display:flex;align-items:center;justify-content:center;
-    border:1px solid rgba(20,15,11,0.18);border-radius:50%;
+    border:1px solid rgba(13,27,42,0.18);border-radius:50%;
     color:var(--gold-deep);margin-bottom:18px;
     transform:scale(0.6) rotate(-12deg);
     opacity:0;
@@ -772,7 +772,7 @@
     display:flex;align-items:flex-end;
   }
   .side-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.55;}
-  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(20,15,11,0.1), rgba(20,15,11,0.85));}
+  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(13,27,42,0.1), rgba(13,27,42,0.85));}
   .side-card .side-label{
     position:relative;z-index:2;
     padding:14px;
@@ -784,7 +784,7 @@
     position:absolute;top:50%;left:50%;
     transform:translate(-50%,-50%);
     width:46px;height:46px;border-radius:50%;
-    background:rgba(20,15,11,0.6);
+    background:rgba(13,27,42,0.6);
     border:1px solid var(--on-dark-line);
     display:flex;align-items:center;justify-content:center;
     color:var(--sand);
@@ -910,7 +910,7 @@
   .review-gallery .play-btn{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:40px;height:40px;border-radius:50%;
-    background:rgba(20,15,11,0.55);
+    background:rgba(13,27,42,0.55);
     display:flex;align-items:center;justify-content:center;color:#fff;
     z-index:2;
   }
@@ -999,7 +999,7 @@
     font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;
     color:var(--ink);
   }
-  .partnership-cta p{font-size:12.5px;color:rgba(20,15,11,0.75);line-height:1.6;margin-bottom:18px;}
+  .partnership-cta p{font-size:12.5px;color:rgba(13,27,42,0.75);line-height:1.6;margin-bottom:18px;}
   .partnership-cta .btn-fill{background:var(--ink);color:var(--sand);border:1px solid var(--ink);}
   .partnership-cta .btn-fill::before{background:var(--ink-2);}
 
@@ -1372,7 +1372,7 @@
             <span class="stage-3d-label">3D Preview</span>
             <div class="stage-3d-inner" id="stage3dInner">
               <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-                <g fill="none" stroke="#e2c58c" stroke-width="1.4" opacity="0.9">
+                <g fill="none" stroke="#6fa3d4" stroke-width="1.4" opacity="0.9">
                   <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
                   <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
                   <rect x="168" y="108" width="70" height="26" rx="4"/>
@@ -1454,9 +1454,9 @@
           <span class="side-label">Video Produk</span>
         </div>
         <div class="side-card" id="view3dCard">
-          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(20,15,11,0.2), rgba(20,15,11,0.9));"></div>
+          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(13,27,42,0.2), rgba(13,27,42,0.9));"></div>
           <svg class="wire-thumb" style="position:absolute;top:8%;left:15%;" viewBox="0 0 400 260">
-            <g fill="none" stroke="#8a642f" stroke-width="1.4" opacity="0.8">
+            <g fill="none" stroke="#1c4a73" stroke-width="1.4" opacity="0.8">
               <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
               <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
             </g>
@@ -1531,7 +1531,7 @@
 
 <section class="partnership-section" id="kerjasama">
   <div class="partnership-head">
-    <h2 class="reveal">Skema Kerjasama</h2>
+    <h2 class="reveal">Bentuk Kerjasama</h2>
     <p class="reveal">Bersama HILOS, Tumbuh &amp; Sukses Bersama</p>
   </div>
 
@@ -1539,29 +1539,29 @@
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
       <h3>Distributor</h3>
-      <p>Harga khusus &amp; margin kompetitif</p>
+      <p>Jadi distributor resmi di wilayah Anda</p>
     </div>
     <div class="scheme-card reveal">
-      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="18" cy="9" r="2.6"/><path d="M15.5 20a5 5 0 0 1 7-4.6"/></svg></div>
-      <h3>Reseller</h3>
-      <p>Tanpa modal besar, keuntungan maksimal</p>
+      <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M7 14h4"/></svg></div>
+      <h3>E-Commerce</h3>
+      <p>Jual di marketplace dengan dukungan penuh</p>
     </div>
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="14" height="11" rx="1"/><path d="M7 8V6a3 3 0 0 1 3-3h1"/><circle cx="19" cy="15" r="3"/></svg></div>
-      <h3>Grosir</h3>
+      <h3>Wholesale</h3>
       <p>Stok lengkap, harga semakin hemat</p>
     </div>
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/></svg></div>
-      <h3>Custom Branding</h3>
-      <p>Buat brand sendiri dengan kualitas HILOS</p>
+      <h3>Manufacture Partner</h3>
+      <p>Produksi brand sendiri dengan kualitas HILOS</p>
     </div>
 
     <div class="partnership-cta reveal-scale">
       <h3>Tertarik Bekerjasama?</h3>
       <p>Hubungi tim kami untuk informasi lebih lanjut dan penawaran terbaik.</p>
       <a href="#" class="btn btn-fill" id="salesBtn3" style="align-self:flex-start;"><span>Hubungi Sales</span></a>
-      <a href="kerjasama.html" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--ink);text-decoration:underline;">Lihat Skema Lengkap →</a>
+      <a href="kerjasama.html" style="display:inline-block;margin-top:12px;font-size:12px;color:var(--ink);text-decoration:underline;">Lihat Selengkapnya →</a>
     </div>
   </div>
 </section>
@@ -1693,7 +1693,7 @@
     links.style.display = isOpen ? 'none' : 'flex';
     cta.style.display = isOpen ? 'none' : 'inline-flex';
     if (!isOpen){
-      links.style.cssText += 'position:absolute;top:64px;left:20px;right:20px;flex-direction:column;background:#1c140f;border:1px solid rgba(243,235,218,0.16);padding:20px;border-radius:8px;z-index:20;gap:16px;';
+      links.style.cssText += 'position:absolute;top:64px;left:20px;right:20px;flex-direction:column;background:#1c140f;border:1px solid rgba(234,241,248,0.16);padding:20px;border-radius:8px;z-index:20;gap:16px;';
       cta.style.cssText += 'position:absolute;top:256px;left:20px;right:20px;justify-content:center;z-index:20;';
     }
   });
@@ -2012,5 +2012,27 @@
   })();
 </script>
 
+
+<style>
+  .wa-float{
+    position:fixed; right:22px; bottom:22px; z-index:999;
+    width:58px; height:58px; border-radius:50%;
+    background:#25D366; color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    transition:transform .2s ease, box-shadow .2s ease;
+    text-decoration:none;
+  }
+  .wa-float:hover{ transform:scale(1.08); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+  .wa-float svg{ width:29px; height:29px; }
+  @media (max-width:640px){
+    .wa-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .wa-float svg{ width:25px; height:25px; }
+  }
+</style>
+<a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-float" aria-label="Chat via WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+</a>
 </body>
+
 </html>
