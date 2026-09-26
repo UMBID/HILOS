@@ -283,7 +283,6 @@
     <li><a href="index.html">Beranda</a></li>
     <li><a href="tentang.html">Tentang Kami</a></li>
     <li><a href="produk.html" class="active">Produk</a></li>
-    <li><a href="index.html">Teknologi</a></li>
     <li><a href="kerjasama.html">Kerjasama</a></li>
     <li><a href="index.html#review">Review</a></li>
   </ul>
@@ -478,7 +477,7 @@
 </div>
 
 <div class="others-section" id="othersSection">
-  <h2 id="othersTitle">Top 10 Lainnya</h2>
+  <h2 id="othersTitle">Produk Serupa</h2>
   <div class="others-grid" id="othersGrid"></div>
 </div>
 
@@ -503,7 +502,7 @@
     </div>
     <div class="footer-col">
       <h4>Perusahaan</h4>
-      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="index.html">Teknologi</a></li><li><a href="#">Karir</a></li></ul>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="#">Karir</a></li></ul>
     </div>
     <div class="footer-col">
       <h4>Hubungi Kami</h4>
@@ -526,15 +525,50 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
 
   /* -----------------------------------------------------------
-     FLAGSHIP DATA — produk rank #1 Top 10 bulan berjalan (Supabase)
+     FLAGSHIP DATA — universal PDP: ?id= untuk produk apapun, ?rank= khusus Top 5 (Supabase)
      ----------------------------------------------------------- */
   const sb = window.getSupabaseClient();
   const FALLBACK_IMG = 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900';
   function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
   async function loadFlagshipProduct(){
-    const requestedRank = parseInt(new URLSearchParams(location.search).get('rank'), 10) || 1;
+    const params = new URLSearchParams(location.search);
+    const requestedId = params.get('id');
+    const requestedRank = parseInt(params.get('rank'), 10);
 
+    /* ---- Mode 1: akses lewat ?id= (produk apapun, tidak harus Top 5) ---- */
+    if (requestedId){
+      const { data: product, error } = await sb
+        .from('products')
+        .select('id,name,model,category,price,images,colors,sizes,badge')
+        .eq('id', requestedId)
+        .maybeSingle();
+      if (error || !product) return null;
+
+      // cek apakah produk ini kebetulan sedang jadi Top 5 bulan ini (buat badge saja)
+      let rank = null;
+      const currentMonth = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
+      const { data: rankRow } = await sb
+        .from('top10_rankings').select('rank').eq('product_id', requestedId).eq('month', currentMonth).maybeSingle();
+      if (rankRow) rank = rankRow.rank;
+
+      // produk serupa: kategori sama, exclude diri sendiri
+      const { data: similar } = await sb
+        .from('products')
+        .select('id,name,images,category')
+        .eq('category', product.category)
+        .neq('id', requestedId)
+        .limit(8);
+
+      return {
+        current: { products: product, rank },
+        others: (similar || []).map(s => ({ products: s })),
+        othersMode: 'similar'
+      };
+    }
+
+    /* ---- Mode 2: akses lewat ?rank= (khusus Top 5) ---- */
+    const rankToShow = requestedRank || 1;
     const { data: monthsData } = await sb.from('top10_rankings').select('month');
     if (!monthsData || monthsData.length === 0) return null;
     const months = [...new Set(monthsData.map(r => r.month))].sort().reverse();
@@ -543,26 +577,28 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,name,model,price,images,colors,sizes,badge)')
+      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
     if (error || !data || data.length === 0) return null;
 
     const rows = data.filter(r => r.products);
-    const current = rows.find(r => r.rank === requestedRank) || rows[0];
+    const current = rows.find(r => r.rank === rankToShow) || rows[0];
     const others = rows.filter(r => r.rank !== current.rank);
-    return { current, others };
+    return { current, others, othersMode: 'rank' };
   }
 
-  function applyFlagshipProduct(current, others){
+  function applyFlagshipProduct(current, others, othersMode){
     const p = current.products;
-    const rank = current.rank;
+    const rank = current.rank; // bisa null kalau produk biasa (bukan Top 5)
     const images = (p.images && p.images.length) ? p.images : [FALLBACK_IMG];
     const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
 
-    document.querySelector('.flagship-tag').textContent = rank === 1 ? 'Produk Andalan' : `Top 10 — Rank #${rank}`;
+    const CATEGORY_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
+    document.querySelector('.flagship-tag').textContent =
+      rank === 1 ? 'Produk Andalan' : rank ? `Top 5 — Rank #${rank}` : (CATEGORY_LABEL[p.category] || 'Detail Produk');
 
     document.querySelector('.thumb-rail').innerHTML = images.map((img, i) => `
       <button class="thumb-btn ${i === 0 ? 'active' : ''}" data-img="${img}" aria-label="Tampilan ${i+1}">
@@ -577,7 +613,7 @@
     document.querySelector('.badges').innerHTML =
       (p.badge === 'best' ? '<span class="pdp-badge badge-best">Best Seller</span>' : '') +
       (p.badge === 'new' ? '<span class="pdp-badge badge-new">New</span>' : '') +
-      `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 10</span>`;
+      (rank ? `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 5</span>` : '');
 
     document.querySelector('.color-row').innerHTML = colors.map((c, i) => `
       <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
@@ -589,13 +625,16 @@
     `).join('');
     document.getElementById('sizeValue').textContent = sizes[Math.floor(sizes.length/2)];
 
-    /* grid navigasi ke rank lain */
+    /* grid navigasi bawah: Top 5 Lainnya (kalau mode rank) atau Produk Serupa (kalau mode id) */
+    document.getElementById('othersTitle').textContent = othersMode === 'rank' ? 'Top 5 Lainnya' : 'Produk Serupa';
     document.getElementById('othersGrid').innerHTML = others.map(o => {
       const op = o.products;
       const img = (op.images && op.images[0]) ? op.images[0] : FALLBACK_IMG;
+      const href = othersMode === 'rank' ? `flagship.html?rank=${o.rank}` : `flagship.html?id=${op.id}`;
+      const rankBadge = othersMode === 'rank' ? `<span class="other-rank${o.rank <= 3 ? ' is-top3' : ''}">#${o.rank}</span>` : '';
       return `
-        <a class="other-card" href="flagship.html?rank=${o.rank}">
-          <span class="other-rank${o.rank <= 3 ? ' is-top3' : ''}">#${o.rank}</span>
+        <a class="other-card" href="${href}">
+          ${rankBadge}
           <div class="other-thumb"><img src="${img}" alt="${op.name}" loading="lazy"></div>
           <div class="other-info">
             <h4>${op.name}</h4>
@@ -607,7 +646,7 @@
   }
 
   loadFlagshipProduct().then(result => {
-    if (result) applyFlagshipProduct(result.current, result.others);
+    if (result) applyFlagshipProduct(result.current, result.others, result.othersMode);
     initFlagshipInteractions();
   });
 
