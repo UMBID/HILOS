@@ -890,12 +890,8 @@
 
     const detailLink = document.getElementById('qvDetailLink');
     const rank = top10RankCache[id];
-    if (rank){
-      detailLink.href = rank === 1 ? 'flagship.html' : `flagship.html?rank=${rank}`;
-      detailLink.style.display = 'inline-flex';
-    } else {
-      detailLink.style.display = 'none';
-    }
+    detailLink.href = rank ? (rank === 1 ? 'flagship.html' : `flagship.html?rank=${rank}`) : `flagship.html?id=${id}`;
+    detailLink.style.display = 'inline-flex';
 
     qvModal.classList.add('open');
   }
