@@ -553,18 +553,24 @@
     if (error || !data || data.length === 0){
       products = fallbackProducts();
     } else {
-      products = data.map(p => ({
-        id: p.id,
-        name: p.name,
-        model: p.model,
-        category: p.category,
-        price: p.price,
-        img: (p.images && p.images[0]) ? p.images[0] : 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500',
-        colors: (p.colors || []).map(c => c.hex),
-        colorNamesMap: (p.colors || []).reduce((acc, c) => { acc[c.hex] = c.name; return acc; }, {}),
-        sizes: p.sizes || [],
-        badge: p.badge || null
-      }));
+      products = data.map(p => {
+        const rawColors = p.colors || [];
+        const firstColorImg = rawColors.find(c => c.image) ? rawColors.find(c => c.image).image : '';
+        return {
+          id: p.id,
+          name: p.name,
+          model: p.model,
+          category: p.category,
+          price: p.price,
+          img: (p.images && p.images[0]) ? p.images[0] : (firstColorImg || 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500'),
+          colors: rawColors.map(c => c.hex),
+          colorNamesMap: rawColors.reduce((acc, c) => { acc[c.hex] = c.name; return acc; }, {}),
+          // peta warna -> foto khusus warna itu (kalau ada), dipakai untuk ganti foto saat klik warna
+          colorImages: rawColors.reduce((acc, c) => { if (c.image) acc[c.hex] = c.image; return acc; }, {}),
+          sizes: p.sizes || [],
+          badge: p.badge || null
+        };
+      });
     }
     initCatalog();
   }
@@ -585,7 +591,7 @@
     priceMin:PRICE_MIN, priceMax:PRICE_MAX, sort:'terbaru', view:'grid', visibleCount:PAGE_SIZE
   };
 
-  function formatRupiah(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
+  function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
   /* ---------- build sidebar filter options dynamically ---------- */
   const categoryLabels = { pria:'Man', wanita:'Ladies', anak:'Kids' };
@@ -758,7 +764,7 @@
         <div class="product-info">
           <h4>${p.name}</h4>
           <div class="model-tag">Lini ${p.model}</div>
-          <!-- HARGA DINONAKTIFKAN: <div class="price">${formatRupiah(p.price)}</div> -->
+          <!-- HARGA DINONAKTIFKAN: sebelumnya ada <div class="price">${'$'}{formatRupiah(p.price)}</div> di sini, uncomment kalau harga dipakai lagi -->
           <div class="product-colors">${p.colors.map(c => `<span style="background:${c}"></span>`).join('')}</div>
         </div>
       </div>
@@ -882,10 +888,15 @@
   function openQuickView(id){
     const p = products.find(x => x.id === id);
     if (!p) return;
+    document.getElementById('qvImage').dataset.defaultImg = p.img.replace('w=500','w=700');
     document.getElementById('qvImage').src = p.img.replace('w=500','w=700');
     document.getElementById('qvName').textContent = p.name;
     // HARGA DINONAKTIFKAN: document.getElementById('qvPrice').textContent = formatRupiah(p.price);
-    document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}"></span>`).join('');
+    document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}" data-img="${(p.colorImages && p.colorImages[c]) || ''}"></span>`).join('');
+    // kalau warna pertama punya foto sendiri, langsung tampilkan itu
+    if (p.colors.length && p.colorImages && p.colorImages[p.colors[0]]){
+      document.getElementById('qvImage').src = p.colorImages[p.colors[0]];
+    }
     document.getElementById('qvSizes').innerHTML = p.sizes.map((s,i) => `<span style="background:transparent;border:1px solid var(--sand-line);width:auto;padding:0 10px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:0;font-size:11px;${i===0 ? 'border-color:var(--gold-deep);color:var(--gold-deep);' : ''}" data-size="${s}">${s}</span>`).join('');
 
     const detailLink = document.getElementById('qvDetailLink');
@@ -918,6 +929,9 @@
     if (!span) return;
     document.querySelectorAll('#qvColors span').forEach(s => s.classList.remove('active'));
     span.classList.add('active');
+    const qvImage = document.getElementById('qvImage');
+    const colorImg = span.dataset.img;
+    qvImage.src = colorImg ? colorImg : qvImage.dataset.defaultImg;
   });
   document.getElementById('qvSizes').addEventListener('click', (e) => {
     const span = e.target.closest('span[data-size]');
@@ -1000,7 +1014,7 @@
           <div class="top10-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
           <div class="top10-info">
             <h4>${p.name}</h4>
-            <!-- HARGA DINONAKTIFKAN: <div class="price">${formatRupiah(p.price)}</div> -->
+            <!-- HARGA DINONAKTIFKAN: sebelumnya ada <div class="price">${'$'}{formatRupiah(p.price)}</div> di sini, uncomment kalau harga dipakai lagi -->
           </div>
         </a>
       `;
