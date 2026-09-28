@@ -616,9 +616,14 @@
       (rank ? `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 5</span>` : '');
 
     document.querySelector('.color-row').innerHTML = colors.map((c, i) => `
-      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
+      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-img="${c.image || ''}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
     `).join('');
     document.getElementById('colorValue').textContent = colors[0].name;
+    document.getElementById('mainImg').dataset.defaultImg = images[0];
+    // kalau warna pertama punya foto sendiri, langsung tampilkan itu di foto utama
+    if (colors[0] && colors[0].image){
+      document.getElementById('mainImg').src = colors[0].image;
+    }
 
     document.querySelector('.size-row').innerHTML = sizes.map((s, i) => `
       <button class="size-btn ${i === Math.floor(sizes.length/2) ? 'active' : ''}">${s}</button>
@@ -757,6 +762,24 @@
       dot.classList.add('active');
       dot.style.borderColor = 'var(--gold)';
       colorValue.textContent = dot.dataset.color;
+
+      // ganti foto utama sesuai warna yang dipilih (kalau warna itu punya foto sendiri)
+      const targetImg = dot.dataset.img || mainImg.dataset.defaultImg;
+      if (targetImg && targetImg !== mainImg.src){
+        mainImg.style.opacity = '0';
+        setTimeout(() => {
+          mainImg.src = targetImg;
+          mainImg.style.opacity = '1';
+        }, 180);
+      }
+      // sinkronkan thumbnail galeri: aktifkan kalau ada yang cocok, kalau tidak kosongkan semua
+      let matched = false;
+      thumbBtns.forEach(b => {
+        const isMatch = b.dataset.img === targetImg;
+        b.classList.toggle('active', isMatch);
+        if (isMatch) matched = true;
+      });
+      if (!matched) thumbBtns.forEach(b => b.classList.remove('active'));
     });
   });
 
