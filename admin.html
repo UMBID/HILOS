@@ -113,9 +113,9 @@
   .table-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; }
   .p-grid{
     display:grid;
-    /* HARGA DINONAKTIFKAN — grid asli 6 kolom (thumb,nama,kategori,HARGA,badge,aksi):
-    grid-template-columns:56px minmax(160px,2fr) 100px 120px 100px auto; */
-    grid-template-columns:56px minmax(160px,2fr) 100px 100px auto;
+    /* HARGA DINONAKTIFKAN — grid asli 7 kolom (thumb,nama,gender,HARGA,tipe produk,badge,aksi):
+    grid-template-columns:56px minmax(160px,2fr) 100px 120px 130px 100px auto; */
+    grid-template-columns:56px minmax(160px,2fr) 90px 130px 100px auto;
     column-gap:0;
   }
   .p-cell{
@@ -123,7 +123,7 @@
     display:flex; flex-direction:column; justify-content:center;
   }
   .p-cell.head{ border-top:none; background:var(--sand); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; color:#6b6058; }
-  .sku-tag{ font-family:'Inter',monospace; font-size:11px; color:var(--gold-deep); background:var(--sand); padding:1px 7px; border-radius:4px; display:inline-block; margin-top:2px; }
+  .sku-tag{ font-family:'Inter',monospace; font-size:11px; color:var(--gold-deep); background:var(--sand); padding:1px 7px; border-radius:4px; display:inline-block; margin-top:2px; align-self:flex-start; }
 
   /* ---------- toolbar: search + filter ---------- */
   .toolbar{
@@ -141,7 +141,7 @@
   .p-thumb img{ width:100%; height:100%; object-fit:cover; }
   .p-name{ font-weight:600; }
   .p-model{ color:#6b6058; font-size:12px; }
-  .badge-tag{ display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:100px; background:var(--gold-light); color:var(--gold-deep); text-transform:uppercase; }
+  .badge-tag{ display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:100px; background:var(--gold-light); color:var(--gold-deep); text-transform:uppercase; align-self:flex-start; }
   .row-actions{ display:flex; flex-direction:row; align-items:center; gap:8px; justify-self:end; }
   .icon-btn{ border:1px solid var(--sand-line); background:#fff; border-radius:6px; padding:7px 12px; font-size:12px; }
   .icon-btn:hover{ background:var(--sand); }
@@ -187,9 +187,25 @@
 
   @media (max-width:720px){
     .p-grid{ grid-template-columns:44px 1fr auto; }
-    .p-cell.col-category, .p-cell.col-price{ display:none; }
+    .p-cell.col-category, .p-cell.col-type, .p-cell.col-price{ display:none; }
     .grid-2{ grid-template-columns:1fr; }
   }
+
+  /* ---------- bulk color upload ---------- */
+  .color-chip.detected{ border-color:var(--gold); }
+  .color-chip .swatch-thumb{ width:20px; height:20px; border-radius:5px; object-fit:cover; flex-shrink:0; }
+  .color-chip input[type="text"]{
+    border:none; background:none; font-family:inherit; font-size:12px; width:70px; padding:0; color:var(--ink);
+  }
+  .color-chip input[type="text"]:focus{ outline:none; border-bottom:1px solid var(--gold); }
+  .bulk-color-drop{
+    border:1.5px dashed var(--gold); border-radius:8px; padding:16px; text-align:center;
+    color:var(--gold-deep); font-size:13px; margin-top:10px; cursor:pointer; background:rgba(47,111,176,0.05);
+  }
+  .bulk-color-drop:hover{ background:rgba(47,111,176,0.1); }
+  .bulk-color-drop strong{ display:block; font-size:13.5px; margin-bottom:2px; }
+  details.manual-color-fallback{ margin-top:10px; }
+  details.manual-color-fallback summary{ font-size:12px; color:#8a8078; cursor:pointer; padding:4px 0; }
 </style>
 </head>
 <body>
@@ -222,7 +238,7 @@
   <div class="wrap">
     <div class="tab-nav">
       <button class="tab-nav-btn active" data-view="produkView">Kelola Produk</button>
-      <button class="tab-nav-btn" data-view="top10View">Top 10 Produk</button>
+      <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
     </div>
 
     <div id="produkView" class="view">
@@ -232,9 +248,6 @@
         <p>Perubahan di sini langsung tampil di halaman Produk publik.</p>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn btn-outline" id="templateExcelBtn">Download Template</button>
-        <button class="btn btn-outline" id="importExcelBtn">Import dari Excel</button>
-        <input type="file" id="importFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
         <button class="btn btn-outline" id="exportExcelBtn">Export ke Excel</button>
         <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
       </div>
@@ -243,10 +256,18 @@
     <div class="toolbar">
       <input type="search" id="searchInput" placeholder="Cari nama atau kode produk...">
       <select id="filterCategory">
-        <option value="">Semua Kategori</option>
-        <option value="pria">Pria</option>
-        <option value="wanita">Wanita</option>
-        <option value="anak">Anak</option>
+        <option value="">Semua Gender</option>
+        <option value="pria">Man</option>
+        <option value="wanita">Ladies</option>
+        <option value="anak">Kids</option>
+      </select>
+      <select id="filterProductType">
+        <option value="">Semua Kategori Produk</option>
+        <option value="Crocs">Crocs</option>
+        <option value="Jepit">Jepit</option>
+        <option value="Slop">Slop</option>
+        <option value="Sepatu / Sol">Sepatu / Sol</option>
+        <option value="Baim">Baim</option>
       </select>
       <select id="filterBadge">
         <option value="">Semua Badge</option>
@@ -269,7 +290,8 @@
       <div class="p-grid">
         <span class="p-cell head"></span>
         <span class="p-cell head">Nama &amp; Kode Produk</span>
-        <span class="p-cell head col-category">Kategori</span>
+        <span class="p-cell head col-category">Gender</span>
+        <span class="p-cell head col-type">Kategori Produk</span>
         <!-- HARGA DINONAKTIFKAN: <span class="p-cell head col-price">Harga</span> -->
         <span class="p-cell head">Badge</span>
         <span class="p-cell head"></span>
@@ -283,12 +305,12 @@
     <div id="top10View" class="view" style="display:none;">
       <div class="page-head">
         <div>
-          <h1>Top 10 Produk</h1>
-          <p>Pilih 10 produk untuk dijadikan sorotan di halaman Produk publik, per bulan.</p>
+          <h1>Top 5 Produk</h1>
+          <p>Pilih 5 produk untuk dijadikan sorotan di halaman Produk publik, per bulan.</p>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
           <input type="month" id="top10Month">
-          <button class="btn btn-gold" id="saveTop10Btn">Simpan Top 10</button>
+          <button class="btn btn-gold" id="saveTop10Btn">Simpan Top 5</button>
         </div>
       </div>
 
@@ -298,7 +320,7 @@
   </div>
 </div>
 
-<!-- ============ PRODUCT PICKER (untuk Top 10) ============ -->
+<!-- ============ PRODUCT PICKER (untuk Top 5) ============ -->
 <div class="modal-overlay" id="pickerOverlay">
   <div class="modal">
     <h2>Pilih Produk untuk Rank <span id="pickerRankLabel"></span></h2>
@@ -306,34 +328,6 @@
     <div id="pickerList" style="max-height:360px; overflow-y:auto;"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" id="pickerCancelBtn">Batal</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ MODAL PREVIEW IMPORT ============ -->
-<div class="modal-overlay" id="importPreviewOverlay">
-  <div class="modal" style="max-width:900px;">
-    <h2>Preview Import</h2>
-    <p style="font-size:13px; color:#6b6058; margin-bottom:16px;" id="importSummary"></p>
-    <div style="max-height:420px; overflow:auto; border:1px solid var(--sand-line); border-radius:6px;">
-      <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
-        <thead>
-          <tr style="background:var(--sand); text-align:left;">
-            <th style="padding:8px 10px;">Status</th>
-            <th style="padding:8px 10px;">SKU</th>
-            <th style="padding:8px 10px;">Nama</th>
-            <th style="padding:8px 10px;">Kategori</th>
-            <th style="padding:8px 10px;">Ukuran</th>
-            <th style="padding:8px 10px;">Warna</th>
-            <th style="padding:8px 10px;">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="importPreviewBody"></tbody>
-      </table>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" id="importCancelBtn">Batal</button>
-      <button class="btn btn-gold" id="importConfirmBtn">Konfirmasi Import</button>
     </div>
   </div>
 </div>
@@ -357,15 +351,21 @@
 
     <div class="grid-2">
       <div class="field">
-        <label>Model / Lini</label>
-        <input type="text" id="fModel" placeholder="Contoh: Wave">
+        <label>Kategori Produk</label>
+        <select id="fModel">
+          <option value="Crocs">Crocs</option>
+          <option value="Jepit">Jepit</option>
+          <option value="Slop">Slop</option>
+          <option value="Sepatu / Sol">Sepatu / Sol</option>
+          <option value="Baim">Baim</option>
+        </select>
       </div>
       <div class="field">
-        <label>Kategori</label>
+        <label>Gender</label>
         <select id="fCategory">
-          <option value="pria">Pria</option>
-          <option value="wanita">Wanita</option>
-          <option value="anak">Anak</option>
+          <option value="pria">Man</option>
+          <option value="wanita">Ladies</option>
+          <option value="anak">Kids</option>
         </select>
       </div>
     </div>
@@ -396,11 +396,20 @@
     <div class="field">
       <label>Warna</label>
       <div class="color-list" id="colorList"></div>
-      <div class="add-color-row">
-        <input type="color" id="fColorHex" value="#1c1a18">
-        <input type="text" id="fColorName" placeholder="Nama warna, contoh: Hitam">
-        <button class="btn btn-outline" type="button" id="addColorBtn">Tambah</button>
-      </div>
+      <label class="bulk-color-drop" for="fColorImages">
+        <strong>Upload foto per-warna (bisa banyak sekaligus)</strong>
+        Warna & nama warna terdeteksi otomatis dari tiap foto — tinggal cek/edit namanya kalau kurang pas.
+      </label>
+      <input type="file" id="fColorImages" accept="image/*" multiple style="display:none;">
+      <p class="hint" id="colorUploadStatus"></p>
+      <details class="manual-color-fallback">
+        <summary>Atau tambah warna manual (tanpa foto)</summary>
+        <div class="add-color-row">
+          <input type="color" id="fColorHex" value="#1c1a18">
+          <input type="text" id="fColorName" placeholder="Nama warna, contoh: Hitam">
+          <button class="btn btn-outline" type="button" id="addColorBtn">Tambah</button>
+        </div>
+      </details>
     </div>
 
     <div class="field">
@@ -430,9 +439,12 @@
   const modalOverlay = document.getElementById('modalOverlay');
   const toast = document.getElementById('toast');
 
-  let currentColors = [];   // [{hex,name}]
+  let currentColors = [];   // [{hex,name,image?}]
   let currentImages = [];   // [url, ...]
   let editingId = null;
+
+  const GENDER_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
+  const PRODUCT_TYPES = ['Crocs','Jepit','Slop','Sepatu / Sol','Baim'];
 
   function showToast(msg){
     toast.textContent = msg;
@@ -491,6 +503,7 @@
   function renderTable(){
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
     const catFilter = document.getElementById('filterCategory').value;
+    const typeFilter = document.getElementById('filterProductType').value;
     const badgeFilter = document.getElementById('filterBadge').value;
     const sortBy = document.getElementById('sortBy').value;
 
@@ -499,9 +512,10 @@
         p.name.toLowerCase().includes(q) ||
         (p.sku && p.sku.toLowerCase().includes(q));
       const matchesCategory = !catFilter || p.category === catFilter;
+      const matchesType = !typeFilter || p.model === typeFilter;
       const matchesBadge = !badgeFilter ||
         (badgeFilter === 'none' ? !p.badge : p.badge === badgeFilter);
-      return matchesQuery && matchesCategory && matchesBadge;
+      return matchesQuery && matchesCategory && matchesType && matchesBadge;
     });
 
     list.sort((a, b) => {
@@ -526,10 +540,10 @@
         <div class="p-cell"><div class="p-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div></div>
         <div class="p-cell">
           <div class="p-name">${p.name}</div>
-          <div class="p-model">${p.model}</div>
           ${p.sku ? `<span class="sku-tag">${p.sku}</span>` : ''}
         </div>
-        <div class="p-cell col-category">${p.category}</div>
+        <div class="p-cell col-category">${GENDER_LABEL[p.category] || p.category}</div>
+        <div class="p-cell col-type"><span class="p-model">${p.model || '-'}</span></div>
         <!-- HARGA DINONAKTIFKAN: <div class="p-cell col-price">${formatRupiah(p.price)}</div> -->
         <div class="p-cell">${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
         <div class="p-cell row-actions">
@@ -548,7 +562,7 @@
   }
 
   ['searchInput'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
-  ['filterCategory','filterBadge','sortBy'].forEach(id => document.getElementById(id).addEventListener('change', renderTable));
+  ['filterCategory','filterProductType','filterBadge','sortBy'].forEach(id => document.getElementById(id).addEventListener('change', renderTable));
 
   async function deleteProduct(id){
     if (!confirm('Hapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
@@ -567,7 +581,7 @@
     document.getElementById('fId').value = '';
     document.getElementById('fName').value = '';
     document.getElementById('fSku').value = '';
-    document.getElementById('fModel').value = '';
+    document.getElementById('fModel').value = 'Crocs';
     document.getElementById('fCategory').value = 'pria';
     // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = '';
     document.getElementById('fBadge').value = '';
@@ -614,8 +628,8 @@
     const rows = allProducts.map(p => ({
       'SKU': p.sku || '-',
       'Nama Produk': p.name,
-      'Model / Lini': p.model,
-      'Kategori': p.category,
+      'Kategori Produk': p.model,
+      'Gender': GENDER_LABEL[p.category] || p.category,
       'Badge': p.badge === 'best' ? 'Best Seller' : (p.badge === 'new' ? 'Baru' : '-'),
       'Ukuran Tersedia': (p.sizes || []).join(', '),
       'Warna': (p.colors || []).map(c => c.name).join(', '),
@@ -638,171 +652,6 @@
     showToast(`Berhasil export ${rows.length} produk.`);
   });
 
-  /* ---------------- IMPORT DARI EXCEL ---------------- */
-  const IMPORT_HEADERS = ['SKU','Nama Produk','Model / Lini','Kategori','Badge','Ukuran Tersedia','Warna','Kode Warna (Hex)','Link Foto'];
-
-  document.getElementById('templateExcelBtn').addEventListener('click', () => {
-    const sample = [{
-      'SKU':'WV-PRO-BLK', 'Nama Produk':'Wave Pro', 'Model / Lini':'Wave', 'Kategori':'pria', 'Badge':'best',
-      'Ukuran Tersedia':'39,40,41,42,43', 'Warna':'Hitam,Cokelat', 'Kode Warna (Hex)':'#1c1a18,#a85c3c',
-      'Link Foto':'https://contoh.com/foto1.jpg,https://contoh.com/foto2.jpg'
-    }];
-    const ws = XLSX.utils.json_to_sheet(sample, { header: IMPORT_HEADERS });
-    ws['!cols'] = [{wch:16},{wch:24},{wch:16},{wch:12},{wch:10},{wch:18},{wch:20},{wch:22},{wch:44}];
-
-    const noteRows = [
-      ['PETUNJUK PENGISIAN'],
-      ['- SKU: opsional. Kalau SKU sama dengan produk yang sudah ada, produk itu akan DIPERBARUI (bukan dobel). Kalau kosong/beda, jadi produk baru.'],
-      ['- Kategori: wajib salah satu dari: pria, wanita, anak'],
-      ['- Badge: isi best / new / kosongkan kalau tidak ada'],
-      ['- Ukuran Tersedia: angka dipisah koma, contoh: 39,40,41,42'],
-      ['- Warna & Kode Warna (Hex): dipisah koma, URUTANNYA HARUS SAMA. Contoh: Warna="Hitam,Cokelat" & Hex="#1c1a18,#a85c3c"'],
-      ['- Link Foto: opsional, dipisah koma kalau lebih dari 1 foto. Kosongkan kalau belum ada, bisa upload manual nanti.'],
-      ['- Jangan ubah nama baris header (baris pertama sheet "Produk HILOS").'],
-      [''],
-      ['Hapus baris contoh di sheet "Produk HILOS" sebelum diisi data asli, atau timpa langsung.']
-    ];
-    const wsNote = XLSX.utils.aoa_to_sheet(noteRows);
-    wsNote['!cols'] = [{ wch:100 }];
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Produk HILOS');
-    XLSX.utils.book_append_sheet(wb, wsNote, 'Petunjuk');
-    XLSX.writeFile(wb, 'HILOS-Template-Import-Produk.xlsx');
-  });
-
-  document.getElementById('importExcelBtn').addEventListener('click', () => {
-    document.getElementById('importFileInput').click();
-  });
-
-  let pendingImportRows = []; // hasil parsing yang sudah divalidasi, siap dikonfirmasi
-
-  document.getElementById('importFileInput').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const wb = XLSX.read(evt.target.result, { type:'binary' });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' });
-        processImportRows(rawRows);
-      } catch (err){
-        showToast('Gagal membaca file: ' + err.message);
-      }
-      e.target.value = '';
-    };
-    reader.readAsBinaryString(file);
-  });
-
-  function processImportRows(rawRows){
-    const validCategories = ['pria','wanita','anak'];
-    const skusInFile = new Set();
-
-    pendingImportRows = rawRows.map((row, i) => {
-      const errors = [];
-
-      const name = String(row['Nama Produk'] || '').trim();
-      const model = String(row['Model / Lini'] || '').trim();
-      const categoryRaw = String(row['Kategori'] || '').trim().toLowerCase();
-      const skuRaw = String(row['SKU'] || '').trim();
-      const sku = (skuRaw && skuRaw !== '-') ? skuRaw : null;
-      const badgeRaw = String(row['Badge'] || '').trim().toLowerCase();
-      const sizesRaw = String(row['Ukuran Tersedia'] || '').trim();
-      const colorNamesRaw = String(row['Warna'] || '').trim();
-      const colorHexRaw = String(row['Kode Warna (Hex)'] || '').trim();
-      const imagesRaw = String(row['Link Foto'] || '').trim();
-
-      if (!name) errors.push('Nama Produk kosong');
-      if (!model) errors.push('Model / Lini kosong');
-      if (!validCategories.includes(categoryRaw)) errors.push('Kategori harus pria/wanita/anak');
-
-      let badge = null;
-      if (badgeRaw === 'best' || badgeRaw === 'best seller') badge = 'best';
-      else if (badgeRaw === 'new' || badgeRaw === 'baru') badge = 'new';
-      else if (badgeRaw && badgeRaw !== '-') errors.push('Badge harus best/new/kosong');
-
-      const sizes = sizesRaw ? sizesRaw.split(',').map(s => parseInt(s.trim(),10)).filter(n => !isNaN(n)) : [];
-
-      const colorNames = colorNamesRaw ? colorNamesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
-      const colorHexes = colorHexRaw ? colorHexRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
-      if (colorNames.length !== colorHexes.length) errors.push('Jumlah Warna & Kode Warna (Hex) tidak sama');
-      const colors = colorNames.map((n, idx) => ({ name:n, hex: colorHexes[idx] || '#8a8a86' }));
-
-      const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
-
-      if (sku){
-        if (skusInFile.has(sku)) errors.push('SKU dobel di dalam file ini');
-        skusInFile.add(sku);
-      }
-
-      const existing = sku ? allProducts.find(p => p.sku && p.sku.toLowerCase() === sku.toLowerCase()) : null;
-
-      return {
-        rowNum: i + 2, // +2: baris 1 header, data mulai baris 2 di Excel
-        valid: errors.length === 0,
-        errors,
-        action: existing ? 'update' : 'insert',
-        existingId: existing ? existing.id : null,
-        data: { sku, name, model, category: categoryRaw, badge, sizes, colors, images }
-      };
-    });
-
-    renderImportPreview();
-    document.getElementById('importPreviewOverlay').classList.add('open');
-  }
-
-  function renderImportPreview(){
-    const validCount = pendingImportRows.filter(r => r.valid).length;
-    const errorCount = pendingImportRows.length - validCount;
-    document.getElementById('importSummary').textContent =
-      `${pendingImportRows.length} baris terbaca — ${validCount} valid, ${errorCount} error (baris error akan dilewati).`;
-
-    document.getElementById('importPreviewBody').innerHTML = pendingImportRows.map(r => `
-      <tr style="border-top:1px solid var(--sand-line); ${r.valid ? '' : 'background:#fdf1ee;'}">
-        <td style="padding:8px 10px;">${r.valid ? '✅' : '❌'} Baris ${r.rowNum}</td>
-        <td style="padding:8px 10px;">${r.data.sku || '-'}</td>
-        <td style="padding:8px 10px;">${r.data.name || '-'}</td>
-        <td style="padding:8px 10px;">${r.data.category || '-'}</td>
-        <td style="padding:8px 10px;">${(r.data.sizes||[]).join(',') || '-'}</td>
-        <td style="padding:8px 10px;">${(r.data.colors||[]).map(c=>c.name).join(', ') || '-'}</td>
-        <td style="padding:8px 10px; font-size:11.5px; color:#9c4726;">
-          ${r.valid ? (r.action === 'update' ? 'Update produk existing' : 'Produk baru') : r.errors.join('; ')}
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  document.getElementById('importCancelBtn').addEventListener('click', () => {
-    document.getElementById('importPreviewOverlay').classList.remove('open');
-    pendingImportRows = [];
-  });
-
-  document.getElementById('importConfirmBtn').addEventListener('click', async () => {
-    const validRows = pendingImportRows.filter(r => r.valid);
-    if (!validRows.length){ showToast('Tidak ada baris valid untuk di-import.'); return; }
-
-    let inserted = 0, updated = 0, failed = 0;
-
-    for (const r of validRows){
-      let error;
-      if (r.action === 'update'){
-        ({ error } = await sb.from('products').update(r.data).eq('id', r.existingId));
-        if (!error) updated++;
-      } else {
-        ({ error } = await sb.from('products').insert(r.data));
-        if (!error) inserted++;
-      }
-      if (error) failed++;
-    }
-
-    document.getElementById('importPreviewOverlay').classList.remove('open');
-    pendingImportRows = [];
-    showToast(`Import selesai — ${inserted} baru, ${updated} diperbarui${failed ? `, ${failed} gagal` : ''}.`);
-    loadProducts();
-  });
-
   document.getElementById('cancelBtn').addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
@@ -810,9 +659,9 @@
   function renderColorList(){
     const wrap = document.getElementById('colorList');
     wrap.innerHTML = currentColors.map((c, i) => `
-      <span class="color-chip">
-        <span class="swatch" style="background:${c.hex}"></span>
-        ${c.name}
+      <span class="color-chip${c.image ? ' detected' : ''}">
+        ${c.image ? `<img class="swatch-thumb" src="${c.image}" alt="">` : `<span class="swatch" style="background:${c.hex}"></span>`}
+        <input type="text" value="${c.name}" data-color-name="${i}" title="Klik untuk ubah nama warna">
         <button type="button" data-remove-color="${i}">×</button>
       </span>
     `).join('');
@@ -820,6 +669,11 @@
       btn.addEventListener('click', () => {
         currentColors.splice(Number(btn.dataset.removeColor), 1);
         renderColorList();
+      });
+    });
+    wrap.querySelectorAll('[data-color-name]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        currentColors[Number(inp.dataset.colorName)].name = inp.value.trim() || 'Tanpa nama';
       });
     });
   }
@@ -830,6 +684,94 @@
     if (!name) { showToast('Isi nama warna dulu.'); return; }
     currentColors.push({ hex, name });
     document.getElementById('fColorName').value = '';
+    renderColorList();
+  });
+
+  /* ---- bulk color upload + deteksi warna otomatis ---- */
+  const NAMED_COLORS = [
+    { name:'Hitam', rgb:[20,20,20] }, { name:'Putih', rgb:[245,245,245] },
+    { name:'Abu-abu', rgb:[128,128,128] }, { name:'Abu Muda', rgb:[190,190,190] },
+    { name:'Abu Tua', rgb:[70,70,70] }, { name:'Merah', rgb:[200,30,30] },
+    { name:'Merah Marun', rgb:[120,25,25] }, { name:'Oranye', rgb:[230,120,30] },
+    { name:'Kuning', rgb:[235,205,40] }, { name:'Hijau', rgb:[40,140,60] },
+    { name:'Hijau Army', rgb:[85,100,55] }, { name:'Hijau Muda', rgb:[150,210,120] },
+    { name:'Biru', rgb:[40,90,180] }, { name:'Biru Muda', rgb:[110,170,220] },
+    { name:'Biru Navy', rgb:[25,40,80] }, { name:'Biru Dongker', rgb:[15,30,60] },
+    { name:'Ungu', rgb:[120,60,160] }, { name:'Pink', rgb:[230,130,170] },
+    { name:'Cokelat', rgb:[110,70,40] }, { name:'Cokelat Muda', rgb:[170,130,90] },
+    { name:'Tan / Krem', rgb:[210,180,140] }, { name:'Beige', rgb:[225,210,180] },
+    { name:'Emas', rgb:[190,150,60] }, { name:'Perak', rgb:[190,190,195] },
+    { name:'Mocca', rgb:[130,100,70] }, { name:'Salem', rgb:[240,170,150] },
+    { name:'Toska', rgb:[40,160,150] }
+  ];
+
+  function nearestColorName(r, g, b){
+    let best = NAMED_COLORS[0], bestDist = Infinity;
+    for (const c of NAMED_COLORS){
+      const dr = r - c.rgb[0], dg = g - c.rgb[1], db = b - c.rgb[2];
+      const dist = dr*dr + dg*dg + db*db;
+      if (dist < bestDist){ bestDist = dist; best = c; }
+    }
+    return best.name;
+  }
+
+  function extractDominantColor(imgEl){
+    const canvas = document.createElement('canvas');
+    const w = canvas.width = 80;
+    const h = canvas.height = 80;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgEl, 0, 0, w, h);
+    let data;
+    try {
+      data = ctx.getImageData(0, 0, w, h).data;
+    } catch (err){
+      return null; // gagal baca (mis. CORS) — fallback ke default
+    }
+    let rSum=0, gSum=0, bSum=0, count=0;
+    for (let i=0; i<data.length; i+=4){
+      const r=data[i], g=data[i+1], b=data[i+2], a=data[i+3];
+      if (a < 40) continue; // transparan, skip
+      if (r>235 && g>235 && b>235) continue; // background putih, skip
+      rSum+=r; gSum+=g; bSum+=b; count++;
+    }
+    if (!count) return null;
+    const r = Math.round(rSum/count), g = Math.round(gSum/count), b = Math.round(bSum/count);
+    const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+    return { hex, name: nearestColorName(r,g,b) };
+  }
+
+  document.getElementById('fColorImages').addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    const statusEl = document.getElementById('colorUploadStatus');
+    statusEl.textContent = `Mengunggah &amp; mendeteksi warna ${files.length} foto...`.replace('&amp;','&');
+
+    for (const file of files){
+      const path = `colors/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+      const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
+      if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
+      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
+      const imageUrl = pub.publicUrl;
+
+      let detected = null;
+      try {
+        detected = await new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(extractDominantColor(img));
+          img.onerror = () => resolve(null);
+          img.src = imageUrl;
+        });
+      } catch (err){ detected = null; }
+
+      currentColors.push({
+        hex: detected ? detected.hex : '#8a8a86',
+        name: detected ? detected.name : 'Warna baru',
+        image: imageUrl
+      });
+    }
+    statusEl.textContent = '';
+    e.target.value = '';
     renderColorList();
   });
 
@@ -914,8 +856,9 @@
     });
   });
 
-  /* ---------------- TOP 10 ---------------- */
-  const top10Assignments = new Array(10).fill(null); // index 0-9 => product object or null
+  /* ---------------- TOP 5 ---------------- */
+  const TOP_N = 5;
+  const top10Assignments = new Array(TOP_N).fill(null); // index 0-4 => product object or null
   let pickerTargetRank = null;
 
   function currentMonthStr(){
@@ -934,9 +877,10 @@
     const { data, error } = await sb
       .from('top10_rankings')
       .select('rank, product_id')
-      .eq('month', month);
+      .eq('month', month)
+      .lte('rank', TOP_N);
 
-    if (error){ showToast('Gagal memuat Top 10: ' + error.message); return; }
+    if (error){ showToast('Gagal memuat Top 5: ' + error.message); return; }
 
     data.forEach(row => {
       const p = allProducts.find(x => x.id === row.product_id);
@@ -949,7 +893,7 @@
   function renderTop10(){
     const list = document.getElementById('top10List');
     list.innerHTML = '';
-    for (let i = 0; i < 10; i++){
+    for (let i = 0; i < TOP_N; i++){
       const p = top10Assignments[i];
       const thumb = p && p.images && p.images[0] ? p.images[0] : '';
       const row = document.createElement('div');
@@ -1042,7 +986,7 @@
       const { error: insError } = await sb.from('top10_rankings').insert(rows);
       if (insError){ showToast('Gagal simpan: ' + insError.message); return; }
     }
-    showToast('Top 10 bulan ' + month + ' disimpan.');
+    showToast('Top 5 bulan ' + month + ' disimpan.');
   });
 
   checkSession();
