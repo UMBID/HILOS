@@ -708,14 +708,70 @@
     renderColorList();
   });
 
+  /* ---- kompresi foto otomatis sebelum upload (hemat storage Supabase) ----
+     Resize ke maksimum dimensi tertentu + re-encode JPEG kualitas terjaga.
+     PNG dengan transparansi asli tetap dijaga sebagai PNG (tidak dipaksa JPEG). */
+  function compressImageFile(file, { maxDim = 1600, quality = 0.82 } = {}){
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim){
+            const scale = maxDim / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // cek transparansi asli (sampling biar cepat) — hanya relevan untuk PNG
+          let hasAlpha = false;
+          if (file.type === 'image/png'){
+            try {
+              const sample = ctx.getImageData(0, 0, width, height).data;
+              for (let i = 3; i < sample.length; i += 4 * 97){
+                if (sample[i] < 255){ hasAlpha = true; break; }
+              }
+            } catch (err){ hasAlpha = true; } // gagal baca (mis. CORS) — aman-kan sebagai PNG
+          }
+
+          const outType = hasAlpha ? 'image/png' : 'image/jpeg';
+          canvas.toBlob((blob) => {
+            if (!blob){ resolve(file); return; } // gagal kompres — pakai file asli, jangan sampai gagal total
+            const ext = outType === 'image/png' ? 'png' : 'jpg';
+            const newName = file.name.replace(/\.[^.]+$/, '') + '.' + ext;
+            const compressed = new File([blob], newName, { type: outType });
+            // kalau hasil kompresi malah lebih besar dari aslinya (jarang, tapi bisa terjadi di file kecil), pakai yang asli
+            resolve(compressed.size < file.size ? compressed : file);
+          }, outType, outType === 'image/jpeg' ? quality : undefined);
+        };
+        img.onerror = () => resolve(file); // gagal decode — fallback ke file asli
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function formatKB(bytes){ return (bytes / 1024).toFixed(0) + ' KB'; }
+
   /* ---- bulk upload foto warna: setiap foto jadi 1 baris warna, RGB & nama diisi manual ---- */
   document.getElementById('fColorImages').addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
     const statusEl = document.getElementById('colorUploadStatus');
-    statusEl.textContent = `Mengunggah ${files.length} foto warna...`;
+    let sizeBefore = 0, sizeAfter = 0;
 
-    for (const file of files){
+    for (let i = 0; i < files.length; i++){
+      const original = files[i];
+      statusEl.textContent = `Mengompres & mengunggah foto ${i + 1} dari ${files.length}...`;
+      const file = await compressImageFile(original);
+      sizeBefore += original.size; sizeAfter += file.size;
+
       const path = `colors/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
       const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
       if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
@@ -725,7 +781,7 @@
     statusEl.textContent = '';
     e.target.value = '';
     renderColorList();
-    showToast('Foto warna terunggah — atur kode warna (RGB) & nama tiap baris di bawah.');
+    showToast(`Foto warna terunggah (${formatKB(sizeBefore)} → ${formatKB(sizeAfter)}) — atur kode warna (RGB) & nama tiap baris di bawah.`);
   });
 
   /* ---- images ---- */
@@ -749,18 +805,24 @@
     const files = Array.from(e.target.files);
     if (!files.length) return;
     const statusEl = document.getElementById('uploadStatus');
-    statusEl.textContent = `Mengunggah ${files.length} foto...`;
+    let sizeBefore = 0, sizeAfter = 0;
 
-    for (const file of files){
+    for (let i = 0; i < files.length; i++){
+      const original = files[i];
+      statusEl.textContent = `Mengompres & mengunggah foto ${i + 1} dari ${files.length}...`;
+      const file = await compressImageFile(original);
+      sizeBefore += original.size; sizeAfter += file.size;
+
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
       const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
       if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
       const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
       currentImages.push(pub.publicUrl);
     }
-    statusEl.textContent = '';
+    statusEl.textContent = sizeBefore ? `Selesai — ukuran total ${formatKB(sizeBefore)} → ${formatKB(sizeAfter)}.` : '';
     e.target.value = '';
     renderImgList();
+    setTimeout(() => { statusEl.textContent = ''; }, 4000);
   });
 
   /* ---- save (insert / update) ---- */
