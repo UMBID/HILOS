@@ -119,10 +119,10 @@
   }
   .stage-3d.visible{display:flex;}
   .stage-3d:active{cursor:grabbing;}
-  .stage-3d-inner{width:60%;transform-style:preserve-3d;transform:rotateY(0deg);}
-  .stage-3d-inner.spin{animation:spin360 6s linear infinite;}
+  .stage-3d-inner{width:62%;transform-style:preserve-3d;transform:rotateY(0deg);filter:drop-shadow(0 18px 24px rgba(0,0,0,0.35));}
+  .stage-3d-inner.spin{animation:spin360 5s linear infinite;}
   @keyframes spin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
-  .stage-3d-inner svg{width:100%;height:auto;overflow:visible;}
+  .stage-3d-inner img{width:100%;height:auto;display:block;object-fit:contain;backface-visibility:hidden;pointer-events:none;-webkit-user-drag:none;}
   .stage-3d-label{position:absolute;top:16px;left:16px;font-family:'Archivo',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-light);display:flex;align-items:center;gap:8px;}
   .stage-3d-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
 
@@ -330,14 +330,7 @@
           <div class="stage-3d" id="stage3d">
             <span class="stage-3d-label">3D Preview</span>
             <div class="stage-3d-inner" id="stage3dInner">
-              <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
-                <g fill="none" stroke="#6fa3d4" stroke-width="1.4" opacity="0.9">
-                  <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
-                  <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
-                  <rect x="168" y="108" width="70" height="26" rx="4"/>
-                  <path d="M60 70 L60 90 M80 60 L80 85 M100 55 L100 82 M60 170 L60 195 M85 185 L85 210 M115 200 L115 222"/>
-                </g>
-              </svg>
+              <img id="stage3dImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Preview 3D produk">
             </div>
           </div>
         </div>
@@ -698,10 +691,13 @@
     zoomLens.style.backgroundPosition = `${x}% ${y}%`;
   });
 
+  const stage3dImg = document.getElementById('stage3dImg');
   const galleryObserver = new MutationObserver(() => {
     if (zoomActive) zoomLens.style.backgroundImage = `url(${mainImg.src})`;
+    stage3dImg.src = mainImg.src; // foto di panel 3D selalu ikut foto/warna yang lagi ditampilkan
   });
   galleryObserver.observe(mainImg, { attributes:true, attributeFilter:['src'] });
+  stage3dImg.src = mainImg.src; // sinkronkan begitu halaman pertama kali dimuat
 
   /* ---- 3D viewer toggle + drag rotate + auto-spin ---- */
   const btn3d = document.getElementById('btn3d');
