@@ -542,6 +542,8 @@
   const sb = window.getSupabaseClient();
   const FALLBACK_IMG = 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900';
   let flagshipImages = [FALLBACK_IMG]; // galeri foto produk aktif — dipakai untuk sequence di panel 3D
+  let flagshipCutouts = {}; // map {urlFotoAsli: urlFotoTransparan} — diisi admin lewat fitur "hapus background otomatis"
+  let flagship3dDefault = FALLBACK_IMG; // foto yang ditampilkan panel 3D saat halaman pertama dibuka (prioritaskan versi transparan kalau ada)
   function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
   async function loadFlagshipProduct(){
@@ -553,7 +555,7 @@
     if (requestedId){
       const { data: product, error } = await sb
         .from('products')
-        .select('id,name,model,category,price,images,colors,sizes,badge')
+        .select('id,name,model,category,price,images,colors,sizes,badge,cutouts')
         .eq('id', requestedId)
         .maybeSingle();
       if (error || !product) return null;
@@ -590,7 +592,7 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge)')
+      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge,cutouts)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
@@ -609,6 +611,8 @@
     const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
     flagshipImages = images; // dipakai initFlagshipInteractions untuk isi panel 3D
+    const cutouts = (p.cutouts && typeof p.cutouts === 'object') ? p.cutouts : {}; // {urlAsli: urlTransparan}
+    flagshipCutouts = cutouts;
 
     const CATEGORY_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
     document.querySelector('.flagship-tag').textContent =
@@ -630,7 +634,7 @@
       (rank ? `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 5</span>` : '');
 
     document.querySelector('.color-row').innerHTML = colors.map((c, i) => `
-      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-img="${c.image || ''}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
+      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-img="${c.image || ''}" data-cutout="${(c.image && cutouts[c.image]) || ''}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
     `).join('');
     document.getElementById('colorValue').textContent = colors[0].name;
     document.getElementById('mainImg').dataset.defaultImg = images[0];
@@ -638,6 +642,10 @@
     if (colors[0] && colors[0].image){
       document.getElementById('mainImg').src = colors[0].image;
     }
+    // panel 3D: pakai versi transparan (cutout) kalau tersedia untuk foto yang sedang tampil,
+    // biar yang kelihatan muter cuma siluet produknya, bukan kotak foto + background-nya
+    const initial3dSrc = (colors[0] && colors[0].image) ? colors[0].image : images[0];
+    flagship3dDefault = cutouts[initial3dSrc] || initial3dSrc;
 
     document.querySelector('.size-row').innerHTML = sizes.map((s, i) => `
       <button class="size-btn ${i === Math.floor(sizes.length/2) ? 'active' : ''}">${s}</button>
@@ -689,6 +697,10 @@
         mainImg.src = btn.dataset.img;
         mainImg.style.opacity = '1';
       }, 180);
+      // panel 3D ikut pakai foto yang baru dipilih di galeri (pakai cutout kalau ada),
+      // supaya tidak nyangkut di foto warna/tampilan sebelumnya kalau dibuka lagi
+      syncStage3dToImage(flagshipCutouts[btn.dataset.img] || btn.dataset.img);
+      if (isSpinning) startAutoSpin();
     });
   });
 
@@ -741,7 +753,7 @@
   function setStage3dImage(src){
     stage3dImg.src = src || FALLBACK_IMG;
   }
-  setStage3dImage(flagshipImages[0]);
+  setStage3dImage(flagship3dDefault);
 
   function applyRotation(deg){
     currentRotation = deg;
@@ -751,14 +763,27 @@
     stage3dShadow.style.transform = `translateX(-50%) scaleX(${1 - Math.abs(wobble)})`;
   }
 
+  const SPIN_DURATION_MS = 5500; // HARUS sama dengan durasi @keyframes spin360 di CSS (5.5s)
+  let spinStartedAt = 0;
+
   function startAutoSpin(){
     if (prefersReducedMotion) return; // hormati preferensi aksesibilitas, jangan auto-gerak
+    spinStartedAt = performance.now();
     stage3dInner.style.transform = ''; // lepas rotasi manual, biar animasi CSS yang jalan
     stage3dInner.classList.add('auto-spin');
   }
   function stopAutoSpin(){
+    // BUG LAMA: currentRotation tidak pernah ikut terupdate selama animasi CSS auto-spin
+    // berjalan, jadi begitu animasi dihentikan, foto "lompat" balik ke sudut sebelum spin
+    // dimulai. Diperbaiki dengan menghitung sudut yang sedang dilalui animasi berdasarkan
+    // waktu yang sudah berlalu, supaya transisi ke mode geser-manual terasa mulus (nyambung).
+    if (stage3dInner.classList.contains('auto-spin')){
+      const elapsed = performance.now() - spinStartedAt;
+      const degTravelled = (elapsed / SPIN_DURATION_MS) * 360;
+      currentRotation = (currentRotation + degTravelled) % 360;
+    }
     stage3dInner.classList.remove('auto-spin');
-    applyRotation(currentRotation); // lanjutkan dari posisi rotasi manual terakhir
+    applyRotation(currentRotation); // lanjutkan dari posisi sudut yang benar, bukan sudut lama
   }
 
   function set3dMode(on){
@@ -851,8 +876,9 @@
       });
       if (!matched) thumbBtns.forEach(b => b.classList.remove('active'));
 
-      // panel 3D ikut pakai foto warna ini kalau ada; kalau tidak, balik ke foto utama produk
-      syncStage3dToImage(dot.dataset.img || flagshipImages[0]);
+      // panel 3D ikut pakai foto warna ini kalau ada — prioritaskan versi transparan (cutout)
+      // biar rotasinya natural; kalau tidak ada warna/cutout, balik ke foto utama produk
+      syncStage3dToImage(dot.dataset.cutout || dot.dataset.img || flagship3dDefault);
       if (isSpinning) startAutoSpin();
     });
   });
