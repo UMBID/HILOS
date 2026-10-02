@@ -216,6 +216,26 @@
   .bulk-color-drop strong{ display:block; font-size:13.5px; margin-bottom:2px; }
   details.manual-color-fallback{ margin-top:10px; }
   details.manual-color-fallback summary{ font-size:12px; color:#8a8078; cursor:pointer; padding:4px 0; }
+
+  /* ---------- hapus background otomatis (cutout transparan untuk panel 3D) ---------- */
+  .cutout-toggle{ display:flex; align-items:center; gap:7px; margin-top:10px; font-size:12px; color:#8a8078; cursor:pointer; }
+  .cutout-toggle input{ width:15px; height:15px; accent-color:var(--gold); cursor:pointer; flex-shrink:0; }
+  .cutout-badge{
+    font-size:9.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+    color:#2f6fb0; background:rgba(47,111,176,0.1); border-radius:4px; padding:2px 6px; flex-shrink:0;
+  }
+  .cutout-badge.pending{ color:#8a8078; background:rgba(138,128,120,0.12); }
+  .cutout-manual-btn{
+    font-size:9.5px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
+    color:#8a8078; background:rgba(138,128,120,0.1); border:1px solid rgba(138,128,120,0.25);
+    border-radius:4px; padding:2px 6px; cursor:pointer; flex-shrink:0; font-family:inherit;
+  }
+  .cutout-manual-btn:hover{ background:rgba(138,128,120,0.2); }
+  .cutout-manual-btn.has-cutout{
+    color:#2f6fb0; background:rgba(47,111,176,0.1); border-color:rgba(47,111,176,0.3);
+  }
+  .cutout-manual-btn.has-cutout:hover{ background:rgba(47,111,176,0.2); }
+  .img-thumb .cutout-manual-btn{ position:absolute; bottom:2px; left:2px; }
 </style>
 </head>
 <body>
@@ -412,6 +432,7 @@
         Tiap foto yang diunggah akan jadi satu baris warna — atur kode warnanya (RGB) &amp; nama manual di baris masing-masing.
       </label>
       <input type="file" id="fColorImages" accept="image/*" multiple style="display:none;">
+      <label class="cutout-toggle"><input type="checkbox" id="autoCutoutColors" checked> Buat versi transparan otomatis tiap foto (biar panel 3D di halaman produk muter natural, tanpa background ikut kelihatan)</label>
       <p class="hint" id="colorUploadStatus"></p>
       <details class="manual-color-fallback">
         <summary>Atau tambah warna manual tanpa foto</summary>
@@ -428,8 +449,12 @@
       <div class="thumb-list" id="imgList"></div>
       <label class="upload-drop" for="fImages">Klik untuk pilih foto (bisa lebih dari satu)</label>
       <input type="file" id="fImages" accept="image/*" multiple style="display:none;">
+      <label class="cutout-toggle"><input type="checkbox" id="autoCutoutMain" checked> Buat versi transparan otomatis tiap foto (untuk panel 3D)</label>
       <p class="hint" id="uploadStatus"></p>
     </div>
+
+    <!-- input tersembunyi dipakai bersama oleh tombol "+ PNG" di foto warna & foto produk -->
+    <input type="file" id="manualCutoutInput" accept="image/png,image/webp,image/*" style="display:none;">
 
     <div class="modal-actions">
       <button class="btn btn-outline" id="cancelBtn">Batal</button>
@@ -452,6 +477,8 @@
 
   let currentColors = [];   // [{hex,name,image?}]
   let currentImages = [];   // [url, ...]
+  let currentCutouts = {};  // {urlFotoAsli: urlFotoTransparan} — dipakai panel 3D di flagship.html
+  let manualCutoutTarget = null; // { kind:'color'|'image', index } — target tombol "+ PNG" yang sedang diklik
   let editingId = null;
 
   const GENDER_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
@@ -588,6 +615,7 @@
     editingId = null;
     currentColors = [];
     currentImages = [];
+    currentCutouts = {};
     document.getElementById('modalTitle').textContent = 'Tambah Produk';
     document.getElementById('fId').value = '';
     document.getElementById('fName').value = '';
@@ -623,6 +651,7 @@
     document.getElementById('fSizes').value = (p.sizes || []).join(',');
     currentColors = Array.isArray(p.colors) ? [...p.colors] : [];
     currentImages = Array.isArray(p.images) ? [...p.images] : [];
+    currentCutouts = (p.cutouts && typeof p.cutouts === 'object') ? { ...p.cutouts } : {};
     renderColorList();
     renderImgList();
     modalOverlay.classList.add('open');
@@ -675,13 +704,21 @@
         <input type="color" value="${c.hex}" data-color-hex="${i}" title="Atur kode warna (RGB)">
         <span class="hex-label">${c.hex}</span>
         <input type="text" value="${c.name}" data-color-name="${i}" placeholder="Nama warna">
+        ${c.image ? `<button type="button" class="cutout-manual-btn${currentCutouts[c.image] ? ' has-cutout' : ''}" data-manual-color="${i}" title="${currentCutouts[c.image] ? 'Sudah ada versi transparan — klik untuk ganti dengan PNG sendiri' : 'Belum ada versi transparan — klik untuk upload PNG sendiri'}">${currentCutouts[c.image] ? '3D ✓' : '+ PNG'}</button>` : ''}
         <button type="button" data-remove-color="${i}">×</button>
       </span>
     `).join('');
     wrap.querySelectorAll('[data-remove-color]').forEach(btn => {
       btn.addEventListener('click', () => {
-        currentColors.splice(Number(btn.dataset.removeColor), 1);
+        const removed = currentColors.splice(Number(btn.dataset.removeColor), 1)[0];
+        if (removed && removed.image) delete currentCutouts[removed.image]; // bersihkan cutout yatim
         renderColorList();
+      });
+    });
+    wrap.querySelectorAll('[data-manual-color]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        manualCutoutTarget = { kind: 'color', index: Number(btn.dataset.manualColor) };
+        document.getElementById('manualCutoutInput').click();
       });
     });
     wrap.querySelectorAll('[data-color-name]').forEach(inp => {
@@ -759,6 +796,138 @@
 
   function formatKB(bytes){ return (bytes / 1024).toFixed(0) + ' KB'; }
 
+  /* ---- hapus background otomatis (cutout transparan, dipakai panel 3D di flagship.html) ----
+     Jalan 100% di browser admin (library WASM, bukan server) — gratis, tidak menambah biaya
+     Supabase. Dimuat baru saat dipakai pertama kali (lazy), supaya tidak bikin halaman admin
+     berat untuk yang tidak pakai fitur ini. Didesain best-effort: kalau library gagal dimuat
+     atau gagal proses (koneksi lambat, dsb), fungsi ini cukup return null dan foto ASLI tetap
+     terupload normal seperti biasa — fitur 3D natural jadi tidak aktif untuk foto itu saja,
+     tidak pernah menggagalkan upload produknya. */
+  let _removeBgFn = null;
+  let _removeBgLoadFailed = false;
+  async function getRemoveBg(){
+    if (_removeBgFn) return _removeBgFn;
+    if (_removeBgLoadFailed) return null;
+    try {
+      const mod = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/browser.mjs');
+      _removeBgFn = mod.removeBackground;
+      return _removeBgFn;
+    } catch (err){
+      console.warn('Gagal memuat modul hapus background (cutout 3D dilewati):', err);
+      _removeBgLoadFailed = true;
+      return null;
+    }
+  }
+
+  async function makeCutout(file){
+    try {
+      const removeBackground = await getRemoveBg();
+      if (!removeBackground) return null;
+      const blob = await removeBackground(file, {
+        publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/dist/'
+      });
+      return blob; // Blob PNG dengan alpha channel (background transparan)
+    } catch (err){
+      console.warn('Gagal membuat versi transparan untuk salah satu foto (dilewati, foto asli tetap dipakai):', err);
+      return null;
+    }
+  }
+
+  async function uploadCutoutFor(originalPublicUrl, baseFileName, cutoutBlob, folder){
+    if (!cutoutBlob) return;
+    const cutoutName = baseFileName.replace(/\.[^.]+$/, '') + '-3d.png';
+    const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}-${cutoutName}`;
+    const cutoutFile = new File([cutoutBlob], cutoutName, { type: 'image/png' });
+    const { error: cutErr } = await sb.storage.from('product-images').upload(path, cutoutFile);
+    if (cutErr){ console.warn('Gagal upload versi transparan:', cutErr.message); return; }
+    const { data: cutPub } = sb.storage.from('product-images').getPublicUrl(path);
+    // PENTING (fix race condition): proses otomatis ini bisa makan waktu lumayan lama
+    // (muat model AI pertama kali). Kalau selama menunggu itu admin sempat upload PNG-nya
+    // sendiri lewat tombol "+ PNG" untuk foto yang sama, JANGAN ditimpa balik oleh hasil
+    // otomatis yang baru selesai belakangan — punya admin yang menang.
+    if (currentCutouts[originalPublicUrl]) return;
+    currentCutouts[originalPublicUrl] = cutPub.publicUrl;
+  }
+
+  /* ---- versi transparan upload MANUAL (admin sudah siapkan sendiri PNG-nya) ----
+     Lebih diandalkan daripada hasil auto, karena sudah pasti sesuai keinginan.
+     Tombol "+ PNG" di tiap foto warna / foto produk memicu input tersembunyi ini. */
+  function toPngFile(file, { maxDim = 1600 } = {}){
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim){
+            const scale = maxDim / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height); // transparansi (alpha) ikut terbawa ke canvas
+
+          // cek apakah benar-benar ADA piksel transparan (alpha < 255) di foto ini.
+          // Kalau tidak ada sama sekali, besar kemungkinan ini BUKAN PNG transparan asli —
+          // misalnya screenshot pratinjau "kotak-kotak" dari aplikasi/situs penghapus
+          // background (kotak-kotak itu cuma indikator visual di app, bukan transparansi
+          // sungguhan — begitu di-screenshot, ia ikut ter-rekam jadi piksel biasa).
+          let hasAlpha = false;
+          try {
+            const sample = ctx.getImageData(0, 0, width, height).data;
+            for (let i = 3; i < sample.length; i += 4 * 61){
+              if (sample[i] < 255){ hasAlpha = true; break; }
+            }
+          } catch (err){ hasAlpha = true; } // gagal baca (mis. CORS) — anggap aman, jangan blokir
+
+          canvas.toBlob((blob) => {
+            if (!blob){ resolve({ file, hasAlpha: true }); return; }
+            const name = file.name.replace(/\.[^.]+$/, '') + '.png';
+            resolve({ file: new File([blob], name, { type: 'image/png' }), hasAlpha });
+          }, 'image/png');
+        };
+        img.onerror = () => resolve({ file, hasAlpha: true }); // gagal decode — upload file asli saja
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve({ file, hasAlpha: true });
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('manualCutoutInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    const target = manualCutoutTarget;
+    manualCutoutTarget = null;
+    if (!file || !target) return;
+
+    const originalUrl = target.kind === 'color'
+      ? (currentColors[target.index] && currentColors[target.index].image)
+      : currentImages[target.index];
+    if (!originalUrl){ showToast('Foto aslinya tidak ditemukan — upload foto ini dulu.'); return; }
+
+    showToast('Memeriksa & mengunggah versi transparan...');
+    const { file: pngFile, hasAlpha } = await toPngFile(file);
+    if (!hasAlpha){
+      const lanjut = window.confirm(
+        'File ini sepertinya TIDAK punya transparansi asli (tidak ada alpha channel terdeteksi).\n\n' +
+        'Kemungkinan ini screenshot pratinjau "kotak-kotak" dari aplikasi/situs penghapus background, bukan file PNG transparan yang sebenarnya — kalau diunggah, kotak-kotaknya akan ikut tampil sebagai gambar biasa, bukan transparan.\n\n' +
+        'Tetap unggah file ini apa adanya?'
+      );
+      if (!lanjut){ showToast('Dibatalkan — cari/export ulang file PNG dengan transparansi asli.'); return; }
+    }
+    const path = `cutouts-manual/${Date.now()}-${Math.random().toString(36).slice(2)}-${pngFile.name}`;
+    const { error: upErr } = await sb.storage.from('product-images').upload(path, pngFile);
+    if (upErr){ showToast('Gagal upload: ' + upErr.message); return; }
+    const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
+    currentCutouts[originalUrl] = pub.publicUrl;
+    renderColorList();
+    renderImgList();
+    showToast('Versi transparan tersimpan untuk panel 3D.');
+  });
+
   /* ---- bulk upload foto warna: setiap foto jadi 1 baris warna, RGB & nama diisi manual ---- */
   document.getElementById('fColorImages').addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
@@ -766,6 +935,7 @@
     const statusEl = document.getElementById('colorUploadStatus');
     let sizeBefore = 0, sizeAfter = 0;
 
+    const wantCutout = document.getElementById('autoCutoutColors').checked;
     for (let i = 0; i < files.length; i++){
       const original = files[i];
       statusEl.textContent = `Mengompres & mengunggah foto ${i + 1} dari ${files.length}...`;
@@ -777,6 +947,14 @@
       if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
       const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
       currentColors.push({ hex: '#8a8a86', name: 'Warna baru', image: pub.publicUrl });
+      renderColorList(); // tampilkan foto ini segera, badge 3D menyusul kalau cutout berhasil
+
+      if (wantCutout){
+        statusEl.textContent = `Membuat versi transparan untuk panel 3D (foto ${i + 1} dari ${files.length})...`;
+        const cutoutBlob = await makeCutout(file);
+        await uploadCutoutFor(pub.publicUrl, file.name, cutoutBlob, 'colors3d');
+        renderColorList();
+      }
     }
     statusEl.textContent = '';
     e.target.value = '';
@@ -790,13 +968,21 @@
     wrap.innerHTML = currentImages.map((url, i) => `
       <div class="img-thumb">
         <img src="${url}" alt="">
+        <button type="button" class="cutout-manual-btn${currentCutouts[url] ? ' has-cutout' : ''}" data-manual-image="${i}" title="${currentCutouts[url] ? 'Sudah ada versi transparan — klik untuk ganti dengan PNG sendiri' : 'Belum ada versi transparan — klik untuk upload PNG sendiri'}">${currentCutouts[url] ? '3D ✓' : '+ PNG'}</button>
         <button type="button" data-remove-img="${i}">×</button>
       </div>
     `).join('');
     wrap.querySelectorAll('[data-remove-img]').forEach(btn => {
       btn.addEventListener('click', () => {
-        currentImages.splice(Number(btn.dataset.removeImg), 1);
+        const removedUrl = currentImages.splice(Number(btn.dataset.removeImg), 1)[0];
+        if (removedUrl) delete currentCutouts[removedUrl]; // bersihkan cutout yatim
         renderImgList();
+      });
+    });
+    wrap.querySelectorAll('[data-manual-image]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        manualCutoutTarget = { kind: 'image', index: Number(btn.dataset.manualImage) };
+        document.getElementById('manualCutoutInput').click();
       });
     });
   }
@@ -807,6 +993,7 @@
     const statusEl = document.getElementById('uploadStatus');
     let sizeBefore = 0, sizeAfter = 0;
 
+    const wantCutout = document.getElementById('autoCutoutMain').checked;
     for (let i = 0; i < files.length; i++){
       const original = files[i];
       statusEl.textContent = `Mengompres & mengunggah foto ${i + 1} dari ${files.length}...`;
@@ -818,6 +1005,14 @@
       if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
       const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
       currentImages.push(pub.publicUrl);
+      renderImgList();
+
+      if (wantCutout){
+        statusEl.textContent = `Membuat versi transparan untuk panel 3D (foto ${i + 1} dari ${files.length})...`;
+        const cutoutBlob = await makeCutout(file);
+        await uploadCutoutFor(pub.publicUrl, file.name, cutoutBlob, 'images3d');
+        renderImgList();
+      }
     }
     statusEl.textContent = sizeBefore ? `Selesai — ukuran total ${formatKB(sizeBefore)} → ${formatKB(sizeAfter)}.` : '';
     e.target.value = '';
@@ -840,7 +1035,7 @@
     if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
 
     // HARGA DINONAKTIFKAN: payload asli menyertakan `price,` setelah `category,` — data harga lama di DB tidak akan berubah karena kolom ini tidak disertakan.
-    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages };
+    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages, cutouts: currentCutouts };
 
     let error;
     if (editingId){
