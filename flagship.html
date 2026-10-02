@@ -116,6 +116,7 @@
       linear-gradient(90deg, var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
       var(--ink);
     perspective:900px;cursor:grab;
+    touch-action:none; /* penting: cegah browser scroll halaman saat geser di panel ini (HP) */
   }
   .stage-3d.visible{display:flex;}
   .stage-3d:active{cursor:grabbing;}
@@ -123,33 +124,24 @@
   .stage-3d-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
   .stage-3d-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--on-dark-muted);letter-spacing:0.03em;z-index:2;pointer-events:none;}
 
-  /* bayangan elips yang "bergoyang" di bawah produk — jual ilusi berputar */
+  /* bayangan elips di bawah produk, ikut menipis saat foto mendekati sudut samping */
   .stage-3d-shadow{
     position:absolute;bottom:16%;left:50%;width:44%;height:9%;
     background:radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 72%);
     transform:translateX(-50%) scaleX(1);
-    transition:transform 0.2s ease;
     filter:blur(1px);
+    pointer-events:none;
   }
 
-  /* ---- mode A: sequence foto (beberapa sudut asli) — di-crossfade gantian, bukan 1 foto di-flip ---- */
-  .stage-3d-frames{position:relative;width:60%;aspect-ratio:1/1;}
-  .s3d-frame{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-    opacity:0;transition:opacity 0.16s ease;
+  /* panggung foto produk (warna aktif) yang bisa ditahan-klik lalu digeser untuk diputar */
+  .stage-3d-inner{width:58%;transform-style:preserve-3d;will-change:transform;}
+  .stage-3d-inner img{
+    width:100%;height:auto;display:block;object-fit:contain;
     filter:drop-shadow(0 16px 20px rgba(0,0,0,0.35));
-    pointer-events:none;-webkit-user-drag:none;
+    pointer-events:none;-webkit-user-drag:none;user-select:none;
   }
-  .s3d-frame.active{opacity:1;}
-
-  /* ---- mode B (fallback kalau cuma 1 foto): tilt+ambang halus, tidak pernah sampai sudut gepeng ---- */
-  .stage-3d-frames.tilt-mode{transform-style:preserve-3d;}
-  .stage-3d-frames.tilt-mode .s3d-frame{transition:transform 0.2s ease;}
-  .stage-3d-frames.tilt-mode.spin .s3d-frame.active{animation:tiltSway 3.4s ease-in-out infinite;}
-  @keyframes tiltSway{
-    0%,100%{transform:perspective(700px) rotateY(-9deg) rotateX(1.5deg);}
-    50%{transform:perspective(700px) rotateY(9deg) rotateX(-1.5deg);}
-  }
+  .stage-3d-inner.auto-spin{animation:spin360 5.5s linear infinite;}
+  @keyframes spin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
 
   .zoom-lens{position:absolute;inset:0;background-repeat:no-repeat;background-size:220%;opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:3;}
   .zoom-lens.active{opacity:1;}
@@ -355,10 +347,10 @@
           <div class="stage-3d" id="stage3d">
             <span class="stage-3d-label">3D Preview</span>
             <div class="stage-3d-shadow" id="stage3dShadow"></div>
-            <div class="stage-3d-frames" id="stage3dFrames">
-              <img class="s3d-frame active" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Preview 3D produk">
+            <div class="stage-3d-inner" id="stage3dInner">
+              <img id="stage3dImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Preview 3D produk">
             </div>
-            <span class="stage-3d-hint" id="stage3dHint">Geser untuk putar</span>
+            <span class="stage-3d-hint" id="stage3dHint">Tahan &amp; geser untuk putar</span>
           </div>
         </div>
 
@@ -725,66 +717,48 @@
   });
   galleryObserver.observe(mainImg, { attributes:true, attributeFilter:['src'] });
 
-  /* ---- Panel 3D: sequence foto asli (bukan 1 foto di-rotateY) ----
-     Kalau produk punya beberapa foto gallery, kita gantian nampilin foto itu
-     (crossfade) sambil digeser — hasilnya kelihatan "muter" secara natural
-     karena yang ditampilkan memang sudut foto yang beda-beda, bukan 1 foto
-     yang digepengin. Kalau cuma ada 1 foto, fallback ke efek tilt halus
-     (miring kecil + ambang) yang tetap hidup tapi tidak pernah sampai ke
-     sudut yang bikin foto kelihatan gepeng/kebalik. */
+  /* ---- Panel 3D: tahan klik lalu geser untuk memutar foto produk ----
+     Sesuai masukan user: "3D" di sini cukup berarti interaksi tahan-klik +
+     geser (drag) di atas 1 foto produk, bukan ilusi berganti-ganti sudut
+     foto. Jadi panel ini memutar foto aktif dengan rotateY() mengikuti
+     gerakan jari/mouse secara langsung (1:1 feel), dan tombol "Putar 360°"
+     tetap ada sebagai mode auto-spin terpisah (CSS animation). Mendukung
+     mouse DAN touch (HP) — ini yang sebelumnya belum ada. */
   const btn3d = document.getElementById('btn3d');
   const btnSpin = document.getElementById('btnSpin');
   const stage3d = document.getElementById('stage3d');
-  const stage3dFrames = document.getElementById('stage3dFrames');
+  const stage3dInner = document.getElementById('stage3dInner');
+  const stage3dImg = document.getElementById('stage3dImg');
   const stage3dShadow = document.getElementById('stage3dShadow');
   const stage3dHint = document.getElementById('stage3dHint');
   let is3dMode = false;
   let isSpinning = false;
   let dragging = false;
   let lastX = 0;
-  let dragAccum = 0;
-  let frames = [];
-  let frameIndex = 0;
-  let multiFrame = false;
-  let spinTimer = null;
-  const DRAG_PER_FRAME = 16; // px geser per 1 langkah foto
+  let currentRotation = 0;
+  const DRAG_SENSITIVITY = 0.6; // derajat rotasi per px geser
 
-  function buildStage3d(imageList){
-    stopAutoSpin();
-    const list = (imageList && imageList.length) ? imageList : [FALLBACK_IMG];
-    multiFrame = list.length >= 3; // perlu minimal beberapa sudut biar sequence-nya mulus
-    stage3dFrames.innerHTML = list.map((src, i) =>
-      `<img class="s3d-frame${i === 0 ? ' active' : ''}" src="${src}" alt="Tampilan sudut ${i + 1}">`
-    ).join('');
-    frames = Array.from(stage3dFrames.querySelectorAll('.s3d-frame'));
-    frameIndex = 0;
-    stage3dFrames.classList.toggle('tilt-mode', !multiFrame);
-    stage3dHint.textContent = multiFrame ? 'Geser untuk putar' : 'Geser untuk lihat sudut lain';
+  function setStage3dImage(src){
+    stage3dImg.src = src || FALLBACK_IMG;
   }
-  buildStage3d(flagshipImages);
+  setStage3dImage(flagshipImages[0]);
 
-  function setFrame(idx){
-    if (!frames.length) return;
-    idx = ((idx % frames.length) + frames.length) % frames.length;
-    frames.forEach((f, i) => f.classList.toggle('active', i === idx));
-    frameIndex = idx;
-    // bayangan "bergoyang" kecil sinkron sama frame, biar makin kerasa muter
-    const wobble = Math.sin((idx / frames.length) * Math.PI * 2) * 0.12;
+  function applyRotation(deg){
+    currentRotation = deg;
+    stage3dInner.style.transform = `rotateY(${deg}deg)`;
+    // bayangan ikut "bergoyang" tipis mengikuti rotasi, biar makin kerasa 3D
+    const wobble = Math.sin((deg * Math.PI) / 180) * 0.12;
     stage3dShadow.style.transform = `translateX(-50%) scaleX(${1 - Math.abs(wobble)})`;
   }
 
   function startAutoSpin(){
-    stopAutoSpin();
     if (prefersReducedMotion) return; // hormati preferensi aksesibilitas, jangan auto-gerak
-    if (multiFrame){
-      spinTimer = setInterval(() => setFrame(frameIndex + 1), 160);
-    } else {
-      stage3dFrames.classList.add('spin');
-    }
+    stage3dInner.style.transform = ''; // lepas rotasi manual, biar animasi CSS yang jalan
+    stage3dInner.classList.add('auto-spin');
   }
   function stopAutoSpin(){
-    if (spinTimer){ clearInterval(spinTimer); spinTimer = null; }
-    stage3dFrames.classList.remove('spin');
+    stage3dInner.classList.remove('auto-spin');
+    applyRotation(currentRotation); // lanjutkan dari posisi rotasi manual terakhir
   }
 
   function set3dMode(on){
@@ -808,32 +782,45 @@
     if (isSpinning) startAutoSpin(); else stopAutoSpin();
   });
 
-  stage3d.addEventListener('mousedown', (e) => {
+  function dragStart(x){
     if (!is3dMode) return;
     dragging = true;
-    lastX = e.clientX;
-    dragAccum = 0;
+    lastX = x;
     isSpinning = false;
     btnSpin.classList.remove('active');
     stopAutoSpin();
-  });
-  window.addEventListener('mousemove', (e) => {
-    if (!dragging || !multiFrame) return;
-    const delta = e.clientX - lastX;
-    lastX = e.clientX;
-    dragAccum += delta;
-    while (Math.abs(dragAccum) >= DRAG_PER_FRAME){
-      const step = dragAccum > 0 ? 1 : -1;
-      setFrame(frameIndex - step); // geser kanan = produk putar ke kiri, lebih natural
-      dragAccum -= step * DRAG_PER_FRAME;
-    }
-  });
-  window.addEventListener('mouseup', () => { dragging = false; });
+  }
+  function dragMove(x){
+    if (!dragging) return;
+    const delta = x - lastX;
+    lastX = x;
+    applyRotation(currentRotation + delta * DRAG_SENSITIVITY);
+  }
+  function dragEnd(){ dragging = false; }
 
-  /* kalau warna diganti dan warna itu punya foto sendiri, panel 3D ikut pakai foto itu
-     (otomatis masuk mode tilt karena cuma 1 foto per warna — tetap natural, tidak di-flip) */
+  // Mouse (desktop)
+  stage3d.addEventListener('mousedown', (e) => dragStart(e.clientX));
+  window.addEventListener('mousemove', (e) => dragMove(e.clientX));
+  window.addEventListener('mouseup', dragEnd);
+
+  // Touch (HP/tablet) — penting: belum pernah ada sebelumnya, ini sebab utama
+  // kenapa "tahan klik & geser" terasa tidak jalan di perangkat sentuh.
+  stage3d.addEventListener('touchstart', (e) => {
+    if (!is3dMode || !e.touches.length) return;
+    dragStart(e.touches[0].clientX);
+  }, { passive: true });
+  stage3d.addEventListener('touchmove', (e) => {
+    if (!dragging || !e.touches.length) return;
+    e.preventDefault(); // cegah halaman ikut ter-scroll saat geser di panel 3D
+    dragMove(e.touches[0].clientX);
+  }, { passive: false });
+  stage3d.addEventListener('touchend', dragEnd);
+  stage3d.addEventListener('touchcancel', dragEnd);
+
+  /* kalau warna diganti dan warna itu punya foto sendiri, panel 3D ikut pakai foto itu */
   function syncStage3dToImage(src){
-    buildStage3d([src]);
+    setStage3dImage(src);
+    applyRotation(0);
   }
 
   /* ---- color selection ---- */
@@ -864,9 +851,8 @@
       });
       if (!matched) thumbBtns.forEach(b => b.classList.remove('active'));
 
-      // panel 3D ikut pakai foto warna ini kalau ada; kalau tidak, balik ke sequence galeri utama
-      if (dot.dataset.img) syncStage3dToImage(dot.dataset.img);
-      else buildStage3d(flagshipImages);
+      // panel 3D ikut pakai foto warna ini kalau ada; kalau tidak, balik ke foto utama produk
+      syncStage3dToImage(dot.dataset.img || flagshipImages[0]);
       if (isSpinning) startAutoSpin();
     });
   });
