@@ -299,9 +299,9 @@
   <ul class="nav-links">
     <li><a href="index.html">Beranda</a></li>
     <li><a href="tentang.html">Tentang Kami</a></li>
-    <li><a href="produk.html" class="active">Produk</a></li>
+    <li><a href="produk.html">Produk</a></li>
     <li><a href="kerjasama.html">Kerjasama</a></li>
-    <li><a href="index.html#review">Review</a></li>
+    <li><a href="kontak.html">Contact Us</a></li>
   </ul>
   <a class="nav-cta" href="#" id="salesBtn">
     Hubungi Sales
@@ -378,7 +378,7 @@
         <div class="pdp-rating">
           <span class="stars">★★★★★</span>
           <span>4.8 (128 Ulasan)</span>
-          <a href="index.html#review">Lihat semua ulasan</a>
+          <a href="kerjasama.html#review">Lihat semua ulasan</a>
         </div>
         <!-- HARGA DINONAKTIFKAN: <div class="product-price">Rp 189.000</div> -->
         <p class="desc">Sandal dengan desain ergonomis dan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
@@ -514,7 +514,7 @@
     </div>
     <div class="footer-col">
       <h4>Perusahaan</h4>
-      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="#">Karir</a></li></ul>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="#">Karir</a></li><li><a href="kontak.html">Contact Us</a></li></ul>
     </div>
     <div class="footer-col">
       <h4>Hubungi Kami</h4>
@@ -911,25 +911,123 @@
 
 
 <style>
+  .wa-widget{ position:fixed; right:22px; bottom:22px; z-index:999; }
+
   .wa-float{
-    position:fixed; right:22px; bottom:22px; z-index:999;
     width:58px; height:58px; border-radius:50%;
-    background:#25D366; color:#fff;
+    background:#25D366; color:#fff; border:none; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     box-shadow:0 8px 24px rgba(0,0,0,0.28);
     transition:transform .2s ease, box-shadow .2s ease;
-    text-decoration:none;
+    position:relative;
   }
   .wa-float:hover{ transform:scale(1.08); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
   .wa-float svg{ width:29px; height:29px; }
+  .wa-float .wa-ping{
+    position:absolute; top:-2px; right:-2px; width:14px; height:14px; border-radius:50%;
+    background:var(--gold); border:2px solid #fff;
+  }
+  .wa-float .wa-ping::after{
+    content:''; position:absolute; inset:0; border-radius:50%; background:var(--gold);
+    animation:waPing 1.8s ease-out infinite;
+  }
+  @keyframes waPing{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(2.4); opacity:0; } }
+
+  .wa-popup{
+    position:absolute; right:0; bottom:74px; width:280px;
+    background:var(--ink); color:var(--sand);
+    box-shadow:0 20px 45px rgba(0,0,0,0.35);
+    padding:20px 20px 18px;
+    opacity:0; transform:translateY(14px) scale(0.97); pointer-events:none;
+    transition:opacity .22s ease, transform .22s ease;
+    transform-origin:bottom right;
+  }
+  .wa-popup.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .wa-popup::after{
+    content:''; position:absolute; right:24px; bottom:-8px;
+    width:16px; height:16px; background:var(--ink); transform:rotate(45deg);
+  }
+  .wa-popup-close{
+    position:absolute; top:10px; right:12px; background:none; border:none; cursor:pointer;
+    color:var(--on-dark-muted); font-size:18px; line-height:1; padding:4px;
+  }
+  .wa-popup-close:hover{ color:var(--sand); }
+  .wa-popup-header{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .wa-avatar{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:var(--ink);
+  }
+  .wa-popup-header strong{ display:block; font-family:'Archivo',sans-serif; font-size:14px; }
+  .wa-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:var(--on-dark-muted); }
+  .wa-status i{ width:6px; height:6px; border-radius:50%; background:#3ecf6a; display:inline-block; }
+  .wa-popup-msg{ font-size:13px; line-height:1.55; color:var(--on-dark-muted); margin-bottom:16px; }
+  .wa-popup-msg strong{ color:var(--sand); }
+  .wa-popup-cta{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#25D366; color:#fff; text-decoration:none;
+    padding:11px 14px; font-size:13px; font-weight:700;
+    transition:background .2s ease;
+  }
+  .wa-popup-cta:hover{ background:#1fb959; }
+  .wa-popup-cta svg{ width:17px; height:17px; }
+
   @media (max-width:640px){
-    .wa-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .wa-widget{ right:16px; bottom:16px; }
+    .wa-float{ width:52px; height:52px; }
     .wa-float svg{ width:25px; height:25px; }
+    .wa-popup{ width:calc(100vw - 32px); right:-4px; }
   }
 </style>
-<a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-float" aria-label="Chat via WhatsApp">
-  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
-</a>
+
+<div class="wa-widget">
+  <div class="wa-popup" id="waPopup">
+    <button class="wa-popup-close" id="waPopupClose" aria-label="Tutup">&times;</button>
+    <div class="wa-popup-header">
+      <div class="wa-avatar">H</div>
+      <div>
+        <strong>HILOS Care</strong>
+        <span class="wa-status"><i></i>Biasanya balas dalam beberapa menit</span>
+      </div>
+    </div>
+    <p class="wa-popup-msg">Halo! 👋 Ada pertanyaan soal produk HILOS atau mau tanya soal kerjasama? Langsung chat aja, kami bantu sampai jelas.</p>
+    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-popup-cta">
+      <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+      Mulai Chat di WhatsApp
+    </a>
+  </div>
+
+  <button class="wa-float" id="waFloatBtn" aria-label="Chat via WhatsApp" aria-expanded="false">
+    <span class="wa-ping"></span>
+    <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+  </button>
+</div>
+
+<script>
+  (function(){
+    var btn = document.getElementById('waFloatBtn');
+    var popup = document.getElementById('waPopup');
+    var closeBtn = document.getElementById('waPopupClose');
+
+    function togglePopup(open){
+      popup.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(!popup.classList.contains('open'));
+    });
+    closeBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(false);
+    });
+    document.addEventListener('click', function(e){
+      if (!popup.contains(e.target) && e.target !== btn){ togglePopup(false); }
+    });
+  })();
+</script>
 </body>
 
 </html>
