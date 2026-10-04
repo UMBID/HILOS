@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — HILOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1b2a;
+    --ink-2:#16283d;
+    --sand:#eaf1f8;
+    --sand-deep:#cddfec;
+    --sand-line:rgba(13,27,42,0.14);
+    --gold:#2f6fb0;
+    --gold-light:#6fa3d4;
+    --gold-deep:#1c4a73;
+    --paper:#f5f9fc;
+    --on-dark-line:rgba(234,241,248,0.16);
+    --on-dark-muted:rgba(234,241,248,0.68);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{display:block;max-width:100%;}
+  a{color:inherit;}
+
+  .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
+  .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
+  .ribbon-track span{display:inline-flex;align-items:center;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);padding:9px 22px;}
+  .ribbon-track span.dot{color:var(--on-dark-muted);padding:9px 0;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  .nav{position:sticky;top:0;z-index:30;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:20px clamp(20px,5vw,64px);border-bottom:1px solid var(--on-dark-line);}
+  .logo{font-family:'Archivo',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.12em;color:var(--sand);}
+  .nav-links{display:flex;gap:clamp(16px,2.4vw,34px);list-style:none;}
+  .nav-links a{color:var(--on-dark-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding-bottom:6px;position:relative;transition:color 0.25s ease;}
+  .nav-links a:hover{color:var(--sand);}
+  .nav-links a.active{color:var(--sand);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
+  .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(234,241,248,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta svg{width:14px;height:14px;}
+  .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
+
+  .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
+  .btn span{position:relative;z-index:2;}
+  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
+  .btn-fill:hover::before{transform:translateY(0);}
+  .btn-fill:hover{transform:translateY(-2px);}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 0.8s cubic-bezier(.16,.84,.44,1), transform 0.8s cubic-bezier(.16,.84,.44,1);}
+  .reveal.is-visible{opacity:1;transform:translateY(0);}
+  .reveal-scale{opacity:0;transform:scale(0.95);transition:opacity 0.9s ease, transform 0.9s cubic-bezier(.16,.84,.44,1);}
+  .reveal-scale.is-visible{opacity:1;transform:scale(1);}
+  @media (prefers-reduced-motion: reduce){ .reveal,.reveal-scale{opacity:1 !important;transform:none !important;transition:none !important;} }
+
+  /* page header */
+  .page-head{max-width:1360px;margin:0 auto;padding:50px clamp(20px,5vw,64px) 10px;}
+  .page-head .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-deep);}
+  .page-head .eyebrow::before{content:"";width:24px;height:1px;background:var(--gold-deep);}
+  .page-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,3.2vw,38px);text-transform:uppercase;margin-top:14px;}
+  .page-head p{margin-top:10px;font-size:14.5px;color:#5c4f40;max-width:560px;}
+
+  /* ============ CONTACT ============ */
+  .contact-section{max-width:1360px;margin:0 auto;padding:46px clamp(20px,5vw,64px) 90px;}
+  .contact-grid{display:grid;grid-template-columns:0.85fr 1.3fr 0.9fr;gap:20px;align-items:stretch;}
+
+  .contact-cta{background:var(--ink);color:var(--sand);padding:30px 26px;display:flex;flex-direction:column;justify-content:center;}
+  .contact-cta h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;line-height:1.2;margin-bottom:10px;}
+  .contact-cta p{font-size:13px;color:var(--on-dark-muted);line-height:1.6;margin-bottom:20px;}
+  .contact-cta .hint{font-size:11.5px;color:var(--on-dark-muted);margin-top:14px;}
+
+  .contact-form{background:#fff;border:1px solid var(--sand-line);padding:26px;}
+  .contact-form h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .contact-form input, .contact-form select, .contact-form textarea{
+    width:100%;padding:11px 12px;border:1px solid var(--sand-line);background:var(--paper);
+    font-family:inherit;font-size:13px;color:var(--ink);
+  }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus{outline:none;border-color:var(--gold-deep);}
+  .contact-form textarea{min-height:110px;resize:vertical;margin-bottom:16px;}
+  .form-success{display:none;margin-top:14px;padding:12px 14px;background:#eef6ec;border:1px solid #b9dcae;color:#3a6b2e;font-size:12.5px;}
+  .form-success.show{display:block;}
+
+  .info-card{background:#fff;border:1px solid var(--sand-line);padding:26px;display:flex;flex-direction:column;gap:18px;}
+  .info-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
+  .info-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#4a3f32;line-height:1.5;}
+  .info-row svg{width:16px;height:16px;color:var(--gold-deep);flex-shrink:0;margin-top:1px;}
+  .info-row a{text-decoration:none;color:inherit;}
+  .info-row a:hover{color:var(--gold-deep);}
+
+  .social-inline{display:flex;gap:10px;margin-top:2px;}
+  .social-inline a{
+    width:34px;height:34px;border-radius:50%;border:1px solid var(--sand-line);
+    display:flex;align-items:center;justify-content:center;color:var(--gold-deep);
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .social-inline a:hover{border-color:var(--gold-deep);}
+  .social-inline svg{width:16px;height:16px;}
+
+  @media (max-width:1080px){ .contact-grid{grid-template-columns:1fr;} }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+    .form-row{grid-template-columns:1fr;}
+  }
+
+  /* footer */
+  .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;margin-top:0;}
+  .footer-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px;padding-bottom:50px;border-bottom:1px solid var(--on-dark-line);}
+  .footer-brand p{font-size:13px;line-height:1.7;max-width:280px;color:var(--on-dark-muted);margin-top:14px;}
+  .footer-col h4{font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--sand);margin-bottom:18px;}
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
+  .footer-col a:hover{color:var(--gold-light);}
+  .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
+  @media (max-width:1080px){ .footer-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:560px){ .footer-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+    <span>Sejak 2014</span><span class="dot">•</span>
+    <span>Sandal Pria</span><span class="dot">•</span>
+    <span>Wanita</span><span class="dot">•</span>
+    <span>Anak</span><span class="dot">•</span>
+    <span>100% Kualitas Terjamin</span><span class="dot">•</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="tentang.html">Tentang Kami</a></li>
+    <li><a href="produk.html">Produk</a></li>
+    <li><a href="kerjasama.html">Kerjasama</a></li>
+    <li><a href="kontak.html" class="active">Contact Us</a></li>
+  </ul>
+  <a class="nav-cta" href="#" id="salesBtn">
+    Hubungi Sales
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </a>
+  <button class="nav-toggle" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+
+<div class="page-head">
+  <span class="eyebrow reveal">Hubungi Kami</span>
+  <h1 class="reveal">Contact Us</h1>
+  <p class="reveal">Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.</p>
+</div>
+
+<section class="contact-section">
+  <div class="contact-grid">
+    <div class="contact-cta reveal">
+      <h2>Ngobrol Langsung?</h2>
+      <p>Cara tercepat untuk dapat jawaban — tim kami biasanya balas dalam hitungan menit di jam kerja.</p>
+      <a href="#" class="btn btn-fill" id="waBtn"><span>Chat via WhatsApp</span></a>
+      <span class="hint">Atau isi formulir di samping, kami akan hubungi balik</span>
+    </div>
+
+    <div class="contact-form reveal">
+      <h3>Kirim Pesan</h3>
+      <form id="contactForm">
+        <div class="form-row">
+          <input type="text" placeholder="Nama Lengkap" required>
+          <input type="tel" placeholder="Nomor WhatsApp" required>
+        </div>
+        <div class="form-row">
+          <input type="email" placeholder="Email" style="grid-column:1/-1;">
+        </div>
+        <select style="margin-bottom:12px;">
+          <option value="">Topik Pesan</option>
+          <option>Pertanyaan Produk</option>
+          <option>Status Pesanan</option>
+          <option>Komplain / Garansi</option>
+          <option>Kerjasama / Partnership</option>
+          <option>Lainnya</option>
+        </select>
+        <textarea placeholder="Tulis pesan Anda di sini"></textarea>
+        <button type="submit" class="btn btn-fill" style="width:100%;"><span>Kirim Pesan</span></button>
+      </form>
+      <div class="form-success" id="formSuccess">Terima kasih! Pesan Anda sudah kami terima, tim kami akan segera menghubungi Anda.</div>
+    </div>
+
+    <div class="info-card reveal">
+      <div>
+        <h3>Informasi Kontak</h3>
+        <div class="info-row" style="margin-top:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"/></svg><a href="tel:+6281234567890">0812-3456-7890</a></div>
+        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg><a href="mailto:sales@hilos.co.id">sales@hilos.co.id</a></div>
+        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>www.hilos.co.id</div>
+      </div>
+      <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
+        <h3>Jam Operasional</h3>
+        <p style="font-size:12.5px;color:#4a3f32;margin-top:8px;">Setiap Hari<br>24 Jam — Siap Melayani Kapan Saja</p>
+      </div>
+      <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
+        <h3>Ikuti Kami</h3>
+        <div class="social-inline" style="margin-top:10px;">
+          <a href="#socmed" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#socmed" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .socmed-section{max-width:1200px;margin:0 auto;padding:10px clamp(20px,5vw,64px) 90px;}
+  .socmed-section .section-head-center{max-width:620px;margin:0 auto 36px;text-align:center;}
+  .socmed-section .section-head-center h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(20px,2.4vw,26px);text-transform:uppercase;}
+  .socmed-section .section-head-center p{margin-top:8px;font-size:14px;color:#5c4f40;}
+  .socmed-grid{display:flex;justify-content:center;gap:70px;flex-wrap:wrap;margin-top:10px;}
+  .socmed-card{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;}
+  .socmed-card .phone-mock{transition:transform .3s ease;}
+  .socmed-card:hover .phone-mock{transform:translateY(-8px) scale(1.02);}
+
+  .socmed-label{
+    display:flex;align-items:center;gap:12px;margin-top:24px;
+    background:#fff;border:1px solid var(--sand-line);
+    padding:10px 20px 10px 10px;border-radius:100px;
+    box-shadow:0 6px 18px rgba(13,27,42,0.08);
+  }
+  .socmed-label svg{width:22px;height:22px;color:#fff;flex-shrink:0;}
+  .socmed-label strong{display:block;font-family:'Archivo',sans-serif;font-size:15px;line-height:1.2;}
+  .socmed-label span{font-size:12.5px;color:var(--ink);opacity:0.65;}
+  .socmed-label > svg, .socmed-label-ig svg, .socmed-label-tiktok svg{
+    width:40px;height:40px;padding:9px;border-radius:50%;
+  }
+  .socmed-label-ig svg{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);}
+  .socmed-label-tiktok svg{background:#000;}
+
+  .phone-mock{
+    position:relative;
+    width:250px;height:520px;
+    background:#111;
+    border-radius:32px;
+    border:6px solid #111;
+    box-shadow:0 40px 70px rgba(0,0,0,0.35);
+    overflow:hidden;
+  }
+  .phone-mock .screen{
+    position:absolute;inset:0;
+    background:#fff;
+    overflow:hidden;
+  }
+  .phone-mock .screen img{
+    width:100%;height:100%;
+    object-fit:cover;object-position:top center;
+    display:block;
+  }
+</style>
+
+<section class="socmed-section" id="socmed">
+  <div class="section-head-center">
+    <h2 class="reveal">Ikuti Kami di Media Sosial</h2>
+    <p class="reveal">Lihat keseharian, promo, dan produk terbaru HILOS di Instagram &amp; TikTok kami.</p>
+  </div>
+  <div class="socmed-grid">
+    <a href="https://instagram.com/hilos.id.official" target="_blank" rel="noopener" class="socmed-card reveal-scale">
+      <div class="phone-mock">
+        <div class="screen">
+          <img src="assets/socmed-ig.jpg" alt="Instagram HILOS - hilos.id.official">
+        </div>
+      </div>
+      <div class="socmed-label socmed-label-ig">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        <div><strong>Instagram</strong><span>@hilos.id.official</span></div>
+      </div>
+    </a>
+
+    <a href="https://tiktok.com/@hilosofficial" target="_blank" rel="noopener" class="socmed-card reveal-scale">
+      <div class="phone-mock">
+        <div class="screen">
+          <img src="assets/socmed-tiktok.jpg" alt="TikTok HILOS - hilosofficial">
+        </div>
+      </div>
+      <div class="socmed-label socmed-label-tiktok">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
+        <div><strong>TikTok</strong><span>@hilosofficial</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo" style="text-decoration:none;">HILOS</a>
+      <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Produk</h4>
+      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="produk.html">Best Seller</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="#">Karir</a></li><li><a href="kontak.html">Contact Us</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi Kami</h4>
+      <ul><li><a href="tel:+6281234567890">0812-3456-7890</a></li><li><a href="mailto:sales@hilos.co.id">sales@hilos.co.id</a></li><li><a href="#socmed">@hilos.official</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
+</footer>
+
+<script>
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const topRibbonEl = document.querySelector('.ribbon');
+  const mainNavEl = document.querySelector('.nav');
+  function syncHeaderOffset(){
+    if (topRibbonEl && mainNavEl) mainNavEl.style.top = topRibbonEl.offsetHeight + 'px';
+  }
+  syncHeaderOffset();
+  window.addEventListener('resize', syncHeaderOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncHeaderOffset);
+
+  document.getElementById('salesBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open('https://wa.me/6281234567890', '_blank');
+  });
+  document.getElementById('waBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.open('https://wa.me/6281234567890', '_blank');
+  });
+
+  /* ---- mobile nav ---- */
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  const cta = document.querySelector('.nav-cta');
+  toggle.addEventListener('click', () => {
+    const isOpen = links.style.display === 'flex';
+    links.style.display = isOpen ? 'none' : 'flex';
+    cta.style.display = isOpen ? 'none' : 'inline-flex';
+    if (!isOpen){
+      links.style.cssText += 'position:absolute;top:64px;left:20px;right:20px;flex-direction:column;background:#1c140f;border:1px solid rgba(234,241,248,0.16);padding:20px;border-radius:8px;z-index:20;gap:16px;';
+      cta.style.cssText += 'position:absolute;top:256px;left:20px;right:20px;justify-content:center;z-index:20;';
+    }
+  });
+
+  /* ---- scroll reveal ---- */
+  const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
+  if (prefersReducedMotion){
+    revealTargets.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
+    revealTargets.forEach(el => io.observe(el));
+  }
+
+  /* ---- contact form (static demo — no real backend, shows a success message) ---- */
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('formSuccess').classList.add('show');
+    e.target.reset();
+  });
+</script>
+
+<style>
+  .wa-widget{ position:fixed; right:22px; bottom:22px; z-index:999; }
+
+  .wa-float{
+    width:58px; height:58px; border-radius:50%;
+    background:#25D366; color:#fff; border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    transition:transform .2s ease, box-shadow .2s ease;
+    position:relative;
+  }
+  .wa-float:hover{ transform:scale(1.08); box-shadow:0 10px 30px rgba(0,0,0,0.35); }
+  .wa-float svg{ width:29px; height:29px; }
+  .wa-float .wa-ping{
+    position:absolute; top:-2px; right:-2px; width:14px; height:14px; border-radius:50%;
+    background:var(--gold); border:2px solid #fff;
+  }
+  .wa-float .wa-ping::after{
+    content:''; position:absolute; inset:0; border-radius:50%; background:var(--gold);
+    animation:waPing 1.8s ease-out infinite;
+  }
+  @keyframes waPing{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(2.4); opacity:0; } }
+
+  .wa-popup{
+    position:absolute; right:0; bottom:74px; width:280px;
+    background:var(--ink); color:var(--sand);
+    box-shadow:0 20px 45px rgba(0,0,0,0.35);
+    padding:20px 20px 18px;
+    opacity:0; transform:translateY(14px) scale(0.97); pointer-events:none;
+    transition:opacity .22s ease, transform .22s ease;
+    transform-origin:bottom right;
+  }
+  .wa-popup.open{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .wa-popup::after{
+    content:''; position:absolute; right:24px; bottom:-8px;
+    width:16px; height:16px; background:var(--ink); transform:rotate(45deg);
+  }
+  .wa-popup-close{
+    position:absolute; top:10px; right:12px; background:none; border:none; cursor:pointer;
+    color:var(--on-dark-muted); font-size:18px; line-height:1; padding:4px;
+  }
+  .wa-popup-close:hover{ color:var(--sand); }
+  .wa-popup-header{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .wa-avatar{
+    width:38px; height:38px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:var(--ink);
+  }
+  .wa-popup-header strong{ display:block; font-family:'Archivo',sans-serif; font-size:14px; }
+  .wa-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:var(--on-dark-muted); }
+  .wa-status i{ width:6px; height:6px; border-radius:50%; background:#3ecf6a; display:inline-block; }
+  .wa-popup-msg{ font-size:13px; line-height:1.55; color:var(--on-dark-muted); margin-bottom:16px; }
+  .wa-popup-msg strong{ color:var(--sand); }
+  .wa-popup-cta{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#25D366; color:#fff; text-decoration:none;
+    padding:11px 14px; font-size:13px; font-weight:700;
+    transition:background .2s ease;
+  }
+  .wa-popup-cta:hover{ background:#1fb959; }
+  .wa-popup-cta svg{ width:17px; height:17px; }
+
+  @media (max-width:640px){
+    .wa-widget{ right:16px; bottom:16px; }
+    .wa-float{ width:52px; height:52px; }
+    .wa-float svg{ width:25px; height:25px; }
+    .wa-popup{ width:calc(100vw - 32px); right:-4px; }
+  }
+</style>
+
+<div class="wa-widget">
+  <div class="wa-popup" id="waPopup">
+    <button class="wa-popup-close" id="waPopupClose" aria-label="Tutup">&times;</button>
+    <div class="wa-popup-header">
+      <div class="wa-avatar">H</div>
+      <div>
+        <strong>HILOS Care</strong>
+        <span class="wa-status"><i></i>Biasanya balas dalam beberapa menit</span>
+      </div>
+    </div>
+    <p class="wa-popup-msg">Halo! 👋 Ada pertanyaan soal produk HILOS atau mau tanya soal kerjasama? Langsung chat aja, kami bantu sampai jelas.</p>
+    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-popup-cta">
+      <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+      Mulai Chat di WhatsApp
+    </a>
+  </div>
+
+  <button class="wa-float" id="waFloatBtn" aria-label="Chat via WhatsApp" aria-expanded="false">
+    <span class="wa-ping"></span>
+    <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
+  </button>
+</div>
+
+<script>
+  (function(){
+    var btn = document.getElementById('waFloatBtn');
+    var popup = document.getElementById('waPopup');
+    var closeBtn = document.getElementById('waPopupClose');
+
+    function togglePopup(open){
+      popup.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(!popup.classList.contains('open'));
+    });
+    closeBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      togglePopup(false);
+    });
+    document.addEventListener('click', function(e){
+      if (!popup.contains(e.target) && e.target !== btn){ togglePopup(false); }
+    });
+  })();
+</script>
+</body>
+
+</html>
