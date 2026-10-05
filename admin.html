@@ -219,6 +219,21 @@
 
   /* ---------- foto 360° (serangkaian foto produk dari banyak sudut, per warna) ---------- */
   .color-row-block{ display:flex; flex-direction:column; gap:6px; width:100%; }
+  .toggle-3d{ display:flex; align-items:center; gap:12px; padding:14px 16px; border:1px solid var(--sand-line); border-radius:10px; background:#faf8f5; cursor:pointer; }
+  .toggle-3d input{ position:absolute; opacity:0; pointer-events:none; }
+  .toggle-3d .sw{ width:42px; height:24px; border-radius:100px; background:#c9c2b8; position:relative; flex-shrink:0; transition:background .2s; }
+  .toggle-3d .sw::after{ content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .2s; }
+  .toggle-3d input:checked + .sw{ background:var(--gold); }
+  .toggle-3d input:checked + .sw::after{ transform:translateX(18px); }
+  .toggle-3d strong{ display:block; font-size:13.5px; }
+  .toggle-3d span.d{ font-size:11.5px; color:#8a8078; }
+  .guide-3d{ margin-top:10px; border:1px solid rgba(47,111,176,0.3); background:rgba(47,111,176,0.05); border-radius:10px; padding:14px 16px; font-size:12.5px; line-height:1.6; color:#3d352d; }
+  .guide-3d h4{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#2f6fb0; margin-bottom:6px; }
+  .guide-3d ol, .guide-3d ul{ margin:6px 0 0 18px; }
+  .guide-3d li{ margin-bottom:3px; }
+  .only-3d{ display:none; }
+  #modalOverlay.is3d-on .only-3d{ display:block; }
+  #modalOverlay:not(.is3d-on) .spin-frames-row{ display:none; }
   .spin-frames-row{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding-left:4px; }
   .spin-upload-btn{
     font-size:9.5px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;
@@ -428,6 +443,27 @@
     </div>
 
     <div class="field">
+      <label class="toggle-3d" for="fIs3d">
+        <input type="checkbox" id="fIs3d">
+        <span class="sw"></span>
+        <span><strong>Aktifkan 3D (360°) untuk produk ini</strong><span class="d">ON: produk punya halaman detail flagship dengan tampilan 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
+      </label>
+      <div class="guide-3d only-3d">
+        <h4>Panduan foto 360°</h4>
+        Upload foto per warna lewat tombol <strong>+ Foto 360°</strong> di bawah. Supaya putarannya mulus:
+        <ol>
+          <li>Letakkan produk di tengah meja putar (turntable) atau alas polos, latar putih/abu polos, pencahayaan sama rata.</li>
+          <li>Kamera di tripod, <strong>jarak, tinggi, dan zoom tidak berubah</strong> selama pemotretan. Produk selalu di posisi tengah.</li>
+          <li>Putar produk <strong>searah, satu putaran penuh (360°)</strong>, foto setiap 10–15° → <strong>24–36 foto</strong> (minimal 12).</li>
+          <li>Urutan sudut: depan → samping kanan → belakang → samping kiri → kembali ke depan. Mulai &amp; akhir di sudut yang sama (depan).</li>
+          <li>Beri nama file berurutan: <code>01.jpg, 02.jpg, … 24.jpg</code>. Format JPG cukup (PNG tidak wajib), ukuran file tidak perlu dikecilkan, sistem mengompres otomatis.</li>
+          <li>Semua foto harus <strong>rasio &amp; ukuran sama</strong> (misal semua 1:1 atau semua 4:5).</li>
+        </ol>
+        Foto utama warna (galeri biasa) tetap diupload di bagian Warna seperti biasa.
+      </div>
+    </div>
+
+    <div class="field">
       <label>Warna</label>
       <p class="hint" style="margin:0 0 8px;">Upload semua foto warna produk ini sekaligus, lalu atur kode warna (RGB) &amp; nama untuk masing-masing foto secara manual di bawah. Tiap warna juga bisa dilengkapi <strong>Foto 360°</strong> — serangkaian foto produk dari banyak sudut (disarankan 16–36 foto, keliling produk) — supaya panel 3D di halaman produk bisa menampilkan putaran yang natural, karena memang foto asli dari sudut berbeda. Beri nama file berurutan (misal 01.jpg, 02.jpg, dst) saat upload, supaya urutan putarannya benar.</p>
       <div class="color-list" id="colorList"></div>
@@ -612,6 +648,11 @@
   }
 
   /* ---------------- MODAL FORM ---------------- */
+  function sync3dToggle(){
+    modalOverlay.classList.toggle('is3d-on', document.getElementById('fIs3d').checked);
+  }
+  document.getElementById('fIs3d').addEventListener('change', sync3dToggle);
+
   function resetForm(){
     editingId = null;
     currentColors = [];
@@ -625,6 +666,8 @@
     // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = '';
     document.getElementById('fBadge').value = '';
     document.getElementById('fSizes').value = '';
+    document.getElementById('fIs3d').checked = false;
+    sync3dToggle();
     document.getElementById('uploadStatus').textContent = '';
     renderColorList();
     renderImgList();
@@ -649,6 +692,8 @@
     // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = p.price;
     document.getElementById('fBadge').value = p.badge || '';
     document.getElementById('fSizes').value = (p.sizes || []).join(',');
+    document.getElementById('fIs3d').checked = !!p.is_3d;
+    sync3dToggle();
     currentColors = Array.isArray(p.colors) ? [...p.colors] : [];
     currentImages = Array.isArray(p.images) ? [...p.images] : [];
     renderColorList();
@@ -928,7 +973,13 @@
     if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
 
     // HARGA DINONAKTIFKAN: payload asli menyertakan `price,` setelah `category,` — data harga lama di DB tidak akan berubah karena kolom ini tidak disertakan.
-    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages };
+    const is_3d = document.getElementById('fIs3d').checked;
+    if (is_3d){
+      const ready = currentColors.filter(c => Array.isArray(c.spin) && c.spin.length >= 12).length;
+      if (!ready && !confirm('3D diaktifkan tapi belum ada warna dengan minimal 12 foto 360°. Produk akan tampil dengan pesan "360° belum tersedia". Tetap simpan?')) return;
+    }
+    // is_3d OFF: foto 360° yang sudah terlanjur diupload tetap disimpan (tidak hilang), hanya tidak ditampilkan
+    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages, is_3d };
 
     let error;
     if (editingId){
