@@ -255,6 +255,42 @@
     position:absolute; top:0; right:0; width:15px; height:15px; border-radius:0 0 0 4px;
     border:none; background:rgba(13,27,42,0.75); color:#fff; font-size:10px; line-height:1; cursor:pointer; padding:0;
   }
+
+  /* ---------- v2: form bersusun (Info → Foto Galeri → 3D → Warna) ---------- */
+  .field label.toggle-3d{ display:flex; text-transform:none; letter-spacing:0; font-weight:400; font-size:13px; margin:0; position:relative; color:var(--ink); }
+  .sec-h{ display:flex; align-items:center; gap:10px; margin:30px 0 4px; padding-top:22px; border-top:1px solid var(--sand-line); }
+  .sec-h .n{ width:24px; height:24px; border-radius:50%; background:var(--ink); color:var(--sand); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sec-h h3{ font-size:14px; letter-spacing:.06em; text-transform:uppercase; }
+  .sec-h .opt{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8a8078; background:var(--sand); border-radius:4px; padding:2px 7px; }
+  .sec-help{ font-size:12.5px; color:#6d645b; line-height:1.55; margin:0 0 10px 34px; }
+  .color-card{ border:1px solid var(--sand-line); border-radius:12px; padding:12px; width:100%; background:#fff; }
+  .color-card .cc-title{ font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#8a8078; margin:0 0 8px 2px; }
+  .color-card .color-chip{ border:none; padding:0; }
+  .color-card .photo-cap{ font-size:9.5px; color:#8a8078; text-align:center; display:block; margin-top:2px; }
+  .spin-box{ margin-top:12px; border-top:1px dashed var(--sand-line); padding-top:12px; }
+  .spin-head{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; justify-content:space-between; margin-bottom:8px; }
+  .spin-head strong{ font-size:12.5px; }
+  .spin-status{ font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; border-radius:4px; padding:3px 8px; background:rgba(138,128,120,.14); color:#8a8078; }
+  .spin-status.ok{ background:rgba(46,125,50,.12); color:#2e7d32; }
+  .seg{ display:inline-flex; border:1px solid var(--sand-line); border-radius:8px; overflow:hidden; }
+  .seg button{ border:none; background:#fff; font-family:inherit; font-size:11.5px; padding:5px 10px; cursor:pointer; color:#6d645b; }
+  .seg button.on{ background:var(--ink); color:var(--sand); }
+  .slot-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .slot{ position:relative; aspect-ratio:1/1; border:1.5px dashed var(--sand-line); border-radius:8px; background:#faf8f5; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; padding:0; font-family:inherit; }
+  .slot:hover{ border-color:var(--gold); }
+  .slot.filled{ border-style:solid; }
+  .slot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .slot .plus{ font-size:20px; color:#b3aa9f; line-height:1; }
+  .slot .lbl{ position:absolute; left:0; right:0; bottom:0; font-size:9.5px; font-weight:600; text-align:center; background:rgba(13,27,42,.72); color:#fff; padding:2px 0; }
+  .slot:not(.filled) .lbl{ background:none; color:#8a8078; }
+  .slot .x{ position:absolute; top:3px; right:3px; width:17px; height:17px; border-radius:50%; border:none; background:rgba(13,27,42,.78); color:#fff; font-size:11px; line-height:1; cursor:pointer; padding:0; }
+  .spin-actions{ margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .bulk-sec-btn{ font-family:inherit; font-size:11.5px; font-weight:600; border:1px solid rgba(47,111,176,.35); color:#2f6fb0; background:rgba(47,111,176,.07); border-radius:6px; padding:6px 10px; cursor:pointer; }
+  .bulk-sec-btn:hover{ background:rgba(47,111,176,.15); }
+  #modalOverlay:not(.is3d-on) .spin-box{ display:none; }
+  .field label.bulk-color-drop{ text-transform:none; letter-spacing:0; font-weight:400; }
+  .field label.upload-drop{ text-transform:none; letter-spacing:0; font-weight:400; }
+  @media (max-width:520px){ .slot-grid{ grid-template-columns:repeat(3,1fr); } }
 </style>
 </head>
 <body>
@@ -385,6 +421,7 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2 id="modalTitle">Tambah Produk</h2>
+    <div class="sec-h" style="margin-top:14px;border-top:none;padding-top:0"><span class="n">1</span><h3>Informasi Produk</h3></div>
     <input type="hidden" id="fId">
 
     <div class="field">
@@ -442,53 +479,55 @@
       <p class="hint">Pisahkan dengan koma.</p>
     </div>
 
-    <div class="field">
+    <!-- ② FOTO GALERI -->
+    <div class="sec-h"><span class="n">2</span><h3>Foto Galeri Produk</h3></div>
+    <p class="sec-help">Foto yang tampil di katalog dan di galeri halaman detail (tampak depan, samping, detail sol, dll). Ini <strong>berbeda</strong> dari foto warna dan foto 360° di bawah.</p>
+    <div class="field" style="margin-top:0">
+      <div class="thumb-list" id="imgList"></div>
+      <label class="upload-drop" for="fImages">+ Pilih foto galeri (bisa lebih dari satu)</label>
+      <input type="file" id="fImages" accept="image/*" multiple style="display:none;">
+      <p class="hint" id="uploadStatus"></p>
+    </div>
+
+    <!-- ③ 3D -->
+    <div class="sec-h"><span class="n">3</span><h3>Tampilan 3D (360°)</h3><span class="opt">Opsional</span></div>
+    <div class="field" style="margin-top:8px">
       <label class="toggle-3d" for="fIs3d">
         <input type="checkbox" id="fIs3d">
         <span class="sw"></span>
-        <span><strong>Aktifkan 3D (360°) untuk produk ini</strong><span class="d">ON: produk punya halaman detail flagship dengan tampilan 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
+        <span><strong>Aktifkan 3D untuk produk ini</strong><span class="d">ON: ada halaman detail flagship dengan putaran 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
       </label>
       <div class="guide-3d only-3d">
-        <h4>Panduan foto 360°</h4>
-        Upload foto per warna lewat tombol <strong>+ Foto 360°</strong> di bawah. Supaya putarannya mulus:
+        <h4>Cara mengambil foto 360°</h4>
+        Per warna cukup <strong>12 foto</strong> (disarankan) atau <strong>8 foto</strong> (lebih cepat, putaran agak patah). Upload-nya di kartu warna pada langkah 4.
         <ol>
-          <li>Letakkan produk di tengah meja putar (turntable) atau alas polos, latar putih/abu polos, pencahayaan sama rata.</li>
-          <li>Kamera di tripod, <strong>jarak, tinggi, dan zoom tidak berubah</strong> selama pemotretan. Produk selalu di posisi tengah.</li>
-          <li>Putar produk <strong>searah, satu putaran penuh (360°)</strong>, foto setiap 10–15° → <strong>24–36 foto</strong> (minimal 12).</li>
-          <li>Urutan sudut: depan → samping kanan → belakang → samping kiri → kembali ke depan. Mulai &amp; akhir di sudut yang sama (depan).</li>
-          <li>Beri nama file berurutan: <code>01.jpg, 02.jpg, … 24.jpg</code>. Format JPG cukup (PNG tidak wajib), ukuran file tidak perlu dikecilkan, sistem mengompres otomatis.</li>
-          <li>Semua foto harus <strong>rasio &amp; ukuran sama</strong> (misal semua 1:1 atau semua 4:5).</li>
+          <li>Taruh produk di tengah alas polos (kertas putih/abu), cahaya merata. Kamera di tripod atau ditumpu, <strong>jarak dan tinggi tidak berubah</strong>.</li>
+          <li>Gambar lingkaran di kertas dengan tanda sudut (12 titik = tiap 30°, atau 8 titik = tiap 45°). Putar produk <strong>searah</strong> ke tiap tanda, lalu foto. Tidak perlu meja putar.</li>
+          <li>Mulai dari <strong>tampak depan</strong>, lalu putar ke kanan sampai kembali ke depan. Isi kotak sesuai label sudutnya.</li>
+          <li>Semua foto harus <strong>rasio dan ukuran sama</strong> (mis. semua 1:1). JPG cukup, sistem mengompres otomatis.</li>
         </ol>
-        Foto utama warna (galeri biasa) tetap diupload di bagian Warna seperti biasa.
       </div>
     </div>
 
-    <div class="field">
-      <label>Warna</label>
-      <p class="hint" style="margin:0 0 8px;">Upload semua foto warna produk ini sekaligus, lalu atur kode warna (RGB) &amp; nama untuk masing-masing foto secara manual di bawah. Tiap warna juga bisa dilengkapi <strong>Foto 360°</strong> — serangkaian foto produk dari banyak sudut (disarankan 16–36 foto, keliling produk) — supaya panel 3D di halaman produk bisa menampilkan putaran yang natural, karena memang foto asli dari sudut berbeda. Beri nama file berurutan (misal 01.jpg, 02.jpg, dst) saat upload, supaya urutan putarannya benar.</p>
+    <!-- ④ WARNA -->
+    <div class="sec-h"><span class="n">4</span><h3>Warna Produk</h3></div>
+    <p class="sec-help">Satu kartu = satu warna. <strong>Foto warna</strong> adalah foto produk saat warna itu dipilih pengunjung. Kalau 3D aktif, tiap kartu punya kotak <strong>Foto 360°</strong> sendiri.</p>
+    <div class="field" style="margin-top:0">
       <div class="color-list" id="colorList"></div>
       <label class="bulk-color-drop" for="fColorImages">
-        <strong>+ Upload Foto Warna (bisa pilih banyak sekaligus)</strong>
-        Tiap foto yang diunggah akan jadi satu baris warna — atur kode warnanya (RGB) &amp; nama manual di baris masing-masing.
+        <strong>+ Tambah Warna</strong>
+        Pilih foto produk, satu foto per warna (bisa pilih banyak sekaligus). Setelah itu isi nama dan pilih kode warnanya di kartu.
       </label>
       <input type="file" id="fColorImages" accept="image/*" multiple style="display:none;">
       <p class="hint" id="colorUploadStatus"></p>
       <details class="manual-color-fallback">
-        <summary>Atau tambah warna manual tanpa foto</summary>
+        <summary>Atau tambah warna tanpa foto</summary>
         <div class="add-color-row">
           <input type="color" id="fColorHex" value="#1c1a18">
           <input type="text" id="fColorName" placeholder="Nama warna, contoh: Hitam">
           <button class="btn btn-outline" type="button" id="addColorBtn">Tambah</button>
         </div>
       </details>
-    </div>
-
-    <div class="field">
-      <label>Foto Produk</label>
-      <div class="thumb-list" id="imgList"></div>
-      <label class="upload-drop" for="fImages">Klik untuk pilih foto (bisa lebih dari satu)</label>
-      <input type="file" id="fImages" accept="image/*" multiple style="display:none;">
-      <p class="hint" id="uploadStatus"></p>
     </div>
 
     <!-- input tersembunyi dipakai tombol "+ Foto 360°" di tiap baris warna -->
@@ -694,7 +733,7 @@
     document.getElementById('fSizes').value = (p.sizes || []).join(',');
     document.getElementById('fIs3d').checked = !!p.is_3d;
     sync3dToggle();
-    currentColors = Array.isArray(p.colors) ? [...p.colors] : [];
+    currentColors = Array.isArray(p.colors) ? p.colors.map(c => ({ ...c, spin: Array.isArray(c.spin) ? [...c.spin] : [] })) : [];
     currentImages = Array.isArray(p.images) ? [...p.images] : [];
     renderColorList();
     renderImgList();
@@ -740,51 +779,108 @@
   modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
   /* ---- colors (manual RGB, per foto — bisa banyak sekaligus) + foto 360° per warna ---- */
+  /* ---- Foto 360°: kotak (slot) berlabel sudut. 12 foto = tiap 30°, 8 foto = tiap 45°. ---- */
+  const SPIN_MIN = 8;
+  function spinMode(c){
+    if (c._mode) return c._mode;
+    const n = (c.spin || []).filter(Boolean).length;
+    return (n > 0 && n <= 8) ? 8 : 12;
+  }
+  function slotCount(c){ return Math.max(spinMode(c), (c.spin || []).length); }
+  function slotLabel(i, n){
+    const deg = Math.round(i * 360 / n);
+    const names = { 0:'Depan', 90:'Kanan', 180:'Belakang', 270:'Kiri' };
+    return names[deg] ? `${deg}° ${names[deg]}` : `${deg}°`;
+  }
+  function filledCount(c){ return (c.spin || []).filter(Boolean).length; }
+
   function renderColorList(){
     const wrap = document.getElementById('colorList');
     wrap.innerHTML = currentColors.map((c, i) => {
-      const frames = Array.isArray(c.spin) ? c.spin : [];
-      const framesHtml = frames.map((url, fi) => `
-        <span class="spin-frame-thumb">
-          <img src="${url}" alt="">
-          <button type="button" data-remove-frame="${i}:${fi}" title="Hapus foto ini">×</button>
-        </span>
-      `).join('');
+      const n = slotCount(c);
+      if (!Array.isArray(c.spin)) c.spin = [];
+      while (c.spin.length < n) c.spin.push('');
+      const mode = spinMode(c);
+      const done = filledCount(c);
+      const slots = c.spin.map((url, si) => url ? `
+        <div class="slot filled" data-slot="${i}:${si}" title="Klik untuk ganti foto">
+          <img src="${url}" alt=""><span class="lbl">${slotLabel(si, n)}</span>
+          <button type="button" class="x" data-remove-frame="${i}:${si}" title="Kosongkan">×</button>
+        </div>` : `
+        <button type="button" class="slot" data-slot="${i}:${si}"><span class="plus">+</span><span class="lbl">${slotLabel(si, n)}</span></button>`
+      ).join('');
       return `
-        <div class="color-row-block">
+        <div class="color-card">
+          <p class="cc-title">Warna ${i + 1}</p>
           <span class="color-chip">
-            ${c.image ? `<img class="swatch-thumb" src="${c.image}" alt="">` : `<span class="swatch" style="background:${c.hex}"></span>`}
-            <input type="color" value="${c.hex}" data-color-hex="${i}" title="Atur kode warna (RGB)">
+            <span>
+              ${c.image ? `<img class="swatch-thumb" src="${c.image}" alt="">` : `<span class="swatch" style="background:${c.hex}"></span>`}
+              <span class="photo-cap">${c.image ? 'Foto warna' : 'Tanpa foto'}</span>
+            </span>
+            <input type="color" value="${c.hex}" data-color-hex="${i}" title="Pilih kode warna (RGB)">
             <span class="hex-label">${c.hex}</span>
             <input type="text" value="${c.name}" data-color-name="${i}" placeholder="Nama warna">
-            <button type="button" data-remove-color="${i}">×</button>
+            <button type="button" data-remove-color="${i}" title="Hapus warna ini">×</button>
           </span>
-          <div class="spin-frames-row">
-            <button type="button" class="spin-upload-btn" data-spin-upload="${i}">+ Foto 360°</button>
-            <span class="spin-count-badge${frames.length ? '' : ' empty'}">${frames.length} foto</span>
-            ${framesHtml}
+          <div class="spin-box">
+            <div class="spin-head">
+              <strong>Foto 360°</strong>
+              <span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done >= SPIN_MIN ? 'Siap' : 'Belum siap'} · ${done}/${n}</span>
+              <span class="seg" role="group" aria-label="Jumlah foto">
+                <button type="button" class="${mode === 8 ? 'on' : ''}" data-mode="${i}:8">8 foto</button>
+                <button type="button" class="${mode === 12 ? 'on' : ''}" data-mode="${i}:12">12 foto (disarankan)</button>
+              </span>
+            </div>
+            <div class="slot-grid">${slots}</div>
+            <div class="spin-actions">
+              <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}">Upload sekaligus (urut nama file)</button>
+              <span class="hint" style="margin:0">Atau klik kotak untuk satu foto. Minimal ${SPIN_MIN} kotak terisi.</span>
+            </div>
           </div>
         </div>
       `;
     }).join('');
+
     wrap.querySelectorAll('[data-remove-color]').forEach(btn => {
       btn.addEventListener('click', () => {
         currentColors.splice(Number(btn.dataset.removeColor), 1);
         renderColorList();
       });
     });
-    wrap.querySelectorAll('[data-spin-upload]').forEach(btn => {
+    wrap.querySelectorAll('[data-slot]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-remove-frame]')) return;
+        const [ci, si] = el.dataset.slot.split(':').map(Number);
+        spinUploadTarget = { ci, slot: si };
+        const inp = document.getElementById('spinFramesInput');
+        inp.multiple = false;
+        inp.click();
+      });
+    });
+    wrap.querySelectorAll('[data-spin-bulk]').forEach(btn => {
       btn.addEventListener('click', () => {
-        spinUploadTarget = Number(btn.dataset.spinUpload);
-        document.getElementById('spinFramesInput').click();
+        spinUploadTarget = { ci: Number(btn.dataset.spinBulk), slot: null };
+        const inp = document.getElementById('spinFramesInput');
+        inp.multiple = true;
+        inp.click();
       });
     });
     wrap.querySelectorAll('[data-remove-frame]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const [ci, si] = btn.dataset.removeFrame.split(':').map(Number);
+        if (currentColors[ci] && currentColors[ci].spin) currentColors[ci].spin[si] = '';
+        renderColorList();
+      });
+    });
+    wrap.querySelectorAll('[data-mode]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const [ci, fi] = btn.dataset.removeFrame.split(':').map(Number);
-        if (currentColors[ci] && Array.isArray(currentColors[ci].spin)){
-          currentColors[ci].spin.splice(fi, 1);
-        }
+        const [ci, m] = btn.dataset.mode.split(':').map(Number);
+        const c = currentColors[ci];
+        if (spinMode(c) === m) return;
+        if (filledCount(c) && !confirm('Mengganti jumlah foto akan mengosongkan foto 360° warna ini (sudut tiap kotak berubah). Lanjutkan?')) return;
+        c.spin = [];
+        c._mode = m;
         renderColorList();
       });
     });
@@ -803,31 +899,41 @@
     });
   }
 
-  /* ---- upload foto 360° (serangkaian foto, per warna) ----
-     File diurutkan berdasarkan NAMA (natural sort) sebelum diunggah, bukan urutan
-     pilih-file browser yang tidak bisa diandalkan — jadi admin disarankan menamai
-     filenya berurutan (01.jpg, 02.jpg, dst) biar urutan putaran 360°-nya benar. */
+  /* ---- upload foto 360° ----
+     - klik 1 kotak  -> 1 foto masuk ke kotak itu (sudutnya jelas)
+     - "Upload sekaligus" -> banyak file, diurutkan berdasarkan NAMA (01, 02, ... 10)
+       lalu mengisi kotak kosong dari yang pertama. */
   document.getElementById('spinFramesInput').addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files);
+    let files = Array.from(e.target.files);
     e.target.value = '';
-    const idx = spinUploadTarget;
+    const t = spinUploadTarget;
     spinUploadTarget = null;
-    if (!files.length || idx === null || !currentColors[idx]) return;
+    if (!files.length || !t || !currentColors[t.ci]) return;
+    const c = currentColors[t.ci];
+    const n = slotCount(c);
+    while (c.spin.length < n) c.spin.push('');
 
     files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-    if (!Array.isArray(currentColors[idx].spin)) currentColors[idx].spin = [];
+    let targets;
+    if (t.slot !== null) targets = [t.slot];
+    else targets = c.spin.map((u, i) => u ? -1 : i).filter(i => i >= 0);
+    if (files.length > targets.length){
+      showToast(`Hanya ${targets.length} kotak yang tersedia, ${files.length - targets.length} foto diabaikan.`);
+      files = files.slice(0, targets.length);
+    }
 
-    for (let i = 0; i < files.length; i++){
-      showToast(`Mengunggah foto 360° ${i + 1} dari ${files.length}...`);
-      const file = await compressImageFile(files[i]);
+    for (let k = 0; k < files.length; k++){
+      showToast(`Mengunggah foto 360° ${k + 1} dari ${files.length}...`);
+      const file = await compressImageFile(files[k]);
       const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
       const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
       if (upErr){ showToast('Gagal upload salah satu foto 360°: ' + upErr.message); continue; }
       const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
-      currentColors[idx].spin.push(pub.publicUrl);
+      c.spin[targets[k]] = pub.publicUrl;
       renderColorList();
     }
-    showToast(`Selesai — ${currentColors[idx].spin.length} foto 360° tersimpan untuk warna ini.`);
+    const done = filledCount(c);
+    showToast(done >= SPIN_MIN ? `Foto 360° siap (${done} foto).` : `${done} foto terisi. Minimal ${SPIN_MIN} agar putaran 360° aktif.`);
   });
 
   document.getElementById('addColorBtn').addEventListener('click', () => {
@@ -959,6 +1065,15 @@
   });
 
   /* ---- save (insert / update) ---- */
+  // buang field sementara (_mode) dan kotak kosong sebelum disimpan ke database
+  function cleanColors(){
+    return currentColors.map(c => {
+      const { _mode, spin, ...rest } = c;
+      const frames = (spin || []).filter(Boolean);
+      return frames.length ? { ...rest, spin: frames } : rest;
+    });
+  }
+
   document.getElementById('saveBtn').addEventListener('click', async () => {
     const name = document.getElementById('fName').value.trim();
     const sku = document.getElementById('fSku').value.trim() || null;
@@ -975,11 +1090,11 @@
     // HARGA DINONAKTIFKAN: payload asli menyertakan `price,` setelah `category,` — data harga lama di DB tidak akan berubah karena kolom ini tidak disertakan.
     const is_3d = document.getElementById('fIs3d').checked;
     if (is_3d){
-      const ready = currentColors.filter(c => Array.isArray(c.spin) && c.spin.length >= 12).length;
-      if (!ready && !confirm('3D diaktifkan tapi belum ada warna dengan minimal 12 foto 360°. Produk akan tampil dengan pesan "360° belum tersedia". Tetap simpan?')) return;
+      const ready = currentColors.filter(c => filledCount(c) >= SPIN_MIN).length;
+      if (!ready && !confirm('3D diaktifkan tapi belum ada warna dengan minimal ' + SPIN_MIN + ' foto 360°. Produk akan tampil dengan pesan "360° belum tersedia". Tetap simpan?')) return;
     }
     // is_3d OFF: foto 360° yang sudah terlanjur diupload tetap disimpan (tidak hilang), hanya tidak ditampilkan
-    const payload = { name, sku, model, category, badge, sizes, colors: currentColors, images: currentImages, is_3d };
+    const payload = { name, sku, model, category, badge, sizes, colors: cleanColors(), images: currentImages, is_3d };
 
     let error;
     if (editingId){
