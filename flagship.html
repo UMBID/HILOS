@@ -115,7 +115,7 @@
       linear-gradient(var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
       linear-gradient(90deg, var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
       var(--ink);
-    perspective:900px;cursor:grab;
+    cursor:grab;
     touch-action:none; /* penting: cegah browser scroll halaman saat geser di panel ini (HP) */
   }
   .stage-3d.visible{display:flex;}
@@ -124,24 +124,29 @@
   .stage-3d-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
   .stage-3d-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--on-dark-muted);letter-spacing:0.03em;z-index:2;pointer-events:none;}
 
-  /* bayangan elips di bawah produk, ikut menipis saat foto mendekati sudut samping */
-  .stage-3d-shadow{
-    position:absolute;bottom:16%;left:50%;width:44%;height:9%;
-    background:radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 72%);
-    transform:translateX(-50%) scaleX(1);
-    filter:blur(1px);
-    pointer-events:none;
-  }
-
-  /* panggung foto produk (warna aktif) yang bisa ditahan-klik lalu digeser untuk diputar */
-  .stage-3d-inner{width:58%;transform-style:preserve-3d;will-change:transform;}
+  /* panggung: menampilkan 1 dari sekian foto 360° (foto asli produk dari banyak sudut),
+     bukan 1 foto yang disimulasikan berputar lewat CSS transform */
+  .stage-3d-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
   .stage-3d-inner img{
-    width:100%;height:auto;display:block;object-fit:contain;
-    filter:drop-shadow(0 16px 20px rgba(0,0,0,0.35));
+    width:100%;height:100%;display:block;object-fit:contain;
     pointer-events:none;-webkit-user-drag:none;user-select:none;
   }
-  .stage-3d-inner.auto-spin{animation:spin360 5.5s linear infinite;}
-  @keyframes spin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
+
+  /* garis progres tipis di bawah panel, nunjukin posisi sudut sekarang dari total foto */
+  .stage-3d-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.08);z-index:2;}
+  .stage-3d-progress-fill{height:100%;background:var(--gold);width:0%;transition:width .08s linear;}
+
+  .stage-3d-loading, .stage-3d-empty{
+    position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+    background:rgba(13,27,42,0.78);z-index:5;color:var(--on-dark-muted);font-size:12px;text-align:center;padding:0 30px;
+  }
+  .stage-3d-loading.show, .stage-3d-empty.show{display:flex;}
+  .stage-3d-spinner{width:28px;height:28px;border:2px solid var(--on-dark-line);border-top-color:var(--gold);border-radius:50%;animation:spin360cw .8s linear infinite;}
+  @keyframes spin360cw{to{transform:rotate(360deg);}}
+  .stage-3d-empty svg{width:28px;height:28px;color:var(--on-dark-muted);}
+
+  .tool-btn[disabled]{opacity:0.4;cursor:not-allowed;}
+  .tool-btn[disabled]:hover{border-color:var(--on-dark-line);color:var(--on-dark-muted);}
 
   .zoom-lens{position:absolute;inset:0;background-repeat:no-repeat;background-size:220%;opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:3;}
   .zoom-lens.active{opacity:1;}
@@ -345,12 +350,20 @@
           </div>
 
           <div class="stage-3d" id="stage3d">
-            <span class="stage-3d-label">3D Preview</span>
-            <div class="stage-3d-shadow" id="stage3dShadow"></div>
+            <span class="stage-3d-label">Tampilan 360°</span>
             <div class="stage-3d-inner" id="stage3dInner">
-              <img id="stage3dImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Preview 3D produk">
+              <img id="stage3dImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Tampilan 360 derajat produk">
             </div>
+            <div class="stage-3d-progress"><div class="stage-3d-progress-fill" id="stage3dProgressFill"></div></div>
             <span class="stage-3d-hint" id="stage3dHint">Tahan &amp; geser untuk putar</span>
+            <div class="stage-3d-loading" id="stage3dLoading">
+              <div class="stage-3d-spinner"></div>
+              <span id="stage3dLoadingText">Memuat tampilan 360°...</span>
+            </div>
+            <div class="stage-3d-empty" id="stage3dEmpty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+              <span>Tampilan 360° belum tersedia untuk warna ini.</span>
+            </div>
           </div>
         </div>
 
@@ -541,9 +554,8 @@
      ----------------------------------------------------------- */
   const sb = window.getSupabaseClient();
   const FALLBACK_IMG = 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900';
-  let flagshipImages = [FALLBACK_IMG]; // galeri foto produk aktif — dipakai untuk sequence di panel 3D
-  let flagshipCutouts = {}; // map {urlFotoAsli: urlFotoTransparan} — diisi admin lewat fitur "hapus background otomatis"
-  let flagship3dDefault = FALLBACK_IMG; // foto yang ditampilkan panel 3D saat halaman pertama dibuka (prioritaskan versi transparan kalau ada)
+  let flagshipImages = [FALLBACK_IMG]; // galeri foto produk aktif
+  let flagshipColorsData = []; // [{hex,name,image,spin:[...]}] — dipakai color-switch & panel 360°
   function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
   async function loadFlagshipProduct(){
@@ -555,7 +567,7 @@
     if (requestedId){
       const { data: product, error } = await sb
         .from('products')
-        .select('id,name,model,category,price,images,colors,sizes,badge,cutouts')
+        .select('id,name,model,category,price,images,colors,sizes,badge')
         .eq('id', requestedId)
         .maybeSingle();
       if (error || !product) return null;
@@ -592,7 +604,7 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge,cutouts)')
+      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
@@ -610,9 +622,8 @@
     const images = (p.images && p.images.length) ? p.images : [FALLBACK_IMG];
     const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
-    flagshipImages = images; // dipakai initFlagshipInteractions untuk isi panel 3D
-    const cutouts = (p.cutouts && typeof p.cutouts === 'object') ? p.cutouts : {}; // {urlAsli: urlTransparan}
-    flagshipCutouts = cutouts;
+    flagshipImages = images;
+    flagshipColorsData = colors; // dipakai initFlagshipInteractions untuk panel 360°
 
     const CATEGORY_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
     document.querySelector('.flagship-tag').textContent =
@@ -634,7 +645,7 @@
       (rank ? `<span class="pdp-badge badge-best" style="background:${rank <= 3 ? 'var(--gold)' : 'var(--ink)'};color:${rank <= 3 ? 'var(--ink)' : 'var(--sand)'};">#${rank} Top 5</span>` : '');
 
     document.querySelector('.color-row').innerHTML = colors.map((c, i) => `
-      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-img="${c.image || ''}" data-cutout="${(c.image && cutouts[c.image]) || ''}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
+      <button class="color-dot ${i === 0 ? 'active' : ''}" data-color="${c.name}" data-img="${c.image || ''}" data-color-index="${i}" style="${i === 0 ? 'border-color:var(--gold);' : ''}"><span style="background:${c.hex};"></span></button>
     `).join('');
     document.getElementById('colorValue').textContent = colors[0].name;
     document.getElementById('mainImg').dataset.defaultImg = images[0];
@@ -642,10 +653,6 @@
     if (colors[0] && colors[0].image){
       document.getElementById('mainImg').src = colors[0].image;
     }
-    // panel 3D: pakai versi transparan (cutout) kalau tersedia untuk foto yang sedang tampil,
-    // biar yang kelihatan muter cuma siluet produknya, bukan kotak foto + background-nya
-    const initial3dSrc = (colors[0] && colors[0].image) ? colors[0].image : images[0];
-    flagship3dDefault = cutouts[initial3dSrc] || initial3dSrc;
 
     document.querySelector('.size-row').innerHTML = sizes.map((s, i) => `
       <button class="size-btn ${i === Math.floor(sizes.length/2) ? 'active' : ''}">${s}</button>
@@ -697,10 +704,6 @@
         mainImg.src = btn.dataset.img;
         mainImg.style.opacity = '1';
       }, 180);
-      // panel 3D ikut pakai foto yang baru dipilih di galeri (pakai cutout kalau ada),
-      // supaya tidak nyangkut di foto warna/tampilan sebelumnya kalau dibuka lagi
-      syncStage3dToImage(flagshipCutouts[btn.dataset.img] || btn.dataset.img);
-      if (isSpinning) startAutoSpin();
     });
   });
 
@@ -729,97 +732,138 @@
   });
   galleryObserver.observe(mainImg, { attributes:true, attributeFilter:['src'] });
 
-  /* ---- Panel 3D: tahan klik lalu geser untuk memutar foto produk ----
-     Sesuai masukan user: "3D" di sini cukup berarti interaksi tahan-klik +
-     geser (drag) di atas 1 foto produk, bukan ilusi berganti-ganti sudut
-     foto. Jadi panel ini memutar foto aktif dengan rotateY() mengikuti
-     gerakan jari/mouse secara langsung (1:1 feel), dan tombol "Putar 360°"
-     tetap ada sebagai mode auto-spin terpisah (CSS animation). Mendukung
-     mouse DAN touch (HP) — ini yang sebelumnya belum ada. */
+  /* ---- Panel 360°: serangkaian FOTO ASLI produk dari banyak sudut ----
+     Konsep baru (sebelumnya 1 foto diputar pakai CSS rotateY — kelihatan
+     gepeng/tidak natural). Sekarang admin upload beberapa foto (idealnya
+     16-36) keliling produk per warna, lalu di sini kita cuma GANTI-GANTI
+     foto yang ditampilkan sesuai posisi geser — hasilnya benar-benar
+     terlihat berputar karena memang foto sungguhan dari sudut berbeda. */
   const btn3d = document.getElementById('btn3d');
   const btnSpin = document.getElementById('btnSpin');
   const stage3d = document.getElementById('stage3d');
-  const stage3dInner = document.getElementById('stage3dInner');
   const stage3dImg = document.getElementById('stage3dImg');
-  const stage3dShadow = document.getElementById('stage3dShadow');
   const stage3dHint = document.getElementById('stage3dHint');
+  const stage3dLoading = document.getElementById('stage3dLoading');
+  const stage3dLoadingText = document.getElementById('stage3dLoadingText');
+  const stage3dEmpty = document.getElementById('stage3dEmpty');
+  const stage3dProgressFill = document.getElementById('stage3dProgressFill');
+
   let is3dMode = false;
   let isSpinning = false;
   let dragging = false;
   let lastX = 0;
-  let currentRotation = 0;
-  const DRAG_SENSITIVITY = 0.6; // derajat rotasi per px geser
+  let activeColorIndex = 0;
+  let spinFrames = [];   // url foto 360° untuk warna aktif
+  let frameIndex = 0;
+  let framesReady = false;
+  let autoSpinTimer = null;
+  const PX_PER_FRAME = 6;  // makin kecil = makin sensitif putarannya saat digeser
+  const AUTO_SPIN_MS = 70; // interval ganti frame saat auto-play
 
-  function setStage3dImage(src){
-    stage3dImg.src = src || FALLBACK_IMG;
-  }
-  setStage3dImage(flagship3dDefault);
-
-  function applyRotation(deg){
-    currentRotation = deg;
-    stage3dInner.style.transform = `rotateY(${deg}deg)`;
-    // bayangan ikut "bergoyang" tipis mengikuti rotasi, biar makin kerasa 3D
-    const wobble = Math.sin((deg * Math.PI) / 180) * 0.12;
-    stage3dShadow.style.transform = `translateX(-50%) scaleX(${1 - Math.abs(wobble)})`;
+  function getSpinFramesFor(colorIndex){
+    const c = flagshipColorsData[colorIndex];
+    return (c && Array.isArray(c.spin) && c.spin.length >= 2) ? c.spin : [];
   }
 
-  const SPIN_DURATION_MS = 5500; // HARUS sama dengan durasi @keyframes spin360 di CSS (5.5s)
-  let spinStartedAt = 0;
-
-  function startAutoSpin(){
-    if (prefersReducedMotion) return; // hormati preferensi aksesibilitas, jangan auto-gerak
-    spinStartedAt = performance.now();
-    stage3dInner.style.transform = ''; // lepas rotasi manual, biar animasi CSS yang jalan
-    stage3dInner.classList.add('auto-spin');
+  function showFrame(i){
+    if (!spinFrames.length) return;
+    frameIndex = ((i % spinFrames.length) + spinFrames.length) % spinFrames.length;
+    stage3dImg.src = spinFrames[frameIndex];
+    stage3dProgressFill.style.width = `${((frameIndex + 1) / spinFrames.length) * 100}%`;
   }
-  function stopAutoSpin(){
-    // BUG LAMA: currentRotation tidak pernah ikut terupdate selama animasi CSS auto-spin
-    // berjalan, jadi begitu animasi dihentikan, foto "lompat" balik ke sudut sebelum spin
-    // dimulai. Diperbaiki dengan menghitung sudut yang sedang dilalui animasi berdasarkan
-    // waktu yang sudah berlalu, supaya transisi ke mode geser-manual terasa mulus (nyambung).
-    if (stage3dInner.classList.contains('auto-spin')){
-      const elapsed = performance.now() - spinStartedAt;
-      const degTravelled = (elapsed / SPIN_DURATION_MS) * 360;
-      currentRotation = (currentRotation + degTravelled) % 360;
+
+  function preloadFrames(urls){
+    return new Promise((resolve) => {
+      if (!urls.length){ resolve(); return; }
+      let loaded = 0;
+      stage3dLoadingText.textContent = `Memuat tampilan 360°... 0/${urls.length}`;
+      urls.forEach((url) => {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+          loaded++;
+          stage3dLoadingText.textContent = `Memuat tampilan 360°... ${loaded}/${urls.length}`;
+          if (loaded === urls.length) resolve();
+        };
+        img.src = url;
+      });
+    });
+  }
+
+  async function loadColorInto3d(colorIndex){
+    activeColorIndex = colorIndex;
+    framesReady = false;
+    spinFrames = getSpinFramesFor(colorIndex);
+    frameIndex = 0;
+    btnSpin.disabled = spinFrames.length === 0;
+
+    if (!spinFrames.length){
+      stage3dEmpty.classList.add('show');
+      stage3dLoading.classList.remove('show');
+      stage3dHint.style.display = 'none';
+      stage3dProgressFill.style.width = '0%';
+      return;
     }
-    stage3dInner.classList.remove('auto-spin');
-    applyRotation(currentRotation); // lanjutkan dari posisi sudut yang benar, bukan sudut lama
+    stage3dEmpty.classList.remove('show');
+    if (!is3dMode) return; // baru benar-benar di-preload saat panel mau/sedang ditampilkan
+    stage3dLoading.classList.add('show');
+    stage3dHint.style.display = 'none';
+    await preloadFrames(spinFrames);
+    stage3dLoading.classList.remove('show');
+    stage3dHint.style.display = '';
+    framesReady = true;
+    showFrame(0);
   }
 
-  function set3dMode(on){
+  async function set3dMode(on){
     is3dMode = on;
     btn3d.classList.toggle('active', on);
     stageMedia.classList.toggle('hidden', on);
     stage3d.classList.toggle('visible', on);
+    if (on && !framesReady && spinFrames.length){
+      await loadColorInto3d(activeColorIndex);
+    }
     if (!on){
-      isSpinning = false;
-      btnSpin.classList.remove('active');
       stopAutoSpin();
     }
   }
 
+  function startAutoSpin(){
+    if (prefersReducedMotion || !framesReady) return; // hormati preferensi aksesibilitas
+    isSpinning = true;
+    btnSpin.classList.add('active');
+    clearInterval(autoSpinTimer);
+    autoSpinTimer = setInterval(() => showFrame(frameIndex + 1), AUTO_SPIN_MS);
+  }
+  function stopAutoSpin(){
+    isSpinning = false;
+    btnSpin.classList.remove('active');
+    clearInterval(autoSpinTimer);
+    autoSpinTimer = null;
+  }
+
   btn3d.addEventListener('click', () => set3dMode(!is3dMode));
 
-  btnSpin.addEventListener('click', () => {
-    if (!is3dMode) set3dMode(true);
-    isSpinning = !isSpinning;
-    btnSpin.classList.toggle('active', isSpinning);
-    if (isSpinning) startAutoSpin(); else stopAutoSpin();
+  btnSpin.addEventListener('click', async () => {
+    if (!spinFrames.length) return; // tombol harusnya sudah disabled, ini jaga-jaga saja
+    if (!is3dMode) await set3dMode(true);
+    else if (!framesReady) await loadColorInto3d(activeColorIndex);
+    if (isSpinning) stopAutoSpin(); else startAutoSpin();
   });
 
   function dragStart(x){
-    if (!is3dMode) return;
+    if (!is3dMode || !framesReady) return;
     dragging = true;
     lastX = x;
-    isSpinning = false;
-    btnSpin.classList.remove('active');
     stopAutoSpin();
   }
   function dragMove(x){
     if (!dragging) return;
     const delta = x - lastX;
-    lastX = x;
-    applyRotation(currentRotation + delta * DRAG_SENSITIVITY);
+    if (Math.abs(delta) >= PX_PER_FRAME){
+      const steps = Math.trunc(delta / PX_PER_FRAME);
+      showFrame(frameIndex + steps);
+      lastX += steps * PX_PER_FRAME;
+    }
   }
   function dragEnd(){ dragging = false; }
 
@@ -828,31 +872,26 @@
   window.addEventListener('mousemove', (e) => dragMove(e.clientX));
   window.addEventListener('mouseup', dragEnd);
 
-  // Touch (HP/tablet) — penting: belum pernah ada sebelumnya, ini sebab utama
-  // kenapa "tahan klik & geser" terasa tidak jalan di perangkat sentuh.
+  // Touch (HP/tablet)
   stage3d.addEventListener('touchstart', (e) => {
     if (!is3dMode || !e.touches.length) return;
     dragStart(e.touches[0].clientX);
   }, { passive: true });
   stage3d.addEventListener('touchmove', (e) => {
     if (!dragging || !e.touches.length) return;
-    e.preventDefault(); // cegah halaman ikut ter-scroll saat geser di panel 3D
+    e.preventDefault(); // cegah halaman ikut ter-scroll saat geser di panel 360°
     dragMove(e.touches[0].clientX);
   }, { passive: false });
   stage3d.addEventListener('touchend', dragEnd);
   stage3d.addEventListener('touchcancel', dragEnd);
 
-  /* kalau warna diganti dan warna itu punya foto sendiri, panel 3D ikut pakai foto itu */
-  function syncStage3dToImage(src){
-    setStage3dImage(src);
-    applyRotation(0);
-  }
+  loadColorInto3d(0); // siapkan status tombol/empty-state untuk warna pertama sejak awal
 
   /* ---- color selection ---- */
   const colorDots = document.querySelectorAll('.color-dot');
   const colorValue = document.getElementById('colorValue');
   colorDots.forEach(dot => {
-    dot.addEventListener('click', () => {
+    dot.addEventListener('click', async () => {
       colorDots.forEach(d => { d.classList.remove('active'); d.style.borderColor = 'transparent'; });
       dot.classList.add('active');
       dot.style.borderColor = 'var(--gold)';
@@ -876,10 +915,11 @@
       });
       if (!matched) thumbBtns.forEach(b => b.classList.remove('active'));
 
-      // panel 3D ikut pakai foto warna ini kalau ada — prioritaskan versi transparan (cutout)
-      // biar rotasinya natural; kalau tidak ada warna/cutout, balik ke foto utama produk
-      syncStage3dToImage(dot.dataset.cutout || dot.dataset.img || flagship3dDefault);
-      if (isSpinning) startAutoSpin();
+      // panel 360° ikut pakai set foto warna ini
+      const wasSpinning = isSpinning;
+      stopAutoSpin();
+      await loadColorInto3d(Number(dot.dataset.colorIndex));
+      if (wasSpinning && is3dMode && framesReady) startAutoSpin();
     });
   });
 
