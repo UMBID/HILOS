@@ -163,9 +163,6 @@
   .badge-new{background:var(--sand);color:var(--ink);}
 
   .product-info h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2vw,28px);text-transform:uppercase;color:var(--sand);}
-  .pdp-rating{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--on-dark-muted);}
-  .pdp-rating .stars{color:var(--gold-light);letter-spacing:1px;}
-  .pdp-rating a{color:var(--gold-light);text-decoration:underline;}
   .product-price{margin-top:10px;font-family:'Archivo',sans-serif;font-weight:700;font-size:20px;color:var(--gold-light);}
   .product-info > p.desc{margin-top:16px;font-size:14px;line-height:1.75;color:var(--on-dark-muted);max-width:340px;}
 
@@ -189,9 +186,6 @@
 
   .cta-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
   .cta-row .btn{padding:14px 22px;font-size:11.5px;}
-  .btn-shopee{display:inline-flex;align-items:center;gap:8px;padding:14px 22px;border:1px solid var(--on-dark-line);color:var(--sand);font-size:11.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;transition:border-color 0.25s ease, color 0.25s ease;}
-  .btn-shopee:hover{border-color:#f36f21;color:#f9a367;}
-  .btn-shopee svg{width:15px;height:15px;}
 
   .trust-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid var(--on-dark-line);}
   .trust-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--on-dark-muted);}
@@ -388,20 +382,10 @@
           <span class="pdp-badge badge-best">Best Seller</span>
         </div>
         <h3>HILOS Wave Pro</h3>
-        <div class="pdp-rating">
-          <span class="stars">★★★★★</span>
-          <span>4.8 (128 Ulasan)</span>
-          <a href="kerjasama.html#review">Lihat semua ulasan</a>
-        </div>
         <!-- HARGA DINONAKTIFKAN: <div class="product-price">Rp 189.000</div> -->
-        <p class="desc">Sandal dengan desain ergonomis dan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
+        <p class="desc" id="pDesc"></p>
 
-        <ul class="feature-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sol empuk &amp; anti-slip</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ringan dan fleksibel</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tahan air &amp; mudah dibersihkan</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Desain modern &amp; minimalis</li>
-        </ul>
+        <ul class="feature-list" id="pFeatures"></ul>
 
         <div class="option-block">
           <div class="option-label">Pilih Warna — <span class="value" id="colorValue">Hitam</span></div>
@@ -428,10 +412,6 @@
 
         <div class="cta-row">
           <a href="#" class="btn btn-fill" id="salesBtn2"><span>Hubungi Sales</span></a>
-          <a href="https://shopee.co.id" target="_blank" rel="noopener" class="btn-shopee">
-            Beli di Shopee
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-          </a>
         </div>
 
         <div class="trust-row">
@@ -467,38 +447,10 @@
 <div class="feature-section">
   <div>
     <h2>Fitur Unggulan</h2>
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c-4-3-8-6.5-8-11a4 4 0 0 1 8-1.2A4 4 0 0 1 20 10c0 4.5-4 8-8 11Z"/></svg></div>
-        <h4>Sol Anti-Slip</h4>
-        <p>Cengkeraman kuat &amp; aman di berbagai permukaan.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3 3 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-7 6-10Z"/></svg></div>
-        <h4>Ringan &amp; Nyaman</h4>
-        <p>Material EVA premium yang ringan dan empuk.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg></div>
-        <h4>Tahan Air</h4>
-        <p>Tidak mudah rusak meski sering terkena air.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20c2-6 4-9 8-9s6 3 8 9"/><circle cx="12" cy="7" r="3"/></svg></div>
-        <h4>Desain Ergonomis</h4>
-        <p>Menyesuaikan bentuk kaki untuk kenyamanan maksimal.</p>
-      </div>
-    </div>
+    <div class="feature-grid" id="pFeatureGrid"></div>
   </div>
 
-  <div class="spec-box">
-    <h3>Spesifikasi</h3>
-    <div class="spec-row"><span class="k">Material Upper</span><span class="v">EVA Premium</span></div>
-    <div class="spec-row"><span class="k">Material Outsole</span><span class="v">EVA High Density</span></div>
-    <div class="spec-row"><span class="k">Berat</span><span class="v">± 180 gram (uk. 40)</span></div>
-    <div class="spec-row"><span class="k">Tipe</span><span class="v">Slide Sandal</span></div>
-    <div class="spec-row"><span class="k">Penggunaan</span><span class="v">Indoor &amp; Outdoor</span></div>
-  </div>
+  <div class="spec-box" id="pSpecBox"></div>
 </div>
 
 <div class="others-section" id="othersSection">
@@ -567,10 +519,11 @@
     if (requestedId){
       const { data: product, error } = await sb
         .from('products')
-        .select('id,name,model,category,price,images,colors,sizes,badge')
+        .select('id,name,model,category,price,images,colors,sizes,badge,is_3d')
         .eq('id', requestedId)
         .maybeSingle();
       if (error || !product) return null;
+      if (!product.is_3d) return { blocked:true };
 
       // cek apakah produk ini kebetulan sedang jadi Top 5 bulan ini (buat badge saja)
       let rank = null;
@@ -583,6 +536,7 @@
       const { data: similar } = await sb
         .from('products')
         .select('id,name,images,category')
+        .eq('is_3d', true)
         .eq('category', product.category)
         .neq('id', requestedId)
         .limit(8);
@@ -604,16 +558,69 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge)')
+      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge,is_3d)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
     if (error || !data || data.length === 0) return null;
 
-    const rows = data.filter(r => r.products);
-    const current = rows.find(r => r.rank === rankToShow) || rows[0];
+    const rows = data.filter(r => r.products && r.products.is_3d);
+    if (!rows.length) return { blocked:true };
+    const current = rows.find(r => r.rank === rankToShow);
+    if (!current) return { blocked:true };
     const others = rows.filter(r => r.rank !== current.rank);
     return { current, others, othersMode: 'rank' };
+  }
+
+
+  /* ---- Konten generik otomatis per jenis produk (sandal / sepatu) ---- */
+  const ICONS = [
+    '<path d="M12 21c-4-3-8-6.5-8-11a4 4 0 0 1 8-1.2A4 4 0 0 1 20 10c0 4.5-4 8-8 11Z"/>',
+    '<path d="M12 3c3 3 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-7 6-10Z"/>',
+    '<path d="M12 2.5s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/>',
+    '<path d="M4 20c2-6 4-9 8-9s6 3 8 9"/><circle cx="12" cy="7" r="3"/>'
+  ];
+  const PRODUCT_COPY = {
+    sandal: {
+      type:'Sandal',
+      desc:'Sandal dengan material pilihan yang awet dan tahan lama, ringan di kaki, serta nyaman dipakai sepanjang hari untuk aktivitas harian.',
+      features:[
+        ['Awet & Tahan Lama','Material berkualitas yang tidak mudah rusak meski dipakai setiap hari.'],
+        ['Ringan & Empuk','Sol empuk dan ringan, nyaman dipakai berjam-jam.'],
+        ['Tahan Air','Mudah dibersihkan dan tidak mudah rusak saat terkena air.'],
+        ['Anti-Slip','Sol bertekstur yang mencengkeram kuat di berbagai permukaan.']
+      ],
+      spec:[['Material','Material sandal pilihan, awet & tahan lama'],['Sol','Empuk, fleksibel & anti-slip'],['Perawatan','Mudah dibersihkan'],['Penggunaan','Harian, indoor & outdoor']]
+    },
+    sepatu: {
+      type:'Sepatu',
+      desc:'Sepatu dengan material pilihan yang kuat dan tahan lama, bantalan nyaman, serta konstruksi kokoh untuk menemani aktivitas harian Anda.',
+      features:[
+        ['Awet & Tahan Lama','Konstruksi dan jahitan kokoh yang tahan pemakaian rutin.'],
+        ['Bantalan Nyaman','Insole empuk yang menopang kaki sepanjang hari.'],
+        ['Sol Anti-Slip','Outsole bertekstur untuk pijakan stabil dan aman.'],
+        ['Bernapas & Ringan','Bahan upper yang ringan dan menjaga sirkulasi udara.']
+      ],
+      spec:[['Material Upper','Material sepatu pilihan, kuat & tahan lama'],['Outsole','Karet/sol anti-slip'],['Insole','Empuk & nyaman'],['Penggunaan','Harian & aktivitas ringan']]
+    }
+  };
+  function productKind(p){
+    return /sepatu|sneaker|shoe|\bsol\b/i.test((p.model || '') + ' ' + (p.name || '')) ? 'sepatu' : 'sandal';
+  }
+  function applyGenericCopy(p, colors, sizes){
+    const c = PRODUCT_COPY[productKind(p)];
+    const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    document.getElementById('pDesc').textContent = c.desc;
+    document.getElementById('pFeatures').innerHTML = c.features.map(f => `<li>${check}${f[0]}</li>`).join('');
+    document.getElementById('pFeatureGrid').innerHTML = c.features.map((f, i) => `
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICONS[i]}</svg></div>
+        <h4>${f[0]}</h4><p>${f[1]}</p>
+      </div>`).join('');
+    const rows = [['Tipe', c.type + (p.model ? ' — ' + p.model : '')], ...c.spec,
+      ['Ukuran', sizes[0] + ' – ' + sizes[sizes.length-1]], ['Pilihan Warna', colors.length + ' warna']];
+    document.getElementById('pSpecBox').innerHTML = '<h3>Spesifikasi</h3>' +
+      rows.map(r => `<div class="spec-row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
   }
 
   function applyFlagshipProduct(current, others, othersMode){
@@ -623,6 +630,7 @@
     const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
     flagshipImages = images;
+    applyGenericCopy(p, colors, sizes);
     flagshipColorsData = colors; // dipakai initFlagshipInteractions untuk panel 360°
 
     const CATEGORY_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
@@ -680,6 +688,7 @@
   }
 
   loadFlagshipProduct().then(result => {
+    if (result && result.blocked){ location.replace('produk.html'); return; }
     if (result) applyFlagshipProduct(result.current, result.others, result.othersMode);
     initFlagshipInteractions();
   });
