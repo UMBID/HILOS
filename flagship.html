@@ -127,7 +127,7 @@
   /* panggung: menampilkan 1 dari sekian foto 360° (foto asli produk dari banyak sudut),
      bukan 1 foto yang disimulasikan berputar lewat CSS transform */
   .stage-3d-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;}
-  .stage-3d-inner img.fade-layer{position:absolute;inset:0;opacity:0;transition:opacity .13s ease;}
+  .stage-3d-inner img.frame-layer{position:absolute;inset:0;opacity:0;will-change:opacity;}
   .stage-3d-inner img{
     width:100%;height:100%;display:block;object-fit:contain;
     pointer-events:none;-webkit-user-drag:none;user-select:none;
@@ -348,7 +348,6 @@
             <span class="stage-3d-label">Tampilan 360°</span>
             <div class="stage-3d-inner" id="stage3dInner">
               <img id="stage3dImg" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Tampilan 360 derajat produk">
-              <img id="stage3dImgFade" class="fade-layer" src="" alt="" aria-hidden="true">
             </div>
             <div class="stage-3d-progress"><div class="stage-3d-progress-fill" id="stage3dProgressFill"></div></div>
             <span class="stage-3d-hint" id="stage3dHint">Tahan &amp; geser untuk putar</span>
@@ -768,38 +767,78 @@
   let frameIndex = 0;
   let framesReady = false;
   let autoSpinTimer = null;
-  /* Kecepatan menyesuaikan jumlah foto: foto sedikit (8-12) = geser lebih jauh per frame,
-     auto-play lebih pelan, dan ada transisi crossfade supaya tidak terasa patah-patah. */
-  function pxPerFrame(){ return Math.max(6, Math.round(300 / Math.max(spinFrames.length, 1))); }
-  function autoSpinMs(){ return spinFrames.length <= 16 ? 170 : 70; }
-  const stage3dFade = document.getElementById('stage3dImgFade');
-  let fadeTimer = null;
+  /* ---- Mesin putar 360° (halus, berbasis sudut kontinu) ----
+     - posisi `pos` adalah angka pecahan (mis. 2.37 = 37% menuju foto ke-3), bukan lompat per foto
+     - dua foto bertetangga di-blend sesuai pecahannya, jadi foto sedikit (8-12) tetap terasa mengalir
+     - auto-play berkecepatan tetap (satu putaran penuh = REV_SECONDS), jauh lebih pelan dari sebelumnya
+     - geser jari/mouse punya inersia: setelah dilepas, putaran melambat pelan-pelan */
+  const REV_SECONDS = 14;     // durasi 1 putaran penuh saat auto-play (makin besar = makin pelan)
+  const PX_FULL_TURN = 620;   // geser sejauh ini (px) = 1 putaran penuh
+  const FRICTION = 2.6;       // makin besar = inersia makin cepat berhenti
+  let pos = 0, vel = 0;       // vel dalam foto/detik
+  let layers = [];
+  let rafId = 0, lastT = 0, lastLit = [];
 
   function getSpinFramesFor(colorIndex){
     const c = flagshipColorsData[colorIndex];
     return (c && Array.isArray(c.spin) && c.spin.length >= 2) ? c.spin : [];
   }
 
-  function showFrame(i){
-    if (!spinFrames.length) return;
-    frameIndex = ((i % spinFrames.length) + spinFrames.length) % spinFrames.length;
-    const url = spinFrames[frameIndex];
-    if (spinFrames.length <= 16 && stage3dImg.getAttribute('src')){
-      stage3dFade.src = url;
-      stage3dFade.style.opacity = 1;
-      clearTimeout(fadeTimer);
-      fadeTimer = setTimeout(() => {
-        stage3dImg.src = url;
-        stage3dFade.style.transition = 'none';
-        stage3dFade.style.opacity = 0;
-        void stage3dFade.offsetWidth;
-        stage3dFade.style.transition = '';
-      }, 140);
-    } else {
-      stage3dImg.src = url;
-    }
-    stage3dProgressFill.style.width = `${((frameIndex + 1) / spinFrames.length) * 100}%`;
+  function buildLayers(){
+    layers.forEach(l => l.remove());
+    stage3dImg.style.display = 'none';
+    const host = document.getElementById('stage3dInner');
+    layers = spinFrames.map(url => {
+      const im = document.createElement('img');
+      im.className = 'frame-layer'; im.alt = ''; im.draggable = false; im.src = url;
+      host.appendChild(im);
+      return im;
+    });
+    lastLit = [];
   }
+
+  function render(){
+    const N = layers.length;
+    if (!N) return;
+    const p = ((pos % N) + N) % N;
+    const i = Math.floor(p) % N, j = (i + 1) % N, f = p - Math.floor(p);
+    // dwell: sebagian besar waktu foto tampil tajam, blend hanya di tengah transisi
+    const t = Math.min(1, Math.max(0, (f - 0.22) / 0.56));
+    const e = t * t * (3 - 2 * t);
+    lastLit.forEach(k => { layers[k].style.opacity = 0; layers[k].style.zIndex = 0; });
+    layers[i].style.opacity = 1; layers[i].style.zIndex = 1;
+    if (j !== i){ layers[j].style.opacity = e; layers[j].style.zIndex = 2; }
+    lastLit = [i, j];
+    frameIndex = Math.round(p) % N;
+    stage3dProgressFill.style.width = `${(p / N) * 100}%`;
+  }
+
+  function tick(t){
+    const dt = Math.min(0.05, (t - lastT) / 1000 || 0.016);
+    lastT = t;
+    const N = layers.length;
+    if (dragging){
+      // posisi diatur langsung oleh dragMove
+    } else if (isSpinning){
+      const target = N / REV_SECONDS;
+      vel += (target - vel) * Math.min(1, dt * 4);   // percepat halus ke kecepatan auto-play
+      pos += vel * dt;
+    } else if (Math.abs(vel) > 0.02){
+      vel *= Math.exp(-FRICTION * dt);                // inersia setelah geser dilepas
+      pos += vel * dt;
+    } else {
+      vel = 0; rafId = 0; render(); return;
+    }
+    render();
+    rafId = requestAnimationFrame(tick);
+  }
+  function kick(){
+    if (rafId) return;
+    lastT = performance.now();
+    rafId = requestAnimationFrame(tick);
+  }
+  function setPos(v){ pos = v; vel = 0; render(); }
+  function showFrame(i){ setPos(i); }
 
   function preloadFrames(urls){
     return new Promise((resolve) => {
@@ -840,7 +879,8 @@
     stage3dLoading.classList.remove('show');
     stage3dHint.style.display = '';
     framesReady = true;
-    showFrame(0);
+    buildLayers();
+    setPos(0);
   }
 
   async function set3dMode(on){
@@ -860,14 +900,11 @@
     if (prefersReducedMotion || !framesReady) return; // hormati preferensi aksesibilitas
     isSpinning = true;
     btnSpin.classList.add('active');
-    clearInterval(autoSpinTimer);
-    autoSpinTimer = setInterval(() => showFrame(frameIndex + 1), autoSpinMs());
+    kick();
   }
   function stopAutoSpin(){
     isSpinning = false;
     btnSpin.classList.remove('active');
-    clearInterval(autoSpinTimer);
-    autoSpinTimer = null;
   }
 
   btn3d.addEventListener('click', () => set3dMode(!is3dMode));
@@ -879,23 +916,33 @@
     if (isSpinning) stopAutoSpin(); else startAutoSpin();
   });
 
+  let dragLastT = 0;
   function dragStart(x){
     if (!is3dMode || !framesReady) return;
     dragging = true;
-    lastX = x;
+    lastX = x; dragLastT = performance.now();
     stopAutoSpin();
+    vel = 0;
+    kick();
   }
   function dragMove(x){
     if (!dragging) return;
-    const delta = x - lastX;
-    const PX = pxPerFrame();
-    if (Math.abs(delta) >= PX){
-      const steps = Math.trunc(delta / PX);
-      showFrame(frameIndex + steps);
-      lastX += steps * PX;
-    }
+    const N = layers.length;
+    const now = performance.now();
+    const dFrames = ((x - lastX) / PX_FULL_TURN) * N;
+    pos += dFrames;
+    const dts = Math.max(0.008, (now - dragLastT) / 1000);
+    vel = vel * 0.6 + (dFrames / dts) * 0.4;             // estimasi kecepatan untuk inersia
+    const cap = N / 1.2; vel = Math.max(-cap, Math.min(cap, vel));
+    lastX = x; dragLastT = now;
+    render();
   }
-  function dragEnd(){ dragging = false; }
+  function dragEnd(){
+    if (!dragging) return;
+    dragging = false;
+    if (performance.now() - dragLastT > 90) vel = 0;     // berhenti dulu sebelum dilepas = tidak meluncur
+    kick();
+  }
 
   // Mouse (desktop)
   stage3d.addEventListener('mousedown', (e) => dragStart(e.clientX));
