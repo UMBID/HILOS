@@ -291,6 +291,99 @@
   .field label.bulk-color-drop{ text-transform:none; letter-spacing:0; font-weight:400; }
   .field label.upload-drop{ text-transform:none; letter-spacing:0; font-weight:400; }
   @media (max-width:520px){ .slot-grid{ grid-template-columns:repeat(3,1fr); } }
+
+  /* ---------- v3: aktivitas terbaru + responsif mobile ---------- */
+  .p-item{ display:contents; }
+  .p-meta-m, .p-badge-m{ display:none; }
+  .p-activity{ font-size:11px; color:#8a8078; margin-top:4px; line-height:1.35; word-break:break-word; }
+  .tag-3d{ display:inline-block; font-size:10px; font-weight:700; letter-spacing:.05em; padding:2px 7px; border-radius:100px; background:rgba(47,111,176,.12); color:var(--gold-deep); margin-left:6px; vertical-align:middle; }
+  .activity-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; margin-bottom:16px; }
+  .activity-card summary{ cursor:pointer; padding:12px 16px; font-family:'Archivo',sans-serif; font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  .activity-card summary::-webkit-details-marker{ display:none; }
+  .activity-card summary::after{ content:"▾"; color:#8a8078; transition:transform .2s; }
+  .activity-card[open] summary::after{ transform:rotate(180deg); }
+  .activity-card ul{ list-style:none; padding:0 16px 8px; }
+  .activity-card li{ display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-top:1px solid var(--sand-line); font-size:12.5px; line-height:1.4; }
+  .activity-card li .dot{ width:8px; height:8px; border-radius:50%; margin-top:5px; flex-shrink:0; background:var(--gold); }
+  .activity-card li .dot.hapus{ background:var(--danger); }
+  .activity-card li .dot.tambah{ background:#2e7d32; }
+  .activity-card li small{ display:block; color:#8a8078; font-size:11px; margin-top:1px; }
+  .activity-card li .who{ font-weight:600; word-break:break-all; }
+  .tab-nav{ overflow-x:auto; }
+  .tab-nav-btn{ white-space:nowrap; }
+
+  @media (max-width:720px){
+    body{ font-size:15px; }
+    .topbar{ padding:12px 16px; }
+    .topbar .logo{ font-size:16px; }
+    .topbar .btn{ padding:9px 14px; font-size:12px; }
+    .wrap{ padding:20px 14px 70px; }
+    .page-head{ margin-bottom:18px; }
+    .page-head h1{ font-size:20px; }
+    .page-head > div:last-child{ width:100%; }
+    .page-head > div:last-child .btn{ flex:1; }
+    .tab-nav{ margin-bottom:18px; gap:0; }
+    .tab-nav-btn{ margin-right:20px; }
+
+    /* input 16px supaya iPhone tidak otomatis zoom saat fokus */
+    .field input, .field select, .toolbar input[type="search"], .toolbar select,
+    .color-chip input[type="text"], .add-color-row input[type="text"], #pickerSearch{ font-size:16px !important; }
+
+    .toolbar{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px; }
+    .toolbar input[type="search"]{ grid-column:1 / -1; min-width:0; }
+    .toolbar select{ width:100%; min-width:0; }
+    .toolbar .result-count{ grid-column:1 / -1; }
+
+    /* tabel produk -> kartu */
+    .table-card{ background:transparent; border:none; border-radius:0; overflow:visible; }
+    .p-grid{ display:block; }
+    .p-grid > .p-cell.head{ display:none; }
+    #productList{ display:flex !important; flex-direction:column; gap:10px; }
+    .p-item{
+      display:grid; grid-template-columns:56px 1fr; column-gap:12px; row-gap:8px;
+      background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:12px;
+    }
+    .p-item .p-cell{ border-top:none; padding:0; }
+    .p-item .p-cell.col-category, .p-item .p-cell.col-type, .p-item .p-cell.c-badge{ display:none; }
+    .p-item .p-thumb{ width:56px; height:56px; }
+    .p-meta-m{ display:block; font-size:12px; color:#6b6058; margin-top:3px; }
+    .p-badge-m{ display:inline-block; margin-top:6px; }
+    .p-item .row-actions{ grid-column:1 / -1; justify-self:stretch; gap:8px; }
+    .p-item .row-actions .icon-btn{ flex:1; padding:11px 12px; font-size:13px; }
+    .empty-state{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; }
+
+    /* top 5 */
+    .top10-row{ flex-wrap:wrap; gap:10px 12px; padding:12px; }
+    .top10-info{ flex:1 1 140px; }
+    .top10-actions{ width:100%; }
+    .top10-actions .btn, .top10-actions .icon-btn, .top10-actions button{ flex:1; }
+    #top10View .page-head > div:last-child{ flex-wrap:wrap; }
+    #top10View .page-head input[type="month"]{ flex:1; min-width:0; font-size:16px; padding:10px; }
+
+    /* modal: layar penuh seperti lembar */
+    .modal-overlay{ padding:0; }
+    .modal{ max-width:none; min-height:100%; border-radius:0; padding:18px 14px 0; }
+    .modal h2{ font-size:18px; }
+    .modal-actions{ position:sticky; bottom:0; background:#fff; margin:22px -14px 0; padding:12px 14px calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--sand-line); z-index:3; }
+    .modal-actions .btn{ flex:1; }
+    .sec-help{ margin-left:0; }
+    .color-card{ padding:10px; }
+    .color-card .color-chip{ flex-wrap:wrap; }
+    .color-card .color-chip input[type="text"]{ flex:1 1 100%; order:5; }
+    .spin-head{ flex-direction:column; align-items:stretch; }
+    .spin-head .seg{ display:flex; }
+    .spin-head .seg button{ flex:1; padding:8px 6px; }
+    .spin-actions .bulk-sec-btn{ width:100%; padding:10px; font-size:12.5px; }
+    .slot .lbl{ font-size:9px; }
+    .guide-3d{ padding:12px; }
+    .toggle-3d{ padding:12px; }
+    .upload-drop, .bulk-color-drop{ padding:16px 10px; }
+    .toast{ left:12px; right:12px; bottom:14px; text-align:center; }
+    .sec-h{ margin-bottom:10px; }
+    .grid-2{ gap:0; }
+    .spin-head .spin-status{ align-self:flex-start; }
+    .login-box{ padding:32px 22px; }
+  }
 </style>
 </head>
 <body>
@@ -337,6 +430,11 @@
         <button class="btn btn-gold" id="addProductBtn">+ Tambah Produk</button>
       </div>
     </div>
+
+    <details class="activity-card" id="activityCard" style="display:none;">
+      <summary>Aktivitas Terbaru</summary>
+      <ul id="activityList"></ul>
+    </details>
 
     <div class="toolbar">
       <input type="search" id="searchInput" placeholder="Cari nama atau kode produk...">
@@ -421,6 +519,7 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2 id="modalTitle">Tambah Produk</h2>
+    <p class="hint" id="modalActivity" style="margin:-12px 0 8px;"></p>
     <div class="sec-h" style="margin-top:14px;border-top:none;padding-top:0"><span class="n">1</span><h3>Informasi Produk</h3></div>
     <input type="hidden" id="fId">
 
@@ -603,6 +702,39 @@
   /* ---------------- LOAD & RENDER ---------------- */
   let allProducts = [];
 
+  /* ---------------- AKTIVITAS TERAKHIR (berdasarkan email admin) ---------------- */
+  function escHtml(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+  function timeAgo(iso){
+    const t = new Date(iso).getTime();
+    if (!t) return '';
+    const sec = Math.max(0, Math.round((Date.now() - t) / 1000));
+    if (sec < 45) return 'baru saja';
+    const min = Math.round(sec / 60);
+    if (min < 60) return `${min} menit lalu`;
+    const hr = Math.round(min / 60);
+    if (hr < 24) return `${hr} jam lalu`;
+    const day = Math.round(hr / 24);
+    if (day < 30) return `${day} hari lalu`;
+    return new Date(iso).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+  }
+  function activityLine(p){
+    if (!p.updated_by) return '';
+    const added = p.created_at && p.updated_at && Math.abs(new Date(p.updated_at) - new Date(p.created_at)) < 3000;
+    return `<div class="p-activity">${added ? 'Ditambahkan' : 'Diubah'} ${timeAgo(p.updated_at)} oleh <strong>${escHtml(p.updated_by)}</strong></div>`;
+  }
+  const ACTION_TEXT = { tambah:'menambahkan', ubah:'mengubah', hapus:'menghapus' };
+  async function loadActivity(){
+    const card = document.getElementById('activityCard');
+    const { data, error } = await sb.from('product_activity').select('*').order('created_at', { ascending:false }).limit(8);
+    if (error || !data || !data.length){ card.style.display = 'none'; return; } // tabel belum dibuat / belum ada aktivitas
+    document.getElementById('activityList').innerHTML = data.map(a => `
+      <li><span class="dot ${escHtml(a.action)}"></span><div>
+        <span class="who">${escHtml(a.actor_email || 'sistem')}</span> ${ACTION_TEXT[a.action] || escHtml(a.action)} <strong>${escHtml(a.product_name || '-')}</strong>
+        <small>${timeAgo(a.created_at)}</small></div></li>`).join('');
+    if (!card.dataset.init){ card.open = window.innerWidth > 720; card.dataset.init = '1'; }
+    card.style.display = 'block';
+  }
+
   async function loadProducts(){
     const { data, error } = await sb
       .from('products')
@@ -613,6 +745,7 @@
     if (error){ showToast('Gagal memuat produk: ' + error.message); return; }
     allProducts = data;
     renderTable();
+    loadActivity();
   }
 
   function renderTable(){
@@ -652,18 +785,23 @@
     list.forEach(p => {
       const thumb = (p.images && p.images[0]) ? p.images[0] : '';
       productList.insertAdjacentHTML('beforeend', `
+        <div class="p-item">
         <div class="p-cell"><div class="p-thumb">${thumb ? `<img src="${thumb}" alt="">` : ''}</div></div>
         <div class="p-cell">
-          <div class="p-name">${p.name}</div>
+          <div class="p-name">${p.name}${p.is_3d ? '<span class="tag-3d">3D</span>' : ''}</div>
           ${p.sku ? `<span class="sku-tag">${p.sku}</span>` : ''}
+          <div class="p-meta-m">${GENDER_LABEL[p.category] || p.category} · ${p.model || '-'}</div>
+          ${p.badge ? `<span class="badge-tag p-badge-m">${p.badge}</span>` : ''}
+          ${activityLine(p)}
         </div>
         <div class="p-cell col-category">${GENDER_LABEL[p.category] || p.category}</div>
         <div class="p-cell col-type"><span class="p-model">${p.model || '-'}</span></div>
         <!-- HARGA DINONAKTIFKAN: <div class="p-cell col-price">${formatRupiah(p.price)}</div> -->
-        <div class="p-cell">${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
+        <div class="p-cell c-badge">${p.badge ? `<span class="badge-tag">${p.badge}</span>` : ''}</div>
         <div class="p-cell row-actions">
           <button class="icon-btn" data-edit="${p.id}">Edit</button>
           <button class="icon-btn" data-del="${p.id}">Hapus</button>
+        </div>
         </div>
       `);
     });
@@ -698,6 +836,7 @@
     currentColors = [];
     currentImages = [];
     document.getElementById('modalTitle').textContent = 'Tambah Produk';
+    document.getElementById('modalActivity').textContent = '';
     document.getElementById('fId').value = '';
     document.getElementById('fName').value = '';
     document.getElementById('fSku').value = '';
@@ -724,6 +863,7 @@
     resetForm();
     editingId = id;
     document.getElementById('modalTitle').textContent = 'Edit Produk';
+    document.getElementById('modalActivity').textContent = p.updated_by ? `Terakhir diubah ${timeAgo(p.updated_at)} oleh ${p.updated_by}` : '';
     document.getElementById('fId').value = p.id;
     document.getElementById('fName').value = p.name;
     document.getElementById('fSku').value = p.sku || '';
