@@ -165,11 +165,6 @@
   .market-trust{display:flex;flex-wrap:wrap;gap:20px;}
   .market-trust-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#4a3f32;}
   .market-trust-item svg{width:17px;height:17px;color:var(--gold-deep);}
-  .market-buttons{display:flex;gap:12px;flex-wrap:wrap;}
-  .market-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;font-size:12px;font-weight:700;letter-spacing:0.04em;text-decoration:none;color:#fff;}
-  .market-btn svg{width:16px;height:16px;}
-  .market-btn.tokopedia{background:#03ac0e;}
-  .market-btn.tiktok{background:#111;}
 
   /* footer */
   .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;}
@@ -419,16 +414,6 @@
       <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Garansi Produk</div>
       <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Pengiriman Cepat</div>
     </div>
-    <div class="market-buttons">
-      <a href="https://tokopedia.com" target="_blank" rel="noopener" class="market-btn tokopedia">
-        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
-        Tokopedia
-      </a>
-      <a href="https://tiktok.com/shop" target="_blank" rel="noopener" class="market-btn tiktok">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M15 3a5 5 0 0 0 5 5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-        TikTok Shop
-      </a>
-    </div>
   </div>
 </div>
 
@@ -454,6 +439,8 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
+<script src="assets/form-config.js"></script>
+<script src="assets/form-mailer.js"></script>
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -485,12 +472,8 @@
     revealTargets.forEach(el => io.observe(el));
   }
 
-  /* contact form (static demo — no real backend, shows a success message) */
-  document.getElementById('kerjasamaForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    document.getElementById('formSuccess').classList.add('show');
-    e.target.reset();
-  });
+  /* form kerjasama: dikirim ke email lewat Web3Forms (lihat assets/form-config.js) */
+  HilosForm.init({ formId: 'kerjasamaForm', successId: 'formSuccess', kind: 'Kerjasama' });
 
   /* mitra video placeholder */
   document.getElementById('mitraVideo').addEventListener('click', () => {
