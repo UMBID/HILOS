@@ -6,6 +6,6 @@
 //    dengan email lain lalu ganti nilai di bawah. Key ini memang publik (aman ada di website).
 // =====================================================================
 window.HILOS_FORM = {
-  accessKey: 'ISI_ACCESS_KEY_WEB3FORMS',
+  accessKey: 'cc6e6ca7-cb2a-4e05-a369-e61f04e05ee8',
   whatsapp: 'https://wa.me/6281234567890'   // dipakai sebagai alternatif kalau pengiriman gagal
 };
