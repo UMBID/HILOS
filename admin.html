@@ -602,7 +602,7 @@
         <ol>
           <li>Taruh produk di tengah alas polos (kertas putih/abu), cahaya merata. Kamera di tripod atau ditumpu, <strong>jarak dan tinggi tidak berubah</strong>.</li>
           <li>Gambar lingkaran di kertas dengan tanda sudut (12 titik = tiap 30°, atau 8 titik = tiap 45°). Putar produk <strong>searah</strong> ke tiap tanda, lalu foto. Tidak perlu meja putar.</li>
-          <li>Mulai dari <strong>tampak depan</strong>, lalu putar ke kanan sampai kembali ke depan. Isi kotak sesuai label sudutnya.</li>
+          <li>Mulai dari <strong>tampak depan</strong>, lalu putar ke kanan sampai kembali ke depan. Urutan inilah yang dipakai sistem; <strong>jumlah 8 atau 12 terdeteksi otomatis</strong> dan posisi sudutnya dipetakan sendiri.</li>
           <li>Semua foto harus <strong>rasio dan ukuran sama</strong> (mis. semua 1:1). JPG cukup, sistem mengompres otomatis.</li>
         </ol>
       </div>
@@ -921,13 +921,8 @@
 
   /* ---- colors (manual RGB, per foto — bisa banyak sekaligus) + foto 360° per warna ---- */
   /* ---- Foto 360°: kotak (slot) berlabel sudut. 12 foto = tiap 30°, 8 foto = tiap 45°. ---- */
-  const SPIN_MIN = 8;
-  function spinMode(c){
-    if (c._mode) return c._mode;
-    const n = (c.spin || []).filter(Boolean).length;
-    return (n > 0 && n <= 8) ? 8 : 12;
-  }
-  function slotCount(c){ return Math.max(spinMode(c), (c.spin || []).length); }
+  const SPIN_MIN = 8, SPIN_MAX = 16;   // jumlah sudut fleksibel: 8 atau 12 (boleh 8–16), terdeteksi otomatis dari upload
+  function slotCount(c){ return (c.spin || []).length; }
   function slotLabel(i, n){
     const deg = Math.round(i * 360 / n);
     const names = { 0:'Depan', 90:'Kanan', 180:'Belakang', 270:'Kiri' };
@@ -938,13 +933,11 @@
   function renderColorList(){
     const wrap = document.getElementById('colorList');
     wrap.innerHTML = currentColors.map((c, i) => {
-      const n = slotCount(c);
       if (!Array.isArray(c.spin)) c.spin = [];
-      while (c.spin.length < n) c.spin.push('');
-      const mode = spinMode(c);
+      const n = slotCount(c);
       const done = filledCount(c);
       const slots = c.spin.map((url, si) => url ? `
-        <div class="slot filled" data-slot="${i}:${si}" title="Klik untuk ganti foto">
+        <div class="slot filled" data-slot="${i}:${si}" title="Klik untuk ganti foto sudut ini">
           <img src="${url}" alt=""><span class="lbl">${slotLabel(si, n)}</span>
           <button type="button" class="x" data-remove-frame="${i}:${si}" title="Kosongkan">×</button>
         </div>` : `
@@ -966,18 +959,14 @@
           <div class="spin-box">
             <div class="spin-head">
               <strong>Foto 360°</strong>
-              <span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done >= SPIN_MIN ? 'Siap' : 'Belum siap'} · ${done}/${n}</span>
-              <span class="seg" role="group" aria-label="Jumlah foto">
-                <button type="button" class="${mode === 8 ? 'on' : ''}" data-mode="${i}:8">8 foto</button>
-                <button type="button" class="${mode === 12 ? 'on' : ''}" data-mode="${i}:12">12 foto (disarankan)</button>
-              </span>
+              ${n ? `<span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done >= SPIN_MIN ? 'Siap' : 'Belum lengkap'} · ${done}/${n} sudut</span>` : '<span class="spin-status">Belum ada foto</span>'}
             </div>
-            <div class="slot-grid">${slots}</div>
+            ${n ? `<div class="slot-grid">${slots}</div>` : `<p class="hint" style="margin:0 0 4px">Upload gambar grid atau beberapa foto sekaligus. Jumlah sudut (8 atau 12) <strong>terdeteksi otomatis</strong>, posisinya diatur sistem.</p>`}
             <div class="spin-actions">
-              <button type="button" class="bulk-sec-btn" data-spin-grid="${i}" title="Satu gambar berisi 8 sudut (4 kolom x 2 baris), otomatis dipotong">Upload 1 gambar grid (8 sudut)</button>
-              <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}">Upload sekaligus (urut nama file)</button>
-              <span class="hint" style="margin:0">Atau klik kotak untuk satu foto. Minimal ${SPIN_MIN} kotak terisi. Grid: 4 kolom × 2 baris, urut kiri→kanan lalu atas→bawah (0°, 45°, 90°, 135° / 180°, 225°, 270°, 315°).</span>
+              <button type="button" class="bulk-sec-btn" data-spin-grid="${i}" title="Satu gambar berisi banyak sudut, otomatis dipotong dan dipetakan">Upload 1 gambar grid</button>
+              <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}" title="Pilih 8–16 foto, urut berdasarkan nama file">Upload beberapa foto (8–16)</button>
             </div>
+            <p class="hint" style="margin-top:6px">Gambar grid: susunan bebas (mis. 4×2 untuk 8 sudut, 4×3 atau 6×2 untuk 12 sudut), urut kiri→kanan lalu atas→bawah, mulai dari tampak depan. Beberapa foto: urut nama file (01, 02, …). Klik satu kotak untuk mengganti foto sudut itu saja.</p>
           </div>
         </div>
       `;
@@ -1021,17 +1010,6 @@
         renderColorList();
       });
     });
-    wrap.querySelectorAll('[data-mode]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const [ci, m] = btn.dataset.mode.split(':').map(Number);
-        const c = currentColors[ci];
-        if (spinMode(c) === m) return;
-        if (filledCount(c) && !confirm('Mengganti jumlah foto akan mengosongkan foto 360° warna ini (sudut tiap kotak berubah). Lanjutkan?')) return;
-        c.spin = [];
-        c._mode = m;
-        renderColorList();
-      });
-    });
     wrap.querySelectorAll('[data-color-name]').forEach(inp => {
       inp.addEventListener('change', () => {
         currentColors[Number(inp.dataset.colorName)].name = inp.value.trim() || 'Tanpa nama';
@@ -1048,9 +1026,33 @@
   }
 
   /* ---- upload foto 360° ----
-     - klik 1 kotak  -> 1 foto masuk ke kotak itu (sudutnya jelas)
-     - "Upload sekaligus" -> banyak file, diurutkan berdasarkan NAMA (01, 02, ... 10)
-       lalu mengisi kotak kosong dari yang pertama. */
+     Jumlah sudut FLEKSIBEL (8 atau 12, boleh 8–16) dan dideteksi otomatis dari upload:
+       - klik 1 kotak          -> ganti foto di sudut itu saja
+       - "Upload beberapa foto" -> N file (urut nama), N = jumlah sudut
+       - "Upload 1 gambar grid"  -> sistem mendeteksi baris/kolom & memotong sendiri
+     Posisi sudut selalu dipetakan rata: sudut ke-i = i x 360 / N. */
+  async function uploadSpinBlob(blob, name){
+    const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-${name}`;
+    const { error } = await sb.storage.from('product-images').upload(path, blob, blob.type ? { contentType: blob.type } : undefined);
+    if (error) throw error;
+    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+  }
+
+  async function fillSpin(c, items, label){ // items: [{blob,name}]
+    c.spin = new Array(items.length).fill('');
+    renderColorList();
+    for (let i = 0; i < items.length; i++){
+      showToast(`${label} ${i + 1} dari ${items.length}...`);
+      try { c.spin[i] = await uploadSpinBlob(items[i].blob, items[i].name); }
+      catch (err){ showToast('Gagal upload salah satu sudut: ' + err.message); }
+      renderColorList();
+    }
+    const done = filledCount(c);
+    showToast(done >= SPIN_MIN
+      ? `Selesai — ${done} sudut siap. Cek tiap kotak; klik kotak untuk mengganti kalau ada yang kurang pas.`
+      : `${done} dari ${items.length} sudut terisi. Isi kotak yang kosong (klik kotaknya).`);
+  }
+
   document.getElementById('spinFramesInput').addEventListener('change', async (e) => {
     let files = Array.from(e.target.files);
     e.target.value = '';
@@ -1058,45 +1060,44 @@
     spinUploadTarget = null;
     if (!files.length || !t || !currentColors[t.ci]) return;
     const c = currentColors[t.ci];
-    const n = slotCount(c);
-    while (c.spin.length < n) c.spin.push('');
+
+    if (t.slot !== null){ // ganti satu sudut
+      showToast('Mengunggah foto...');
+      try {
+        const file = await compressImageFile(files[0]);
+        c.spin[t.slot] = await uploadSpinBlob(file, file.name);
+        showToast('Foto sudut ' + slotLabel(t.slot, c.spin.length) + ' diperbarui.');
+      } catch (err){ showToast('Gagal upload: ' + err.message); }
+      renderColorList();
+      return;
+    }
 
     files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-    let targets;
-    if (t.slot !== null) targets = [t.slot];
-    else targets = c.spin.map((u, i) => u ? -1 : i).filter(i => i >= 0);
-    if (files.length > targets.length){
-      showToast(`Hanya ${targets.length} kotak yang tersedia, ${files.length - targets.length} foto diabaikan.`);
-      files = files.slice(0, targets.length);
+    if (files.length < SPIN_MIN || files.length > SPIN_MAX){
+      showToast(`Pilih ${SPIN_MIN}–${SPIN_MAX} foto sekaligus (disarankan 8 atau 12). Terpilih: ${files.length}.`);
+      return;
     }
-
-    for (let k = 0; k < files.length; k++){
-      showToast(`Mengunggah foto 360° ${k + 1} dari ${files.length}...`);
-      const file = await compressImageFile(files[k]);
-      const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
-      const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
-      if (upErr){ showToast('Gagal upload salah satu foto 360°: ' + upErr.message); continue; }
-      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
-      c.spin[targets[k]] = pub.publicUrl;
-      renderColorList();
+    if (filledCount(c) && !confirm('Foto 360° warna ini akan diganti dengan foto yang baru dipilih. Lanjutkan?')) return;
+    const items = [];
+    for (let i = 0; i < files.length; i++){
+      showToast(`Mengompres foto ${i + 1} dari ${files.length}...`);
+      const f = await compressImageFile(files[i]);
+      items.push({ blob: f, name: f.name });
     }
-    const done = filledCount(c);
-    showToast(done >= SPIN_MIN ? `Foto 360° siap (${done} foto).` : `${done} foto terisi. Minimal ${SPIN_MIN} agar putaran 360° aktif.`);
+    await fillSpin(c, items, 'Mengunggah sudut');
   });
 
-
-  /* ---- Upload 1 gambar grid (4 kolom x 2 baris = 8 sudut) -> dipotong otomatis ----
-     Tiap sel: cari bentuk sepatu (piksel yang bukan putih/transparan), buang teks label di
-     bawahnya (dipisah celah putih), lalu semua frame disamakan skala, tengah, dan garis
-     bawahnya supaya putarannya tidak "loncat". Hasil: 8 foto JPG persegi 1:1. */
-  async function splitGridImage(file, cols = 4, rows = 2, S = 1000){
+  /* ---- Upload 1 gambar grid -> deteksi baris/kolom otomatis -> potong ----
+     Latar putih/abu muda/transparan dibersihkan, teks label dibuang (dipisah celah putih),
+     lalu semua frame disamakan skala, tengah, dan garis bawahnya supaya putarannya tidak "loncat".
+     Susunan grid bebas (4x2, 4x3, 6x2, ...) - dibaca kiri->kanan, atas->bawah. */
+  async function splitGridImage(file, S = 1000){
     const bmp = await createImageBitmap(file);
     const W = bmp.width, H = bmp.height;
     const full = document.createElement('canvas'); full.width = W; full.height = H;
     const fctx = full.getContext('2d', { willReadFrequently: true });
     fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, W, H);
     fctx.drawImage(bmp, 0, 0);
-    // bersihkan latar: piksel hampir putih / abu sangat muda (termasuk pola kotak-kotak transparan) -> putih murni
     const img = fctx.getImageData(0, 0, W, H);
     const d = img.data;
     for (let p = 0; p < d.length; p += 4){
@@ -1105,7 +1106,6 @@
     fctx.putImageData(img, 0, 0);
     const ink = (x, y) => { const p = (y * W + x) * 4; return Math.min(d[p], d[p+1], d[p+2]) < 215; };
 
-    // kelompokkan indeks 0..n-1 yang "ada isinya" menjadi segmen, dipisah celah kosong >= gap
     function segments(counts, minCount, gap){
       const segs = []; let cur = null, blank = 0;
       for (let i = 0; i < counts.length; i++){
@@ -1118,32 +1118,33 @@
       return segs;
     }
 
+    // 1) baris: pita vertikal dipisah celah putih; pita tipis (teks label) dibuang
+    const rowCnt = new Array(H).fill(0);
+    for (let y = 0; y < H; y++){ let n = 0; for (let x = 0; x < W; x++) if (ink(x, y)) n++; rowCnt[y] = n; }
+    const vb = segments(rowCnt, 3, Math.max(8, Math.round(H * 0.015)));
+    if (!vb.length) throw new Error('Tidak ada gambar produk yang terdeteksi.');
+    const maxBandH = Math.max(...vb.map(b => b.b - b.a + 1));
+    const bands = vb.filter(b => (b.b - b.a + 1) >= 0.4 * maxBandH);
+
+    // 2) kolom di tiap baris: sepatu dipisah celah putih; serpihan sangat sempit digabung ke tetangga
     const crops = [];
-    const halfH = H / rows;
-    for (let r = 0; r < rows; r++){
-      const ry0 = Math.round(r * halfH), ry1 = Math.round((r + 1) * halfH);
-      // 1) pita vertikal terbesar di baris ini = sepatu (teks label = pita lebih kecil, dipisah celah putih)
-      const rowCnt = [];
-      for (let y = ry0; y < ry1; y++){ let n = 0; for (let x = 0; x < W; x++) if (ink(x, y)) n++; rowCnt.push(n); }
-      const vb = segments(rowCnt, 3, Math.max(6, Math.round(halfH * 0.03)));
-      if (!vb.length) throw new Error(`Baris ${r + 1} kosong — pastikan gambar berisi ${cols} kolom × ${rows} baris.`);
-      const band = vb.reduce((p, q) => (q.mass > p.mass ? q : p));
-      const by0 = ry0 + band.a, by1 = ry0 + band.b;
-      // 2) dalam pita itu, pisahkan sepatu per kolom berdasarkan celah putih antar sepatu
+    for (const band of bands){
       const colCnt = new Array(W).fill(0);
-      for (let x = 0; x < W; x++) for (let y = by0; y <= by1; y++) if (ink(x, y)) colCnt[x]++;
+      for (let x = 0; x < W; x++) for (let y = band.a; y <= band.b; y++) if (ink(x, y)) colCnt[x]++;
       let hs = segments(colCnt, 1, Math.max(4, Math.round(W * 0.008)));
-      while (hs.length > cols){ // gabungkan dua segmen yang celahnya paling sempit
-        let bi = 0, bg = Infinity;
-        for (let i = 0; i < hs.length - 1; i++){ const g = hs[i+1].a - hs[i].b; if (g < bg){ bg = g; bi = i; } }
-        hs.splice(bi, 2, { a: hs[bi].a, b: hs[bi+1].b, mass: hs[bi].mass + hs[bi+1].mass });
-      }
-      if (hs.length < cols){ // celah tidak terdeteksi -> bagi rata
-        hs = Array.from({ length: cols }, (_, i) => ({ a: Math.round(i * W / cols), b: Math.round((i + 1) * W / cols) - 1 }));
+      const tiny = W * 0.04;
+      for (let guard = 0; guard < 50 && hs.length > 1; guard++){
+        const ti = hs.findIndex(h => (h.b - h.a) < tiny);
+        if (ti < 0) break;
+        const left = ti > 0 ? hs[ti].a - hs[ti-1].b : Infinity;
+        const right = ti < hs.length - 1 ? hs[ti+1].a - hs[ti].b : Infinity;
+        const j = left <= right ? ti - 1 : ti + 1;
+        const lo = Math.min(ti, j);
+        hs.splice(lo, 2, { a: hs[lo].a, b: hs[lo+1].b, mass: 0 });
       }
       for (const h of hs){
-        let y0 = by1, y1 = by0;
-        for (let y = by0; y <= by1; y++){
+        let y0 = band.b, y1 = band.a;
+        for (let y = band.a; y <= band.b; y++){
           for (let x = h.a; x <= h.b; x++) if (ink(x, y)){ if (y < y0) y0 = y; if (y > y1) y1 = y; break; }
         }
         const pad = 6;
@@ -1155,9 +1156,14 @@
         crops.push(piece);
       }
     }
+    if (crops.length < SPIN_MIN || crops.length > SPIN_MAX){
+      throw new Error(`Terdeteksi ${crops.length} sudut — harus ${SPIN_MIN}–${SPIN_MAX} (disarankan 8 atau 12). Pastikan antar-sepatu ada celah putih dan tidak saling menempel.`);
+    }
+
+    // 3) samakan skala/tengah/garis bawah, simpan sebagai JPG 1:1
     const maxW = Math.max(...crops.map(p => p.width)), maxH = Math.max(...crops.map(p => p.height));
-    const k = Math.min(0.86 * S / maxW, 0.80 * S / maxH);  // satu skala untuk semua frame
-    const baseY = (S + maxH * k) / 2;                      // garis bawah sama
+    const k = Math.min(0.86 * S / maxW, 0.80 * S / maxH);
+    const baseY = (S + maxH * k) / 2;
     const blobs = [];
     for (const p of crops){
       const out = document.createElement('canvas'); out.width = S; out.height = S;
@@ -1181,25 +1187,16 @@
     if (filledCount(c) && !confirm('Foto 360° warna ini akan diganti dengan hasil potongan gambar grid. Lanjutkan?')) return;
     let blobs;
     try {
-      showToast('Memotong gambar grid menjadi 8 sudut...');
+      showToast('Mendeteksi dan memotong gambar grid...');
       blobs = await splitGridImage(file);
     } catch (err){
       showToast('Gagal memotong gambar: ' + err.message);
       return;
     }
-    c._mode = 8;
-    c.spin = new Array(8).fill('');
-    for (let i = 0; i < blobs.length; i++){
-      showToast(`Mengunggah sudut ${i + 1} dari ${blobs.length}...`);
-      const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-grid-${String(i + 1).padStart(2, '0')}.jpg`;
-      const { error: upErr } = await sb.storage.from('product-images').upload(path, blobs[i], { contentType: 'image/jpeg' });
-      if (upErr){ showToast('Gagal upload salah satu sudut: ' + upErr.message); continue; }
-      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
-      c.spin[i] = pub.publicUrl;
-      renderColorList();
-    }
-    renderColorList();
-    showToast(`Selesai — ${filledCount(c)} dari 8 sudut terisi. Cek tiap kotak; kalau ada yang salah, klik kotaknya untuk menggantinya.`);
+    if (blobs.length !== 8 && blobs.length !== 12 &&
+        !confirm(`Terdeteksi ${blobs.length} sudut (biasanya 8 atau 12). Lanjutkan dengan ${blobs.length} sudut?`)) return;
+    const items = blobs.map((b, i) => ({ blob: b, name: `grid-${String(i + 1).padStart(2, '0')}.jpg` }));
+    await fillSpin(c, items, 'Mengunggah sudut');
   });
 
   document.getElementById('addColorBtn').addEventListener('click', () => {
@@ -1331,10 +1328,10 @@
   });
 
   /* ---- save (insert / update) ---- */
-  // buang field sementara (_mode) dan kotak kosong sebelum disimpan ke database
+  // buang kotak kosong sebelum disimpan ke database
   function cleanColors(){
     return currentColors.map(c => {
-      const { _mode, spin, ...rest } = c;
+      const { spin, ...rest } = c;
       const frames = (spin || []).filter(Boolean);
       return frames.length ? { ...rest, spin: frames } : rest;
     });
