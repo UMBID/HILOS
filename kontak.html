@@ -317,6 +317,8 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
+<script src="assets/form-config.js"></script>
+<script src="assets/form-mailer.js"></script>
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -369,11 +371,7 @@
   }
 
   /* ---- contact form (static demo — no real backend, shows a success message) ---- */
-  document.getElementById('contactForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    document.getElementById('formSuccess').classList.add('show');
-    e.target.reset();
-  });
+  HilosForm.init({ formId: 'contactForm', successId: 'formSuccess', kind: 'Kontak' });
 </script>
 
 <style>
