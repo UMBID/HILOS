@@ -157,6 +157,13 @@
   .modal h2{ font-size:20px; margin-bottom:20px; }
   .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .hint{ font-size:11.5px; color:#8a8078; margin-top:4px; }
+  .link-btn{ background:none; border:0; color:#6b6058; font-size:13px; text-decoration:underline; cursor:pointer; margin-top:14px; display:block; width:100%; text-align:center; font-family:inherit; }
+  .info-msg{ color:#2f7d4f; font-size:13px; margin-top:10px; display:none; }
+  #pwOverlay{ align-items:center; }
+  #pwOverlay .modal{ max-width:400px; min-height:0; border-radius:12px; padding:28px 24px; }
+  .pw-row{ position:relative; }
+  .pw-row input{ padding-right:64px; }
+  .pw-row .pw-eye{ position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:0; font-size:12px; color:#6b6058; cursor:pointer; padding:6px; font-family:inherit; }
 
   .color-list, .thumb-list{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
   .color-chip{ display:flex; align-items:center; gap:8px; border:1px solid var(--sand-line); border-radius:100px; padding:5px 10px 5px 6px; font-size:12px; }
@@ -403,6 +410,8 @@
     </div>
     <button class="btn btn-gold btn-block" id="loginBtn">Masuk</button>
     <p class="error-msg" id="loginError">Email atau password salah.</p>
+    <p class="info-msg" id="loginInfo"></p>
+    <button type="button" class="link-btn" id="forgotBtn">Lupa password?</button>
   </div>
 </div>
 
@@ -410,7 +419,10 @@
 <div id="app">
   <div class="topbar">
     <div class="logo">HILOS <span>ADMIN</span></div>
-    <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Keluar</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline" id="pwBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Ganti Password</button>
+      <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Keluar</button>
+    </div>
   </div>
 
   <div class="wrap">
@@ -516,6 +528,32 @@
 </div>
 
 <!-- ============ MODAL FORM ============ -->
+<!-- ============ GANTI PASSWORD ============ -->
+<div class="modal-overlay" id="pwOverlay">
+  <div class="modal">
+    <h2 id="pwTitle">Ganti Password</h2>
+    <p class="hint" id="pwUser" style="margin:-12px 0 16px;"></p>
+    <div class="field" id="pwOldField">
+      <label>Password saat ini</label>
+      <div class="pw-row"><input type="password" id="pwOld" autocomplete="current-password"><button type="button" class="pw-eye" data-eye="pwOld">Lihat</button></div>
+    </div>
+    <div class="field">
+      <label>Password baru</label>
+      <div class="pw-row"><input type="password" id="pwNew" autocomplete="new-password"><button type="button" class="pw-eye" data-eye="pwNew">Lihat</button></div>
+      <div class="hint">Minimal 10 karakter. Makin panjang makin aman.</div>
+    </div>
+    <div class="field">
+      <label>Ulangi password baru</label>
+      <div class="pw-row"><input type="password" id="pwNew2" autocomplete="new-password"><button type="button" class="pw-eye" data-eye="pwNew2">Lihat</button></div>
+    </div>
+    <p class="error-msg" id="pwError"></p>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="btn btn-gold" id="pwSave" style="flex:1;">Simpan</button>
+      <button class="btn btn-outline" id="pwCancel">Batal</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2 id="modalTitle">Tambah Produk</h2>
@@ -697,6 +735,90 @@
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await sb.auth.signOut();
     checkSession();
+  });
+
+  /* ---------------- LUPA PASSWORD & GANTI PASSWORD ---------------- */
+  const pwOverlay = document.getElementById('pwOverlay');
+  const pwErr = document.getElementById('pwError');
+  let pwRecovery = false; // true = datang dari link email reset (tanpa password lama)
+
+  document.getElementById('forgotBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const errEl = document.getElementById('loginError');
+    const infoEl = document.getElementById('loginInfo');
+    errEl.style.display = 'none'; infoEl.style.display = 'none';
+    if (!email){
+      errEl.textContent = 'Isi email dulu di kolom Email, lalu klik "Lupa password?".';
+      errEl.style.display = 'block';
+      return;
+    }
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    if (error){ errEl.textContent = error.message; errEl.style.display = 'block'; return; }
+    infoEl.textContent = 'Jika email terdaftar, link reset password sudah dikirim. Cek inbox (dan folder spam).';
+    infoEl.style.display = 'block';
+  });
+
+  function openPwModal(recovery){
+    pwRecovery = !!recovery;
+    document.getElementById('pwTitle').textContent = recovery ? 'Buat Password Baru' : 'Ganti Password';
+    document.getElementById('pwOldField').style.display = recovery ? 'none' : '';
+    document.getElementById('pwCancel').style.display = recovery ? 'none' : '';
+    ['pwOld','pwNew','pwNew2'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.type = 'password'; });
+    document.querySelectorAll('.pw-eye').forEach(b => b.textContent = 'Lihat');
+    pwErr.style.display = 'none';
+    sb.auth.getSession().then(({ data }) => {
+      document.getElementById('pwUser').textContent = data.session ? data.session.user.email : '';
+    });
+    pwOverlay.classList.add('open');
+  }
+  function closePwModal(){ pwOverlay.classList.remove('open'); }
+  function pwFail(msg){ pwErr.textContent = msg; pwErr.style.display = 'block'; }
+
+  document.getElementById('pwBtn').addEventListener('click', () => openPwModal(false));
+  document.getElementById('pwCancel').addEventListener('click', closePwModal);
+  document.querySelectorAll('.pw-eye').forEach(b => b.addEventListener('click', () => {
+    const inp = document.getElementById(b.dataset.eye);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    b.textContent = show ? 'Sembunyi' : 'Lihat';
+  }));
+
+  document.getElementById('pwSave').addEventListener('click', async () => {
+    pwErr.style.display = 'none';
+    const oldPw = document.getElementById('pwOld').value;
+    const n1 = document.getElementById('pwNew').value;
+    const n2 = document.getElementById('pwNew2').value;
+    const { data } = await sb.auth.getSession();
+    if (!data.session){ pwFail('Sesi habis. Silakan login ulang.'); return; }
+    if (!pwRecovery && !oldPw){ pwFail('Isi password saat ini.'); return; }
+    if (n1.length < 10){ pwFail('Password baru minimal 10 karakter.'); return; }
+    if (n1 !== n2){ pwFail('Ulangi password baru tidak sama.'); return; }
+    if (!pwRecovery && n1 === oldPw){ pwFail('Password baru harus berbeda dari yang lama.'); return; }
+    const btn = document.getElementById('pwSave');
+    btn.disabled = true;
+    try {
+      if (!pwRecovery){
+        // verifikasi password lama dulu
+        const chk = await sb.auth.signInWithPassword({ email: data.session.user.email, password: oldPw });
+        if (chk.error){ pwFail('Password saat ini salah.'); return; }
+      }
+      const { error } = await sb.auth.updateUser({ password: n1 });
+      if (error){ pwFail(error.message); return; }
+      closePwModal();
+      pwRecovery = false;
+      await sb.auth.signOut();
+      checkSession();
+      alert('Password berhasil diubah. Silakan login dengan password baru.');
+    } finally { btn.disabled = false; }
+  });
+
+  // Datang dari link email "reset password" → langsung minta password baru
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY'){
+      loginWrap.style.display = 'none';
+      app.style.display = 'block';
+      openPwModal(true);
+    }
   });
 
   /* ---------------- LOAD & RENDER ---------------- */
