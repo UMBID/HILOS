@@ -557,262 +557,108 @@
   .detail-produk{
     position:relative;
     background:var(--ink);
-    padding:120px clamp(20px,5vw,64px) 130px;
+    padding:110px clamp(16px,5vw,64px) 120px;
     overflow:hidden;
   }
   .detail-produk::before{
-    content:"";
-    position:absolute;inset:0;
-    background:radial-gradient(ellipse 60% 50% at 85% 0%, rgba(198,154,88,0.08), transparent 60%);
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse 60% 50% at 85% 0%, rgba(111,163,212,0.12), transparent 60%);
     pointer-events:none;
   }
-
-  .detail-head{
-    position:relative;z-index:2;
-    max-width:1360px;margin:0 auto 50px;
-  }
+  .detail-head{position:relative;z-index:2;max-width:1200px;margin:0 auto 34px;}
   .detail-head .eyebrow{
     display:inline-flex;align-items:center;gap:10px;
-    font-family:'Archivo',sans-serif;
-    font-size:11px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;
-    color:var(--gold-light);
+    font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold-light);
   }
   .detail-head .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);}
-  .detail-head h2{
-    font-family:'Archivo',sans-serif;
-    font-weight:800;
-    font-size:clamp(28px,3.2vw,40px);
-    margin-top:16px;
-    color:var(--sand);
+  .detail-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,3.4vw,42px);margin-top:14px;color:var(--sand);}
+  .detail-sub{margin-top:12px;max-width:620px;font-size:15px;line-height:1.7;color:var(--on-dark-muted);}
+
+  /* ---- pemilih produk (Top 5) ---- */
+  .pd-tabs{display:flex;gap:10px;margin-top:28px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+  .pd-tabs::-webkit-scrollbar{height:4px;}
+  .pd-tabs::-webkit-scrollbar-thumb{background:var(--on-dark-line);border-radius:4px;}
+  .pd-tab{
+    flex:0 0 auto;scroll-snap-align:start;display:flex;align-items:center;gap:12px;
+    padding:8px 18px 8px 8px;min-width:190px;max-width:260px;text-align:left;
+    background:rgba(255,255,255,0.03);border:1px solid var(--on-dark-line);color:var(--on-dark-muted);
+    font-family:'Inter',sans-serif;cursor:pointer;transition:border-color .2s,background .2s,transform .2s;
   }
+  .pd-tab:hover{border-color:var(--gold-light);transform:translateY(-2px);}
+  .pd-tab.active{border-color:var(--gold);background:rgba(47,111,176,0.2);color:var(--sand);}
+  .pd-tab-img{width:52px;height:52px;flex:0 0 52px;background:var(--ink-2);overflow:hidden;}
+  .pd-tab-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pd-tab-txt{display:flex;flex-direction:column;min-width:0;}
+  .pd-tab-txt b{font-family:'Archivo',sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold-light);}
+  .pd-tab-txt span{font-size:13.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
   .product-card{
-    position:relative;z-index:2;
-    max-width:1360px;margin:0 auto;
-    background:var(--ink-2);
-    border:1px solid var(--on-dark-line);
-    padding:clamp(20px,3vw,36px);
+    position:relative;z-index:2;max-width:1200px;margin:0 auto;
+    background:var(--ink-2);border:1px solid var(--on-dark-line);
+    padding:clamp(16px,3vw,40px);
   }
+  .pd-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start;}
 
-  .detail-grid{
-    display:grid;
-    grid-template-columns:84px minmax(300px,1fr) minmax(300px,360px) minmax(190px,220px);
-    gap:22px;
-  }
-
-  /* ---- thumbnail rail ---- */
-  .thumb-rail{
-    display:flex;flex-direction:column;gap:10px;
-  }
-  .thumb-btn{
-    position:relative;
-    width:100%;aspect-ratio:1/1;
-    background:var(--ink);
-    border:1px solid var(--on-dark-line);
-    padding:0;cursor:pointer;
-    overflow:hidden;
-    transition:border-color 0.25s ease;
-  }
-  .thumb-btn img{width:100%;height:100%;object-fit:cover;}
-  .thumb-btn.active{border-color:var(--gold);}
-  .thumb-btn:hover{border-color:var(--gold-light);}
-
-  /* ---- main stage ---- */
-  .stage-wrap{
-    display:flex;flex-direction:column;gap:14px;
-  }
-  .stage{
-    position:relative;
-    background:var(--ink);
-    border:1px solid var(--on-dark-line);
-    aspect-ratio:4/5;
-    overflow:hidden;
-    cursor:default;
-  }
-  .stage-media{
-    position:absolute;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    transition:opacity 0.35s ease;
-  }
-  .stage-media img{width:100%;height:100%;object-fit:cover;}
-  .stage-media.hidden{opacity:0;pointer-events:none;position:absolute;}
-
-  .stage-3d{
-    position:absolute;inset:0;
-    display:none;
-    align-items:center;justify-content:center;
-    background:
-      linear-gradient(var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
-      linear-gradient(90deg, var(--on-dark-line) 1px, transparent 1px) 0 0/28px 28px,
-      var(--ink);
-    perspective:900px;
-    cursor:grab;
-  }
-  .stage-3d.visible{display:flex;}
-  .stage-3d:active{cursor:grabbing;}
-  .stage-3d-inner{
-    width:60%;
-    transform-style:preserve-3d;
-    transform:rotateY(0deg);
-  }
-  .stage-3d-inner.spin{animation:spin360 6s linear infinite;}
-  @keyframes spin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
-  .stage-3d-inner svg{width:100%;height:auto;overflow:visible;}
-  .stage-3d-label{
-    position:absolute;top:16px;left:16px;
-    font-family:'Archivo',sans-serif;font-size:10px;font-weight:700;
-    letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-light);
-    display:flex;align-items:center;gap:8px;
-  }
-  .stage-3d-label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
-
-  .zoom-lens{
-    position:absolute;inset:0;
-    background-repeat:no-repeat;
-    background-size:220%;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.2s ease;
-    z-index:3;
-  }
+  /* ---- galeri ---- */
+  .pd-gallery{position:sticky;top:96px;}
+  .stage{position:relative;background:var(--ink);border:1px solid var(--on-dark-line);aspect-ratio:1/1;overflow:hidden;touch-action:pan-y;}
+  .stage-media{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  .stage-media img{width:100%;height:100%;object-fit:cover;transition:opacity .18s ease;}
+  .zoom-lens{position:absolute;inset:0;background-repeat:no-repeat;background-size:220%;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:3;}
   .zoom-lens.active{opacity:1;}
+  .pd-rank{position:absolute;top:14px;left:14px;z-index:4;padding:6px 12px;background:var(--gold);color:#fff;font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;}
+  .stage-zoom{position:absolute;top:14px;right:14px;z-index:4;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;background:rgba(13,27,42,.72);backdrop-filter:blur(4px);border:1px solid var(--on-dark-line);color:var(--sand);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;}
+  .stage-zoom svg{width:14px;height:14px;}
+  .stage-zoom.active{border-color:var(--gold);color:var(--gold-light);}
+  .stage-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:40px;height:40px;border-radius:50%;background:rgba(13,27,42,.7);backdrop-filter:blur(4px);border:1px solid var(--on-dark-line);color:var(--sand);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;}
+  .stage-nav:hover{background:var(--gold);border-color:var(--gold);}
+  .stage-nav svg{width:18px;height:18px;}
+  .stage-nav.prev{left:12px;}.stage-nav.next{right:12px;}
+  .stage-count{position:absolute;bottom:12px;right:14px;z-index:4;padding:4px 10px;background:rgba(13,27,42,.72);font-size:11px;font-weight:600;color:var(--sand);letter-spacing:.06em;}
+  .thumb-rail{display:flex;gap:10px;margin-top:12px;overflow-x:auto;padding-bottom:4px;}
+  .thumb-btn{position:relative;flex:0 0 72px;aspect-ratio:1/1;background:var(--ink);border:1px solid var(--on-dark-line);padding:0;cursor:pointer;overflow:hidden;opacity:.7;transition:border-color .25s,opacity .25s;}
+  .thumb-btn img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb-btn.active{border-color:var(--gold);opacity:1;}
+  .thumb-btn:hover{opacity:1;}
 
-  .stage-toolbar{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-  .tool-btn{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:10px 16px;
-    border:1px solid var(--on-dark-line);
-    background:transparent;
-    color:var(--on-dark-muted);
-    font-family:'Inter',sans-serif;
-    font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
-    cursor:pointer;
-    transition:border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
-  }
-  .tool-btn svg{width:14px;height:14px;}
-  .tool-btn:hover{border-color:var(--gold);color:var(--sand);}
-  .tool-btn.active{border-color:var(--gold);color:var(--gold-light);background:rgba(198,154,88,0.08);}
-
-  /* ---- product info ---- */
-  .product-info h3{
-    font-family:'Archivo',sans-serif;
-    font-weight:800;
-    font-size:clamp(22px,2vw,28px);
-    text-transform:uppercase;
-    color:var(--sand);
-  }
-  .product-price{
-    margin-top:8px;
-    font-family:'Archivo',sans-serif;
-    font-weight:700;
-    font-size:20px;
-    color:var(--gold-light);
-  }
-  .product-info > p{
-    margin-top:16px;
-    font-size:14px;line-height:1.75;
-    color:var(--on-dark-muted);
-    max-width:340px;
-  }
-
-  .feature-list{
-    list-style:none;
-    margin-top:20px;
-    display:flex;flex-direction:column;gap:9px;
-  }
-  .feature-list li{
-    display:flex;align-items:flex-start;gap:9px;
-    font-size:13.5px;color:var(--sand);
-  }
-  .feature-list svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;color:var(--gold);}
-
-  .option-block{margin-top:24px;}
-  .option-label{
-    font-family:'Archivo',sans-serif;
-    font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
-    color:var(--on-dark-muted);
-    margin-bottom:12px;
-    display:flex;align-items:center;gap:8px;
-  }
-  .option-label .value{color:var(--gold-light);}
-
-  .pd-tabs{display:flex;gap:8px;margin-top:26px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
-  .pd-tab{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 16px;background:transparent;border:1px solid var(--on-dark-line);color:var(--on-dark-muted);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:border-color .2s,color .2s,background .2s;}
-  .pd-tab b{font-family:'Archivo',sans-serif;font-weight:800;color:var(--gold-light);}
-  .pd-tab:hover{border-color:var(--gold-light);color:var(--sand);}
-  .pd-tab.active{border-color:var(--gold);color:var(--sand);background:rgba(47,111,176,0.16);}
-  .pd-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-  .pd-chip{font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px;border:1px solid var(--on-dark-line);color:var(--on-dark-muted);}
+  /* ---- info ---- */
+  .pd-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .pd-chip{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--on-dark-line);color:var(--on-dark-muted);}
   .pd-chip.hot{border-color:var(--gold);color:var(--gold-light);}
-  .color-row{display:flex;gap:10px;flex-wrap:wrap;}
-  .color-dot{
-    width:28px;height:28px;border-radius:50%;
-    border:2px solid transparent;
-    padding:2px;
-    cursor:pointer;
-    position:relative;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .color-dot span{width:100%;height:100%;border-radius:50%;display:block;}
-  .color-dot.active{border-color:var(--gold);}
-
+  .product-info h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,3vw,38px);line-height:1.1;text-transform:uppercase;color:var(--sand);}
+  .pd-desc{margin-top:14px;font-size:14.5px;line-height:1.75;color:var(--on-dark-muted);}
+  .feature-grid{list-style:none;margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .feature-grid li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--sand);padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--on-dark-line);}
+  .feature-grid svg{width:15px;height:15px;flex-shrink:0;color:var(--gold-light);}
+  .option-block{margin-top:26px;}
+  .option-label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--on-dark-muted);margin-bottom:12px;}
+  .option-label .value{color:var(--gold-light);letter-spacing:.04em;text-transform:none;font-size:13px;}
+  .color-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .color-dot{width:38px;height:38px;border-radius:50%;border:2px solid transparent;padding:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:transparent;transition:transform .15s;}
+  .color-dot:hover{transform:scale(1.08);}
+  .color-dot span{width:100%;height:100%;border-radius:50%;display:block;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);}
+  .color-dot.active{border-color:var(--gold-light);}
   .size-row{display:flex;gap:8px;flex-wrap:wrap;}
-  .size-btn{
-    width:42px;height:38px;
-    display:flex;align-items:center;justify-content:center;
-    background:transparent;
-    border:1px solid var(--on-dark-line);
-    color:var(--sand);
-    font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;
-    cursor:pointer;
-    transition:border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-  }
+  .size-btn{min-width:48px;height:42px;padding:0 10px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--on-dark-line);color:var(--sand);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s,background .2s;}
   .size-btn:hover{border-color:var(--gold-light);}
-  .size-btn.active{border-color:var(--gold);color:var(--gold-light);background:rgba(198,154,88,0.08);}
+  .size-btn.active{border-color:var(--gold);color:#fff;background:var(--gold);}
+  .pd-summary{margin-top:24px;padding:12px 14px;border-left:3px solid var(--gold);background:rgba(255,255,255,0.04);font-size:13px;line-height:1.6;color:var(--on-dark-muted);}
+  .pd-summary b{color:var(--sand);font-weight:600;}
+  .cta-row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;}
+  .btn-wa{flex:1 1 260px;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:16px 22px;background:#25D366;color:#073b1d;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.03em;text-decoration:none;transition:filter .2s,transform .2s;}
+  .btn-wa:hover{filter:brightness(1.07);transform:translateY(-2px);}
+  .btn-wa svg{width:20px;height:20px;}
+  .btn-3d{flex:1 1 160px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:16px 20px;background:transparent;border:1px solid var(--gold);color:var(--gold-light);font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s,color .2s;}
+  .btn-3d:hover{background:var(--gold);color:#fff;}
+  .btn-3d svg{width:18px;height:18px;}
+  .pd-all{display:inline-block;margin-top:18px;font-size:12.5px;color:var(--gold-light);text-decoration:underline;}
 
-  .cta-row{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap;}
-  .cta-row .btn{padding:14px 22px;font-size:11.5px;}
-
-  /* ---- side stack: video + 3D cards ---- */
-  .side-stack{display:flex;flex-direction:column;gap:16px;}
-  .side-card{
-    position:relative;
-    aspect-ratio:1/0.9;
-    background:var(--ink);
-    border:1px solid var(--on-dark-line);
-    overflow:hidden;
-    cursor:pointer;
-    display:flex;align-items:flex-end;
-  }
-  .side-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.55;}
-  .side-card .side-scrim{position:absolute;inset:0;background:linear-gradient(180deg, rgba(13,27,42,0.1), rgba(13,27,42,0.85));}
-  .side-card .side-label{
-    position:relative;z-index:2;
-    padding:14px;
-    font-family:'Archivo',sans-serif;
-    font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-    color:var(--sand);
-  }
   .play-btn{
-    position:absolute;top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    width:46px;height:46px;border-radius:50%;
-    background:rgba(13,27,42,0.6);
-    border:1px solid var(--on-dark-line);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--sand);
-    z-index:2;
-    transition:background 0.25s ease, transform 0.25s ease;
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:46px;height:46px;border-radius:50%;background:rgba(13,27,42,0.6);border:1px solid var(--on-dark-line);
+    display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;
   }
   .play-btn svg{width:16px;height:16px;margin-left:2px;}
-  .side-card:hover .play-btn{background:var(--gold);color:var(--ink);transform:translate(-50%,-50%) scale(1.08);}
-
-  .wire-thumb{width:70%;filter:none;}
 
   /* ---- video modal ---- */
   .modal-overlay{
@@ -844,18 +690,20 @@
   }
   .modal-close:hover{border-color:var(--gold);}
 
-  @media (max-width:1080px){
-    .detail-grid{grid-template-columns:70px minmax(260px,1fr) minmax(260px,320px);}
-    .side-stack{grid-column:1 / -1;flex-direction:row;}
-    .side-card{aspect-ratio:1.6/1;}
+  @media (max-width:900px){
+    .pd-grid{grid-template-columns:1fr;}
+    .pd-gallery{position:static;}
+    .detail-produk{padding:80px 16px 90px;}
   }
-
-  @media (max-width:760px){
-    .detail-grid{grid-template-columns:1fr;}
-    .thumb-rail{flex-direction:row;overflow-x:auto;}
-    .thumb-btn{width:64px;flex-shrink:0;}
-    .side-stack{flex-direction:column;}
+  @media (max-width:560px){
+    .stage{aspect-ratio:1/1;}
+    .stage-nav{width:36px;height:36px;}
+    .feature-grid{grid-template-columns:1fr 1fr;gap:8px;}
+    .feature-grid li{font-size:12px;padding:9px 10px;}
+    .pd-tab{min-width:170px;}
+    .btn-wa,.btn-3d{flex:1 1 100%;}
   }
+  @media (hover:none){ .stage-zoom{display:none;} }
 
   /* ==================================================
      SECTION 4 — APA KATA MEREKA (REVIEW TEASER)
@@ -1194,7 +1042,7 @@
   <div class="top10-teaser-head">
     <div>
       <span class="eyebrow reveal">Sorotan</span>
-      <h2 class="reveal" id="top10TeaserTitle">Top 10 Bulan Ini</h2>
+      <h2 class="reveal" id="top10TeaserTitle">Top 5 Bulan Ini</h2>
     </div>
     <a href="produk.html#top10Section" class="btn btn-fill"><span>Lihat Semua</span></a>
   </div>
@@ -1203,87 +1051,70 @@
 
 <section class="detail-produk" id="produk" style="display:none;">
   <div class="detail-head">
-    <span class="eyebrow reveal">Detail Produk</span>
-    <h2 class="reveal">Kenali setiap detail sebelum Anda memilih</h2>
+    <span class="eyebrow reveal">Produk Terlaris</span>
+    <h2 class="reveal">Pilihan favorit pelanggan HILOS</h2>
+    <p class="detail-sub reveal">Top 5 penjualan bulan ini. Pilih produk, lihat warna dan ukurannya, lalu tanya langsung ke tim kami lewat WhatsApp.</p>
     <div class="pd-tabs" id="pdTabs"></div>
   </div>
 
   <div class="product-card reveal-scale">
-    <div class="detail-grid">
+    <div class="pd-grid">
 
-      <!-- thumbnail rail -->
-      <div class="thumb-rail" id="thumbRail"></div>
-
-      <!-- main stage -->
-      <div class="stage-wrap">
+      <!-- gallery -->
+      <div class="pd-gallery">
         <div class="stage" id="mainStage">
           <div class="stage-media" id="stageMedia">
             <img id="mainImg" src="" alt="Produk HILOS">
             <div class="zoom-lens" id="zoomLens"></div>
           </div>
-
-        </div>
-
-        <div class="stage-toolbar">
-          <button class="tool-btn" id="btn3d">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05M12 22.08V12"/></svg>
-            <span id="btn3dText">Lihat 3D 360°</span>
-          </button>
-          <button class="tool-btn" id="btnZoom">
+          <span class="pd-rank" id="pdRank">#1</span>
+          <button class="stage-zoom" id="btnZoom" type="button" aria-label="Perbesar foto">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            Zoom
+            <span>Zoom</span>
           </button>
+          <button class="stage-nav prev" id="pdPrev" type="button" aria-label="Foto sebelumnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="stage-nav next" id="pdNext" type="button" aria-label="Foto berikutnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          <span class="stage-count" id="pdCount"></span>
         </div>
+        <div class="thumb-rail" id="thumbRail"></div>
       </div>
 
-      <!-- product info -->
+      <!-- info -->
       <div class="product-info">
         <div class="pd-meta" id="pMeta"></div>
         <h3 id="pName">HILOS</h3>
-        <!-- HARGA DINONAKTIFKAN: <div class="product-price">Rp 189.000</div> -->
-        <p id="pDesc">Desain ergonomis dengan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
+        <p class="pd-desc" id="pDesc">Desain ergonomis dengan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
 
-        <ul class="feature-list">
+        <ul class="feature-grid">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sol empuk &amp; anti-slip</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ringan dan fleksibel</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tahan air &amp; mudah dibersihkan</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Desain modern &amp; minimalis</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ringan &amp; fleksibel</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tahan air</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Desain modern</li>
         </ul>
 
         <div class="option-block" id="colorBlock">
-          <div class="option-label">Warna — <span class="value" id="colorValue">-</span></div>
+          <div class="option-label">Warna <span class="value" id="colorValue">-</span></div>
           <div class="color-row" id="colorRow"></div>
         </div>
 
         <div class="option-block" id="sizeBlock">
-          <div class="option-label">Ukuran — <span class="value" id="sizeValue">Belum dipilih</span></div>
+          <div class="option-label">Ukuran <span class="value" id="sizeValue">Belum dipilih</span></div>
           <div class="size-row" id="sizeRow"></div>
         </div>
 
-        <div class="cta-row">
-          <a href="#" class="btn btn-fill" id="salesBtn2"><span>Hubungi Sales</span></a>
-        </div>
-        <a href="produk.html" style="display:inline-block;margin-top:16px;font-size:12px;color:var(--gold-light);text-decoration:underline;">Lihat Semua Produk →</a>
-      </div>
+        <div class="pd-summary" id="pdSummary"></div>
 
-      <!-- side stack -->
-      <div class="side-stack">
-        <div class="side-card" id="videoCard">
-          <img src="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Video produk HILOS">
-          <div class="side-scrim"></div>
-          <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-          <span class="side-label">Video Produk</span>
+        <div class="cta-row">
+          <a href="#" class="btn-wa" id="salesBtn2">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.5 5.4 5.5-1.45A9.9 9.9 0 1 0 12.04 2Zm0 18.1c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3.2.85.85-3.1-.2-.3a8.1 8.1 0 1 1 7 3.85Zm4.5-6.1c-.25-.12-1.45-.7-1.7-.8-.22-.08-.4-.12-.55.12-.17.25-.63.8-.77.96-.14.17-.28.18-.53.06-.25-.12-1.03-.38-1.97-1.2-.73-.65-1.2-1.45-1.36-1.7-.14-.25 0-.38.1-.5.12-.1.25-.28.37-.42.12-.14.17-.25.25-.4.08-.17.04-.3-.02-.42-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.4-.55-.42h-.47c-.17 0-.42.06-.64.3-.22.25-.84.82-.84 2s.86 2.32.98 2.48c.12.17 1.7 2.6 4.1 3.65 2.4 1.04 2.4.7 2.83.66.43-.04 1.4-.57 1.6-1.12.2-.55.2-1.03.14-1.12-.06-.1-.22-.17-.47-.3Z"/></svg>
+            <span>Tanya &amp; Pesan via WhatsApp</span>
+          </a>
+          <button type="button" class="btn-3d" id="btn3d" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05M12 22.08V12"/></svg>
+            <span>Lihat 3D 360°</span>
+          </button>
         </div>
-        <div class="side-card" id="view3dCard" style="display:none;">
-          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(13,27,42,0.2), rgba(13,27,42,0.9));"></div>
-          <svg class="wire-thumb" style="position:absolute;top:8%;left:15%;" viewBox="0 0 400 260">
-            <g fill="none" stroke="#1c4a73" stroke-width="1.4" opacity="0.8">
-              <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
-              <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
-            </g>
-          </svg>
-          <span class="side-label">3D Animation</span>
-        </div>
+        <a href="produk.html" class="pd-all">Lihat semua produk →</a>
       </div>
 
     </div>
@@ -1574,7 +1405,8 @@
 
   /* ---- Detail Produk: otomatis dari Top 5 ---- */
   const btn3d = document.getElementById('btn3d');
-  const view3dCard = document.getElementById('view3dCard');
+  const pdCount = document.getElementById('pdCount');
+  const pdSummary = document.getElementById('pdSummary');
   const pdTabs = document.getElementById('pdTabs');
   const thumbRail = document.getElementById('thumbRail');
   const colorRow = document.getElementById('colorRow');
@@ -1582,17 +1414,33 @@
   const colorValue = document.getElementById('colorValue');
   const sizeValue = document.getElementById('sizeValue');
   const CAT_LABEL = { pria:'Pria', wanita:'Wanita', anak:'Anak' };
-  let pdItems = [], pdCur = null, pdColorIdx = -1, pdSize = '', pd3dHref = '';
+  let pdItems = [], pdCur = null, pdColorIdx = -1, pdSize = '', pd3dHref = '', pdPhotos = [], pdIdx = 0;
 
   const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 
-  function pdSetMain(url){
-    if (!url || mainImg.getAttribute('src') === url) return;
-    mainImg.style.opacity = '0';
-    setTimeout(() => { mainImg.src = url; mainImg.style.opacity = '1'; }, 160);
+  function pdShow(idx){
+    if (!pdPhotos.length) return;
+    pdIdx = (idx + pdPhotos.length) % pdPhotos.length;
+    const url = pdPhotos[pdIdx];
+    if (mainImg.getAttribute('src') !== url){
+      mainImg.style.opacity = '0';
+      setTimeout(() => { mainImg.src = url; mainImg.style.opacity = '1'; }, 140);
+    }
+    thumbRail.querySelectorAll('.thumb-btn').forEach((b, k) => {
+      b.classList.toggle('active', k === pdIdx);
+      if (k === pdIdx) b.scrollIntoView({ block:'nearest', inline:'nearest' });
+    });
+    pdCount.textContent = (pdIdx + 1) + ' / ' + pdPhotos.length;
   }
-  function pdMarkThumb(url){
-    thumbRail.querySelectorAll('.thumb-btn').forEach(b => b.classList.toggle('active', b.dataset.img === url));
+  function pdShowUrl(url){ const k = pdPhotos.indexOf(url); if (k >= 0) pdShow(k); }
+  function pdUpdateSummary(){
+    const p = pdCur ? pdCur.p : null; if (!p) return;
+    const c = (p.colors || [])[pdColorIdx];
+    const parts = [`<b>${esc(p.name)}</b>`];
+    if (c && c.name) parts.push('warna ' + esc(c.name));
+    if (pdSize) parts.push('ukuran ' + esc(pdSize));
+    const needSize = (p.sizes || []).length && !pdSize;
+    pdSummary.innerHTML = 'Pilihan Anda: ' + parts.join(' · ') + (needSize ? '<br>Pilih ukuran supaya langsung tercantum di chat WhatsApp.' : '<br>Detail ini otomatis masuk ke pesan WhatsApp.');
   }
 
   function pdRender(i){
@@ -1605,7 +1453,9 @@
     const chips = [];
     if (p.category && CAT_LABEL[p.category]) chips.push(`<span class="pd-chip">${CAT_LABEL[p.category]}</span>`);
     if (p.model) chips.push(`<span class="pd-chip">${esc(p.model)}</span>`);
-    chips.push(`<span class="pd-chip hot">Top ${it.rank} Penjualan</span>`);
+    if (p.badge === 'best') chips.push('<span class="pd-chip hot">Best Seller</span>');
+    else if (p.badge === 'new') chips.push('<span class="pd-chip hot">Baru</span>');
+    document.getElementById('pdRank').textContent = '#' + it.rank + ' TERLARIS';
     document.getElementById('pMeta').innerHTML = chips.join('');
 
     // foto: galeri + foto khusus warna (tanpa duplikat)
@@ -1613,11 +1463,17 @@
     const photos = [];
     (p.images || []).forEach(u => { if (u && !photos.includes(u)) photos.push(u); });
     colors.forEach(c => { if (c && c.image && !photos.includes(c.image)) photos.push(c.image); });
-    thumbRail.innerHTML = photos.map((u, k) => `<button class="thumb-btn${k === 0 ? ' active' : ''}" data-img="${esc(u)}" aria-label="Foto ${k + 1}"><img src="${esc(u)}" alt="${esc(p.name)} foto ${k + 1}" loading="lazy"></button>`).join('');
+    pdPhotos = photos;
+    thumbRail.innerHTML = photos.map((u, k) => `<button class="thumb-btn${k === 0 ? ' active' : ''}" data-i="${k}" aria-label="Foto ${k + 1}"><img src="${esc(u)}" alt="${esc(p.name)} foto ${k + 1}" loading="lazy"></button>`).join('');
     thumbRail.style.display = photos.length > 1 ? '' : 'none';
+    const multi = photos.length > 1;
+    document.getElementById('pdPrev').style.display = multi ? '' : 'none';
+    document.getElementById('pdNext').style.display = multi ? '' : 'none';
+    pdCount.style.display = multi ? '' : 'none';
     mainImg.alt = p.name || 'Produk HILOS';
     mainImg.style.opacity = '1';
     mainImg.src = photos[0] || '';
+    pdIdx = 0; pdCount.textContent = '1 / ' + photos.length;
 
     // warna
     document.getElementById('colorBlock').style.display = colors.length ? '' : 'none';
@@ -1630,11 +1486,11 @@
     document.getElementById('sizeBlock').style.display = sizes.length ? '' : 'none';
     sizeRow.innerHTML = sizes.map(sz => `<button class="size-btn" data-size="${esc(sz)}">${esc(sz)}</button>`).join('');
     sizeValue.textContent = 'Belum dipilih';
+    pdUpdateSummary();
 
     // 3D hanya untuk produk yang diaktifkan 3D di admin
     pd3dHref = p.is_3d ? (it.rank === 1 ? 'flagship.html' : `flagship.html?rank=${it.rank}`) : '';
     btn3d.style.display = pd3dHref ? '' : 'none';
-    view3dCard.style.display = pd3dHref ? '' : 'none';
   }
 
   function pdPickColor(k, silent){
@@ -1642,10 +1498,10 @@
     pdColorIdx = k;
     colorRow.querySelectorAll('.color-dot').forEach((d, j) => {
       d.classList.toggle('active', j === k);
-      d.style.borderColor = j === k ? 'var(--gold)' : 'transparent';
     });
     colorValue.textContent = c.name || '';
-    if (c.image && !silent){ pdSetMain(c.image); pdMarkThumb(c.image); }
+    if (c.image && !silent) pdShowUrl(c.image);
+    pdUpdateSummary();
   }
 
   colorRow.addEventListener('click', (e) => { const b = e.target.closest('.color-dot'); if (b) pdPickColor(Number(b.dataset.i)); });
@@ -1654,16 +1510,27 @@
     pdSize = b.dataset.size;
     sizeRow.querySelectorAll('.size-btn').forEach(x => x.classList.toggle('active', x === b));
     sizeValue.textContent = pdSize;
+    pdUpdateSummary();
   });
   thumbRail.addEventListener('click', (e) => {
     const b = e.target.closest('.thumb-btn'); if (!b) return;
-    pdSetMain(b.dataset.img); pdMarkThumb(b.dataset.img);
+    pdShow(Number(b.dataset.i));
   });
+  document.getElementById('pdPrev').addEventListener('click', () => pdShow(pdIdx - 1));
+  document.getElementById('pdNext').addEventListener('click', () => pdShow(pdIdx + 1));
+  (function(){ // geser foto di HP
+    const st = document.getElementById('mainStage'); let x0 = null;
+    st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive:true });
+    st.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 40) pdShow(pdIdx + (dx < 0 ? 1 : -1));
+    }, { passive:true });
+  })();
   pdTabs.addEventListener('click', (e) => { const t = e.target.closest('.pd-tab'); if (t) pdRender(Number(t.dataset.i)); });
 
   const go3d = () => { if (pd3dHref) location.href = pd3dHref; };
   btn3d.addEventListener('click', go3d);
-  view3dCard.addEventListener('click', go3d);
 
   window.__pdWA = () => {
     const p = pdCur ? pdCur.p : {};
@@ -1690,7 +1557,10 @@
     if (error || !data) return;
     pdItems = data.filter(r => r.products).map(r => ({ rank: r.rank, p: r.products }));
     if (!pdItems.length) return;
-    pdTabs.innerHTML = pdItems.map((it, i) => `<button class="pd-tab" data-i="${i}"><b>#${it.rank}</b>${esc(it.p.name)}</button>`).join('');
+    pdTabs.innerHTML = pdItems.map((it, i) => {
+      const th = (it.p.images && it.p.images[0]) || ((it.p.colors || []).find(c => c.image) || {}).image || '';
+      return `<button class="pd-tab" data-i="${i}"><span class="pd-tab-img">${th ? `<img src="${esc(th)}" alt="" loading="lazy">` : ''}</span><span class="pd-tab-txt"><b>#${it.rank}</b><span>${esc(it.p.name)}</span></span></button>`;
+    }).join('');
     pdTabs.style.display = pdItems.length > 1 ? '' : 'none';
     document.getElementById('produk').style.display = '';
     pdRender(0);
@@ -1698,7 +1568,6 @@
 
   /* ---- video modal ---- */
   const videoModal = document.getElementById('videoModal');
-  document.getElementById('videoCard').addEventListener('click', () => videoModal.classList.add('open'));
   document.getElementById('closeModal').addEventListener('click', () => videoModal.classList.remove('open'));
   videoModal.addEventListener('click', (e) => { if (e.target === videoModal) videoModal.classList.remove('open'); });
 
@@ -1707,7 +1576,7 @@
     reviewVideoThumb.addEventListener('click', () => videoModal.classList.add('open'));
   }
 
-  /* ---- Top 10 teaser ---- */
+  /* ---- Top 5 teaser ---- */
   (async function initTop10Teaser(){
     const sb = window.getSupabaseClient();
     const monthsRes = await sb.from('top10_rankings').select('month');
@@ -1727,7 +1596,7 @@
     if (error || !data || data.length === 0) return;
 
     document.getElementById('top10TeaserTitle').textContent =
-      month === currentMonth ? 'Top 10 Bulan Ini' : 'Top 10 Terbaru';
+      month === currentMonth ? 'Top 5 Bulan Ini' : 'Top 5 Terbaru';
 
     const row = document.getElementById('top10TeaserRow');
     row.innerHTML = data.filter(r => r.products).map(r => {
