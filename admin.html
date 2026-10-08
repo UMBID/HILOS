@@ -161,6 +161,48 @@
   .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .hint{ font-size:11.5px; color:#8a8078; margin-top:4px; }
 
+
+  /* ---------- video putar 360° ---------- */
+  #vidOverlay{ z-index:60; align-items:center; }
+  #vidOverlay .modal{ max-width:640px; min-height:0; position:relative; }
+  .vid-step{ display:none; }
+  .vid-step.on{ display:block; }
+  .vid-drop{ display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; padding:30px 16px; border:2px dashed rgba(47,111,176,.45); border-radius:12px; background:rgba(47,111,176,.05); cursor:pointer; color:#2f6fb0; }
+  .vid-drop:hover{ background:rgba(47,111,176,.1); }
+  .vid-drop strong{ font-size:15px; }
+  .vid-drop span{ font-size:12.5px; color:#6b6058; }
+  .vid-tips{ margin-top:16px; font-size:12.5px; line-height:1.6; color:#3d352d; background:#faf8f5; border:1px solid var(--sand-line); border-radius:10px; padding:12px 14px; }
+  .vid-tips h4{ font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+  .vid-tips ol{ margin-left:18px; }
+  .vid-tips li{ margin-bottom:3px; }
+  #vidEl{ width:100%; max-height:300px; background:#000; border-radius:8px; display:block; }
+  .vid-range label{ display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:#6b6058; margin:8px 0 2px; text-transform:uppercase; letter-spacing:.04em; }
+  .vid-range input[type=range], .vid-slider{ width:100%; accent-color:#2f6fb0; }
+  .vid-preview{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; aspect-ratio:1/1; max-height:380px; margin:0 auto; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .vid-preview img{ width:100%; height:100%; object-fit:contain; display:block; }
+  .vid-prevbar{ display:flex; align-items:center; gap:12px; margin:8px 0; flex-wrap:wrap; }
+  .vid-prevbar .btn{ padding:8px 14px; font-size:12px; }
+  .vid-warn{ display:none; background:#fff6e0; border-left:3px solid #d49a1c; color:#6b4a00; font-size:12.5px; line-height:1.55; padding:9px 12px; border-radius:6px; margin:8px 0; }
+  .vid-prog{ display:none; margin-top:14px; }
+  .vid-prog.on{ display:block; }
+  .vid-prog-track{ height:8px; background:#e8eef4; border-radius:6px; overflow:hidden; }
+  #vidProgBar{ height:100%; width:0; background:#2f6fb0; transition:width .15s; }
+  #vidProgTxt{ display:block; font-size:12px; color:#6b6058; margin-top:6px; }
+  .spin-compact{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .spin-compact .strip{ display:flex; gap:4px; flex:1; min-width:180px; }
+  .spin-compact .strip img{ width:44px; height:44px; object-fit:cover; border:1px solid var(--sand-line); border-radius:6px; background:#fff; }
+  .bulk-sec-btn.primary{ background:#2f6fb0; color:#fff; border-color:#2f6fb0; }
+  .bulk-sec-btn.primary:hover{ background:#1c4a73; }
+  .bulk-sec-btn.danger{ color:#b3261e; border-color:rgba(179,38,30,.35); background:rgba(179,38,30,.06); }
+  .spin-more{ margin-top:10px; font-size:12px; color:#6d645b; }
+  .spin-more summary{ cursor:pointer; font-weight:600; }
+  @media (max-width:520px){
+    #vidOverlay{ align-items:flex-start; padding:0; }
+    #vidOverlay .modal{ min-height:100%; border-radius:0; }
+    .vid-modal .modal-actions{ position:static; }
+    .vid-modal .modal-actions .btn{ flex:1; }
+  }
+
   /* ---------- peta distribusi ---------- */
   .map-help{ background:#eaf1f8; border:1px solid var(--sand-line); border-left:3px solid var(--gold); padding:10px 14px; font-size:13px; color:#3b4a5a; margin-bottom:16px; border-radius:6px; }
   .map-help.placing{ background:#fff6e0; border-left-color:#d49a1c; color:#6b4a00; }
@@ -580,6 +622,78 @@
   </div>
 </div>
 
+<!-- ============ VIDEO PUTAR 360° ============ -->
+<div class="modal-overlay" id="vidOverlay">
+  <div class="modal vid-modal">
+    <h2>Video Putar 360° <span id="vidColorName" style="font-weight:500;color:#6b6058;"></span></h2>
+
+    <!-- langkah 1: pilih video -->
+    <div class="vid-step" id="vidStep1">
+      <label class="vid-drop" for="vidFile">
+        <strong>Pilih video produk berputar</strong>
+        <span>MP4 / MOV dari HP, 10–30 detik</span>
+      </label>
+      <input type="file" id="vidFile" accept="video/*" style="display:none;">
+      <div class="vid-tips">
+        <h4>Cara merekam supaya hasilnya bagus</h4>
+        <ol>
+          <li>Taruh produk di tengah <strong>piringan/meja putar</strong>. Alasi dengan kertas atau kain <strong>putih polos</strong>, latar belakang polos juga.</li>
+          <li>HP di tripod (atau ditumpu), <strong>tidak bergerak</strong>. Cahaya merata, tanpa bayangan keras.</li>
+          <li>Mulai dari <strong>tampak depan</strong>, putar <strong>satu kali penuh</strong> dengan kecepatan stabil (sekitar 10–15 detik), berhenti di depan lagi.</li>
+          <li>Resolusi 1080p sudah cukup. Videonya <strong>tidak disimpan</strong>, hanya foto-foto hasil olahannya.</li>
+        </ol>
+      </div>
+      <div class="modal-actions"><button class="btn btn-outline" type="button" id="vidCancel1">Batal</button></div>
+    </div>
+
+    <!-- langkah 2: atur bagian video -->
+    <div class="vid-step" id="vidStep2">
+      <video id="vidEl" muted playsinline preload="auto"></video>
+      <p class="hint" style="margin:8px 0 12px;">Sistem sudah menebak awal dan akhir putaran. Geser kalau kurang pas: <strong>Mulai</strong> = produk tampak depan, <strong>Selesai</strong> = tepat saat kembali ke depan.</p>
+      <div class="vid-range">
+        <label>Mulai <b id="vidStartLbl"></b></label>
+        <input type="range" id="vidStart" value="0">
+        <label>Selesai <b id="vidEndLbl"></b></label>
+        <input type="range" id="vidEnd" value="1">
+      </div>
+      <p class="hint" id="vidRangeInfo"></p>
+      <div class="field" style="margin-top:12px">
+        <label for="vidCount">Jumlah foto sudut</label>
+        <select id="vidCount">
+          <option value="36" selected>36 foto (sangat halus, disarankan)</option>
+          <option value="24">24 foto (halus, lebih ringan)</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" type="button" id="vidCancel2">Batal</button>
+        <button class="btn btn-gold" type="button" id="vidMake">Buat 360°</button>
+      </div>
+    </div>
+
+    <!-- langkah 3: pratinjau -->
+    <div class="vid-step" id="vidStep3">
+      <div class="vid-preview"><img id="vidPrevImg" alt="Pratinjau 360°"></div>
+      <input type="range" id="vidSlider" class="vid-slider" value="0">
+      <div class="vid-prevbar">
+        <button class="btn btn-outline" type="button" id="vidPlay">▶ Putar</button>
+        <span class="hint" id="vidResultInfo"></span>
+      </div>
+      <p class="vid-warn" id="vidWarn">Perhatian: frame terakhir terlihat berbeda dari frame pertama, jadi video mungkin belum satu putaran penuh. Putar pratinjau di atas; kalau melompat di akhir, klik "Atur ulang" dan geser titik Selesai.</p>
+      <p class="hint">Geser slider atau klik Putar untuk mengecek. Pastikan produk tidak melompat dan tidak terpotong.</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" type="button" id="vidCancel3">Batal</button>
+        <button class="btn btn-outline" type="button" id="vidRedo">Atur ulang</button>
+        <button class="btn btn-gold" type="button" id="vidApply">Pakai hasil ini</button>
+      </div>
+    </div>
+
+    <div class="vid-prog" id="vidProg">
+      <div class="vid-prog-track"><div id="vidProgBar"></div></div>
+      <span id="vidProgTxt"></span>
+    </div>
+  </div>
+</div>
+
 <!-- ============ MODAL FORM ============ -->
 <!-- ============ GANTI PASSWORD ============ -->
 <div class="modal-overlay" id="pwOverlay">
@@ -688,14 +802,14 @@
         <span><strong>Aktifkan 3D untuk produk ini</strong><span class="d">ON: ada halaman detail flagship dengan putaran 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
       </label>
       <div class="guide-3d only-3d">
-        <h4>Cara mengambil foto 360°</h4>
-        Per warna cukup <strong>12 foto</strong> (disarankan) atau <strong>8 foto</strong> (lebih cepat, putaran agak patah). Upload-nya di kartu warna pada langkah 4.
+        <h4>Cara membuat tampilan 360°</h4>
+        Cara termudah: <strong>satu video produk berputar</strong>. Sistem mengambil 36 foto sudut sendiri, merapikan latarnya, dan hanya foto hasilnya yang disimpan (videonya tidak). Upload di kartu warna pada langkah 4, tombol <strong>"Upload video putar"</strong>.
         <ol>
-          <li>Taruh produk di tengah alas polos (kertas putih/abu), cahaya merata. Kamera di tripod atau ditumpu, <strong>jarak dan tinggi tidak berubah</strong>.</li>
-          <li>Gambar lingkaran di kertas dengan tanda sudut (12 titik = tiap 30°, atau 8 titik = tiap 45°). Putar produk <strong>searah</strong> ke tiap tanda, lalu foto. Tidak perlu meja putar.</li>
-          <li>Mulai dari <strong>tampak depan</strong>, lalu putar ke kanan sampai kembali ke depan. Urutan inilah yang dipakai sistem; <strong>jumlah 8 atau 12 terdeteksi otomatis</strong> dan posisi sudutnya dipetakan sendiri.</li>
-          <li>Semua foto harus <strong>rasio dan ukuran sama</strong> (mis. semua 1:1). JPG cukup, sistem mengompres otomatis.</li>
+          <li>Taruh produk di piringan putar beralas <strong>putih polos</strong>, HP di tripod, cahaya merata.</li>
+          <li>Rekam <strong>satu putaran penuh</strong> mulai dari tampak depan, kecepatan stabil, 10–15 detik.</li>
+          <li>Upload videonya, cek pratinjau, lalu klik <strong>Pakai hasil ini</strong> dan Simpan produk.</li>
         </ol>
+        Cara lain (lebih manual): upload gambar grid atau 8–16 foto. Hasilnya kurang halus karena sudutnya lebih sedikit.
       </div>
     </div>
 
@@ -994,8 +1108,10 @@
 
   async function deleteProduct(id){
     if (!confirm('Hapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
+    const doomed = allProducts.find(x => x.id === id);
     const { error } = await sb.from('products').delete().eq('id', id);
     if (error){ showToast('Gagal hapus: ' + error.message); return; }
+    if (doomed && Array.isArray(doomed.colors)) removeSpinUrls(doomed.colors.flatMap(c => c.spin || []));
     showToast('Produk dihapus.');
     loadProducts();
   }
@@ -1007,6 +1123,7 @@
   document.getElementById('fIs3d').addEventListener('change', sync3dToggle);
 
   function resetForm(){
+    pendingDelete.clear(); sessionUploaded.clear();
     editingId = null;
     currentColors = [];
     currentImages = [];
@@ -1056,7 +1173,12 @@
     modalOverlay.classList.add('open');
   }
 
-  function closeModal(){ modalOverlay.classList.remove('open'); }
+  function closeModal(){
+    // dibatalkan tanpa simpan: frame yang baru diupload di sesi ini dibuang
+    if (sessionUploaded.size) removeSpinUrls([...sessionUploaded]);
+    sessionUploaded.clear(); pendingDelete.clear();
+    modalOverlay.classList.remove('open');
+  }
 
   document.getElementById('addProductBtn').addEventListener('click', openAdd);
 
@@ -1133,22 +1255,47 @@
           </span>
           <div class="spin-box">
             <div class="spin-head">
-              <strong>Foto 360°</strong>
-              ${n ? `<span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done >= SPIN_MIN ? 'Siap' : 'Belum lengkap'} · ${done}/${n} sudut</span>` : '<span class="spin-status">Belum ada foto</span>'}
+              <strong>Tampilan 360°</strong>
+              ${n ? `<span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done >= SPIN_MIN ? 'Siap' : 'Belum lengkap'} · ${done}${n !== done ? '/' + n : ''} foto sudut</span>` : '<span class="spin-status">Belum ada</span>'}
             </div>
-            ${n ? `<div class="slot-grid">${slots}</div>` : `<p class="hint" style="margin:0 0 4px">Upload gambar grid atau beberapa foto sekaligus. Jumlah sudut (8 atau 12) <strong>terdeteksi otomatis</strong>, posisinya diatur sistem.</p>`}
-            <div class="spin-actions">
-              <button type="button" class="bulk-sec-btn" data-spin-grid="${i}" title="Satu gambar berisi banyak sudut, otomatis dipotong dan dipetakan">Upload 1 gambar grid</button>
-              <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}" title="Pilih 8–16 foto, urut berdasarkan nama file">Upload beberapa foto (8–16)</button>
-            </div>
-            <p class="hint" style="margin-top:6px">Gambar grid: susunan bebas (mis. 4×2 untuk 8 sudut, 4×3 atau 6×2 untuk 12 sudut), urut kiri→kanan lalu atas→bawah, mulai dari tampak depan. Beberapa foto: urut nama file (01, 02, …). Klik satu kotak untuk mengganti foto sudut itu saja.</p>
+            ${n > SPIN_MAX ? `
+              <div class="spin-compact">
+                <div class="strip">${c.spin.filter((u, k) => u && k % Math.ceil(n / 6) === 0).slice(0, 6).map(u => `<img src="${u}" alt="">`).join('')}</div>
+              </div>
+              <div class="spin-actions">
+                <button type="button" class="bulk-sec-btn primary" data-spin-video="${i}">Ganti dengan video baru</button>
+                <button type="button" class="bulk-sec-btn danger" data-spin-clear="${i}">Hapus 360°</button>
+              </div>` : `
+              ${n ? `<div class="slot-grid">${slots}</div>` : `<p class="hint" style="margin:0 0 4px">Belum ada tampilan 360° untuk warna ini. Cara termudah: upload <strong>satu video produk berputar</strong>, foto sudutnya dibuat otomatis.</p>`}
+              <div class="spin-actions">
+                <button type="button" class="bulk-sec-btn primary" data-spin-video="${i}">Upload video putar (disarankan)</button>
+              </div>
+              <details class="spin-more"><summary>Cara lain: gambar grid / beberapa foto</summary>
+                <div class="spin-actions">
+                  <button type="button" class="bulk-sec-btn" data-spin-grid="${i}" title="Satu gambar berisi banyak sudut, otomatis dipotong dan dipetakan">Upload 1 gambar grid</button>
+                  <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}" title="Pilih 8–16 foto, urut berdasarkan nama file">Upload beberapa foto (8–16)</button>
+                </div>
+                <p class="hint" style="margin-top:6px">Gambar grid: susunan bebas (mis. 4×2 atau 4×3), urut kiri→kanan lalu atas→bawah, mulai dari tampak depan. Beberapa foto: urut nama file (01, 02, …). Klik satu kotak untuk mengganti foto sudut itu saja. Sudut lebih sedikit = putaran kurang halus.</p>
+              </details>`}
           </div>
         </div>
       `;
     }).join('');
 
+    wrap.querySelectorAll('[data-spin-video]').forEach(btn => {
+      btn.addEventListener('click', () => vidOpen(Number(btn.dataset.spinVideo)));
+    });
+    wrap.querySelectorAll('[data-spin-clear]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!confirm('Hapus tampilan 360° warna ini?')) return;
+        const c = currentColors[Number(btn.dataset.spinClear)];
+        queueOrphans(c.spin || []); c.spin = [];
+        renderColorList();
+      });
+    });
     wrap.querySelectorAll('[data-remove-color]').forEach(btn => {
       btn.addEventListener('click', () => {
+        queueOrphans((currentColors[Number(btn.dataset.removeColor)].spin) || []);
         currentColors.splice(Number(btn.dataset.removeColor), 1);
         renderColorList();
       });
@@ -1181,7 +1328,7 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const [ci, si] = btn.dataset.removeFrame.split(':').map(Number);
-        if (currentColors[ci] && currentColors[ci].spin) currentColors[ci].spin[si] = '';
+        if (currentColors[ci] && currentColors[ci].spin){ queueOrphans([currentColors[ci].spin[si]]); currentColors[ci].spin[si] = ''; }
         renderColorList();
       });
     });
@@ -1206,14 +1353,38 @@
        - "Upload beberapa foto" -> N file (urut nama), N = jumlah sudut
        - "Upload 1 gambar grid"  -> sistem mendeteksi baris/kolom & memotong sendiri
      Posisi sudut selalu dipetakan rata: sudut ke-i = i x 360 / N. */
+  /* ---- kebersihan Storage: frame lama yang diganti/dihapus ikut dibersihkan ---- */
+  const pendingDelete = new Set();    // frame tersimpan di DB yang diganti -> dihapus setelah klik Simpan
+  const sessionUploaded = new Set();  // frame yang diupload sesi ini -> dihapus kalau modal dibatalkan
+  function spinPathFromUrl(u){
+    const i = String(u || '').indexOf('/product-images/');
+    if (i < 0) return null;
+    const path = decodeURIComponent(u.slice(i + 16).split('?')[0]);
+    return path.startsWith('spin/') ? path : null;
+  }
+  async function removeSpinUrls(urls){
+    const paths = [...new Set(urls.map(spinPathFromUrl).filter(Boolean))];
+    if (!paths.length) return;
+    try { await sb.storage.from('product-images').remove(paths); } catch (e){ /* abaikan */ }
+  }
+  function queueOrphans(urls){
+    urls.filter(Boolean).forEach(u => {
+      if (sessionUploaded.has(u)){ sessionUploaded.delete(u); removeSpinUrls([u]); }
+      else pendingDelete.add(u);
+    });
+  }
+
   async function uploadSpinBlob(blob, name){
     const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-${name}`;
     const { error } = await sb.storage.from('product-images').upload(path, blob, blob.type ? { contentType: blob.type } : undefined);
     if (error) throw error;
-    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    sessionUploaded.add(url);
+    return url;
   }
 
   async function fillSpin(c, items, label){ // items: [{blob,name}]
+    queueOrphans(c.spin || []);
     c.spin = new Array(items.length).fill('');
     renderColorList();
     for (let i = 0; i < items.length; i++){
@@ -1240,7 +1411,9 @@
       showToast('Mengunggah foto...');
       try {
         const file = await compressImageFile(files[0]);
+        const oldUrl = c.spin[t.slot];
         c.spin[t.slot] = await uploadSpinBlob(file, file.name);
+        queueOrphans([oldUrl]);
         showToast('Foto sudut ' + slotLabel(t.slot, c.spin.length) + ' diperbarui.');
       } catch (err){ showToast('Gagal upload: ' + err.message); }
       renderColorList();
@@ -1261,6 +1434,358 @@
     }
     await fillSpin(c, items, 'Mengunggah sudut');
   });
+
+
+  /* ================= VIDEO PUTAR 360° =================
+     Admin mengunggah 1 video produk berputar. Browser (bukan server) mengambil N frame,
+     membersihkan latar jadi putih, menyamakan skala/posisi, lalu hanya FRAME-nya yang
+     diupload ke Storage. Videonya sendiri tidak pernah disimpan. */
+  const VID_SIZE = 800;
+  const vidOverlay = document.getElementById('vidOverlay');
+  const vidEl = document.getElementById('vidEl');
+  const vidCtx = { ci:null, objUrl:null, blobs:[], previewUrls:[], timer:null, busy:false, loopWarn:false };
+
+  function vidShow(step){ [1,2,3].forEach(n => document.getElementById('vidStep' + n).classList.toggle('on', n === step)); }
+  function vidProgress(on, txt, pct){
+    const box = document.getElementById('vidProg');
+    box.classList.toggle('on', !!on);
+    if (txt != null) document.getElementById('vidProgTxt').textContent = txt;
+    if (pct != null) document.getElementById('vidProgBar').style.width = Math.round(pct) + '%';
+  }
+  function vidStopPlay(){
+    if (vidCtx.timer){ clearInterval(vidCtx.timer); vidCtx.timer = null; }
+    const b = document.getElementById('vidPlay'); if (b) b.textContent = '▶ Putar';
+  }
+  function vidFreeMedia(){
+    vidStopPlay();
+    vidCtx.previewUrls.forEach(u => URL.revokeObjectURL(u));
+    vidCtx.previewUrls = []; vidCtx.blobs = [];
+    if (vidCtx.objUrl){ URL.revokeObjectURL(vidCtx.objUrl); vidCtx.objUrl = null; }
+    vidEl.removeAttribute('src'); try { vidEl.load(); } catch(e){}
+  }
+  function vidOpen(ci){
+    vidCtx.ci = ci;
+    document.getElementById('vidColorName').textContent = '— ' + (currentColors[ci].name || ('Warna ' + (ci + 1)));
+    vidFreeMedia(); vidProgress(false); vidShow(1);
+    vidOverlay.classList.add('open');
+  }
+  function vidClose(){
+    if (vidCtx.busy && !confirm('Proses masih berjalan. Batalkan?')) return;
+    vidCtx.busy = false;
+    vidFreeMedia(); vidProgress(false);
+    vidOverlay.classList.remove('open');
+  }
+
+  const tick = (ms) => new Promise(r => setTimeout(r, ms));
+  function seekTo(t){
+    return new Promise(res => {
+      const target = Math.min(Math.max(0, t), Math.max(0, vidEl.duration - 0.001));
+      if (Math.abs(vidEl.currentTime - target) < 0.001){ res(); return; }
+      const done = () => { vidEl.removeEventListener('seeked', done); clearTimeout(to); res(); };
+      const to = setTimeout(done, 6000);
+      vidEl.addEventListener('seeked', done);
+      vidEl.currentTime = target;
+    }).then(() => tick(30));
+  }
+
+  function gray48(){
+    const c = document.createElement('canvas'); c.width = c.height = 48;
+    const x = c.getContext('2d', { willReadFrequently: true });
+    x.drawImage(vidEl, 0, 0, 48, 48);
+    const d = x.getImageData(0, 0, 48, 48).data, g = new Float32Array(48 * 48);
+    for (let i = 0; i < g.length; i++) g[i] = 0.299 * d[i*4] + 0.587 * d[i*4+1] + 0.114 * d[i*4+2];
+    return g;
+  }
+  function meanAbs(a, b){ let s = 0; for (let i = 0; i < a.length; i++) s += Math.abs(a[i] - b[i]); return s / a.length; }
+
+  // cari kapan produk mulai & selesai berputar (membuang bagian diam di awal/akhir video)
+  async function vidDetectRange(){
+    const dur = vidEl.duration;
+    const n = Math.min(60, Math.max(20, Math.round(dur * 4)));
+    const times = [], grays = [];
+    for (let i = 0; i < n; i++){
+      const t = dur * i / (n - 1);
+      await seekTo(t);
+      times.push(t); grays.push(gray48());
+      vidProgress(true, 'Menganalisis video…', (i + 1) / n * 100);
+    }
+    const diffs = [];
+    for (let i = 1; i < n; i++) diffs.push(meanAbs(grays[i - 1], grays[i]));
+    const mx = Math.max(...diffs);
+    const thr = Math.max(0.8, mx * 0.25);
+    const first = diffs.findIndex(d => d > thr);
+    let last = -1; diffs.forEach((d, i) => { if (d > thr) last = i; });
+    if (first < 0 || last < first) return [0, dur];
+    const s = times[first], e = times[Math.min(n - 1, last + 1)];
+    return (e - s < 1) ? [0, dur] : [s, e];
+  }
+
+  async function vidLoad(file){
+    vidFreeMedia();
+    vidCtx.busy = true;
+    vidProgress(true, 'Membaca video…', 5);
+    try {
+      vidCtx.objUrl = URL.createObjectURL(file);
+      await new Promise((res, rej) => {
+        vidEl.onloadedmetadata = () => res();
+        vidEl.onerror = () => rej(new Error('Format video tidak bisa dibaca browser. Simpan/ekspor ulang sebagai MP4 (H.264), lalu coba lagi.'));
+        vidEl.src = vidCtx.objUrl;
+      });
+      if (!isFinite(vidEl.duration) || vidEl.duration < 2) throw new Error('Video terlalu pendek (minimal 2 detik).');
+      if (vidEl.duration > 90) throw new Error('Video terlalu panjang (maksimal 90 detik). Potong dulu sampai satu putaran penuh saja.');
+      await seekTo(0);
+      const [s, e] = await vidDetectRange();
+      const dur = vidEl.duration;
+      ['vidStart', 'vidEnd'].forEach(id => { const r = document.getElementById(id); r.min = 0; r.max = dur; r.step = 0.05; });
+      document.getElementById('vidStart').value = s;
+      document.getElementById('vidEnd').value = e;
+      vidUpdateRange(null);
+      vidShow(2);
+      await seekTo(s);
+    } catch (err){
+      vidFreeMedia(); vidShow(1);
+      showToast(err.message || 'Gagal membaca video.');
+    } finally {
+      vidCtx.busy = false; vidProgress(false);
+    }
+  }
+
+  function vidUpdateRange(changed){
+    const a = document.getElementById('vidStart'), b = document.getElementById('vidEnd');
+    let s = parseFloat(a.value), e = parseFloat(b.value);
+    if (changed === 'start' && s > e - 0.5){ s = Math.max(0, e - 0.5); a.value = s; }
+    if (changed === 'end' && e < s + 0.5){ e = Math.min(vidEl.duration, s + 0.5); b.value = e; }
+    document.getElementById('vidStartLbl').textContent = s.toFixed(1) + ' dtk';
+    document.getElementById('vidEndLbl').textContent = e.toFixed(1) + ' dtk';
+    document.getElementById('vidRangeInfo').textContent = 'Bagian yang dipakai: ' + (e - s).toFixed(1) + ' detik (harus tepat satu putaran penuh).';
+    if (changed === 'start') vidEl.currentTime = s;
+    if (changed === 'end') vidEl.currentTime = e;
+  }
+
+  // 1 frame video -> latar dibuat putih, kembalikan potongan area produk
+  function vidProcessFrame(){
+    const vw = vidEl.videoWidth, vh = vidEl.videoHeight;
+    const sc = Math.min(1, 960 / Math.max(vw, vh));
+    const w = Math.max(2, Math.round(vw * sc)), h = Math.max(2, Math.round(vh * sc));
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const cx = cv.getContext('2d', { willReadFrequently: true });
+    cx.drawImage(vidEl, 0, 0, w, h);
+    const img = cx.getImageData(0, 0, w, h), d = img.data;
+
+    // warna latar = median piksel di tepi gambar
+    const ring = Math.max(3, Math.round(Math.min(w, h) * 0.03));
+    const hist = [new Uint32Array(256), new Uint32Array(256), new Uint32Array(256)]; let cnt = 0;
+    for (let y = 0; y < h; y++){
+      const edgeRow = y < ring || y >= h - ring;
+      for (let x = 0; x < w; x++){
+        if (!edgeRow && x >= ring && x < w - ring) continue;
+        const p = (y * w + x) * 4; hist[0][d[p]]++; hist[1][d[p+1]]++; hist[2][d[p+2]]++; cnt++;
+      }
+    }
+    const med = hist.map(hh => { let a = 0; for (let v = 0; v < 256; v++){ a += hh[v]; if (a >= cnt / 2) return v; } return 255; });
+
+    // 1) pisahkan latar dan produk; simpan peta "produk" per piksel
+    const fg = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++){
+      for (let x = 0; x < w; x++){
+        const p = (y * w + x) * 4;
+        const dr = d[p] - med[0], dg = d[p+1] - med[1], db = d[p+2] - med[2];
+        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+        const a = Math.min(1, Math.max(0, (dist - 28) / 32));
+        d[p]   = 255 + (d[p]   - 255) * a;
+        d[p+1] = 255 + (d[p+1] - 255) * a;
+        d[p+2] = 255 + (d[p+2] - 255) * a;
+        if (a > 0.5) fg[y * w + x] = 1;
+      }
+    }
+    // 2) ambil hanya satu gumpalan terbesar (produk). Tulisan, tepi piringan, atau benda kecil lain dibuang.
+    const cs = Math.max(4, Math.round(Math.max(w, h) / 160));
+    const gw = Math.ceil(w / cs), gh = Math.ceil(h / cs);
+    const mass = new Uint32Array(gw * gh);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (fg[y * w + x]) mass[Math.floor(y / cs) * gw + Math.floor(x / cs)]++;
+    const active = new Uint8Array(gw * gh);
+    for (let i = 0; i < active.length; i++) active[i] = mass[i] > cs * cs * 0.08 ? 1 : 0;
+    const comp = new Int32Array(gw * gh).fill(-1); const compMass = [];
+    const R = 2;   // jarak maksimal antar bagian produk yang masih dianggap satu benda (dalam sel)
+    for (let i0 = 0; i0 < active.length; i0++){
+      if (!active[i0] || comp[i0] >= 0) continue;
+      const id = compMass.length; let m = 0; const stack = [i0]; comp[i0] = id;
+      while (stack.length){
+        const i = stack.pop(); m += mass[i];
+        const cx0 = i % gw, cy0 = Math.floor(i / gw);
+        for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++){
+          const nx = cx0 + dx, ny = cy0 + dy;
+          if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+          const j = ny * gw + nx;
+          if (active[j] && comp[j] < 0){ comp[j] = id; stack.push(j); }
+        }
+      }
+      compMass.push(m);
+    }
+    if (!compMass.length) return null;
+    let best = 0; compMass.forEach((m, i) => { if (m > compMass[best]) best = i; });
+    const keepCell = new Uint8Array(gw * gh);
+    for (let i = 0; i < keepCell.length; i++){
+      if (comp[i] !== best) continue;
+      const cx0 = i % gw, cy0 = Math.floor(i / gw);
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++){
+        const nx = cx0 + dx, ny = cy0 + dy;
+        if (nx >= 0 && ny >= 0 && nx < gw && ny < gh) keepCell[ny * gw + nx] = 1;
+      }
+    }
+    const rows = new Uint32Array(h), cols = new Uint32Array(w);
+    for (let y = 0; y < h; y++){
+      for (let x = 0; x < w; x++){
+        const p = (y * w + x) * 4;
+        if (!keepCell[Math.floor(y / cs) * gw + Math.floor(x / cs)]){ d[p] = d[p+1] = d[p+2] = 255; continue; }
+        if (fg[y * w + x]){ rows[y]++; cols[x]++; }
+      }
+    }
+    cx.putImageData(img, 0, 0);
+    const minR = Math.max(3, Math.round(w * 0.004)), minC = Math.max(3, Math.round(h * 0.004));
+    let y0 = 0, y1 = h - 1, x0 = 0, x1 = w - 1;
+    while (y0 < h && rows[y0] < minR) y0++;
+    while (y1 > y0 && rows[y1] < minR) y1--;
+    while (x0 < w && cols[x0] < minC) x0++;
+    while (x1 > x0 && cols[x1] < minC) x1--;
+    if (y1 - y0 < 10 || x1 - x0 < 10) return null;   // tidak ada produk terdeteksi
+    const pad = 4;
+    x0 = Math.max(0, x0 - pad); y0 = Math.max(0, y0 - pad); x1 = Math.min(w - 1, x1 + pad); y1 = Math.min(h - 1, y1 + pad);
+    const piece = document.createElement('canvas'); piece.width = x1 - x0 + 1; piece.height = y1 - y0 + 1;
+    piece.getContext('2d').drawImage(cv, x0, y0, piece.width, piece.height, 0, 0, piece.width, piece.height);
+    return piece;
+  }
+
+  async function vidBuild(){
+    const N = Number(document.getElementById('vidCount').value) || 36;
+    const s = parseFloat(document.getElementById('vidStart').value);
+    const e = parseFloat(document.getElementById('vidEnd').value);
+    vidCtx.busy = true;
+    document.getElementById('vidMake').disabled = true;
+    try {
+      const crops = [], grays = [];
+      for (let i = 0; i < N; i++){
+        await seekTo(s + (e - s) * i / N);
+        const piece = vidProcessFrame();
+        if (!piece) throw new Error(`Produk tidak terdeteksi di frame ${i + 1}. Pastikan produk terlihat jelas dengan latar polos, atau atur ulang bagian mulai/selesai.`);
+        crops.push(piece); grays.push(gray48());
+        vidProgress(true, `Mengambil frame ${i + 1} dari ${N}…`, (i + 1) / N * 70);
+      }
+      // cek apakah video benar-benar satu putaran penuh: frame di titik "selesai" harus mirip frame pertama
+      await seekTo(e);
+      const gEnd = gray48();
+      const loopDiff = meanAbs(grays[0], gEnd);
+      const maxDiff = Math.max(...grays.slice(1).map(g => meanAbs(grays[0], g)));
+      vidCtx.loopWarn = maxDiff > 0 && loopDiff > 0.5 * maxDiff;
+
+      // samakan skala (satu skala untuk semua), posisi tengah, dan garis bawah
+      const pct = (arr, q) => { const a = arr.slice().sort((x, y) => x - y); return a[Math.min(a.length - 1, Math.floor(a.length * q))]; };
+      const maxW = pct(crops.map(p => p.width), 0.9), maxH = pct(crops.map(p => p.height), 0.9);   // tahan terhadap 1-2 frame yang aneh
+      const S = VID_SIZE;
+      const k = Math.min(0.88 * S / maxW, 0.82 * S / maxH);
+      const baseY = (S + maxH * k) / 2;
+      const blobs = [];
+      for (let i = 0; i < crops.length; i++){
+        const p = crops[i];
+        const out = document.createElement('canvas'); out.width = S; out.height = S;
+        const o = out.getContext('2d');
+        o.fillStyle = '#fff'; o.fillRect(0, 0, S, S);
+        o.imageSmoothingQuality = 'high';
+        const ki = Math.min(k, 0.96 * S / p.width, 0.94 * S / p.height);   // frame yang lebih besar dari rata-rata tetap muat
+        const dw = p.width * ki, dh = p.height * ki;
+        o.drawImage(p, (S - dw) / 2, Math.min(baseY, S * 0.97) - dh, dw, dh);
+        let blob = await new Promise(res => out.toBlob(res, 'image/webp', 0.82));
+        if (!blob || blob.type !== 'image/webp') blob = await new Promise(res => out.toBlob(res, 'image/jpeg', 0.86));
+        blobs.push(blob);
+        vidProgress(true, `Merapikan frame ${i + 1} dari ${crops.length}…`, 70 + (i + 1) / crops.length * 30);
+      }
+      vidCtx.blobs = blobs;
+      vidCtx.previewUrls = blobs.map(b => URL.createObjectURL(b));
+      vidShowResult();
+    } catch (err){
+      showToast(err.message || 'Gagal membuat 360°.');
+    } finally {
+      vidCtx.busy = false; vidProgress(false);
+      document.getElementById('vidMake').disabled = false;
+    }
+  }
+
+  function vidShowResult(){
+    const n = vidCtx.previewUrls.length;
+    const sl = document.getElementById('vidSlider');
+    sl.min = 0; sl.max = n - 1; sl.value = 0;
+    document.getElementById('vidPrevImg').src = vidCtx.previewUrls[0];
+    document.getElementById('vidResultInfo').textContent = `${n} frame siap · perkiraan ${(vidCtx.blobs.reduce((a, b) => a + b.size, 0) / 1048576).toFixed(1)} MB`;
+    document.getElementById('vidWarn').style.display = vidCtx.loopWarn ? 'block' : 'none';
+    vidShow(3);
+  }
+  document.getElementById('vidSlider').addEventListener('input', (e) => {
+    vidStopPlay();
+    document.getElementById('vidPrevImg').src = vidCtx.previewUrls[Number(e.target.value)];
+  });
+  document.getElementById('vidPlay').addEventListener('click', () => {
+    if (vidCtx.timer){ vidStopPlay(); return; }
+    document.getElementById('vidPlay').textContent = '❚❚ Berhenti';
+    const sl = document.getElementById('vidSlider'), img = document.getElementById('vidPrevImg');
+    vidCtx.timer = setInterval(() => {
+      const n = vidCtx.previewUrls.length;
+      sl.value = (Number(sl.value) + 1) % n;
+      img.src = vidCtx.previewUrls[Number(sl.value)];
+    }, 90);
+  });
+
+  async function vidApply(){
+    const c = currentColors[vidCtx.ci]; if (!c) return;
+    const blobs = vidCtx.blobs, n = blobs.length;
+    const urls = new Array(n);
+    const btn = document.getElementById('vidApply'); btn.disabled = true;
+    vidCtx.busy = true; vidStopPlay();
+    try {
+      let done = 0, next = 0, failed = null;
+      const stamp = Date.now();
+      const worker = async () => {
+        while (next < n && !failed){
+          const i = next++;
+          try {
+            const ext = blobs[i].type === 'image/webp' ? 'webp' : 'jpg';
+            urls[i] = await uploadSpinBlob(blobs[i], `v${String(i + 1).padStart(2, '0')}.${ext}`);
+          } catch (err){ failed = err; return; }
+          done++;
+          vidProgress(true, `Menyimpan frame ${done} dari ${n}…`, done / n * 100);
+        }
+      };
+      await Promise.all([worker(), worker(), worker(), worker()]);
+      if (failed){
+        removeSpinUrls(urls.filter(Boolean)); urls.filter(Boolean).forEach(u => sessionUploaded.delete(u));
+        throw new Error('Gagal upload: ' + (failed.message || failed));
+      }
+      queueOrphans(c.spin || []);
+      c.spin = urls;
+      renderColorList();
+      vidCtx.busy = false;
+      vidFreeMedia(); vidProgress(false);
+      vidOverlay.classList.remove('open');
+      showToast(`Selesai — ${n} frame 360° terpasang. Jangan lupa klik Simpan pada produk.`);
+    } catch (err){
+      showToast(err.message || 'Gagal menyimpan frame.');
+    } finally {
+      vidCtx.busy = false; vidProgress(false); btn.disabled = false;
+    }
+  }
+
+  document.getElementById('vidFile').addEventListener('change', (e) => {
+    const f = e.target.files[0]; e.target.value = '';
+    if (f) vidLoad(f);
+  });
+  document.getElementById('vidStart').addEventListener('input', () => vidUpdateRange('start'));
+  document.getElementById('vidEnd').addEventListener('input', () => vidUpdateRange('end'));
+  document.getElementById('vidMake').addEventListener('click', vidBuild);
+  document.getElementById('vidApply').addEventListener('click', vidApply);
+  document.getElementById('vidRedo').addEventListener('click', () => { vidStopPlay(); vidShow(2); });
+  document.getElementById('vidCancel1').addEventListener('click', vidClose);
+  document.getElementById('vidCancel2').addEventListener('click', vidClose);
+  document.getElementById('vidCancel3').addEventListener('click', vidClose);
+  vidOverlay.addEventListener('click', (e) => { if (e.target === vidOverlay) vidClose(); });
 
   /* ---- Upload 1 gambar grid -> deteksi baris/kolom otomatis -> potong ----
      Latar putih/abu muda/transparan dibersihkan, teks label dibuang (dipisah celah putih),
@@ -1550,6 +2075,10 @@
       return;
     }
     showToast(editingId ? 'Produk diperbarui.' : 'Produk ditambahkan.');
+    // simpan berhasil: frame lama yang sudah tidak dipakai dihapus dari Storage
+    const keepUrls = new Set(payload.colors.flatMap(c => c.spin || []));
+    removeSpinUrls([...pendingDelete].filter(u => !keepUrls.has(u)));
+    sessionUploaded.clear(); pendingDelete.clear();
     closeModal();
     loadProducts();
   });
