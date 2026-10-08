@@ -53,6 +53,8 @@
   .btn-gold{ background:var(--gold); color:var(--ink); }
   .btn-gold:hover{ background:var(--gold-light); }
   .btn-outline{ background:transparent; border:1px solid var(--sand-line); color:var(--ink); }
+  .btn-outline:hover{ background:#eaf1f8; border-color:var(--gold); color:var(--ink); }
+  .topbar .btn-outline:hover{ background:rgba(255,255,255,0.12); border-color:var(--gold-light); color:var(--sand) !important; }
   .btn-danger{ background:transparent; border:1px solid var(--danger); color:var(--danger); }
   .btn-danger:hover{ background:var(--danger); color:#fff; }
   .btn-block{ width:100%; }
@@ -1604,7 +1606,7 @@
           <button type="button" class="btn ${i === citySel ? 'btn-gold' : 'btn-outline'}" data-act="place">${i === citySel ? 'Klik di peta…' : (c.x == null ? 'Tentukan titik' : 'Pindahkan titik')}</button>
           <span class="city-pos${c.x == null ? ' unset' : ''}">${c.x == null ? 'Titik belum diatur' : 'Titik sudah diatur'}</span>
           <label class="city-act"><input type="checkbox" data-f="is_active" ${c.is_active ? 'checked' : ''}> Tampil</label>
-          <button type="button" class="btn btn-outline" data-act="del" style="color:#b3261e;">Hapus</button>
+          <button type="button" class="btn btn-danger" data-act="del">Hapus</button>
         </div>
       </div>`).join('') : '<p class="hint">Belum ada kota. Klik "+ Tambah Kota".</p>';
 
