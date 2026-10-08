@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/dist-map.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
@@ -157,6 +158,34 @@
   .modal h2{ font-size:20px; margin-bottom:20px; }
   .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   .hint{ font-size:11.5px; color:#8a8078; margin-top:4px; }
+
+  /* ---------- peta distribusi ---------- */
+  .map-help{ background:#eaf1f8; border:1px solid var(--sand-line); border-left:3px solid var(--gold); padding:10px 14px; font-size:13px; color:#3b4a5a; margin-bottom:16px; border-radius:6px; }
+  .map-help.placing{ background:#fff6e0; border-left-color:#d49a1c; color:#6b4a00; }
+  .map-admin-grid{ display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:20px; align-items:start; }
+  .map-admin-map{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:10px; position:sticky; top:12px; }
+  .map-admin-map svg{ width:100%; height:auto; display:block; cursor:crosshair; }
+  .map-admin-map .island-shapes{ fill:#cddfec; }
+  .map-admin-map .island-shapes path{ stroke:none; }
+  .map-admin-map .apin circle{ fill:#1c4a73; stroke:#fff; stroke-width:4; }
+  .map-admin-map .apin text{ font-family:Inter,sans-serif; font-size:30px; font-weight:700; fill:#0d1b2a; paint-order:stroke; stroke:#f5f9fc; stroke-width:7px; pointer-events:none; }
+  .map-admin-map .apin.off{ opacity:.35; }
+  .map-admin-map .apin.sel circle{ fill:#d49a1c; }
+  .map-admin-list{ display:flex; flex-direction:column; gap:10px; }
+  .city-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:12px 14px; display:grid; grid-template-columns:1fr 88px; gap:10px; }
+  .city-card.sel{ border-color:#d49a1c; box-shadow:0 0 0 2px rgba(212,154,28,.25); }
+  .city-card label{ display:block; font-size:10.5px; font-weight:600; color:#6b6058; text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px; }
+  .city-card input[type="text"], .city-card input[type="number"]{ width:100%; padding:9px 10px; border:1px solid var(--sand-line); border-radius:6px; font-size:14px; font-family:inherit; }
+  .city-card .city-actions{ grid-column:1 / -1; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .city-card .city-actions .btn{ padding:8px 12px; font-size:12px; }
+  .city-card .city-act{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:#3b4a5a; margin-left:auto; }
+  .city-card .city-pos{ font-size:11.5px; color:#8a8078; }
+  .city-card .city-pos.unset{ color:#b3261e; font-weight:600; }
+  @media (max-width:900px){
+    .map-admin-grid{ grid-template-columns:1fr; }
+    .map-admin-map{ position:static; }
+    .city-card input[type="text"], .city-card input[type="number"]{ font-size:16px; }
+  }
   .link-btn{ background:none; border:0; color:#6b6058; font-size:13px; text-decoration:underline; cursor:pointer; margin-top:14px; display:block; width:100%; text-align:center; font-family:inherit; }
   .info-msg{ color:#2f7d4f; font-size:13px; margin-top:10px; display:none; }
   #pwOverlay{ align-items:center; }
@@ -429,6 +458,7 @@
     <div class="tab-nav">
       <button class="tab-nav-btn active" data-view="produkView">Kelola Produk</button>
       <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
+      <button class="tab-nav-btn" data-view="mapView">Peta Distribusi</button>
     </div>
 
     <div id="produkView" class="view">
@@ -512,6 +542,27 @@
       <div class="top10-list" id="top10List"></div>
     </div>
     <!-- /top10View -->
+
+    <div id="mapView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Peta Distribusi</h1>
+          <p>Kota mitra yang tampil di peta pada Beranda dan halaman Kerjasama.</p>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-outline" id="mapAddBtn">+ Tambah Kota</button>
+          <button class="btn btn-gold" id="mapSaveBtn">Simpan Perubahan</button>
+        </div>
+      </div>
+
+      <div class="map-help" id="mapHelp">Pilih kota di daftar, lalu <b>klik lokasinya di peta</b> untuk memindahkan titik.</div>
+      <div class="map-admin-grid">
+        <div class="map-admin-map" id="mapAdminMap"></div>
+        <div class="map-admin-list" id="mapAdminList"></div>
+      </div>
+      <p class="hint" id="mapNote" style="margin-top:14px;"></p>
+    </div>
+    <!-- /mapView -->
   </div>
 </div>
 
@@ -1507,7 +1558,139 @@
       document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.toggle('active', b === btn));
       document.querySelectorAll('.view').forEach(v => v.style.display = (v.id === btn.dataset.view) ? '' : 'none');
       if (btn.dataset.view === 'top10View') loadTop10();
+      if (btn.dataset.view === 'mapView') loadCities();
     });
+  });
+
+
+  /* ---------------- PETA DISTRIBUSI ---------------- */
+  let cityRows = [];         // [{id|null, name, partner_count, x, y, is_active}]
+  let cityRemoved = [];      // id yang dihapus (dieksekusi saat Simpan)
+  let citySel = -1;          // indeks kota yang sedang diatur titiknya
+  let cityLoaded = false;
+
+  const mapHelp = document.getElementById('mapHelp');
+  const mapNote = document.getElementById('mapNote');
+
+  async function loadCities(){
+    mapNote.textContent = '';
+    const { data, error } = await sb.from('distribution_cities')
+      .select('id, name, partner_count, x, y, is_active, sort_order, updated_by, updated_at')
+      .order('sort_order', { ascending: true }).order('created_at', { ascending: true });
+    if (error){
+      mapNote.innerHTML = 'Tabel peta belum dibuat. Jalankan bagian <b>PETA DISTRIBUSI</b> dari file <code>supabase-schema.sql</code> di Supabase SQL Editor, lalu muat ulang halaman ini.';
+      cityRows = []; renderCities(); return;
+    }
+    cityRows = data.map(r => ({ id:r.id, name:r.name, partner_count:r.partner_count, x:r.x, y:r.y, is_active:r.is_active }));
+    cityRemoved = []; citySel = -1; cityLoaded = true;
+    const last = data.filter(r => r.updated_at).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+    if (last) mapNote.textContent = 'Perubahan terakhir: ' + timeAgo(last.updated_at) + (last.updated_by ? ' oleh ' + last.updated_by : '');
+    renderCities();
+  }
+
+  function renderCities(){
+    const M = window.HilosDistMap;
+    const pins = cityRows.map((c, i) => (c.x == null) ? '' : `
+      <g class="apin${i === citySel ? ' sel' : ''}${c.is_active ? '' : ' off'}" transform="translate(${c.x},${c.y})"><circle r="${i === citySel ? 13 : 9}"/><text x="20" y="10">${escHtml(c.name || '')}</text></g>`).join('');
+    document.getElementById('mapAdminMap').innerHTML = M
+      ? `<svg viewBox="0 0 ${M.width} ${M.height}" id="mapAdminSvg">${M.shapes}${pins}</svg>`
+      : '<p class="hint">Peta tidak termuat. Pastikan file assets/dist-map.js sudah diupload.</p>';
+
+    document.getElementById('mapAdminList').innerHTML = cityRows.length ? cityRows.map((c, i) => `
+      <div class="city-card${i === citySel ? ' sel' : ''}" data-i="${i}">
+        <div><label>Nama kota</label><input type="text" data-f="name" value="${escHtml(c.name)}" placeholder="mis. Bandung"></div>
+        <div><label>Jml mitra</label><input type="number" min="0" data-f="partner_count" value="${Number(c.partner_count) || 0}"></div>
+        <div class="city-actions">
+          <button type="button" class="btn ${i === citySel ? 'btn-gold' : 'btn-outline'}" data-act="place">${i === citySel ? 'Klik di peta…' : (c.x == null ? 'Tentukan titik' : 'Pindahkan titik')}</button>
+          <span class="city-pos${c.x == null ? ' unset' : ''}">${c.x == null ? 'Titik belum diatur' : 'Titik sudah diatur'}</span>
+          <label class="city-act"><input type="checkbox" data-f="is_active" ${c.is_active ? 'checked' : ''}> Tampil</label>
+          <button type="button" class="btn btn-outline" data-act="del" style="color:#b3261e;">Hapus</button>
+        </div>
+      </div>`).join('') : '<p class="hint">Belum ada kota. Klik "+ Tambah Kota".</p>';
+
+    mapHelp.classList.toggle('placing', citySel >= 0);
+    mapHelp.innerHTML = citySel >= 0
+      ? '<b>Klik lokasi kota di peta</b> untuk menaruh titik "' + escHtml(cityRows[citySel].name || 'kota baru') + '".'
+      : 'Pilih kota di daftar, lalu <b>klik lokasinya di peta</b> untuk memindahkan titik.';
+  }
+
+  document.getElementById('mapAdminMap').addEventListener('click', (e) => {
+    const svg = document.getElementById('mapAdminSvg');
+    if (!svg || citySel < 0 || !cityRows[citySel]) return;
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    cityRows[citySel].x = Math.max(0, Math.min(window.HilosDistMap.width, Math.round(p.x)));
+    cityRows[citySel].y = Math.max(0, Math.min(window.HilosDistMap.height, Math.round(p.y)));
+    citySel = -1;
+    renderCities();
+  });
+
+  const cityList = document.getElementById('mapAdminList');
+  cityList.addEventListener('input', (e) => {
+    const card = e.target.closest('.city-card'); if (!card) return;
+    const row = cityRows[Number(card.dataset.i)]; const f = e.target.dataset.f;
+    if (!row || !f) return;
+    if (f === 'is_active') row.is_active = e.target.checked;
+    else if (f === 'partner_count') row.partner_count = Math.max(0, parseInt(e.target.value, 10) || 0);
+    else row[f] = e.target.value;
+    if (f === 'name' || f === 'is_active'){
+      // perbarui label pin tanpa membuat ulang input (agar kursor tidak lompat)
+      const svg = document.getElementById('mapAdminSvg');
+      if (svg){ const m = window.HilosDistMap; svg.innerHTML = m.shapes + cityRows.map((c, i) => (c.x == null) ? '' : `<g class="apin${i === citySel ? ' sel' : ''}${c.is_active ? '' : ' off'}" transform="translate(${c.x},${c.y})"><circle r="${i === citySel ? 13 : 9}"/><text x="20" y="10">${escHtml(c.name || '')}</text></g>`).join(''); }
+    }
+  });
+  cityList.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]'); if (!btn) return;
+    const i = Number(btn.closest('.city-card').dataset.i);
+    if (btn.dataset.act === 'place'){ citySel = (citySel === i) ? -1 : i; renderCities(); }
+    if (btn.dataset.act === 'del'){
+      const c = cityRows[i];
+      if (!confirm('Hapus kota "' + (c.name || 'ini') + '" dari peta?')) return;
+      if (c.id) cityRemoved.push(c.id);
+      cityRows.splice(i, 1); citySel = -1; renderCities();
+    }
+  });
+
+  document.getElementById('mapAddBtn').addEventListener('click', () => {
+    cityRows.push({ id:null, name:'', partner_count:1, x:null, y:null, is_active:true });
+    citySel = cityRows.length - 1; renderCities();
+    const inputs = cityList.querySelectorAll('.city-card');
+    const last = inputs[inputs.length - 1];
+    if (last){ last.scrollIntoView({ behavior:'smooth', block:'center' }); const inp = last.querySelector('input[data-f="name"]'); if (inp) inp.focus(); }
+  });
+
+  document.getElementById('mapSaveBtn').addEventListener('click', async () => {
+    for (const c of cityRows){
+      if (!c.name.trim()){ showToast('Ada kota yang namanya masih kosong.'); return; }
+      if (c.x == null){ showToast('Atur titik di peta untuk "' + c.name + '".'); return; }
+    }
+    const btn = document.getElementById('mapSaveBtn');
+    btn.disabled = true; btn.textContent = 'Menyimpan…';
+    try {
+      if (cityRemoved.length){
+        const r = await sb.from('distribution_cities').delete().in('id', cityRemoved);
+        if (r.error) throw r.error;
+      }
+      const inserts = [];
+      for (let i = 0; i < cityRows.length; i++){
+        const c = cityRows[i];
+        const payload = { name:c.name.trim(), partner_count:c.partner_count, x:c.x, y:c.y, is_active:c.is_active, sort_order:i + 1 };
+        if (c.id){
+          const r = await sb.from('distribution_cities').update(payload).eq('id', c.id);
+          if (r.error) throw r.error;
+        } else inserts.push(payload);
+      }
+      if (inserts.length){
+        const r = await sb.from('distribution_cities').insert(inserts);
+        if (r.error) throw r.error;
+      }
+      showToast('Peta distribusi tersimpan.');
+      await loadCities();
+    } catch(err){
+      showToast('Gagal menyimpan: ' + (err.message || err));
+    } finally {
+      btn.disabled = false; btn.textContent = 'Simpan Perubahan';
+    }
   });
 
   /* ---------------- TOP 5 ---------------- */
