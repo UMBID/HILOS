@@ -476,6 +476,8 @@
     .spin-head .spin-status{ align-self:flex-start; }
     .login-box{ padding:32px 22px; }
   }
+  .vid-opt{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:4px 0;cursor:pointer}
+  .vid-opt input{margin-top:3px}
 </style>
 </head>
 <body>
@@ -652,6 +654,7 @@
           <li>Taruh produk di tengah <strong>piringan/meja putar</strong>. Alasi dengan kertas atau kain <strong>putih polos</strong>, latar belakang polos juga.</li>
           <li>HP di tripod (atau ditumpu), <strong>tidak bergerak</strong>. Cahaya merata, tanpa bayangan keras.</li>
           <li>Mulai dari <strong>tampak depan</strong>, putar <strong>satu kali penuh</strong> dengan kecepatan stabil (sekitar 10–15 detik), berhenti di depan lagi.</li>
+          <li><strong>Jangan diputar dengan tangan</strong> (tangan ikut terlihat dan kamera goyang, hasilnya tidak mulus). Pakai piringan putar / lazy susan.</li>
           <li>Resolusi 1080p sudah cukup. Videonya <strong>tidak disimpan</strong>, hanya foto-foto hasil olahannya.</li>
         </ol>
       </div>
@@ -669,6 +672,23 @@
         <input type="range" id="vidEnd" value="1">
       </div>
       <p class="hint" id="vidRangeInfo"></p>
+      <div class="vid-mode">
+        <p class="hint" id="vidBgNote" style="margin:12px 0 6px;"></p>
+        <label class="vid-opt"><input type="radio" name="vidMode" value="clean" checked> <span><strong>Bersihkan latar</strong> (untuk latar putih/polos, produk dipusatkan otomatis)</span></label>
+        <label class="vid-opt"><input type="radio" name="vidMode" value="raw"> <span><strong>Tanpa hapus latar</strong> (warna asli, hanya dipotong persegi)</span></label>
+        <div id="vidCropBox" style="display:none;margin-top:8px;">
+          <canvas id="vidCrop" width="300" height="300" style="width:100%;max-width:300px;border:1px solid var(--line,#ddd);border-radius:8px;display:block;margin:0 auto 8px;background:#eee;"></canvas>
+          <div class="vid-range">
+            <label>Zoom <b id="vidZoomLbl">100%</b></label>
+            <input type="range" id="vidZoom" min="100" max="300" value="100">
+            <label>Geser kiri-kanan</label>
+            <input type="range" id="vidPanX" min="0" max="100" value="50">
+            <label>Geser atas-bawah</label>
+            <input type="range" id="vidPanY" min="0" max="100" value="50">
+          </div>
+          <p class="hint">Atur bingkai supaya produk ada di tengah di sepanjang putaran. Bingkai ini tetap, jadi hasil mulus hanya jika HP tidak bergerak.</p>
+        </div>
+      </div>
       <div class="field" style="margin-top:12px">
         <label for="vidCount">Jumlah foto sudut</label>
         <select id="vidCount">
@@ -1590,8 +1610,17 @@
       document.getElementById('vidStart').value = s;
       document.getElementById('vidEnd').value = e;
       vidUpdateRange(null);
-      vidShow(2);
       await seekTo(s);
+      const uni = vidBgUniformity();
+      const plain = uni >= 0.85;
+      document.querySelector(`input[name="vidMode"][value="${plain ? 'clean' : 'raw'}"]`).checked = true;
+      document.getElementById('vidBgNote').innerHTML = plain
+        ? '✅ Latar belakang terlihat <strong>polos</strong>, jadi dibersihkan otomatis jadi putih.'
+        : '⚠️ Latar belakang terlihat <strong>ramai/tidak polos</strong>. Dipilih mode <em>tanpa hapus latar</em> supaya warna produk tidak rusak. Hasil paling mulus tetap dari meja putar + latar putih.';
+      vidCrop.zoom = 1; vidCrop.x = 50; vidCrop.y = 50;
+      ['vidZoom','vidPanX','vidPanY'].forEach(id => { const r = document.getElementById(id); r.value = id === 'vidZoom' ? 100 : 50; });
+      vidShow(2);
+      vidApplyMode();
     } catch (err){
       vidFreeMedia(); vidShow(1);
       showToast(err.message || 'Gagal membaca video.');
@@ -1634,20 +1663,23 @@
     }
     const med = hist.map(hh => { let a = 0; for (let v = 0; v < 256; v++){ a += hh[v]; if (a >= cnt / 2) return v; } return 255; });
 
-    // 1) pisahkan latar dan produk; simpan peta "produk" per piksel
-    const fg = new Uint8Array(w * h);
-    for (let y = 0; y < h; y++){
-      for (let x = 0; x < w; x++){
-        const p = (y * w + x) * 4;
-        const dr = d[p] - med[0], dg = d[p+1] - med[1], db = d[p+2] - med[2];
-        const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-        const a = Math.min(1, Math.max(0, (dist - 28) / 32));
-        d[p]   = 255 + (d[p]   - 255) * a;
-        d[p+1] = 255 + (d[p+1] - 255) * a;
-        d[p+2] = 255 + (d[p+2] - 255) * a;
-        if (a > 0.5) fg[y * w + x] = 1;
-      }
+    // 1) latar = piksel mirip warna tepi yang tersambung ke pinggir gambar (flood-fill).
+    //    Warna produk TIDAK diubah sama sekali; hanya latar di luar produk yang diputihkan.
+    const fg = new Uint8Array(w * h).fill(1);
+    const TH2 = 34 * 34;
+    const isBg = (i) => { const p = i * 4, dr = d[p] - med[0], dg = d[p+1] - med[1], db = d[p+2] - med[2]; return dr*dr + dg*dg + db*db < TH2; };
+    const stk = new Int32Array(w * h); let sp = 0;
+    const seed = (i) => { if (fg[i] && isBg(i)){ fg[i] = 0; stk[sp++] = i; } };
+    for (let x = 0; x < w; x++){ seed(x); seed((h - 1) * w + x); }
+    for (let y = 0; y < h; y++){ seed(y * w); seed(y * w + w - 1); }
+    while (sp){
+      const i = stk[--sp], x = i % w, y = (i - x) / w;
+      if (x > 0) seed(i - 1);
+      if (x < w - 1) seed(i + 1);
+      if (y > 0) seed(i - w);
+      if (y < h - 1) seed(i + w);
     }
+    for (let i = 0; i < w * h; i++) if (!fg[i]){ const p = i * 4; d[p] = d[p+1] = d[p+2] = 255; }
     // 2) ambil hanya satu gumpalan terbesar (produk). Tulisan, tepi piringan, atau benda kecil lain dibuang.
     const cs = Math.max(4, Math.round(Math.max(w, h) / 160));
     const gw = Math.ceil(w / cs), gh = Math.ceil(h / cs);
@@ -1706,6 +1738,46 @@
     return piece;
   }
 
+  // ---- mode "tanpa hapus latar": hanya potong bingkai persegi, warna asli ----
+  const vidCrop = { zoom: 1, x: 50, y: 50 };
+  function vidCropRect(){
+    const vw = vidEl.videoWidth, vh = vidEl.videoHeight;
+    const side = Math.min(vw, vh) / vidCrop.zoom;
+    return { sx: (vw - side) * vidCrop.x / 100, sy: (vh - side) * vidCrop.y / 100, side };
+  }
+  function vidDrawCrop(){
+    const cv = document.getElementById('vidCrop'); if (!cv || !vidEl.videoWidth) return;
+    const r = vidCropRect();
+    cv.getContext('2d').drawImage(vidEl, r.sx, r.sy, r.side, r.side, 0, 0, cv.width, cv.height);
+  }
+  function vidRawFrame(){
+    const r = vidCropRect(), out = document.createElement('canvas'); out.width = out.height = VID_SIZE;
+    const o = out.getContext('2d'); o.imageSmoothingQuality = 'high';
+    o.drawImage(vidEl, r.sx, r.sy, r.side, r.side, 0, 0, VID_SIZE, VID_SIZE);
+    return out;
+  }
+  function vidMode(){ const r = document.querySelector('input[name="vidMode"]:checked'); return r ? r.value : 'clean'; }
+  function vidApplyMode(){
+    const raw = vidMode() === 'raw';
+    document.getElementById('vidCropBox').style.display = raw ? 'block' : 'none';
+    if (raw) vidDrawCrop();
+  }
+  // seberapa polos latar di tepi frame? (0..1)
+  function vidBgUniformity(){
+    const vw = vidEl.videoWidth, vh = vidEl.videoHeight, sc = 240 / Math.max(vw, vh);
+    const w = Math.max(8, Math.round(vw * sc)), h = Math.max(8, Math.round(vh * sc));
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    const cx = cv.getContext('2d', { willReadFrequently: true }); cx.drawImage(vidEl, 0, 0, w, h);
+    const d = cx.getImageData(0, 0, w, h).data, ring = Math.max(2, Math.round(Math.min(w, h) * 0.04)), px = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      if (y >= ring && y < h - ring && x >= ring && x < w - ring) continue;
+      const p = (y * w + x) * 4; px.push([d[p], d[p+1], d[p+2]]);
+    }
+    const med = [0, 1, 2].map(c => px.map(v => v[c]).sort((a, b) => a - b)[px.length >> 1]);
+    let ok = 0; px.forEach(v => { const dr = v[0]-med[0], dg = v[1]-med[1], db = v[2]-med[2]; if (dr*dr + dg*dg + db*db < 34*34) ok++; });
+    return ok / px.length;
+  }
+
   async function vidBuild(){
     const N = Number(document.getElementById('vidCount').value) || 36;
     const s = parseFloat(document.getElementById('vidStart').value);
@@ -1713,9 +1785,18 @@
     vidCtx.busy = true;
     document.getElementById('vidMake').disabled = true;
     try {
-      const crops = [], grays = [];
+      const raw = vidMode() === 'raw';
+      const crops = [], grays = [], rawBlobs = [];
       for (let i = 0; i < N; i++){
         await seekTo(s + (e - s) * i / N);
+        if (raw){
+          const fr = vidRawFrame();
+          let bl = await new Promise(res => fr.toBlob(res, 'image/webp', 0.82));
+          if (!bl || bl.type !== 'image/webp') bl = await new Promise(res => fr.toBlob(res, 'image/jpeg', 0.86));
+          rawBlobs.push(bl); grays.push(gray48());
+          vidProgress(true, `Mengambil frame ${i + 1} dari ${N}…`, (i + 1) / N * 100);
+          continue;
+        }
         const piece = vidProcessFrame();
         if (!piece) throw new Error(`Produk tidak terdeteksi di frame ${i + 1}. Pastikan produk terlihat jelas dengan latar polos, atau atur ulang bagian mulai/selesai.`);
         crops.push(piece); grays.push(gray48());
@@ -1728,6 +1809,12 @@
       const maxDiff = Math.max(...grays.slice(1).map(g => meanAbs(grays[0], g)));
       vidCtx.loopWarn = maxDiff > 0 && loopDiff > 0.5 * maxDiff;
 
+      if (raw){
+        vidCtx.blobs = rawBlobs;
+        vidCtx.previewUrls = rawBlobs.map(b => URL.createObjectURL(b));
+        vidShowResult();
+        return;
+      }
       // samakan skala (satu skala untuk semua), posisi tengah, dan garis bawah
       const pct = (arr, q) => { const a = arr.slice().sort((x, y) => x - y); return a[Math.min(a.length - 1, Math.floor(a.length * q))]; };
       const maxW = pct(crops.map(p => p.width), 0.9), maxH = pct(crops.map(p => p.height), 0.9);   // tahan terhadap 1-2 frame yang aneh
@@ -1759,6 +1846,12 @@
       document.getElementById('vidMake').disabled = false;
     }
   }
+
+  document.querySelectorAll('input[name="vidMode"]').forEach(r => r.addEventListener('change', vidApplyMode));
+  vidEl.addEventListener('seeked', () => { if (vidMode() === 'raw') vidDrawCrop(); });
+  [['vidZoom', v => { vidCrop.zoom = v / 100; document.getElementById('vidZoomLbl').textContent = v + '%'; }],
+   ['vidPanX', v => { vidCrop.x = v; }], ['vidPanY', v => { vidCrop.y = v; }]].forEach(([id, fn]) =>
+    document.getElementById(id).addEventListener('input', (e) => { fn(Number(e.target.value)); vidDrawCrop(); }));
 
   function vidShowResult(){
     const n = vidCtx.previewUrls.length;
