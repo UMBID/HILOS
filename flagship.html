@@ -276,6 +276,7 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/wa-config.js"></script>
 </head>
 <body>
 
@@ -484,7 +485,7 @@
     </div>
     <div class="footer-col">
       <h4>Hubungi Kami</h4>
-      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+      <ul><li><a href="#"><span data-wa-text>0812-3456-7890</span></a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
     </div>
   </div>
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
@@ -520,7 +521,7 @@
     if (requestedId){
       const { data: product, error } = await sb
         .from('products')
-        .select('id,name,model,category,price,images,colors,sizes,badge,is_3d')
+        .select('id,sku,name,model,category,price,images,colors,sizes,badge,is_3d')
         .eq('id', requestedId)
         .maybeSingle();
       if (error || !product) return null;
@@ -559,7 +560,7 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,name,model,category,price,images,colors,sizes,badge,is_3d)')
+      .select('rank, products(id,sku,name,model,category,price,images,colors,sizes,badge,is_3d)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
@@ -631,6 +632,7 @@
     const colors = (p.colors && p.colors.length) ? p.colors : [{ name:'Standar', hex:'#8a8a86' }];
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
     flagshipImages = images;
+    window.__flagshipSku = p.sku || '';
     applyGenericCopy(p, colors, sizes);
     flagshipColorsData = colors; // dipakai initFlagshipInteractions untuk panel 360°
 
@@ -696,8 +698,8 @@
 
   function initFlagshipInteractions(){
 
-  document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
-  document.getElementById('salesBtn2').addEventListener('click', (e) => { e.preventDefault(); window.open('https://wa.me/6281234567890', '_blank'); });
+  document.getElementById('salesBtn').addEventListener('click', (e) => { e.preventDefault(); HilosWA.open('general'); });
+  document.getElementById('salesBtn2').addEventListener('click', (e) => { e.preventDefault(); HilosWA.open('produk', HilosWA.productFromPage({ sku: window.__flagshipSku || '' })); });
 
   /* ---- gallery thumbnail swap ---- */
   const thumbBtns = document.querySelectorAll('.thumb-btn');
@@ -803,8 +805,9 @@
     const p = ((pos % N) + N) % N;
     const i = Math.floor(p) % N, j = (i + 1) % N, f = p - Math.floor(p);
     // dwell: sebagian besar waktu foto tampil tajam, blend hanya di tengah transisi
+    // foto banyak (24+): blend linear terus-menerus = putaran mulus. Foto sedikit: tahan tiap foto sebentar agar tetap tajam.
     const t = Math.min(1, Math.max(0, (f - 0.22) / 0.56));
-    const e = t * t * (3 - 2 * t);
+    const e = N >= 24 ? f : t * t * (3 - 2 * t);
     lastLit.forEach(k => { layers[k].style.opacity = 0; layers[k].style.zIndex = 0; });
     layers[i].style.opacity = 1; layers[i].style.zIndex = 1;
     if (j !== i){ layers[j].style.opacity = e; layers[j].style.zIndex = 2; }
@@ -1109,7 +1112,7 @@
       </div>
     </div>
     <p class="wa-popup-msg">Halo! 👋 Ada pertanyaan soal produk HILOS atau mau tanya soal kerjasama? Langsung chat aja, kami bantu sampai jelas.</p>
-    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-popup-cta">
+    <a href="#" data-wa="general" target="_blank" rel="noopener" class="wa-popup-cta">
       <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
       Mulai Chat di WhatsApp
     </a>
