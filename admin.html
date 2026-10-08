@@ -311,6 +311,18 @@
   .guide-3d h4{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#2f6fb0; margin-bottom:6px; }
   .guide-3d ol, .guide-3d ul{ margin:6px 0 0 18px; }
   .guide-3d li{ margin-bottom:3px; }
+
+  .spin3d-panel{ margin-top:12px; border:1px solid rgba(47,111,176,.35); border-radius:12px; background:#fff; padding:14px; }
+  .spin3d-panel h4{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#2f6fb0; margin-bottom:4px; }
+  .spin3d-panel .sp-note{ font-size:12.5px; color:#6d645b; line-height:1.55; margin-bottom:10px; }
+  .sp-row{ display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--sand-line); flex-wrap:wrap; }
+  .sp-row:first-of-type{ border-top:none; }
+  .sp-sw{ width:22px; height:22px; border-radius:50%; border:1px solid rgba(0,0,0,.2); flex:0 0 22px; }
+  .sp-name{ font-weight:600; font-size:13.5px; flex:1; min-width:90px; }
+  .sp-add{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .sp-add input[type=text]{ flex:1; min-width:140px; padding:9px 10px; border:1px solid var(--sand-line); border-radius:6px; font-size:14px; font-family:inherit; }
+  .sp-add input[type=color]{ width:42px; height:38px; padding:2px; border:1px solid var(--sand-line); border-radius:6px; background:#fff; }
+  @media (max-width:520px){ .sp-row .bulk-sec-btn, .sp-add .btn{ width:100%; padding:10px; } .sp-add input[type=text]{ font-size:16px; } }
   .only-3d{ display:none; }
   #modalOverlay.is3d-on .only-3d{ display:block; }
   #modalOverlay:not(.is3d-on) .spin-frames-row{ display:none; }
@@ -811,6 +823,8 @@
         </ol>
         Cara lain (lebih manual): upload gambar grid atau 8–16 foto. Hasilnya kurang halus karena sudutnya lebih sedikit.
       </div>
+
+      <div class="spin3d-panel only-3d" id="spin3dPanel"></div>
     </div>
 
     <!-- ④ WARNA -->
@@ -1227,7 +1241,43 @@
   }
   function filledCount(c){ return (c.spin || []).filter(Boolean).length; }
 
+  function render3dPanel(){
+    const box = document.getElementById('spin3dPanel'); if (!box) return;
+    if (!currentColors.length){
+      box.innerHTML = `
+        <h4>Upload video 360°</h4>
+        <p class="sp-note">Tampilan 360° dibuat <strong>per warna</strong>. Belum ada warna di produk ini, jadi tambahkan satu dulu, lalu langsung upload videonya.</p>
+        <div class="sp-add">
+          <input type="color" id="spQuickHex" value="#1c1a18" title="Pilih kode warna">
+          <input type="text" id="spQuickName" placeholder="Nama warna, contoh: Hitam">
+          <button class="btn btn-gold" type="button" id="spQuickBtn">Tambah warna & upload video</button>
+        </div>`;
+      document.getElementById('spQuickBtn').addEventListener('click', () => {
+        const name = document.getElementById('spQuickName').value.trim();
+        if (!name){ showToast('Isi nama warna dulu.'); return; }
+        currentColors.push({ hex: document.getElementById('spQuickHex').value, name, spin: [] });
+        renderColorList();
+        vidOpen(currentColors.length - 1);
+      });
+      return;
+    }
+    box.innerHTML = `
+      <h4>Upload video 360° per warna</h4>
+      <p class="sp-note">Pilih warna yang ingin diberi tampilan 360°, lalu upload video produk berputar.</p>
+      ${currentColors.map((c, i) => {
+        const done = filledCount(c);
+        return `<div class="sp-row">
+          <span class="sp-sw" style="background:${c.hex}"></span>
+          <span class="sp-name">${escHtml(c.name || ('Warna ' + (i + 1)))}</span>
+          <span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done ? done + ' foto sudut' : 'Belum ada'}</span>
+          <button type="button" class="bulk-sec-btn primary" data-sp-video="${i}">${done ? 'Ganti dengan video baru' : 'Upload video putar'}</button>
+        </div>`;
+      }).join('')}`;
+    box.querySelectorAll('[data-sp-video]').forEach(b => b.addEventListener('click', () => vidOpen(Number(b.dataset.spVideo))));
+  }
+
   function renderColorList(){
+    render3dPanel();
     const wrap = document.getElementById('colorList');
     wrap.innerHTML = currentColors.map((c, i) => {
       if (!Array.isArray(c.spin)) c.spin = [];
