@@ -140,6 +140,12 @@
     padding:10px 12px; border:1px solid var(--sand-line); border-radius:6px; font-size:13px; background:#fff; color:var(--ink);
   }
   .toolbar .result-count{ font-size:12px; color:#6b6058; white-space:nowrap; }
+  .pager{ display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin:16px 0 8px; }
+  .pager button{ min-width:38px; height:38px; padding:0 12px; border:1px solid var(--line,#d6dde6); background:#fff; color:var(--ink); border-radius:8px; font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .pager button:hover:not(:disabled):not(.on){ background:#eaf1f8; border-color:var(--gold); }
+  .pager button.on{ background:var(--ink); color:#fff; border-color:var(--ink); cursor:default; }
+  .pager button:disabled{ opacity:.4; cursor:not-allowed; }
+  .pager .dots{ color:#6b6058; padding:0 2px; }
   .p-thumb{ width:44px; height:44px; border-radius:6px; overflow:hidden; background:var(--sand); }
   .p-thumb img{ width:100%; height:100%; object-fit:cover; }
   .p-name{ font-weight:600; }
@@ -582,6 +588,7 @@
       </div>
       <div class="empty-state" id="emptyState" style="display:none;">Belum ada produk. Klik "Tambah Produk" untuk mulai.</div>
     </div>
+    <nav class="pager" id="pager" aria-label="Halaman produk" style="display:none;"></nav>
     </div>
     <!-- /produkView -->
 
@@ -1071,6 +1078,8 @@
     loadActivity();
   }
 
+  const PAGE_SIZE = 25;
+  let pageNum = 1;
   function renderTable(){
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
     const catFilter = document.getElementById('filterCategory').value;
@@ -1097,7 +1106,15 @@
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
-    document.getElementById('resultCount').textContent = `${list.length} dari ${allProducts.length} produk`;
+    const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+    if (pageNum > totalPages) pageNum = totalPages;
+    if (pageNum < 1) pageNum = 1;
+    const from = (pageNum - 1) * PAGE_SIZE;
+    const pageList = list.slice(from, from + PAGE_SIZE);
+    document.getElementById('resultCount').textContent = list.length
+      ? `${from + 1}–${from + pageList.length} dari ${list.length} produk` + (list.length !== allProducts.length ? ` (total ${allProducts.length})` : '')
+      : `0 dari ${allProducts.length} produk`;
+    renderPager(totalPages);
 
     productList.innerHTML = '';
     emptyState.style.display = list.length ? 'none' : 'block';
@@ -1105,7 +1122,7 @@
       ? 'Tidak ada produk yang cocok dengan pencarian/filter.'
       : 'Belum ada produk. Klik "Tambah Produk" untuk mulai.';
 
-    list.forEach(p => {
+    pageList.forEach(p => {
       const thumb = (p.images && p.images[0]) ? p.images[0] : '';
       productList.insertAdjacentHTML('beforeend', `
         <div class="p-item">
@@ -1137,8 +1154,30 @@
     });
   }
 
-  ['searchInput'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
-  ['filterCategory','filterProductType','filterBadge','sortBy'].forEach(id => document.getElementById(id).addEventListener('change', renderTable));
+  function renderPager(total){
+    const el = document.getElementById('pager');
+    if (total <= 1){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    const pages = [];
+    for (let i = 1; i <= total; i++) if (i === 1 || i === total || Math.abs(i - pageNum) <= 1) pages.push(i);
+    let h = `<button type="button" data-pg="${pageNum - 1}" ${pageNum === 1 ? 'disabled' : ''}>‹ Sebelumnya</button>`;
+    let prev = 0;
+    pages.forEach(i => {
+      if (i - prev > 1) h += '<span class="dots">…</span>';
+      h += `<button type="button" class="pg-num${i === pageNum ? ' on' : ''}" data-pg="${i}" ${i === pageNum ? 'aria-current="page"' : ''}>${i}</button>`;
+      prev = i;
+    });
+    h += `<button type="button" data-pg="${pageNum + 1}" ${pageNum === total ? 'disabled' : ''}>Berikutnya ›</button>`;
+    el.innerHTML = h; el.style.display = 'flex';
+  }
+  document.getElementById('pager').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-pg]'); if (!b || b.disabled) return;
+    pageNum = Number(b.dataset.pg); renderTable();
+    document.querySelector('.toolbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  // filter / pencarian / urutan berubah -> kembali ke halaman 1
+  const toFirstPage = () => { pageNum = 1; renderTable(); };
+  ['searchInput'].forEach(id => document.getElementById(id).addEventListener('input', toFirstPage));
+  ['filterCategory','filterProductType','filterBadge','sortBy'].forEach(id => document.getElementById(id).addEventListener('change', toFirstPage));
 
   async function deleteProduct(id){
     if (!confirm('Hapus produk ini? Tindakan tidak bisa dibatalkan.')) return;
