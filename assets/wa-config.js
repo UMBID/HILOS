@@ -6,7 +6,7 @@
 (function(){
   const CONFIG = {
     // Nomor format internasional: tanpa "+", tanpa "0" di depan, tanpa spasi/strip.
-    number: '6281234567890',
+    number: '6289507609765',
 
     // Template pesan. Baris "Nama:" dst. dibiarkan kosong supaya diisi pengunjung,
     // lalu tinggal menekan kirim. {produk} {kode} {warna} {ukuran} diisi otomatis.
