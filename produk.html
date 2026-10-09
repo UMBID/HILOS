@@ -60,42 +60,57 @@
   .catalog-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,3vw,34px);text-transform:uppercase;letter-spacing:0.02em;}
   .catalog-head p{margin-top:10px;font-size:14.5px;color:#5c4f40;max-width:520px;margin-left:auto;margin-right:auto;}
 
-  .catalog-hero{
-    max-width:1360px;margin:0 auto;padding:64px clamp(20px,5vw,64px) 30px;
-    display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;
+  /* ===== Banner parallax 3 kategori utama ===== */
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  .px{--hdr:80px;position:relative;background:var(--ink);}
+  .px-track{height:340vh;position:relative;}
+  .px-stage{position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));min-height:420px;overflow:hidden;color:#fff;}
+  .px-scene{position:absolute;inset:0;display:flex;align-items:center;visibility:hidden;}
+  .px-scene:first-of-type{visibility:visible;}
+  .px-bg{position:absolute;inset:-12% 0;background-size:cover;background-position:center;opacity:var(--op,1);
+    transform:translate3d(0,calc(var(--r,0) * -9%),0) scale(1.12);will-change:transform,opacity;}
+  .px-scene::before{content:"";position:absolute;inset:0;z-index:1;opacity:var(--op,1);
+    background:linear-gradient(90deg,rgba(13,27,42,.88) 0%,rgba(13,27,42,.55) 55%,rgba(13,27,42,.25) 100%);}
+  .px-ghost{position:absolute;z-index:1;right:-2vw;bottom:-3vw;font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;line-height:.85;
+    font-size:clamp(90px,19vw,300px);letter-spacing:-.02em;color:transparent;-webkit-text-stroke:2px rgba(234,241,248,.22);white-space:nowrap;
+    opacity:var(--op,1);transform:translate3d(calc(var(--r,0) * -20vw),0,0);will-change:transform;pointer-events:none;user-select:none;}
+  .px-copy{position:relative;z-index:2;width:100%;max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px);
+    opacity:var(--op,1);transform:translate3d(0,calc(var(--d,0) * -70px),0);will-change:transform,opacity;}
+  .px-copy > *{max-width:560px;}
+  .px-eyebrow{display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);}
+  .px-eyebrow::before{content:"";width:34px;height:2px;background:var(--gold-light);}
+  .px-copy h2{margin-top:14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
+  .px-copy p{margin-top:16px;font-size:clamp(14px,1.5vw,17px);line-height:1.65;color:rgba(234,241,248,.88);}
+  .px-copy .btn{margin-top:26px;border:0;cursor:pointer;font-family:inherit;}
+  .px-scene:not(.on) .btn{pointer-events:none;}
+  .px-dots{position:absolute;z-index:3;right:clamp(14px,3vw,40px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;}
+  .px-dot{display:flex;align-items:center;gap:10px;flex-direction:row-reverse;background:none;border:0;color:rgba(234,241,248,.55);cursor:pointer;font:inherit;padding:4px;}
+  .px-dot i{display:block;width:10px;height:10px;border-radius:50%;border:2px solid currentColor;transition:all .3s ease;}
+  .px-dot span{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:0;transform:translateX(6px);transition:all .3s ease;}
+  .px-dot:hover span,.px-dot.on span{opacity:1;transform:none;}
+  .px-dot.on{color:#fff;}
+  .px-dot.on i{background:var(--gold-light);border-color:var(--gold-light);transform:scale(1.25);}
+  .px-hint{position:absolute;z-index:3;left:50%;bottom:20px;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(234,241,248,.7);display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .3s;}
+  .px-hint::after{content:"";width:1px;height:26px;background:linear-gradient(var(--gold-light),transparent);animation:pxHint 1.8s ease-in-out infinite;}
+  @keyframes pxHint{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+  .px.scrolled .px-hint{opacity:0;}
+  /* latar tiap scene: foto sendiri (assets/banner-*.jpg) kalau ada, kalau tidak pakai gradasi/foto sementara */
+  .px-bg.s0{background-image:url('assets/banner-sepatu.jpg'),linear-gradient(135deg,#0d1b2a 0%,#1b3a5c 60%,#2d5f8f 100%);}
+  .px-bg.s1{background-image:url('assets/banner-sandal-pria.jpg'),url('https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=1400'),linear-gradient(135deg,#0d1b2a,#16283d);}
+  .px-bg.s2{background-image:url('assets/banner-sandal-wanita.jpg'),url('https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=1400'),linear-gradient(135deg,#1c2a3d,#3a4a63);}
+  @media (max-width:700px){
+    .px-track{height:320vh;}
+    .px-scene::before{background:linear-gradient(180deg,rgba(13,27,42,.55) 0%,rgba(13,27,42,.85) 100%);}
+    .px-copy{padding-right:56px;}
+    .px-dot span{display:none;}
   }
-  .catalog-hero-copy h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,3.2vw,36px);text-transform:uppercase;letter-spacing:0.02em;}
-  .catalog-hero-copy p{margin-top:12px;font-size:14.5px;color:#5c4f40;max-width:480px;}
-
-  .catalog-hero-3d{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
-  .mini-stage{
-    width:200px;height:200px;perspective:900px;
-    display:flex;align-items:center;justify-content:center;
-    cursor:grab;
-  }
-  .mini-stage:active{cursor:grabbing;}
-  .mini-stage-inner{
-    width:170px;height:170px;transform-style:preserve-3d;
-  }
-  .mini-stage-inner.spin{animation:miniSpin360 7s linear infinite;}
-  @keyframes miniSpin360{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
-  .mini-stage-inner img{
-    width:100%;height:100%;object-fit:contain;
-    filter:drop-shadow(0 18px 20px rgba(13,27,42,0.18));
-    pointer-events:none;
-  }
-  .mini-stage-hint{font-size:10.5px;color:var(--gold-deep);margin-top:4px;letter-spacing:0.03em;}
-  .mini-stage-label{margin-top:8px;text-align:center;}
-  .mini-stage-badge{
-    display:inline-block;background:var(--ink);color:var(--sand);
-    font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;
-    padding:3px 10px;border-radius:100px;margin-bottom:4px;
-  }
-  .mini-stage-label strong{display:block;font-family:'Archivo',sans-serif;font-size:13.5px;}
-
-  @media (max-width:820px){
-    .catalog-hero{grid-template-columns:1fr;text-align:center;}
-    .catalog-hero-3d{margin:0 auto;}
+  @media (prefers-reduced-motion:reduce){
+    .px-track{height:auto;}
+    .px-stage{position:relative;top:0;height:auto;min-height:0;overflow:visible;}
+    .px-scene{position:relative;visibility:visible;min-height:70vh;overflow:hidden;}
+    .px-bg,.px-ghost,.px-copy{transform:none !important;opacity:1 !important;}
+    .px-scene::before{opacity:1 !important;}
+    .px-dots,.px-hint{display:none;}
   }
 
   .category-row{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
@@ -274,6 +289,7 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/wa-config.js"></script>
 </head>
 <body>
 
@@ -310,57 +326,49 @@
   </button>
 </nav>
 
-<section class="catalog-hero">
-  <div class="catalog-hero-copy">
-    <h1>Koleksi Sepatu &amp; Sandal HILOS</h1>
-    <p>Dari sandal harian sampai sepatu untuk aktivitas luar ruangan — temukan alas kaki terbaik untuk setiap langkahmu.</p>
-  </div>
-
-  <div class="catalog-hero-3d" id="catalogHero3d" style="display:none;">
-    <div class="mini-stage" id="miniStage">
-      <div class="mini-stage-inner spin" id="miniStageInner">
-        <img id="miniStageImg" src="" alt="Produk unggulan HILOS">
+<h1 class="sr-only">Koleksi Sepatu &amp; Sandal HILOS</h1>
+<section class="px" id="pxBanner" aria-label="Kategori utama HILOS">
+  <div class="px-track">
+    <div class="px-stage">
+      <div class="px-scene on" data-kind="sepatu">
+        <div class="px-bg s0"></div>
+        <div class="px-ghost" aria-hidden="true">Sepatu</div>
+        <div class="px-copy">
+          <div class="px-eyebrow">01 / 03 · Koleksi HILOS</div>
+          <h2>Sepatu</h2>
+          <p>Tangguh untuk aktivitas luar ruangan dan kerja harian. Sol kuat, tetap ringan di kaki.</p>
+          <button type="button" class="btn btn-fill" data-px="sepatu"><span>Lihat Sepatu</span></button>
+        </div>
       </div>
-    </div>
-    <div class="mini-stage-hint">Geser untuk putar · Klik untuk detail</div>
-    <div class="mini-stage-label">
-      <span class="mini-stage-badge">#1 Top 5</span>
-      <strong id="miniStageName">—</strong>
+      <div class="px-scene" data-kind="pria">
+        <div class="px-bg s1"></div>
+        <div class="px-ghost" aria-hidden="true">Pria</div>
+        <div class="px-copy">
+          <div class="px-eyebrow">02 / 03 · Koleksi HILOS</div>
+          <h2>Sandal Pria</h2>
+          <p>Desain maskulin dan kokoh untuk aktivitas sehari-hari, nyaman dipakai seharian.</p>
+          <button type="button" class="btn btn-fill" data-px="pria"><span>Lihat Sandal Pria</span></button>
+        </div>
+      </div>
+      <div class="px-scene" data-kind="wanita">
+        <div class="px-bg s2"></div>
+        <div class="px-ghost" aria-hidden="true">Wanita</div>
+        <div class="px-copy">
+          <div class="px-eyebrow">03 / 03 · Koleksi HILOS</div>
+          <h2>Sandal Wanita</h2>
+          <p>Elegan, ringan, dan stylish untuk setiap langkahmu, dari santai sampai bepergian.</p>
+          <button type="button" class="btn btn-fill" data-px="wanita"><span>Lihat Sandal Wanita</span></button>
+        </div>
+      </div>
+      <div class="px-dots" role="tablist" aria-label="Pilih kategori">
+        <button type="button" class="px-dot on" data-go="0" aria-label="Sepatu"><i></i><span>Sepatu</span></button>
+        <button type="button" class="px-dot" data-go="1" aria-label="Sandal Pria"><i></i><span>Sandal Pria</span></button>
+        <button type="button" class="px-dot" data-go="2" aria-label="Sandal Wanita"><i></i><span>Sandal Wanita</span></button>
+      </div>
+      <div class="px-hint">Scroll</div>
     </div>
   </div>
 </section>
-
-<div class="category-row">
-  <div class="category-card" data-category="pria">
-    <img src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Sandal Pria HILOS">
-    <div class="category-scrim"></div>
-    <div class="category-content">
-      <h3>Man</h3>
-      <p>Desain maskulin dan tangguh untuk aktivitas sehari-hari.</p>
-      <a href="#grid" class="btn btn-outline-light" style="padding:11px 20px;font-size:11px;"><span>Lihat Produk</span></a>
-    </div>
-  </div>
-
-  <div class="category-card" data-category="wanita">
-    <img src="https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Sandal Wanita HILOS">
-    <div class="category-scrim"></div>
-    <div class="category-content">
-      <h3>Ladies</h3>
-      <p>Elegan, nyaman, dan stylish untuk setiap langkahmu.</p>
-      <a href="#grid" class="btn btn-outline-light" style="padding:11px 20px;font-size:11px;"><span>Lihat Produk</span></a>
-    </div>
-  </div>
-
-  <div class="category-card" data-category="anak">
-    <img src="https://images.pexels.com/photos/35903658/pexels-photo-35903658.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Sandal Anak HILOS">
-    <div class="category-scrim"></div>
-    <div class="category-content">
-      <h3>Kids</h3>
-      <p>Aman, ringan, dan nyaman untuk si kecil aktif setiap hari.</p>
-      <a href="#grid" class="btn btn-outline-light" style="padding:11px 20px;font-size:11px;"><span>Lihat Produk</span></a>
-    </div>
-  </div>
-</div>
 
 <section class="top10-section" id="top10Section" style="display:none;">
   <div class="top10-head">
@@ -499,7 +507,7 @@
     </div>
     <div class="footer-col">
       <h4>Hubungi Kami</h4>
-      <ul><li><a href="#">0812-3456-7890</a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
+      <ul><li><a href="#"><span data-wa-text>0812-3456-7890</span></a></li><li><a href="#">sales@hilos.co.id</a></li><li><a href="#">@hilos.official</a></li></ul>
     </div>
   </div>
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
@@ -524,7 +532,7 @@
 
   document.getElementById('salesBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    window.open('https://wa.me/6281234567890', '_blank');
+    HilosWA.open('general');
   });
 
   /* ---------------------------------------------------------
@@ -569,6 +577,7 @@
           colorImages: rawColors.reduce((acc, c) => { if (c.image) acc[c.hex] = c.image; return acc; }, {}),
           sizes: p.sizes || [],
           badge: p.badge || null,
+          sku: p.sku || '',
           is3d: !!p.is_3d
         };
       });
@@ -785,6 +794,77 @@
     });
   });
 
+  /* ---------- banner parallax: scroll menggeser tiap kategori ---------- */
+  (function(){
+    const root = document.getElementById('pxBanner'); if (!root) return;
+    const track = root.querySelector('.px-track');
+    const scenes = [...root.querySelectorAll('.px-scene')];
+    const dots = [...root.querySelectorAll('.px-dot')];
+    const nav = document.querySelector('.nav');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const hdr = () => (nav ? nav.offsetHeight : 0);
+    const range = () => Math.max(1, track.offsetHeight - (window.innerHeight - hdr()));
+    let ticking = false;
+
+    function update(){
+      ticking = false;
+      root.style.setProperty('--hdr', hdr() + 'px');
+      if (reduce.matches) return;
+      const top = track.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, (hdr() - top) / range()));
+      const u = p * 3;
+      let active = 0;
+      scenes.forEach((sc, i) => {
+        const c = i + 0.5, raw = u - c;
+        let d = raw;
+        if (i === 0 && u < c) d = 0;
+        if (i === scenes.length - 1 && u > c) d = 0;
+        const op = Math.min(1, Math.max(0, 1 - (Math.abs(d) - 0.25) * 2));
+        sc.style.setProperty('--op', op.toFixed(3));
+        sc.style.setProperty('--d', d.toFixed(3));
+        sc.style.setProperty('--r', raw.toFixed(3));
+        sc.style.visibility = op > 0.01 ? 'visible' : 'hidden';
+        sc.classList.toggle('on', op > 0.5);
+        if (op > 0.5) active = i;
+      });
+      dots.forEach((dt, i) => dt.classList.toggle('on', i === active));
+      root.classList.toggle('scrolled', p > 0.02);
+    }
+    const req = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
+    window.addEventListener('scroll', req, { passive:true });
+    window.addEventListener('resize', req);
+    reduce.addEventListener && reduce.addEventListener('change', req);
+    update();
+
+    dots.forEach(dt => dt.addEventListener('click', () => {
+      const i = Number(dt.dataset.go);
+      const y = track.getBoundingClientRect().top + window.scrollY - hdr() + range() * ((i + 0.5) / 3);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }));
+
+    // tombol kategori -> terapkan filter lalu turun ke daftar produk
+    const isShoe = (m) => /sepatu/i.test(String(m || ''));
+    root.querySelectorAll('[data-px]').forEach(btn => btn.addEventListener('click', () => {
+      const kind = btn.dataset.px;
+      const all = [...new Set(products.map(p => p.model).filter(Boolean))];
+      state.search = ''; state.sizes.clear(); state.colors.clear();
+      state.categories = new Set(); state.models = new Set();
+      if (kind === 'sepatu'){
+        const m = all.filter(isShoe);
+        state.models = new Set(m.length ? m : ['Sepatu']);
+      } else {
+        state.categories = new Set([kind]);
+        state.models = new Set(all.filter(m => !isShoe(m)));
+        if (!state.models.size) state.models = new Set();
+      }
+      const fs = document.getElementById('filterSearch'); if (fs) fs.value = '';
+      state.visibleCount = PAGE_SIZE;
+      syncCheckboxUI();
+      renderAll();
+      document.getElementById('grid').scrollIntoView({ behavior:'smooth', block:'start' });
+    }));
+  })();
+
   /* ---------- events: sidebar checkboxes / chips / swatches ---------- */
   document.getElementById('categoryChecks').addEventListener('change', (e) => {
     const el = e.target.closest('[data-filter="category"]');
@@ -900,6 +980,12 @@
     }
     document.getElementById('qvSizes').innerHTML = p.sizes.map((s,i) => `<span style="background:transparent;border:1px solid var(--sand-line);width:auto;padding:0 10px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:0;font-size:11px;${i===0 ? 'border-color:var(--gold-deep);color:var(--gold-deep);' : ''}" data-size="${s}">${s}</span>`).join('');
 
+    window.__qvWA = () => {
+      const act = document.querySelector('#qvColors .active');
+      const hex = act ? act.dataset.color : '';
+      return { name: p.name, sku: p.sku, color: (p.colorNamesMap && p.colorNamesMap[hex]) || '' };
+    };
+
     const detailLink = document.getElementById('qvDetailLink');
     const rank = top10RankCache[id];
     if (p.is3d){
@@ -949,7 +1035,7 @@
 
   document.getElementById('qvSalesBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    window.open('https://wa.me/6281234567890', '_blank');
+    HilosWA.open('produk', window.__qvWA ? window.__qvWA() : {});
   });
 
   /* ---------- Top 10 Produk ---------- */
@@ -998,18 +1084,6 @@
     top10RankCache = {};
     data.forEach(r => { if (r.products) top10RankCache[r.products.id] = r.rank; });
 
-    const rank1 = data.find(r => r.rank === 1 && r.products && r.products.is_3d);
-    if (rank1){
-      const p = rank1.products;
-      const img = (p.images && p.images[0]) ? p.images[0] : '';
-      if (img){
-        document.getElementById('miniStageImg').src = img;
-        document.getElementById('miniStageName').textContent = p.name;
-        document.getElementById('miniStage').dataset.href = 'flagship.html';
-        document.getElementById('catalogHero3d').style.display = 'flex';
-      }
-    }
-
     grid.innerHTML = data.filter(r => r.products).map(r => {
       const p = r.products;
       const img = (p.images && p.images[0]) ? p.images[0] : '';
@@ -1026,46 +1100,6 @@
       `;
     }).join('');
   }
-
-  /* ---------- Mini 3D stage: geser untuk putar, klik untuk buka detail ---------- */
-  (function(){
-    const stage = document.getElementById('miniStage');
-    const inner = document.getElementById('miniStageInner');
-    if (!stage || !inner) return;
-    let dragging = false, lastX = 0, startX = 0, currentRotation = 0, moved = 0;
-    const CLICK_THRESHOLD = 6; // px — di bawah ini dianggap klik, bukan geser
-
-    function startDrag(x){
-      dragging = true; lastX = x; startX = x; moved = 0;
-      inner.classList.remove('spin');
-      stage.style.cursor = 'grabbing';
-    }
-    function moveDrag(x){
-      if (!dragging) return;
-      const delta = x - lastX;
-      currentRotation += delta * 0.6;
-      moved += Math.abs(delta);
-      inner.style.transform = `rotateY(${currentRotation}deg)`;
-      lastX = x;
-    }
-    function endDrag(){
-      if (!dragging) return;
-      dragging = false;
-      stage.style.cursor = 'grab';
-      if (moved < CLICK_THRESHOLD){
-        // dianggap klik, bukan geser -> buka detail produk
-        window.location.href = stage.dataset.href || 'flagship.html';
-      }
-    }
-
-    stage.addEventListener('mousedown', (e) => startDrag(e.clientX));
-    window.addEventListener('mousemove', (e) => moveDrag(e.clientX));
-    window.addEventListener('mouseup', endDrag);
-
-    stage.addEventListener('touchstart', (e) => startDrag(e.touches[0].clientX), { passive:true });
-    stage.addEventListener('touchmove', (e) => moveDrag(e.touches[0].clientX), { passive:true });
-    stage.addEventListener('touchend', endDrag);
-  })();
 
   initTop10();
 
@@ -1158,7 +1192,7 @@
       </div>
     </div>
     <p class="wa-popup-msg">Halo! 👋 Ada pertanyaan soal produk HILOS atau mau tanya soal kerjasama? Langsung chat aja, kami bantu sampai jelas.</p>
-    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="wa-popup-cta">
+    <a href="#" data-wa="general" target="_blank" rel="noopener" class="wa-popup-cta">
       <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.688 4.564 1.872 6.418L4 29l7.803-2.049A11.94 11.94 0 0 0 16.001 27C22.627 27 28 21.627 28 15S22.627 3 16.001 3zm.021 21.75a9.7 9.7 0 0 1-4.95-1.354l-.355-.21-3.55.931.95-3.463-.231-.365A9.71 9.71 0 0 1 6.25 15c0-5.385 4.366-9.75 9.75-9.75S25.75 9.615 25.75 15s-4.365 9.75-9.729 9.75zm5.361-7.297c-.294-.147-1.74-.858-2.01-.956-.27-.098-.467-.147-.663.147-.196.294-.76.956-.932 1.152-.171.196-.343.221-.637.074-.294-.147-1.243-.458-2.368-1.462-.875-.78-1.466-1.744-1.638-2.038-.171-.294-.018-.453.129-.6.133-.132.294-.343.44-.514.147-.171.196-.294.294-.49.098-.196.049-.368-.025-.514-.074-.147-.663-1.6-.909-2.192-.239-.575-.482-.497-.663-.506-.171-.008-.368-.01-.564-.01a1.084 1.084 0 0 0-.784.368c-.269.294-1.03 1.007-1.03 2.455s1.055 2.847 1.202 3.043c.147.196 2.077 3.172 5.033 4.447.703.303 1.251.484 1.679.62.705.224 1.347.192 1.854.117.566-.085 1.74-.712 1.985-1.4.245-.688.245-1.278.171-1.4-.073-.122-.269-.196-.563-.343z"/></svg>
       Mulai Chat di WhatsApp
     </a>
