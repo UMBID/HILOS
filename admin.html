@@ -484,6 +484,42 @@
   }
   .vid-opt{display:flex;gap:8px;align-items:flex-start;font-size:13px;margin:4px 0;cursor:pointer}
   .vid-opt input{margin-top:3px}
+  /* ---------- peran & kelola admin & riwayat ---------- */
+  .role-badge{ display:none; margin-left:10px; padding:3px 10px; border-radius:100px; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; background:rgba(111,163,212,.18); color:var(--gold-light); vertical-align:middle; }
+  .role-badge.on{ display:inline-block; }
+  .topbar .who-mini{ color:rgba(234,241,248,.65); font-size:12px; margin-right:10px; align-self:center; word-break:break-all; }
+  .adm-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:18px; margin-bottom:18px; }
+  .adm-card h3{ font-family:'Archivo',sans-serif; font-size:14px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px; }
+  .adm-form{ display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; }
+  .adm-form .field{ margin:0; }
+  .adm-pw{ display:flex; gap:6px; }
+  .adm-pw input{ flex:1; min-width:0; }
+  .adm-cred{ display:none; margin-top:14px; padding:14px; border-radius:8px; background:#eef6ee; border:1px solid #bcd9bf; font-size:13px; line-height:1.6; }
+  .adm-cred.on{ display:block; }
+  .adm-cred code{ background:#fff; padding:2px 7px; border-radius:4px; border:1px solid #cfe3d1; word-break:break-all; }
+  .adm-row{ display:flex; align-items:center; gap:14px; padding:14px 0; border-top:1px solid var(--sand-line); flex-wrap:wrap; }
+  .adm-row:first-child{ border-top:none; }
+  .adm-main{ flex:1; min-width:200px; }
+  .adm-main b{ word-break:break-all; }
+  .adm-main small{ display:block; color:#8a8078; font-size:11.5px; margin-top:2px; }
+  .st{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:100px; text-transform:uppercase; letter-spacing:.04em; margin-left:6px; }
+  .st.ok{ background:#e3f2e5; color:#2e7d32; } .st.off{ background:#fde8e8; color:var(--danger); } .st.warn{ background:#fff3d9; color:#9a6a00; } .st.sup{ background:rgba(47,111,176,.14); color:var(--gold-deep); }
+  .adm-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .hist-bar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .hist-bar input,.hist-bar select{ padding:10px 12px; border:1px solid var(--sand-line); border-radius:8px; font:inherit; font-size:13px; background:#fff; }
+  .hist-bar input{ flex:1; min-width:180px; }
+  .hist-sub{ display:flex; gap:8px; margin-bottom:12px; }
+  .hist-sub button{ padding:8px 14px; border:1px solid var(--sand-line); background:#fff; border-radius:100px; font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .hist-sub button.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .hist-list{ list-style:none; padding:0; }
+  .hist-list li{ display:flex; gap:10px; align-items:flex-start; padding:12px 0; border-top:1px solid var(--sand-line); font-size:13px; line-height:1.45; }
+  .hist-list li:first-child{ border-top:none; }
+  .hist-list .dot{ width:8px; height:8px; border-radius:50%; margin-top:6px; flex-shrink:0; background:var(--gold); }
+  .hist-list .dot.hapus{ background:var(--danger); } .hist-list .dot.tambah{ background:#2e7d32; }
+  .hist-list small{ display:block; color:#8a8078; font-size:11.5px; margin-top:1px; }
+  .hist-list .who{ font-weight:600; word-break:break-all; }
+  .pager{ display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin:16px 0 8px; }
+  @media (max-width:760px){ .adm-form{ grid-template-columns:1fr; } .topbar .who-mini{ display:none; } }
 </style>
 </head>
 <body>
@@ -511,8 +547,9 @@
 <!-- ============ APP ============ -->
 <div id="app">
   <div class="topbar">
-    <div class="logo">HILOS <span>ADMIN</span></div>
+    <div class="logo">HILOS <span>ADMIN</span><span class="role-badge" id="roleBadge"></span></div>
     <div style="display:flex;gap:8px;">
+      <span class="who-mini" id="whoMini"></span>
       <button class="btn btn-outline" id="pwBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Ganti Password</button>
       <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Keluar</button>
     </div>
@@ -523,6 +560,8 @@
       <button class="tab-nav-btn active" data-view="produkView">Kelola Produk</button>
       <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
       <button class="tab-nav-btn" data-view="mapView">Peta Distribusi</button>
+      <button class="tab-nav-btn" data-view="historyView">Riwayat</button>
+      <button class="tab-nav-btn" data-view="adminsView" id="tabAdmins" style="display:none;">Kelola Admin</button>
     </div>
 
     <div id="produkView" class="view">
@@ -628,6 +667,61 @@
       <p class="hint" id="mapNote" style="margin-top:14px;"></p>
     </div>
     <!-- /mapView -->
+
+    <div id="historyView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Riwayat</h1>
+          <p id="histSub">Siapa mengubah apa dan kapan.</p>
+        </div>
+      </div>
+      <div class="hist-sub" id="histTabs" style="display:none;">
+        <button type="button" class="on" data-h="produk">Aktivitas Produk</button>
+        <button type="button" data-h="akun">Akun Admin</button>
+      </div>
+      <div class="adm-card">
+        <div class="hist-bar" id="histBar">
+          <input type="search" id="histQ" placeholder="Cari nama produk atau email admin...">
+          <select id="histAction">
+            <option value="">Semua aksi</option>
+            <option value="tambah">Tambah</option>
+            <option value="ubah">Ubah</option>
+            <option value="hapus">Hapus</option>
+          </select>
+        </div>
+        <ul class="hist-list" id="histList"></ul>
+        <p class="empty-state" id="histEmpty" style="display:none;">Belum ada riwayat.</p>
+        <nav class="pager" id="histPager" style="display:none;"></nav>
+      </div>
+    </div>
+    <!-- /historyView -->
+
+    <div id="adminsView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Kelola Admin</h1>
+          <p>Hanya Super Admin yang bisa melihat halaman ini. Semua admin punya fitur yang sama.</p>
+        </div>
+      </div>
+      <div class="adm-card">
+        <h3>Tambah Admin Baru</h3>
+        <div class="adm-form">
+          <div class="field"><label for="admEmail">Email</label><input type="email" id="admEmail" placeholder="nama@email.com" autocomplete="off"></div>
+          <div class="field"><label for="admPw">Password sementara</label>
+            <div class="adm-pw"><input type="text" id="admPw" autocomplete="off"><button type="button" class="icon-btn" id="admGen">Acak</button></div>
+          </div>
+          <button class="btn btn-gold" type="button" id="admCreate">Buat Akun</button>
+        </div>
+        <p class="hint" style="margin-top:8px;">Admin baru wajib mengganti password ini saat login pertama. Password tidak bisa dilihat lagi setelah dibuat, jadi salin dan kirim ke yang bersangkutan.</p>
+        <p class="error-msg" id="admError"></p>
+        <div class="adm-cred" id="admCred"></div>
+      </div>
+      <div class="adm-card">
+        <h3>Daftar Akun</h3>
+        <div id="admList"></div>
+      </div>
+    </div>
+    <!-- /adminsView -->
   </div>
 </div>
 
@@ -913,17 +1007,50 @@
   }
   function formatRupiah(n){ return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); }
 
-  /* ---------------- AUTH ---------------- */
+  /* ---------------- AUTH & PERAN ---------------- */
+  let me = { role:'admin', email:'', must:false, legacy:false };
+  const isSuper = () => me.role === 'super_admin';
+  const loginErrShow = (msg) => { const el = document.getElementById('loginError'); el.textContent = msg; el.style.display = 'block'; };
+
+  async function loadMe(user){
+    const { data, error } = await sb.from('admin_profiles').select('role,is_active,must_change_password').eq('user_id', user.id).maybeSingle();
+    if (error){
+      // tabel peran belum dibuat (SQL belum dijalankan): perilaku lama, semua login = admin
+      if (error.code === '42P01' || error.code === 'PGRST205' || /admin_profiles/.test(error.message || '')){
+        me = { role:'admin', email:user.email, must:false, legacy:true };
+        return true;
+      }
+      await sb.auth.signOut(); showLogin(); loginErrShow('Gagal memeriksa akses: ' + error.message); return false;
+    }
+    if (!data || !data.is_active){
+      await sb.auth.signOut(); showLogin(); loginErrShow('Akun ini tidak punya akses admin atau sudah dinonaktifkan.'); return false;
+    }
+    me = { role:data.role, email:user.email, must:!!data.must_change_password, legacy:false };
+    return true;
+  }
+  function showLogin(){ loginWrap.style.display = 'flex'; app.style.display = 'none'; }
+  function applyRoleUI(){
+    const badge = document.getElementById('roleBadge');
+    badge.textContent = isSuper() ? 'Super Admin' : 'Admin';
+    badge.classList.toggle('on', !me.legacy);
+    document.getElementById('whoMini').textContent = me.email;
+    document.getElementById('tabAdmins').style.display = isSuper() ? '' : 'none';
+    document.getElementById('histSub').textContent = isSuper()
+      ? 'Aktivitas semua admin, termasuk Anda sendiri, dan log pengelolaan akun.'
+      : 'Aktivitas admin lain. Aktivitas Super Admin tidak ditampilkan.';
+    document.getElementById('histTabs').style.display = isSuper() ? 'flex' : 'none';
+  }
+  function startApp(){ loadProducts(); }
+
   async function checkSession(){
     const { data } = await sb.auth.getSession();
-    if (data.session){
-      loginWrap.style.display = 'none';
-      app.style.display = 'block';
-      loadProducts();
-    } else {
-      loginWrap.style.display = 'flex';
-      app.style.display = 'none';
-    }
+    if (!data.session){ showLogin(); return; }
+    if (!(await loadMe(data.session.user))) return;
+    loginWrap.style.display = 'none';
+    app.style.display = 'block';
+    applyRoleUI();
+    if (me.must){ openPwModal('force'); return; }   // password sementara: wajib diganti dulu
+    startApp();
   }
 
   document.getElementById('loginBtn').addEventListener('click', async () => {
@@ -933,7 +1060,7 @@
     errEl.style.display = 'none';
     const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error){
-      errEl.textContent = error.message;
+      errEl.textContent = /banned|disabled/i.test(error.message) ? 'Akun ini dinonaktifkan.' : error.message;
       errEl.style.display = 'block';
       return;
     }
@@ -948,7 +1075,8 @@
   /* ---------------- LUPA PASSWORD & GANTI PASSWORD ---------------- */
   const pwOverlay = document.getElementById('pwOverlay');
   const pwErr = document.getElementById('pwError');
-  let pwRecovery = false; // true = datang dari link email reset (tanpa password lama)
+  let pwRecovery = false; // true = tanpa password lama (link email reset, atau wajib ganti password sementara)
+  let pwForce = false;    // true = login pertama dengan password sementara
 
   document.getElementById('forgotBtn').addEventListener('click', async () => {
     const email = document.getElementById('loginEmail').value.trim();
@@ -966,16 +1094,18 @@
     infoEl.style.display = 'block';
   });
 
-  function openPwModal(recovery){
-    pwRecovery = !!recovery;
-    document.getElementById('pwTitle').textContent = recovery ? 'Buat Password Baru' : 'Ganti Password';
-    document.getElementById('pwOldField').style.display = recovery ? 'none' : '';
-    document.getElementById('pwCancel').style.display = recovery ? 'none' : '';
+  function openPwModal(mode){
+    pwForce = (mode === 'force');
+    pwRecovery = !!mode;
+    document.getElementById('pwTitle').textContent = mode ? 'Buat Password Baru' : 'Ganti Password';
+    document.getElementById('pwOldField').style.display = mode ? 'none' : '';
+    document.getElementById('pwCancel').style.display = (mode && !pwForce) ? 'none' : '';
+    document.getElementById('pwCancel').textContent = pwForce ? 'Keluar' : 'Batal';
     ['pwOld','pwNew','pwNew2'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.type = 'password'; });
     document.querySelectorAll('.pw-eye').forEach(b => b.textContent = 'Lihat');
     pwErr.style.display = 'none';
     sb.auth.getSession().then(({ data }) => {
-      document.getElementById('pwUser').textContent = data.session ? data.session.user.email : '';
+      document.getElementById('pwUser').textContent = (data.session ? data.session.user.email : '') + (pwForce ? ' — demi keamanan, ganti password sementara sebelum melanjutkan.' : '');
     });
     pwOverlay.classList.add('open');
   }
@@ -983,7 +1113,10 @@
   function pwFail(msg){ pwErr.textContent = msg; pwErr.style.display = 'block'; }
 
   document.getElementById('pwBtn').addEventListener('click', () => openPwModal(false));
-  document.getElementById('pwCancel').addEventListener('click', closePwModal);
+  document.getElementById('pwCancel').addEventListener('click', async () => {
+    if (pwForce){ closePwModal(); pwForce = false; await sb.auth.signOut(); checkSession(); return; }
+    closePwModal();
+  });
   document.querySelectorAll('.pw-eye').forEach(b => b.addEventListener('click', () => {
     const inp = document.getElementById(b.dataset.eye);
     const show = inp.type === 'password';
@@ -1010,8 +1143,21 @@
         const chk = await sb.auth.signInWithPassword({ email: data.session.user.email, password: oldPw });
         if (chk.error){ pwFail('Password saat ini salah.'); return; }
       }
+      if (pwForce){
+        // password baru tidak boleh sama dengan password sementara
+        const same = await sb.auth.signInWithPassword({ email: data.session.user.email, password: n1 });
+        if (!same.error){ pwFail('Password baru tidak boleh sama dengan password sementara.'); return; }
+      }
       const { error } = await sb.auth.updateUser({ password: n1 });
       if (error){ pwFail(error.message); return; }
+      if (pwForce){
+        await sb.rpc('clear_must_change_password');
+        me.must = false; pwForce = false; pwRecovery = false;
+        closePwModal();
+        showToast('Password berhasil diganti. Selamat datang!');
+        startApp();
+        return;
+      }
       closePwModal();
       pwRecovery = false;
       await sb.auth.signOut();
@@ -1049,6 +1195,7 @@
   }
   function activityLine(p){
     if (!p.updated_by) return '';
+    if (p.updated_by_super && !isSuper()) return '';   // aktivitas Super Admin tidak ditampilkan ke admin biasa
     const added = p.created_at && p.updated_at && Math.abs(new Date(p.updated_at) - new Date(p.created_at)) < 3000;
     return `<div class="p-activity">${added ? 'Ditambahkan' : 'Diubah'} ${timeAgo(p.updated_at)} oleh <strong>${escHtml(p.updated_by)}</strong></div>`;
   }
@@ -2265,6 +2412,138 @@
     loadProducts();
   });
 
+  /* ---------------- RIWAYAT ---------------- */
+  const HIST_PAGE = 25;
+  let histPage = 1, histMode = 'produk';
+  const fmtDT = (iso) => new Date(iso).toLocaleString('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const AUDIT_TEXT = { buat_admin:'membuat akun admin', reset_password:'mereset password', nonaktifkan:'menonaktifkan akun', aktifkan:'mengaktifkan akun', hapus_admin:'menghapus akun' };
+
+  async function loadHistory(reset){
+    if (reset) histPage = 1;
+    const list = document.getElementById('histList'), empty = document.getElementById('histEmpty');
+    const from = (histPage - 1) * HIST_PAGE, to = from + HIST_PAGE - 1;
+    const q = document.getElementById('histQ').value.trim().replace(/[,()%*]/g, ' ');
+    const act = document.getElementById('histAction').value;
+    let query, rows, total, error;
+    if (histMode === 'akun'){
+      query = sb.from('admin_audit').select('*', { count:'exact' }).order('created_at', { ascending:false });
+      if (q) query = query.or(`actor_email.ilike.%${q}%,target_email.ilike.%${q}%`);
+    } else {
+      query = sb.from('product_activity').select('*', { count:'exact' }).order('created_at', { ascending:false });
+      if (act) query = query.eq('action', act);
+      if (q) query = query.or(`product_name.ilike.%${q}%,actor_email.ilike.%${q}%,sku.ilike.%${q}%`);
+    }
+    ({ data: rows, count: total, error } = await query.range(from, to));
+    if (error){ list.innerHTML = ''; empty.textContent = 'Gagal memuat riwayat: ' + error.message; empty.style.display = 'block'; document.getElementById('histPager').style.display = 'none'; return; }
+    empty.textContent = 'Belum ada riwayat.';
+    empty.style.display = rows.length ? 'none' : 'block';
+    list.innerHTML = rows.map(a => histMode === 'akun'
+      ? `<li><span class="dot"></span><div><span class="who">${escHtml(a.actor_email || '-')}</span> ${AUDIT_TEXT[a.action] || escHtml(a.action)} <strong>${escHtml(a.target_email || '-')}</strong><small>${fmtDT(a.created_at)}</small></div></li>`
+      : `<li><span class="dot ${escHtml(a.action)}"></span><div><span class="who">${escHtml(a.actor_email || 'sistem')}</span> ${ACTION_TEXT[a.action] || escHtml(a.action)} <strong>${escHtml(a.product_name || '-')}</strong>${a.sku ? ' <span class="p-model">(' + escHtml(a.sku) + ')</span>' : ''}<small>${fmtDT(a.created_at)}</small></div></li>`).join('');
+    renderHistPager(Math.max(1, Math.ceil((total || 0) / HIST_PAGE)));
+  }
+  function renderHistPager(totalPages){
+    const el = document.getElementById('histPager');
+    if (totalPages <= 1){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) if (i === 1 || i === totalPages || Math.abs(i - histPage) <= 1) pages.push(i);
+    let h = `<button type="button" class="icon-btn" data-hp="${histPage - 1}" ${histPage === 1 ? 'disabled' : ''}>‹ Sebelumnya</button>`, prev = 0;
+    pages.forEach(i => { if (i - prev > 1) h += '<span>…</span>'; h += `<button type="button" class="icon-btn" data-hp="${i}" ${i === histPage ? 'disabled style="background:var(--ink);color:#fff;"' : ''}>${i}</button>`; prev = i; });
+    h += `<button type="button" class="icon-btn" data-hp="${histPage + 1}" ${histPage === totalPages ? 'disabled' : ''}>Berikutnya ›</button>`;
+    el.innerHTML = h; el.style.display = 'flex';
+  }
+  document.getElementById('histPager').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-hp]'); if (!b || b.disabled) return;
+    histPage = Number(b.dataset.hp); loadHistory(false);
+    document.getElementById('historyView').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+  let histTimer = null;
+  document.getElementById('histQ').addEventListener('input', () => { clearTimeout(histTimer); histTimer = setTimeout(() => loadHistory(true), 350); });
+  document.getElementById('histAction').addEventListener('change', () => loadHistory(true));
+  document.getElementById('histTabs').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-h]'); if (!b) return;
+    histMode = b.dataset.h;
+    document.querySelectorAll('#histTabs button').forEach(x => x.classList.toggle('on', x === b));
+    document.getElementById('histAction').style.display = histMode === 'produk' ? '' : 'none';
+    loadHistory(true);
+  });
+
+  /* ---------------- KELOLA ADMIN (khusus Super Admin) ---------------- */
+  const admErr = document.getElementById('admError'), admCred = document.getElementById('admCred');
+  function genPw(){
+    const chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const a = new Uint32Array(10); crypto.getRandomValues(a);
+    return 'Hilos-' + Array.from(a, v => chars[v % chars.length]).join('');
+  }
+  async function callAdminFn(body){
+    const { data, error } = await sb.functions.invoke('admin-users', { body });
+    if (error) return { ok:false, error:'Fungsi "admin-users" belum terpasang atau bermasalah. Lihat panduan pemasangan Edge Function. (' + (error.message || 'error') + ')' };
+    return data || { ok:false, error:'Tidak ada respon dari server.' };
+  }
+  function showCred(email, pw, title){
+    const url = location.origin + location.pathname;
+    admCred.innerHTML = `<b>${title}</b><br>Kirim ke yang bersangkutan:<br>Halaman: <code>${escHtml(url)}</code><br>Email: <code>${escHtml(email)}</code><br>Password sementara: <code>${escHtml(pw)}</code><br><button type="button" class="icon-btn" id="admCopy" style="margin-top:8px;">Salin semuanya</button> <small style="color:#5b7a5e;">Password akan wajib diganti saat login pertama dan tidak bisa dilihat lagi setelah halaman ini ditutup.</small>`;
+    admCred.classList.add('on');
+    document.getElementById('admCopy').onclick = async () => {
+      try { await navigator.clipboard.writeText(`Login Admin HILOS\nHalaman: ${url}\nEmail: ${email}\nPassword sementara: ${pw}\n(Wajib ganti password saat login pertama)`); showToast('Tersalin.'); } catch(e){ showToast('Gagal menyalin, salin manual.'); }
+    };
+  }
+  async function loadAdmins(){
+    if (!isSuper()) return;
+    if (!document.getElementById('admPw').value) document.getElementById('admPw').value = genPw();
+    const { data, error } = await sb.from('admin_profiles').select('*').order('created_at', { ascending:true });
+    const box = document.getElementById('admList');
+    if (error){ box.innerHTML = '<p class="hint">Gagal memuat: ' + escHtml(error.message) + '</p>'; return; }
+    box.innerHTML = data.map(a => {
+      const sup = a.role === 'super_admin';
+      const status = !a.is_active ? '<span class="st off">Nonaktif</span>' : (a.must_change_password ? '<span class="st warn">Belum ganti password</span>' : '<span class="st ok">Aktif</span>');
+      return `<div class="adm-row"><div class="adm-main"><b>${escHtml(a.email)}</b>${sup ? '<span class="st sup">Super Admin</span>' : status}
+        <small>${sup ? 'Akun utama' : 'Dibuat ' + fmtDT(a.created_at) + (a.created_by ? ' oleh ' + escHtml(a.created_by) : '')}</small></div>
+        ${sup ? '' : `<div class="adm-actions">
+          <button class="icon-btn" data-adm="reset" data-id="${a.user_id}" data-email="${escHtml(a.email)}">Reset Password</button>
+          <button class="icon-btn" data-adm="${a.is_active ? 'off' : 'on'}" data-id="${a.user_id}" data-email="${escHtml(a.email)}">${a.is_active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+          <button class="icon-btn" data-adm="del" data-id="${a.user_id}" data-email="${escHtml(a.email)}" style="color:var(--danger);">Hapus</button></div>`}</div>`;
+    }).join('') || '<p class="hint">Belum ada akun.</p>';
+  }
+  document.getElementById('admGen').addEventListener('click', () => { document.getElementById('admPw').value = genPw(); });
+  document.getElementById('admCreate').addEventListener('click', async () => {
+    admErr.style.display = 'none'; admCred.classList.remove('on');
+    const email = document.getElementById('admEmail').value.trim().toLowerCase();
+    const password = document.getElementById('admPw').value;
+    if (!email){ admErr.textContent = 'Isi email admin.'; admErr.style.display = 'block'; return; }
+    if (password.length < 8){ admErr.textContent = 'Password sementara minimal 8 karakter.'; admErr.style.display = 'block'; return; }
+    const btn = document.getElementById('admCreate'); btn.disabled = true;
+    const r = await callAdminFn({ action:'create', email, password });
+    btn.disabled = false;
+    if (!r.ok){ admErr.textContent = r.error; admErr.style.display = 'block'; return; }
+    showCred(email, password, 'Akun admin dibuat.');
+    document.getElementById('admEmail').value = ''; document.getElementById('admPw').value = genPw();
+    loadAdmins();
+  });
+  document.getElementById('admList').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-adm]'); if (!b) return;
+    const act = b.dataset.adm, id = b.dataset.id, email = b.dataset.email;
+    admErr.style.display = 'none';
+    let r;
+    if (act === 'reset'){
+      const pw = prompt('Password sementara baru untuk ' + email + ' (min. 8 karakter):', genPw());
+      if (pw == null) return;
+      if (pw.length < 8){ showToast('Minimal 8 karakter.'); return; }
+      r = await callAdminFn({ action:'reset_password', user_id:id, password:pw });
+      if (r.ok) showCred(email, pw, 'Password direset.');
+    } else if (act === 'off' || act === 'on'){
+      if (act === 'off' && !confirm('Nonaktifkan ' + email + '? Admin ini langsung tidak bisa mengubah data.')) return;
+      r = await callAdminFn({ action:'set_active', user_id:id, active: act === 'on' });
+      if (r.ok) showToast(act === 'on' ? 'Akun diaktifkan.' : 'Akun dinonaktifkan.');
+    } else if (act === 'del'){
+      if (!confirm('Hapus akun ' + email + ' secara permanen? Tindakan tidak bisa dibatalkan.')) return;
+      r = await callAdminFn({ action:'delete', user_id:id });
+      if (r.ok) showToast('Akun dihapus.');
+    }
+    if (r && !r.ok){ admErr.textContent = r.error; admErr.style.display = 'block'; }
+    loadAdmins();
+  });
+
   /* ---------------- TAB NAV ---------------- */
   document.querySelectorAll('.tab-nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2272,6 +2551,8 @@
       document.querySelectorAll('.view').forEach(v => v.style.display = (v.id === btn.dataset.view) ? '' : 'none');
       if (btn.dataset.view === 'top10View') loadTop10();
       if (btn.dataset.view === 'mapView') loadCities();
+      if (btn.dataset.view === 'historyView') loadHistory(true);
+      if (btn.dataset.view === 'adminsView') loadAdmins();
     });
   });
 
