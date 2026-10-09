@@ -60,57 +60,69 @@
   .catalog-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,3vw,34px);text-transform:uppercase;letter-spacing:0.02em;}
   .catalog-head p{margin-top:10px;font-size:14.5px;color:#5c4f40;max-width:520px;margin-left:auto;margin-right:auto;}
 
-  /* ===== Banner parallax 3 kategori utama ===== */
+  /* ===== Banner: 3 foto bulat menyatu -> pecah saat scroll ===== */
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
   .px{--hdr:80px;position:relative;background:var(--ink);}
-  .px-track{height:340vh;position:relative;}
-  .px-stage{position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));min-height:420px;overflow:hidden;color:#fff;}
-  .px-scene{position:absolute;inset:0;display:flex;align-items:center;visibility:hidden;}
-  .px-scene:first-of-type{visibility:visible;}
-  .px-bg{position:absolute;inset:-12% 0;background-size:cover;background-position:center;opacity:var(--op,1);
-    transform:translate3d(0,calc(var(--r,0) * -9%),0) scale(1.12);will-change:transform,opacity;}
-  .px-scene::before{content:"";position:absolute;inset:0;z-index:1;opacity:var(--op,1);
-    background:linear-gradient(90deg,rgba(13,27,42,.88) 0%,rgba(13,27,42,.55) 55%,rgba(13,27,42,.25) 100%);}
-  .px-ghost{position:absolute;z-index:1;right:-2vw;bottom:-3vw;font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;line-height:.85;
-    font-size:clamp(90px,19vw,300px);letter-spacing:-.02em;color:transparent;-webkit-text-stroke:2px rgba(234,241,248,.22);white-space:nowrap;
-    opacity:var(--op,1);transform:translate3d(calc(var(--r,0) * -20vw),0,0);will-change:transform;pointer-events:none;user-select:none;}
-  .px-copy{position:relative;z-index:2;width:100%;max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px);
-    opacity:var(--op,1);transform:translate3d(0,calc(var(--d,0) * -70px),0);will-change:transform,opacity;}
-  .px-copy > *{max-width:560px;}
-  .px-eyebrow{display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);}
-  .px-eyebrow::before{content:"";width:34px;height:2px;background:var(--gold-light);}
-  .px-copy h2{margin-top:14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(34px,6vw,76px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
-  .px-copy p{margin-top:16px;font-size:clamp(14px,1.5vw,17px);line-height:1.65;color:rgba(234,241,248,.88);}
-  .px-copy .btn{margin-top:26px;border:0;cursor:pointer;font-family:inherit;}
-  .px-scene:not(.on) .btn{pointer-events:none;}
-  .px-dots{position:absolute;z-index:3;right:clamp(14px,3vw,40px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;}
-  .px-dot{display:flex;align-items:center;gap:10px;flex-direction:row-reverse;background:none;border:0;color:rgba(234,241,248,.55);cursor:pointer;font:inherit;padding:4px;}
-  .px-dot i{display:block;width:10px;height:10px;border-radius:50%;border:2px solid currentColor;transition:all .3s ease;}
-  .px-dot span{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:0;transform:translateX(6px);transition:all .3s ease;}
-  .px-dot:hover span,.px-dot.on span{opacity:1;transform:none;}
-  .px-dot.on{color:#fff;}
-  .px-dot.on i{background:var(--gold-light);border-color:var(--gold-light);transform:scale(1.25);}
-  .px-hint{position:absolute;z-index:3;left:50%;bottom:20px;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(234,241,248,.7);display:flex;flex-direction:column;align-items:center;gap:6px;transition:opacity .3s;}
+  .px-track{height:300vh;position:relative;}
+  .px-stage{
+    position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));min-height:480px;overflow:hidden;color:#fff;
+    background:radial-gradient(ellipse at 50% 55%,#1f3a57 0%,#102235 45%,#0a1624 100%);
+    --D:clamp(150px,min(30vw,44vh),400px);   /* diameter bulatan */
+    --dx:calc(var(--D) * 1.18);               /* jarak geser kiri/kanan */
+    --sx:0;--lab:0;--intro:1;--drift:0;
+  }
+  .px-ghost{position:absolute;left:50%;top:50%;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(120px,24vw,380px);letter-spacing:-.02em;line-height:1;color:transparent;
+    -webkit-text-stroke:2px rgba(234,241,248,.07);white-space:nowrap;pointer-events:none;user-select:none;
+    transform:translate(calc(-50% + var(--gx,0) * 1px),-50%);}
+  .px-intro{position:absolute;z-index:4;left:0;right:0;top:clamp(18px,6vh,64px);text-align:center;padding:0 20px;pointer-events:none;
+    opacity:var(--intro);transform:translate3d(0,calc((1 - var(--intro)) * -30px),0);}
+  .px-eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);}
+  .px-eyebrow::before,.px-eyebrow::after{content:"";width:28px;height:2px;background:var(--gold-light);}
+  .px-intro h2{margin-top:12px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,4.6vw,58px);line-height:1.02;text-transform:uppercase;letter-spacing:.01em;}
+  .px-intro p{margin:10px auto 0;max-width:460px;font-size:clamp(13px,1.4vw,16px);color:rgba(234,241,248,.8);line-height:1.6;}
+
+  .px-group{position:absolute;left:50%;top:54%;width:0;height:0;transform:rotate(calc((1 - var(--sx)) * -24deg));}
+  .px-item{
+    position:absolute;left:calc(var(--D) / -2);top:calc(var(--D) / -2);width:var(--D);height:var(--D);
+    background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;text-align:center;
+    transform:translate3d(calc(var(--sx) * var(--ix,0) * var(--dx)),calc(var(--sx) * var(--iy,0) * var(--D) + var(--drift) * var(--dr,0) * 1px),0) scale(calc(1 + var(--sx) * var(--is,0)));
+    filter:drop-shadow(0 22px 28px rgba(0,0,0,.35));will-change:transform;
+  }
+  .px-item[data-px="sepatu"]{--ix:-1;--iy:0;--dr:1;z-index:1;}
+  .px-item[data-px="wanita"]{--ix:0;--iy:0;--dr:0;--is:.1;z-index:3;}
+  .px-item[data-px="pria"]{--ix:1;--iy:0;--dr:-1;z-index:2;}
+  .px-orb{position:absolute;inset:0;overflow:hidden;border-radius:50%;}
+  .px-orb .px-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
+  .px-item:hover .px-img,.px-item:focus-visible .px-img{transform:scale(1.07);}
+  .px-item:focus-visible{outline:none;}
+  .px-item:focus-visible .px-orb{box-shadow:0 0 0 4px var(--gold-light);}
+  .px-img.i-sepatu{background-image:url('assets/banner-sepatu.jpg'),url('https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=900'),linear-gradient(135deg,#2d5f8f,#0d1b2a);}
+  .px-img.i-pria{background-image:url('assets/banner-sandal-pria.jpg'),url('https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=900'),linear-gradient(135deg,#3b6b94,#16283d);}
+  .px-img.i-wanita{background-image:url('assets/banner-sandal-wanita.jpg'),url('https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=900'),linear-gradient(135deg,#6b7fa0,#1c2a3d);}
+  .px-label{position:absolute;left:50%;top:100%;width:max(100%,200px);transform:translate3d(-50%,calc((1 - var(--lab)) * 14px + 14px),0);opacity:var(--lab);pointer-events:none;}
+  .px-label h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(15px,1.9vw,24px);text-transform:uppercase;letter-spacing:.03em;}
+  .px-label span{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);}
+  .px-label span::after{content:"→";transition:transform .25s;}
+  .px-item:hover .px-label span::after{transform:translateX(4px);}
+  .px-item[data-px="wanita"] .px-label{top:calc(100% + var(--D) * .1);}
+  .px-hint{position:absolute;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(234,241,248,.7);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:var(--intro);pointer-events:none;}
   .px-hint::after{content:"";width:1px;height:26px;background:linear-gradient(var(--gold-light),transparent);animation:pxHint 1.8s ease-in-out infinite;}
   @keyframes pxHint{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
-  .px.scrolled .px-hint{opacity:0;}
-  /* latar tiap scene: foto sendiri (assets/banner-*.jpg) kalau ada, kalau tidak pakai gradasi/foto sementara */
-  .px-bg.s0{background-image:url('assets/banner-sepatu.jpg'),linear-gradient(135deg,#0d1b2a 0%,#1b3a5c 60%,#2d5f8f 100%);}
-  .px-bg.s1{background-image:url('assets/banner-sandal-pria.jpg'),url('https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=1400'),linear-gradient(135deg,#0d1b2a,#16283d);}
-  .px-bg.s2{background-image:url('assets/banner-sandal-wanita.jpg'),url('https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=1400'),linear-gradient(135deg,#1c2a3d,#3a4a63);}
   @media (max-width:700px){
-    .px-track{height:320vh;}
-    .px-scene::before{background:linear-gradient(180deg,rgba(13,27,42,.55) 0%,rgba(13,27,42,.85) 100%);}
-    .px-copy{padding-right:56px;}
-    .px-dot span{display:none;}
+    .px-track{height:280vh;}
+    .px-stage{--D:clamp(96px,28vw,150px);--dx:calc(var(--D) * 1.06);}
+    .px-group{top:50%;}
+    .px-item[data-px="sepatu"]{--iy:-.32;}
+    .px-item[data-px="pria"]{--iy:.32;}
+    .px-item[data-px="wanita"]{--is:.06;--iy:0;}
+    .px-label{width:max(100%,110px);}
+    .px-label h3{font-size:13px;}
+    .px-label span{font-size:10px;}
   }
   @media (prefers-reduced-motion:reduce){
     .px-track{height:auto;}
-    .px-stage{position:relative;top:0;height:auto;min-height:0;overflow:visible;}
-    .px-scene{position:relative;visibility:visible;min-height:70vh;overflow:hidden;}
-    .px-bg,.px-ghost,.px-copy{transform:none !important;opacity:1 !important;}
-    .px-scene::before{opacity:1 !important;}
-    .px-dots,.px-hint{display:none;}
+    .px-stage{position:relative;top:0;min-height:0;height:auto;padding:150px 0 130px;--sx:1;--lab:1;--intro:1;}
+    .px-hint{display:none;}
   }
 
   .category-row{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
@@ -329,41 +341,26 @@
 <h1 class="sr-only">Koleksi Sepatu &amp; Sandal HILOS</h1>
 <section class="px" id="pxBanner" aria-label="Kategori utama HILOS">
   <div class="px-track">
-    <div class="px-stage">
-      <div class="px-scene on" data-kind="sepatu">
-        <div class="px-bg s0"></div>
-        <div class="px-ghost" aria-hidden="true">Sepatu</div>
-        <div class="px-copy">
-          <div class="px-eyebrow">01 / 03 · Koleksi HILOS</div>
-          <h2>Sepatu</h2>
-          <p>Tangguh untuk aktivitas luar ruangan dan kerja harian. Sol kuat, tetap ringan di kaki.</p>
-          <button type="button" class="btn btn-fill" data-px="sepatu"><span>Lihat Sepatu</span></button>
-        </div>
+    <div class="px-stage" id="pxStage">
+      <div class="px-ghost" aria-hidden="true">HILOS</div>
+      <div class="px-intro">
+        <div class="px-eyebrow">Koleksi HILOS</div>
+        <h2>Tiga Pilihan, Satu Langkah</h2>
+        <p>Sepatu, sandal pria, dan sandal wanita. Scroll untuk memilih.</p>
       </div>
-      <div class="px-scene" data-kind="pria">
-        <div class="px-bg s1"></div>
-        <div class="px-ghost" aria-hidden="true">Pria</div>
-        <div class="px-copy">
-          <div class="px-eyebrow">02 / 03 · Koleksi HILOS</div>
-          <h2>Sandal Pria</h2>
-          <p>Desain maskulin dan kokoh untuk aktivitas sehari-hari, nyaman dipakai seharian.</p>
-          <button type="button" class="btn btn-fill" data-px="pria"><span>Lihat Sandal Pria</span></button>
-        </div>
-      </div>
-      <div class="px-scene" data-kind="wanita">
-        <div class="px-bg s2"></div>
-        <div class="px-ghost" aria-hidden="true">Wanita</div>
-        <div class="px-copy">
-          <div class="px-eyebrow">03 / 03 · Koleksi HILOS</div>
-          <h2>Sandal Wanita</h2>
-          <p>Elegan, ringan, dan stylish untuk setiap langkahmu, dari santai sampai bepergian.</p>
-          <button type="button" class="btn btn-fill" data-px="wanita"><span>Lihat Sandal Wanita</span></button>
-        </div>
-      </div>
-      <div class="px-dots" role="tablist" aria-label="Pilih kategori">
-        <button type="button" class="px-dot on" data-go="0" aria-label="Sepatu"><i></i><span>Sepatu</span></button>
-        <button type="button" class="px-dot" data-go="1" aria-label="Sandal Pria"><i></i><span>Sandal Pria</span></button>
-        <button type="button" class="px-dot" data-go="2" aria-label="Sandal Wanita"><i></i><span>Sandal Wanita</span></button>
+      <div class="px-group">
+        <button type="button" class="px-item" data-px="sepatu" aria-label="Lihat koleksi Sepatu">
+          <span class="px-orb"><span class="px-img i-sepatu"></span></span>
+          <span class="px-label"><h3>Sepatu</h3><span>Lihat koleksi</span></span>
+        </button>
+        <button type="button" class="px-item" data-px="pria" aria-label="Lihat koleksi Sandal Pria">
+          <span class="px-orb"><span class="px-img i-pria"></span></span>
+          <span class="px-label"><h3>Sandal Pria</h3><span>Lihat koleksi</span></span>
+        </button>
+        <button type="button" class="px-item" data-px="wanita" aria-label="Lihat koleksi Sandal Wanita">
+          <span class="px-orb"><span class="px-img i-wanita"></span></span>
+          <span class="px-label"><h3>Sandal Wanita</h3><span>Lihat koleksi</span></span>
+        </button>
       </div>
       <div class="px-hint">Scroll</div>
     </div>
@@ -794,58 +791,71 @@
     });
   });
 
-  /* ---------- banner parallax: scroll menggeser tiap kategori ---------- */
+  /* ---------- banner: 3 bulatan menyatu -> pecah saat scroll ---------- */
   (function(){
     const root = document.getElementById('pxBanner'); if (!root) return;
     const track = root.querySelector('.px-track');
-    const scenes = [...root.querySelectorAll('.px-scene')];
-    const dots = [...root.querySelectorAll('.px-dot')];
+    const stage = document.getElementById('pxStage');
     const nav = document.querySelector('.nav');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // tiap bulatan awalnya hanya irisan 120° (menyatu jadi 1 lingkaran); sudut searah jarum jam dari atas
+    const SECTORS = { wanita:[-60, 60], pria:[60, 180], sepatu:[180, 300] };
+    const items = [...root.querySelectorAll('.px-item')].map(el => ({ el, orb: el.querySelector('.px-orb'), a: SECTORS[el.dataset.px] }));
+    const N = 72, ease = (t) => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
     const hdr = () => (nav ? nav.offsetHeight : 0);
     const range = () => Math.max(1, track.offsetHeight - (window.innerHeight - hdr()));
-    let ticking = false;
 
+    function wedgeClip(a, te){
+      const pts = [];
+      for (let k = 0; k < N; k++){
+        const th = (k / N) * 360;
+        let inside = false;
+        for (const off of [-360, 0, 360]) if (th + off >= a[0] && th + off <= a[1]) inside = true;
+        const rho = inside ? 50 : 50 * te;
+        const r = th * Math.PI / 180;
+        pts.push((50 + rho * Math.sin(r)).toFixed(2) + '% ' + (50 - rho * Math.cos(r)).toFixed(2) + '%');
+      }
+      return 'polygon(' + pts.join(',') + ')';
+    }
+    let ticking = false, lastKey = '';
+    function paint(p){
+      const split = ease(clamp((p - 0.10) / 0.50));      // 10%..60% scroll: pecah
+      const lab = clamp((p - 0.55) / 0.2);                 // label muncul setelah pecah
+      const intro = 1 - clamp((p - 0.05) / 0.3);           // judul awal memudar
+      const drift = clamp((p - 0.6) / 0.4);                // setelah pecah: bergeser pelan (parallax)
+      const key = [split, lab, intro, drift].map(v => v.toFixed(3)).join('|');
+      if (key === lastKey) return; lastKey = key;
+      stage.style.setProperty('--sx', split.toFixed(4));
+      stage.style.setProperty('--lab', lab.toFixed(3));
+      stage.style.setProperty('--intro', intro.toFixed(3));
+      stage.style.setProperty('--drift', (drift * -40).toFixed(2));
+      stage.style.setProperty('--gx', ((p - 0.5) * -160).toFixed(1));
+      const te = clamp(split * 1.8);   // bentuk bulat selesai lebih dulu, baru bergeser menjauh
+      items.forEach(it => {
+        it.orb.style.clipPath = te >= 0.999 ? 'none' : wedgeClip(it.a, te);
+        it.orb.style.webkitClipPath = it.orb.style.clipPath;
+        it.el.style.pointerEvents = lab > 0.4 ? 'auto' : 'none';
+        it.el.tabIndex = lab > 0.4 ? 0 : -1;
+      });
+    }
     function update(){
       ticking = false;
       root.style.setProperty('--hdr', hdr() + 'px');
-      if (reduce.matches) return;
+      if (reduce.matches){ lastKey = ''; paint(1); items.forEach(it => { it.orb.style.clipPath = 'none'; it.el.style.pointerEvents = 'auto'; it.el.tabIndex = 0; }); return; }
       const top = track.getBoundingClientRect().top;
-      const p = Math.min(1, Math.max(0, (hdr() - top) / range()));
-      const u = p * 3;
-      let active = 0;
-      scenes.forEach((sc, i) => {
-        const c = i + 0.5, raw = u - c;
-        let d = raw;
-        if (i === 0 && u < c) d = 0;
-        if (i === scenes.length - 1 && u > c) d = 0;
-        const op = Math.min(1, Math.max(0, 1 - (Math.abs(d) - 0.25) * 2));
-        sc.style.setProperty('--op', op.toFixed(3));
-        sc.style.setProperty('--d', d.toFixed(3));
-        sc.style.setProperty('--r', raw.toFixed(3));
-        sc.style.visibility = op > 0.01 ? 'visible' : 'hidden';
-        sc.classList.toggle('on', op > 0.5);
-        if (op > 0.5) active = i;
-      });
-      dots.forEach((dt, i) => dt.classList.toggle('on', i === active));
-      root.classList.toggle('scrolled', p > 0.02);
+      paint(clamp((hdr() - top) / range()));
     }
     const req = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
     window.addEventListener('scroll', req, { passive:true });
     window.addEventListener('resize', req);
-    reduce.addEventListener && reduce.addEventListener('change', req);
+    if (reduce.addEventListener) reduce.addEventListener('change', req);
     update();
 
-    dots.forEach(dt => dt.addEventListener('click', () => {
-      const i = Number(dt.dataset.go);
-      const y = track.getBoundingClientRect().top + window.scrollY - hdr() + range() * ((i + 0.5) / 3);
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }));
-
-    // tombol kategori -> terapkan filter lalu turun ke daftar produk
+    // klik bulatan -> terapkan filter lalu turun ke daftar produk
     const isShoe = (m) => /sepatu/i.test(String(m || ''));
-    root.querySelectorAll('[data-px]').forEach(btn => btn.addEventListener('click', () => {
-      const kind = btn.dataset.px;
+    items.forEach(it => it.el.addEventListener('click', () => {
+      const kind = it.el.dataset.px;
       const all = [...new Set(products.map(p => p.model).filter(Boolean))];
       state.search = ''; state.sizes.clear(); state.colors.clear();
       state.categories = new Set(); state.models = new Set();
@@ -855,7 +865,6 @@
       } else {
         state.categories = new Set([kind]);
         state.models = new Set(all.filter(m => !isShoe(m)));
-        if (!state.models.size) state.models = new Set();
       }
       const fs = document.getElementById('filterSearch'); if (fs) fs.value = '';
       state.visibleCount = PAGE_SIZE;
