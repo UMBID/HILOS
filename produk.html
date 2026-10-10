@@ -298,6 +298,37 @@
     .product-grid{grid-template-columns:1fr 1fr;}
     .footer-grid{grid-template-columns:1fr;}
   }
+
+  /* ===== upgrade katalog: bar kategori cepat (menempel), kartu lebih hidup ===== */
+  .filter-sidebar{top:calc(var(--stick,110px) + 20px);max-height:calc(100vh - var(--stick,110px) - 40px);overflow-y:auto;scrollbar-width:thin;padding-right:4px;}
+  .quick-bar{position:sticky;top:var(--stick,110px);z-index:25;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding:12px 0;background:rgba(245,249,252,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--sand-line);}
+  .quick-bar::-webkit-scrollbar{display:none;}
+  .quick-pill{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--sand-line);border-radius:999px;background:#fff;color:var(--ink);font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s,border-color .25s,transform .2s;}
+  .quick-pill em{font-style:normal;font-family:'Inter',sans-serif;font-weight:600;font-size:10.5px;padding:2px 7px;border-radius:99px;background:rgba(13,27,42,.08);transition:background .25s,color .25s;}
+  .quick-pill:hover{border-color:var(--gold-deep);transform:translateY(-1px);}
+  .quick-pill.active{background:var(--ink);border-color:var(--ink);color:var(--sand);}
+  .quick-pill.active em{background:var(--gold);color:var(--ink);}
+  .product-thumb{background:linear-gradient(100deg,#e6edf3 30%,#f3f7fa 50%,#e6edf3 70%) 0 0/200% 100%;animation:thumbShimmer 1.4s linear infinite;}
+  .product-thumb.loaded{animation:none;background:#eef3f7;}
+  @keyframes thumbShimmer{to{background-position:-200% 0;}}
+  .product-thumb img{opacity:0;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1);}
+  .product-thumb.loaded img{opacity:1;}
+  .product-card:hover .product-thumb img{transform:scale(1.08);}
+  .product-cta{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:11px 14px;background:linear-gradient(to top,rgba(13,27,42,.88),rgba(13,27,42,0));color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);padding-top:26px;}
+  .product-card:hover .product-cta,.product-card:focus-within .product-cta{transform:none;}
+  .product-cta svg{width:14px;height:14px;transition:transform .3s;}
+  .product-card:hover .product-cta svg{transform:translateX(3px);}
+  .product-card{cursor:pointer;}
+  .product-colors span{transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+  .product-card:hover .product-colors span{transform:scale(1.25);}
+  .product-card:hover .product-colors span:nth-child(2){transition-delay:.04s;}
+  .product-card:hover .product-colors span:nth-child(3){transition-delay:.08s;}
+  .product-card::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform .4s ease;}
+  .product-card:hover::after{transform:scaleX(1);}
+  .result-count b{color:var(--ink);font-variant-numeric:tabular-nums;}
+  @media (max-width:900px){.filter-sidebar{max-height:none;top:0 !important;}}
+  @media (hover:none){.product-cta{transform:none;background:none;color:var(--gold-deep);position:static;padding:0 16px 14px;}}
+  @media (prefers-reduced-motion:reduce){.product-thumb{animation:none;}.product-cta,.product-card::after{transition:none;}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
@@ -434,6 +465,7 @@
   </aside>
 
   <div class="catalog-main">
+    <div class="quick-bar" id="quickBar" role="tablist" aria-label="Kategori cepat"></div>
     <div class="active-chips" id="activeChips"></div>
 
     <div class="toolbar">
@@ -733,11 +765,12 @@
   }
 
   function renderGrid(){
+    renderQuick();
     const grid = document.getElementById('productGrid');
     const full = getFiltered();
     const visible = full.slice(0, state.visibleCount);
 
-    document.getElementById('resultCount').textContent = `Menampilkan ${visible.length} dari ${full.length} produk`;
+    document.getElementById('resultCount').innerHTML = `Menampilkan <b>${visible.length}</b> dari <b>${full.length}</b> produk`;
     grid.classList.toggle('list-view', state.view === 'list');
 
     const loadMoreWrap = document.getElementById('loadMoreWrap');
@@ -766,7 +799,8 @@
               <svg viewBox="0 0 24 24" fill="${wishlist.has(p.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg>
             </button>
           </div>
-          <img src="${p.img}" alt="${p.name}" loading="lazy">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" onload="this.parentNode.classList.add('loaded')" onerror="this.parentNode.classList.add('loaded')">
+          <div class="product-cta"><span>Lihat Cepat</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
         </div>
         <div class="product-info">
           <h4>${p.name}</h4>
@@ -777,6 +811,30 @@
       </div>
     `).join('');
   }
+
+
+  /* ---------- bar kategori cepat (menempel di bawah header) ---------- */
+  function renderQuick(){
+    const bar = document.getElementById('quickBar'); if (!bar) return;
+    const cnt = {}; products.forEach(p => { cnt[p.category] = (cnt[p.category] || 0) + 1; });
+    const only = state.categories.size === 1 ? [...state.categories][0] : null;
+    const items = [{ k:'', l:'Semua', n:products.length }].concat(Object.keys(categoryLabels).filter(k => cnt[k]).map(k => ({ k, l:categoryLabels[k], n:cnt[k] })));
+    bar.innerHTML = items.map(it => `<button type="button" class="quick-pill${(it.k === (only || '') && state.categories.size <= 1) ? ' active' : ''}" role="tab" data-cat="${it.k}">${it.l}<em>${it.n}</em></button>`).join('');
+  }
+  document.getElementById('quickBar').addEventListener('click', (e) => {
+    const b = e.target.closest('.quick-pill'); if (!b) return;
+    state.categories = b.dataset.cat ? new Set([b.dataset.cat]) : new Set();
+    state.visibleCount = PAGE_SIZE;
+    syncCheckboxUI();
+    renderAll();
+  });
+  /* tinggi header (ribbon + nav) -> posisi menempel bar & sidebar */
+  (function(){
+    const rib = document.querySelector('.ribbon'), nv = document.querySelector('.nav');
+    const set = () => document.documentElement.style.setProperty('--stick', ((rib ? rib.offsetHeight : 0) + (nv ? nv.offsetHeight : 0)) + 'px');
+    set(); window.addEventListener('resize', set);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(set);
+  })();
 
   /* ---------- events: category cards (top) ---------- */
   document.querySelectorAll('.category-card').forEach(card => {
