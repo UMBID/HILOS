@@ -163,6 +163,57 @@
   .kj-group.bad .kj-error{display:block;}
   .kj-group.bad .kj-chip span{border-color:#d9a09b;}
   .contact-form textarea{min-height:90px;resize:vertical;margin-bottom:16px;}
+
+  /* ===== formulir bertahap ===== */
+  .kj-steps{list-style:none;display:flex;justify-content:space-between;margin:0 0 8px;padding:0;gap:6px;}
+  .kj-steps li{flex:1;display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;color:#8a97a5;transition:color .3s;}
+  .kj-steps li b{width:24px;height:24px;flex:0 0 24px;border-radius:50%;border:1.5px solid #b8c3ce;display:flex;align-items:center;justify-content:center;font-size:11px;background:#fff;transition:all .3s;}
+  .kj-steps li.cur{color:var(--ink);}
+  .kj-steps li.cur b{border-color:var(--gold-deep);background:var(--gold-deep);color:#fff;box-shadow:0 0 0 4px rgba(47,111,176,.15);}
+  .kj-steps li.done{color:var(--gold-deep);}
+  .kj-steps li.done b{border-color:var(--gold-deep);background:#fff;color:var(--gold-deep);}
+  .kj-bar{height:3px;background:var(--sand-line);margin:0 0 18px;overflow:hidden;}
+  .kj-bar i{display:block;height:100%;width:100%;background:var(--gold-deep);transform-origin:left;transform:scaleX(.34);transition:transform .45s cubic-bezier(.2,.8,.2,1);}
+  .kj-panel{display:none;}
+  .kj-panel.on{display:block;animation:kjIn .35s ease both;}
+  @keyframes kjIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
+  .kj-panel .form-row:last-child{margin-bottom:0;}
+  .contact-form input.bad{border-color:#d9a09b;background:#fdf3f2;}
+  .kj-fieldmsg{display:none;margin:-4px 0 12px;font-size:12px;color:#b3261e;}
+  .kj-fieldmsg.show{display:block;}
+  .kj-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px;font-size:12px;color:#5c6a78;}
+  .kj-sum span{background:rgba(47,111,176,.1);color:var(--gold-deep);font-weight:600;padding:4px 9px;border-radius:99px;}
+  .kj-nav{display:flex;gap:10px;margin-top:16px;}
+  .kj-nav button{flex:1;cursor:pointer;font-family:'Archivo',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;padding:13px 14px;border:1px solid var(--gold-deep);transition:background .2s,color .2s,transform .2s;}
+  .kj-nav .kj-back{background:#fff;color:var(--gold-deep);flex:0 0 38%;}
+  .kj-nav .kj-back:hover{background:rgba(47,111,176,.08);}
+  .kj-nav .kj-next{background:var(--gold-deep);color:#fff;}
+  .kj-nav .kj-next:hover{background:var(--ink);border-color:var(--ink);}
+  .kj-nav [hidden]{display:none;}
+  .contact-form textarea{margin-bottom:12px;}
+
+  /* ===== alur menjadi mitra ===== */
+  .flow-section{background:var(--paper);padding:80px clamp(20px,5vw,64px);}
+  .flow-list{--p:0;position:relative;max-width:1100px;margin:44px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;list-style:none;padding:0;}
+  .flow-line{position:absolute;top:23px;left:12.5%;right:12.5%;height:2px;background:var(--sand-line);}
+  .flow-line i{display:block;height:100%;background:var(--gold-deep);transform-origin:left;transform:scaleX(var(--p));}
+  .flow-step{position:relative;text-align:center;padding:0 6px;}
+  .flow-node{position:relative;z-index:1;width:46px;height:46px;margin:0 auto 16px;border-radius:50%;background:#fff;border:2px solid #b8c3ce;color:#8a97a5;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:15px;transition:all .45s cubic-bezier(.34,1.56,.64,1);}
+  .flow-step.on .flow-node{background:var(--gold-deep);border-color:var(--gold-deep);color:#fff;transform:scale(1.12);box-shadow:0 0 0 6px rgba(47,111,176,.14);}
+  .flow-step h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px;color:#8a97a5;transition:color .4s;}
+  .flow-step p{font-size:12.5px;line-height:1.6;color:#8a97a5;max-width:230px;margin:0 auto;transition:color .4s;}
+  .flow-step.on h3{color:var(--ink);}
+  .flow-step.on p{color:#4a5a6a;}
+  .flow-cta{text-align:center;margin-top:36px;}
+  @media (max-width:760px){
+    .flow-list{grid-template-columns:1fr;gap:26px;margin-top:34px;}
+    .flow-line{top:23px;bottom:23px;left:22px;right:auto;width:2px;height:auto;}
+    .flow-line i{width:100%;transform-origin:top;transform:scaleY(var(--p));}
+    .flow-step{display:grid;grid-template-columns:46px 1fr;column-gap:16px;text-align:left;padding:0;}
+    .flow-node{margin:0;grid-row:1 / span 2;}
+    .flow-step p{max-width:none;margin:0;}
+  }
+  @media (prefers-reduced-motion:reduce){.kj-panel.on{animation:none;}.kj-bar i,.flow-node{transition:none;}}
   .form-success{display:none;margin-top:14px;padding:12px 14px;background:#eef6ec;border:1px solid #b9dcae;color:#3a6b2e;font-size:12.5px;}
   .form-success.show{display:block;}
 
@@ -279,25 +330,25 @@
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
       <h3>Distributor</h3>
       <p>Jadi distributor resmi HILOS di wilayah Anda, dengan dukungan penuh dari sisi stok dan pemasaran.</p>
-      <a href="#kontak">Selengkapnya →</a>
+      <a href="#kontak" data-kj="Distributor">Daftar sebagai Distributor →</a>
     </div>
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><path d="M7 14h4"/></svg></div>
       <h3>E-Commerce</h3>
       <p>Jual produk HILOS lewat marketplace atau toko online Anda sendiri, lengkap dengan materi dan dukungan konten.</p>
-      <a href="#kontak">Selengkapnya →</a>
+      <a href="#kontak" data-kj="E-Commerce">Daftar sebagai E-Commerce →</a>
     </div>
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="14" height="11" rx="1"/><path d="M7 8V6a3 3 0 0 1 3-3h1"/><circle cx="19" cy="15" r="3"/></svg></div>
       <h3>Wholesale</h3>
       <p>Pembelian dalam jumlah besar dengan harga khusus grosir, cocok untuk toko dan reseller skala besar.</p>
-      <a href="#kontak">Selengkapnya →</a>
+      <a href="#kontak" data-kj="Wholesale">Daftar sebagai Wholesale →</a>
     </div>
     <div class="scheme-card reveal">
       <div class="scheme-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/></svg></div>
       <h3>Manufacture Partner</h3>
       <p>Produksi sandal dengan brand Anda sendiri (OEM/ODM), dari desain sampai kemasan, di pabrik HILOS.</p>
-      <a href="#kontak">Selengkapnya →</a>
+      <a href="#kontak" data-kj="Manufacture Partner">Daftar sebagai Manufacture Partner →</a>
     </div>
   </div>
 
@@ -313,6 +364,22 @@
   </div>
 </section>
 
+
+<!-- ============ ALUR MENJADI MITRA ============ -->
+<section class="flow-section" id="alur">
+  <div class="section-head-center">
+    <h2 class="reveal">Alur Menjadi Mitra</h2>
+    <p class="reveal">Empat langkah sederhana dari tanya-tanya sampai mulai berjualan.</p>
+  </div>
+  <ol class="flow-list" id="flowList">
+    <div class="flow-line" aria-hidden="true"><i></i></div>
+    <li class="flow-step"><div class="flow-node">1</div><h3>Pilih Kerjasama</h3><p>Tentukan bentuk kerjasama yang cocok: distributor, e-commerce, wholesale, atau manufacture.</p></li>
+    <li class="flow-step"><div class="flow-node">2</div><h3>Isi Formulir</h3><p>Isi data singkat Anda lewat formulir, atau langsung hubungi sales kami via WhatsApp.</p></li>
+    <li class="flow-step"><div class="flow-node">3</div><h3>Konsultasi &amp; Penawaran</h3><p>Tim kami menghubungi Anda, membahas kebutuhan, dan mengirim penawaran terbaik.</p></li>
+    <li class="flow-step"><div class="flow-node">4</div><h3>Mulai Berjualan</h3><p>Stok dikirim, materi promosi disiapkan, dan Anda siap menjual produk HILOS.</p></li>
+  </ol>
+  <div class="flow-cta reveal"><a href="#kontak" class="btn btn-fill"><span>Mulai Sekarang</span></a></div>
+</section>
 
 <!-- ============ JARINGAN DISTRIBUSI ============ -->
 <div id="distMap" data-cta-href="#kontak"></div>
@@ -388,7 +455,16 @@
 
     <div class="contact-form reveal">
       <h3>Kirim Pesan</h3>
-      <form id="kerjasamaForm">
+      <form id="kerjasamaForm" novalidate>
+        <ol class="kj-steps" id="kjSteps" aria-label="Langkah pengisian">
+          <li class="cur"><b>1</b>Jenis</li>
+          <li><b>2</b>Data Anda</li>
+          <li><b>3</b>Pesan</li>
+        </ol>
+        <div class="kj-bar" aria-hidden="true"><i id="kjBar"></i></div>
+
+        <!-- urutan isian di HTML sengaja tidak diubah (nama pertama) agar format email tetap sama -->
+        <div class="kj-panel" data-step="2">
         <div class="form-row">
           <input type="text" placeholder="Nama Lengkap" required>
           <input type="text" placeholder="Nama Perusahaan">
@@ -397,6 +473,10 @@
           <input type="tel" placeholder="Nomor WhatsApp" required>
           <input type="email" placeholder="Email">
         </div>
+          <p class="kj-fieldmsg" id="kjMsg2"></p>
+        </div>
+
+        <div class="kj-panel on" data-step="1">
         <fieldset class="kj-group" id="kjGroup">
           <legend>Jenis Kerjasama yang Diminati <em>(boleh pilih lebih dari satu)</em></legend>
           <div class="kj-options">
@@ -409,8 +489,18 @@
           <input type="hidden" id="kjValue" placeholder="Jenis Kerjasama yang Diminati">
           <p class="kj-error" id="kjError">Pilih minimal satu jenis kerjasama.</p>
         </fieldset>
-        <textarea placeholder="Pesan"></textarea>
-        <button type="submit" class="btn btn-fill" style="width:100%;"><span>Kirim Pesan</span></button>
+        </div>
+
+        <div class="kj-panel" data-step="3">
+          <div class="kj-sum" id="kjSum"></div>
+          <textarea placeholder="Pesan"></textarea>
+          <button type="submit" class="btn btn-fill" id="kjSubmit" style="width:100%;"><span>Kirim Pesan</span></button>
+        </div>
+
+        <div class="kj-nav">
+          <button type="button" class="kj-back" id="kjBack" hidden>Kembali</button>
+          <button type="button" class="kj-next" id="kjNext">Lanjut</button>
+        </div>
       </form>
       <div class="form-success" id="formSuccess">Terima kasih! Pesan Anda sudah kami terima, tim kami akan segera menghubungi Anda.</div>
     </div>
@@ -495,19 +585,94 @@
     revealTargets.forEach(el => io.observe(el));
   }
 
-  /* jenis kerjasama: centang bisa lebih dari satu -> digabung ke 1 isian tersembunyi ("Distributor, Wholesale") */
+  /* formulir bertahap (3 langkah). Isian & urutan DOM tidak berubah -> format email form-mailer tetap sama */
   (function(){
     const form = document.getElementById('kerjasamaForm'), grp = document.getElementById('kjGroup'), out = document.getElementById('kjValue');
     if (!form || !grp || !out) return;
+    const panels = Array.from(form.querySelectorAll('.kj-panel')).sort((x,y)=>x.dataset.step-y.dataset.step);
+    const dots = Array.from(form.querySelectorAll('#kjSteps li')), bar = document.getElementById('kjBar');
+    const back = document.getElementById('kjBack'), next = document.getElementById('kjNext');
+    const sum = document.getElementById('kjSum'), msg2 = document.getElementById('kjMsg2');
+    const p2 = form.querySelector('[data-step="2"]');
+    const nameIn = p2.querySelector('input[type=text]:not([placeholder*=Perusahaan])'), waIn = p2.querySelector('input[type=tel]'), mailIn = p2.querySelector('input[type=email]');
+    let step = 1;
+
     const boxes = () => Array.from(grp.querySelectorAll('input[type=checkbox]'));
     const sync = () => { out.value = boxes().filter(b => b.checked).map(b => b.value).join(', '); if (out.value) grp.classList.remove('bad'); };
     grp.addEventListener('change', sync);
-    form.addEventListener('reset', () => setTimeout(sync, 0));
-    // wajib pilih minimal satu; dipasang SEBELUM HilosForm.init supaya pengiriman email tertahan kalau kosong
-    form.addEventListener('submit', (e) => {
-      sync();
-      if (!out.value){ e.preventDefault(); e.stopImmediatePropagation(); grp.classList.add('bad'); grp.scrollIntoView({ block:'center', behavior:'smooth' }); }
+
+    function go(n, focus){
+      step = Math.max(1, Math.min(3, n));
+      panels.forEach(p => p.classList.toggle('on', +p.dataset.step === step));
+      dots.forEach((d,i) => { d.classList.toggle('cur', i+1 === step); d.classList.toggle('done', i+1 < step); d.querySelector('b').textContent = (i+1 < step) ? '✓' : (i+1); });
+      bar.style.transform = 'scaleX(' + (step/3) + ')';
+      back.hidden = step === 1; next.hidden = step === 3;
+      if (step === 3){
+        sum.innerHTML = 'Pilihan Anda: ' + (out.value ? out.value.split(', ').map(v => '<span>'+v+'</span>').join('') : '-');
+      }
+      if (focus){
+        const f = panels[step-1].querySelector('input:not([type=checkbox]):not([type=hidden]), textarea');
+        if (f && step > 1) setTimeout(() => f.focus({ preventScroll:true }), 60);
+      }
+    }
+    function validStep1(){ sync(); if (!out.value){ grp.classList.add('bad'); return false; } return true; }
+    function validStep2(){
+      let m = '';
+      [nameIn, waIn, mailIn].forEach(i => i && i.classList.remove('bad'));
+      if (!nameIn.value.trim()){ nameIn.classList.add('bad'); m = 'Nama lengkap wajib diisi.'; }
+      else if (waIn.value.replace(/\D/g,'').length < 8){ waIn.classList.add('bad'); m = 'Nomor WhatsApp wajib diisi dengan benar.'; }
+      else if (mailIn.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mailIn.value.trim())){ mailIn.classList.add('bad'); m = 'Format email belum benar.'; }
+      msg2.textContent = m; msg2.classList.toggle('show', !!m);
+      return !m;
+    }
+    p2.addEventListener('input', e => { e.target.classList.remove('bad'); msg2.classList.remove('show'); });
+
+    function advance(){
+      if (step === 1){ if (validStep1()) go(2, true); else grp.scrollIntoView({ block:'center', behavior:'smooth' }); }
+      else if (step === 2){ if (validStep2()) go(3, true); }
+    }
+    next.addEventListener('click', advance);
+    back.addEventListener('click', () => go(step-1));
+    // Enter di isian = lanjut, bukan kirim
+    form.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && step < 3 && e.target.tagName !== 'BUTTON'){ e.preventDefault(); advance(); }
     });
+    // pengaman: kirim hanya dari langkah 3 & semua langkah valid (dipasang SEBELUM HilosForm.init)
+    form.addEventListener('submit', e => {
+      if (step < 3){ e.preventDefault(); e.stopImmediatePropagation(); advance(); return; }
+      if (!validStep1()){ e.preventDefault(); e.stopImmediatePropagation(); go(1); return; }
+      if (!validStep2()){ e.preventDefault(); e.stopImmediatePropagation(); go(2); return; }
+    });
+    form.addEventListener('reset', () => setTimeout(() => { sync(); go(1); }, 0));
+
+    // kartu skema -> langsung pilih jenis kerjasamanya
+    document.querySelectorAll('[data-kj]').forEach(a => a.addEventListener('click', () => {
+      boxes().forEach(b => { b.checked = (b.value === a.dataset.kj); });
+      sync(); go(1);
+    }));
+    go(1);
+  })();
+
+  /* alur menjadi mitra: garis terisi mengikuti scroll */
+  (function(){
+    const list = document.getElementById('flowList'); if (!list) return;
+    const steps = Array.from(list.querySelectorAll('.flow-step')), n = steps.length;
+    let ticking = false;
+    function paint(p){
+      list.style.setProperty('--p', p.toFixed(3));
+      steps.forEach((s,i) => s.classList.toggle('on', p >= i/(n-1) - 0.001));
+    }
+    function update(){
+      ticking = false;
+      const r = list.getBoundingClientRect(), vh = window.innerHeight;
+      const p = Math.max(0, Math.min(1, (vh*0.72 - r.top) / (r.height + vh*0.1)));
+      paint(p);
+    }
+    if (prefersReducedMotion){ paint(1); return; }
+    const req = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
+    window.addEventListener('scroll', req, { passive:true });
+    window.addEventListener('resize', req);
+    update();
   })();
 
   /* form kerjasama: dikirim ke email lewat Web3Forms (lihat assets/form-config.js) */
