@@ -212,19 +212,111 @@
     .cert-badges{grid-template-columns:1fr 1fr;}
     .footer-grid{grid-template-columns:1fr;}
   }
+
+  /* ===== animasi halaman Tentang ===== */
+  #readBar{position:fixed;left:0;top:0;height:3px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none;}
+  .page-head h1.split{overflow:visible;}
+  .page-head h1 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em;}
+  .page-head h1 .w > span{display:inline-block;transform:translateY(112%);transition:transform .9s cubic-bezier(.16,.84,.24,1);transition-delay:calc(var(--i) * .08s + .1s);}
+  .page-head h1.go .w > span{transform:none;}
+  .page-head .eyebrow::before{transform:scaleX(0);transform-origin:left;transition:transform .9s .2s cubic-bezier(.16,.84,.44,1);}
+  .page-head .eyebrow.is-visible::before{transform:scaleX(1);}
+  .hero-slideshow{--py:0px;}
+  .hero-slide img{position:absolute;left:0;top:-9%;height:118%;translate:0 var(--py);transform:scale(1.14);}
+  .hero-slide.active img{animation:kenburns 7s ease-out both;}
+  @keyframes kenburns{from{transform:scale(1.14);}to{transform:scale(1);}}
+  .hero-slide-dots .dot{transition:width .4s ease,background .3s ease;}
+  .hero-slide-dots .dot.active{width:28px;border-radius:99px;}
+  .about-hero-banner .hero-slideshow::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(13,27,42,.28),rgba(13,27,42,0) 45%);pointer-events:none;}
+
+  .vm-card{position:relative;overflow:hidden;transition:transform .35s ease,box-shadow .35s ease;}
+  .vm-card:hover{transform:translateY(-4px);box-shadow:0 18px 36px rgba(13,27,42,.09);}
+  .vm-card::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform 1.1s .25s cubic-bezier(.16,.84,.44,1);}
+  .vm-card.is-visible::before{transform:scaleX(1);}
+  .vm-card ul{list-style:none;padding-left:0;counter-reset:m;}
+  .vm-card li{position:relative;padding-left:34px;counter-increment:m;opacity:0;transform:translateX(-14px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,.84,.44,1);transition-delay:calc(var(--i) * .13s + .35s);}
+  .vm-card li::before{content:counter(m);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--gold-deep);color:var(--gold-deep);font-family:'Archivo',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .vm-card.is-visible li{opacity:1;transform:none;}
+
+  .stat-card{position:relative;border-top:0;}
+  .stat-card::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--sand-line);}
+  .stat-card::after{content:"";position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform 1.2s .2s cubic-bezier(.16,.84,.44,1);}
+  .stat-card.is-visible::after{transform:scaleX(.28);}
+  .stat-icon{transform:scale(.4) rotate(-40deg);opacity:0;transition:transform .7s cubic-bezier(.34,1.56,.64,1) .15s,opacity .5s ease .15s;}
+  .stat-card.is-visible .stat-icon{transform:none;opacity:1;}
+  .stat-number{font-variant-numeric:tabular-nums;}
+
+  .proc-card{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1);}
+  .proc-card .photo img{transform:scale(1.3);transition:transform 1.4s cubic-bezier(.16,.84,.44,1),filter .6s ease;}
+  .proc-card.is-visible .photo img{transform:scale(1);}
+  .proc-card.is-visible:hover .photo img{transform:scale(1.07);filter:grayscale(.1) sepia(.1) saturate(1.1) brightness(.95);}
+  .proc-card h4{transition:color .3s;}
+  .proc-card:hover h4{color:var(--gold-deep);}
+
+  .kebersamaan-panel.active{animation:panelIn .55s ease both;}
+  @keyframes panelIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  .cert-badge{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1),box-shadow .3s,border-color .3s;}
+  .cert-badge .mark{transform:scale(.5) rotate(-25deg);transition:transform .7s cubic-bezier(.34,1.56,.64,1) .25s;}
+  .cert-badge.is-visible .mark{transform:none;}
+  .cert-badge.is-visible:hover{border-color:var(--gold-deep);box-shadow:0 10px 24px rgba(13,27,42,.08);}
+  .commit-card li{opacity:0;transform:translateX(-12px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(var(--i) * .14s + .3s);}
+  .commit-card.is-visible li{opacity:1;transform:none;}
+  .commit-card svg polyline{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .6s ease;transition-delay:calc(var(--i) * .14s + .55s);}
+  .commit-card.is-visible svg polyline{stroke-dashoffset:0;}
+  .outing-grid .photo img{transition:transform .8s cubic-bezier(.16,.84,.44,1),filter .6s;}
+  .outing-grid .photo:hover img{transform:scale(1.05);filter:grayscale(.1) sepia(.1) saturate(1.1);}
+  @media (prefers-reduced-motion:reduce){
+    .page-head h1 .w > span,.vm-card li,.commit-card li,.stat-icon,.cert-badge .mark{transform:none !important;opacity:1 !important;transition:none !important;}
+    .hero-slide.active img{animation:none;transform:none;}.kebersamaan-panel.active{animation:none;}
+    .stat-card::after{transition:none;}.proc-card .photo img{transform:none;}.commit-card svg polyline{stroke-dashoffset:0;transition:none;}
+  }
+
+  /* ===== parallax & scroll-scrub tambahan ===== */
+  .page-head{position:relative;}
+  .ghost-word{position:absolute;right:clamp(10px,4vw,60px);top:34px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(96px,17vw,240px);line-height:.9;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1.5px rgba(28,74,115,.16);pointer-events:none;user-select:none;z-index:0;white-space:nowrap;}
+  .page-head > *:not(.ghost-word){position:relative;z-index:1;}
+  .hero-slideshow{transform:scale(calc(.86 + .14 * var(--bp,1)));border-radius:calc((1 - var(--bp,1)) * 32px);will-change:transform;}
+  .about-hero-banner{overflow:hidden;position:relative;z-index:1;}
+  .hw{transition:opacity .35s ease,color .35s ease;opacity:.28;}
+  .hw.on{opacity:1;}
+  .vm-card.vision p{font-size:clamp(17px,1.7vw,21px);line-height:1.65;font-weight:600;}
+
+  .scroll-marquee{background:var(--ink);overflow:hidden;padding:34px 0;margin:10px 0 50px;position:relative;}
+  .scroll-marquee-track{display:flex;gap:46px;white-space:nowrap;width:max-content;will-change:transform;}
+  .scroll-marquee-track span{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(40px,7vw,96px);text-transform:uppercase;letter-spacing:-.01em;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(234,241,248,.5);}
+  .scroll-marquee-track span:nth-child(3n+2){color:var(--gold);-webkit-text-stroke:0;}
+  .scroll-marquee-track i{font-style:normal;color:var(--gold-light);font-size:clamp(28px,4vw,56px);align-self:center;}
+
+  .proc-wrap{position:relative;}
+  .proc-rail{position:relative;height:2px;background:var(--sand-line);margin:0 0 22px;}
+  .proc-rail i{position:absolute;left:0;top:-1px;height:4px;width:100%;background:var(--gold-deep);transform-origin:left;transform:scaleX(var(--pp,0));}
+  .proc-card{position:relative;}
+  .proc-no{position:absolute;top:10px;left:10px;z-index:3;min-width:34px;height:34px;padding:0 8px;border-radius:99px;background:rgba(13,27,42,.82);color:var(--sand);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.06em;transition:background .5s,color .5s,transform .5s cubic-bezier(.34,1.56,.64,1);}
+  .proc-card.lit .proc-no{background:var(--gold);color:var(--ink);transform:scale(1.12);}
+  .proc-card .photo{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.16,.84,.24,1);}
+  .proc-card.is-visible .photo{clip-path:inset(0 0 0 0);}
+  .tilt{transform-style:preserve-3d;will-change:transform;}
+  [data-par]{will-change:transform;}
+  .orb-deco{position:absolute;border-radius:50%;border:1.5px solid rgba(28,74,115,.16);pointer-events:none;z-index:0;}
+  .orb-deco.fill{border:0;background:radial-gradient(circle at 30% 30%,rgba(47,111,176,.16),rgba(47,111,176,0) 70%);}
+  .vision-mission-section,.cert-section,.process-section{position:relative;}
+  .vision-mission-section{overflow-x:clip;}
+  .page-head{overflow-x:clip;}
+  .vm-grid,.cert-section > *{position:relative;z-index:1;}
+  @media (prefers-reduced-motion:reduce){.hero-slideshow{transform:none;border-radius:0;}.hw{opacity:1;}.proc-card .photo{clip-path:none;}.scroll-marquee-track{transform:none !important;}}
 </style>
 <script src="assets/wa-config.js"></script>
 </head>
 <body>
+<div id="readBar" aria-hidden="true"></div>
 
 <div class="ribbon">
   <div class="ribbon-track">
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Sandal Pria</span><span class="dot">•</span>
     <span>Wanita</span><span class="dot">•</span>
     <span>Anak</span><span class="dot">•</span>
     <span>100% Kualitas Terjamin</span><span class="dot">•</span>
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Sandal Pria</span><span class="dot">•</span>
     <span>Wanita</span><span class="dot">•</span>
     <span>Anak</span><span class="dot">•</span>
@@ -252,8 +344,9 @@
 
 <!-- ============ HERO: BANNER SANDAL + VIDEO PROFIL ============ -->
 <div class="page-head">
+  <div class="ghost-word" data-par-top="0.28" aria-hidden="true">HILOS</div>
   <span class="eyebrow reveal">Tentang HILOS</span>
-  <h1 class="reveal">Cerita di Balik Setiap Langkah</h1>
+  <h1 class="split" id="aboutH1">Cerita di Balik Setiap Langkah</h1>
   <p class="reveal">Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.</p>
 </div>
 
@@ -282,20 +375,28 @@
 
 <!-- ============ VISI & MISI ============ -->
 <div class="vision-mission-section">
+  <div class="orb-deco" data-par="0.12" style="width:260px;height:260px;left:-90px;top:20px;" aria-hidden="true"></div>
+  <div class="orb-deco fill" data-par="-0.18" style="width:340px;height:340px;right:-120px;bottom:-40px;" aria-hidden="true"></div>
   <div class="vm-grid">
-    <div class="vm-card reveal">
+    <div class="vm-card vision reveal">
       <span class="vm-label">Visi</span>
       <p>Menjadi produsen alas kaki terpercaya di Indonesia yang mengutamakan kenyamanan, kualitas, dan keberlanjutan bagi setiap langkah pelanggan.</p>
     </div>
     <div class="vm-card reveal">
       <span class="vm-label">Misi</span>
       <ul>
-        <li>Menghadirkan produk berkualitas tinggi dengan harga yang kompetitif.</li>
-        <li>Mengembangkan inovasi desain secara berkelanjutan mengikuti kebutuhan pasar.</li>
-        <li>Memberdayakan tenaga kerja lokal dan mendukung pertumbuhan ekonomi daerah.</li>
-        <li>Menjaga kelestarian lingkungan di setiap tahap proses produksi.</li>
+        <li style="--i:0">Menghadirkan produk berkualitas tinggi dengan harga yang kompetitif.</li>
+        <li style="--i:1">Mengembangkan inovasi desain secara berkelanjutan mengikuti kebutuhan pasar.</li>
+        <li style="--i:2">Memberdayakan tenaga kerja lokal dan mendukung pertumbuhan ekonomi daerah.</li>
+        <li style="--i:3">Menjaga kelestarian lingkungan di setiap tahap proses produksi.</li>
       </ul>
     </div>
+  </div>
+</div>
+
+<div class="scroll-marquee" id="scrollMarquee" aria-hidden="true">
+  <div class="scroll-marquee-track" id="scrollMarqueeTrack">
+    <span>Kenyamanan</span><i>✦</i><span>Kualitas</span><i>✦</i><span>Keberlanjutan</span><i>✦</i><span>Kenyamanan</span><i>✦</i><span>Kualitas</span><i>✦</i><span>Keberlanjutan</span><i>✦</i><span>Kenyamanan</span><i>✦</i><span>Kualitas</span><i>✦</i><span>Keberlanjutan</span><i>✦</i>
   </div>
 </div>
 
@@ -332,32 +433,40 @@
 
 
 <div class="process-section">
+  <div class="proc-wrap" id="procWrap">
+  <div class="proc-rail" aria-hidden="true"><i></i></div>
   <div class="grid-5">
     <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">01</span>
       <div class="photo"><img src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Injection Molding"></div>
       <h4>Injection Molding</h4>
       <p>Teknologi injeksi modern untuk hasil presisi dan kuat.</p>
     </div>
     <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">02</span>
       <div class="photo"><img src="https://images.pexels.com/photos/19316517/pexels-photo-19316517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="EVA Compounding"></div>
       <h4>EVA Compounding</h4>
       <p>Bahan baku berkualitas dengan formulasi khusus HILOS.</p>
     </div>
     <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">03</span>
       <div class="photo"><img src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Automatic Production Line"></div>
       <h4>Automatic Production Line</h4>
       <p>Sistem otomatis untuk efisiensi dan konsistensi kualitas.</p>
     </div>
     <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">04</span>
       <div class="photo"><img src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Quality Control"></div>
       <h4>Quality Control</h4>
       <p>Pengecekan ketat di setiap tahap produksi.</p>
     </div>
     <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">05</span>
       <div class="photo"><img src="https://images.pexels.com/photos/4480982/pexels-photo-4480982.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Warehouse & Logistics"></div>
       <h4>Warehouse &amp; Logistics</h4>
       <p>Manajemen stok rapi dan pengiriman tepat waktu ke seluruh Indonesia.</p>
     </div>
+  </div>
   </div>
 </div>
 
@@ -421,7 +530,7 @@
 
   <div class="kebersamaan-panel" id="panel-outing" hidden>
     <div class="outing-grid">
-      <div class="outing-main photo reveal-scale">
+      <div class="outing-main photo reveal-scale" data-tilt>
         <img src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
       </div>
       <div class="outing-side">
@@ -459,10 +568,10 @@
   <div class="commit-card reveal-scale">
     <h3>Komitmen Kami</h3>
     <ul>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bahan baku aman dan berkualitas</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Proses produksi ramah lingkungan</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Produk tahan lama dan nyaman digunakan</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kepuasan pelanggan adalah prioritas utama</li>
+      <li style="--i:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bahan baku aman dan berkualitas</li>
+      <li style="--i:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Proses produksi ramah lingkungan</li>
+      <li style="--i:2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Produk tahan lama dan nyaman digunakan</li>
+      <li style="--i:3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kepuasan pelanggan adalah prioritas utama</li>
     </ul>
   </div>
 </div>
@@ -534,6 +643,136 @@
     }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
     revealTargets.forEach(el => io.observe(el));
   }
+
+
+  /* ---- judul per kata ---- */
+  (function(){
+    const h = document.getElementById('aboutH1'); if (!h) return;
+    const words = h.textContent.trim().split(/\s+/);
+    h.setAttribute('aria-label', h.textContent.trim());
+    h.innerHTML = words.map((w,i) => '<span class="w" aria-hidden="true" style="--i:'+i+'"><span>'+w+'</span></span>').join(' ');
+    requestAnimationFrame(() => requestAnimationFrame(() => h.classList.add('go')));
+  })();
+
+  /* ---- jeda berurutan untuk kartu dalam satu grid ---- */
+  document.querySelectorAll('.stat-row,.grid-3,.grid-4,.grid-5,.cert-badges,.outing-side').forEach(g => {
+    Array.from(g.children).forEach((el, i) => {
+      if (!el.matches('.reveal,.reveal-scale')) return;
+      el.style.transitionDelay = Math.min(i * 0.09, 0.55) + 's';
+      setTimeout(() => { el.style.transitionDelay = ''; }, 2400);
+    });
+  });
+
+  /* ---- angka pabrik menghitung naik ---- */
+  (function(){
+    const nums = Array.from(document.querySelectorAll('.stat-row .stat-number'));
+    const parsed = nums.map(el => {
+      const m = el.textContent.trim().match(/^(\D*)([\d.,]+)(.*)$/);
+      return m ? { el, pre:m[1], to:parseInt(m[2].replace(/[.,]/g,''),10), suf:m[3], orig:el.textContent } : null;
+    }).filter(Boolean);
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
+    parsed.forEach(o => { o.el.textContent = o.pre + '0' + o.suf; });
+    const io2 = new IntersectionObserver((ents) => {
+      ents.forEach(e => {
+        if (!e.isIntersecting) return; io2.unobserve(e.target);
+        const o = parsed.find(x => x.el === e.target), t0 = performance.now() + 250, dur = 1700;
+        (function tick(t){
+          const k = Math.max(0, Math.min(1, (t - t0) / dur)), v = Math.round(o.to * (1 - Math.pow(1 - k, 4)));
+          o.el.textContent = o.pre + v.toLocaleString('id-ID') + o.suf;
+          if (k < 1) requestAnimationFrame(tick); else o.el.textContent = o.orig;
+        })(t0);
+      });
+    }, { threshold:.6 });
+    parsed.forEach(o => io2.observe(o.el));
+  })();
+
+  /* ---- parallax foto banner + progress baca ---- */
+  (function(){
+    const ss = document.getElementById('heroSlideshow'), bar = document.getElementById('readBar');
+    let tk = false;
+    function upd(){
+      tk = false;
+      const de = document.documentElement, max = de.scrollHeight - innerHeight;
+      if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, scrollY / max) : 0).toFixed(4) + ')';
+      if (ss && !prefersReducedMotion){
+        const r = ss.getBoundingClientRect(), c = (r.top + r.height/2 - innerHeight/2) / innerHeight;   // -1..1
+        ss.style.setProperty('--py', (Math.max(-1, Math.min(1, c)) * -r.height * 0.07).toFixed(1) + 'px');
+      }
+    }
+    addEventListener('scroll', () => { if (!tk){ tk = true; requestAnimationFrame(upd); } }, { passive:true });
+    addEventListener('resize', upd); upd();
+  })();
+
+
+  /* ---- mesin scroll: parallax, scrub banner, sorot teks visi, marquee, rel proses ---- */
+  (function(){
+    const clamp = (v,a=0,b=1) => Math.min(b, Math.max(a, v));
+    const vh = () => window.innerHeight;
+    // pecah teks Visi jadi kata
+    const vp = document.querySelector('.vm-card.vision p');
+    let words = [];
+    if (vp){
+      vp.innerHTML = vp.textContent.trim().split(/\s+/).map(w => '<span class="hw">'+w+'</span>').join(' ');
+      words = Array.from(vp.querySelectorAll('.hw'));
+    }
+    const pars = Array.from(document.querySelectorAll('[data-par]'));
+    const ss = document.getElementById('heroSlideshow');
+    const mq = document.getElementById('scrollMarquee'), mqt = document.getElementById('scrollMarqueeTrack');
+    const wrap = document.getElementById('procWrap');
+    const cards = wrap ? Array.from(wrap.querySelectorAll('.proc-card')) : [];
+    if (prefersReducedMotion){ words.forEach(w => w.classList.add('on')); cards.forEach(c => c.classList.add('lit')); wrap && wrap.style.setProperty('--pp', 1); return; }
+
+    function frame(){
+      const H = vh();
+      const gw = document.querySelector('[data-par-top]');
+      if (gw){ const y = window.scrollY; gw.style.translate = '0 ' + (y * parseFloat(gw.dataset.parTop)).toFixed(1) + 'px'; gw.style.opacity = (1 - clamp(y / (H * 0.7))).toFixed(3); }
+      pars.forEach(el => {
+        const r = el.parentElement.getBoundingClientRect();
+        const c = (r.top + r.height/2 - H/2);
+        el.style.translate = '0 ' + (c * -parseFloat(el.dataset.par)).toFixed(1) + 'px';
+      });
+      if (ss){ const r = ss.parentElement.getBoundingClientRect(); ss.style.setProperty('--bp', clamp((H*0.95 - r.top) / (H*0.55)).toFixed(3)); }
+      if (words.length){
+        const r = vp.getBoundingClientRect();
+        const p = clamp((H*0.85 - r.top) / (H*0.45));
+        const n = Math.round(p * words.length);
+        words.forEach((w,i) => w.classList.toggle('on', i < n));
+      }
+      if (mq){
+        const r = mq.getBoundingClientRect(), p = (r.top + r.height/2) / H;     // ~1.1 -> -0.1
+        const half = mqt.scrollWidth / 3;
+        mqt.style.transform = 'translateX(' + (-half * clamp(1 - p + 0.05, 0, 1.2)).toFixed(1) + 'px)';
+      }
+      if (wrap){
+        const r = wrap.getBoundingClientRect();
+        const p = clamp((H*0.8 - r.top) / (r.height * 0.85));
+        wrap.style.setProperty('--pp', p.toFixed(3));
+        cards.forEach((c,i) => c.classList.toggle('lit', p >= (i + 0.4) / cards.length));
+      }
+    }
+    let tk = false;
+    const req = () => { if (!tk){ tk = true; requestAnimationFrame(() => { tk = false; frame(); }); } };
+    addEventListener('scroll', req, { passive:true }); addEventListener('resize', req);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(req);
+    frame();
+  })();
+
+  /* ---- miring 3D mengikuti kursor (hanya perangkat dengan mouse) ---- */
+  (function(){
+    if (prefersReducedMotion || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    document.querySelectorAll('.proc-card .photo, .outing-grid .photo, .outing-grid [data-tilt]').forEach(el => {
+      el.classList.add('tilt');
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.style.transition = 'transform .08s linear, clip-path 1.1s cubic-bezier(.16,.84,.24,1)';
+        el.style.transform = 'perspective(800px) rotateY(' + (x*9).toFixed(2) + 'deg) rotateX(' + (-y*9).toFixed(2) + 'deg) scale(1.02)';
+      });
+      el.addEventListener('pointerleave', () => {
+        el.style.transition = 'transform .6s cubic-bezier(.16,.84,.24,1), clip-path 1.1s cubic-bezier(.16,.84,.24,1)';
+        el.style.transform = '';
+      });
+    });
+  })();
 
   /* outing video placeholder modal (reuse simple alert-style overlay) */
   document.getElementById('outingVideo').addEventListener('click', () => {
