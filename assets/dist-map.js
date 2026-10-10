@@ -63,6 +63,19 @@
   .dm-pop.open{opacity:1;transform:none;}
   .dm-pop b{display:block;font-family:'Archivo',sans-serif;font-size:15px;}
   .dm-pop span{font-size:12.5px;color:rgba(234,241,248,.72);}
+
+  /* animasi muncul saat peta terlihat: titik satu per satu + hitung naik */
+  .dm-pin .pin-dot,.dm-pin text{transition:fill .2s,opacity .5s ease,transform .6s cubic-bezier(.34,1.56,.64,1);transform-box:fill-box;transform-origin:center;}
+  .dm-pre .dm-pin .pin-dot{opacity:0;transform:scale(0);}
+  .dm-pre .dm-pin text{opacity:0;}
+  .dm-pre .dm-pin .pin-ping{opacity:0;animation:none;}
+  .dm-pre .dm-pin.in .pin-dot{opacity:1;transform:scale(1);}
+  .dm-pre .dm-pin.in text{opacity:1;}
+  .dm-pre .dm-pin.in .pin-ping{opacity:.5;animation:dmPing 2.4s ease-out infinite;}
+  .dm-pre .dm-row{opacity:0;transform:translateX(-14px);}
+  .dm-pre .dm-row.in{opacity:1;transform:none;}
+  .dm-row{transition:border-color .2s,transform .45s ease,background .2s,opacity .45s ease;}
+  .dm-n{text-decoration:none;font-variant-numeric:tabular-nums;}
   @media (max-width:900px){.dm{padding:76px 18px;}.dm-grid{grid-template-columns:1fr;gap:28px;}.dm-pin text{font-size:34px;}}
   @media (prefers-reduced-motion:reduce){.dm-pin .pin-ping{animation:none;}}
   `;
@@ -86,7 +99,7 @@
       </g>`).join('');
 
     const rows = CITIES.map(c => `
-      <li><button type="button" class="dm-row" data-id="${c.id}"><i></i><strong>${esc(c.name)}</strong><span>${Number(c.count)} mitra</span></button></li>`).join('');
+      <li><button type="button" class="dm-row" data-id="${c.id}"><i></i><strong>${esc(c.name)}</strong><span><u class="dm-n" data-n="${Number(c.count)}">${Number(c.count)}</u> mitra</span></button></li>`).join('');
 
     host.innerHTML = `
   <style>${CSS}</style>
@@ -104,7 +117,7 @@
           <div class="dm-pop" id="dmPop"><b id="dmPopName"></b><span id="dmPopCount"></span></div>
         </div>
         <div class="dm-side">
-          <div class="dm-total"><b>${CITIES.length}</b><span>kota dengan ${totalPartner} mitra aktif</span></div>
+          <div class="dm-total"><b class="dm-n" data-n="${CITIES.length}">${CITIES.length}</b><span>kota dengan <u class="dm-n" data-n="${totalPartner}">${totalPartner}</u> mitra aktif</span></div>
           <ul class="dm-list">${rows}</ul>
           <div class="dm-cta">
             <p>Belum ada mitra di kota Anda? Jadilah distributor atau reseller HILOS di sana.</p>
@@ -129,6 +142,37 @@
     });
     host.querySelectorAll('.dm-row').forEach(r => r.addEventListener('click', () => select(r.dataset.id)));
     select(CITIES[0].id);
+
+    /* reveal: titik muncul satu per satu + angka hitung naik (hormati reduced-motion) */
+    (function(){
+      const sec = host.querySelector('.dm');
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!sec || reduce || !('IntersectionObserver' in window)) return;
+      const nums = Array.from(host.querySelectorAll('.dm-n'));
+      const countUp = (el, dur) => {
+        const to = Number(el.dataset.n) || 0, t0 = performance.now();
+        el.textContent = '0';
+        (function tick(t){
+          const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+          el.textContent = String(Math.round(to * e));
+          if (k < 1) requestAnimationFrame(tick); else el.textContent = String(to);
+        })(t0);
+      };
+      sec.classList.add('dm-pre');
+      nums.forEach(n => { n.textContent = '0'; });
+      const pins = Array.from(host.querySelectorAll('.dm-pin')), rows = Array.from(host.querySelectorAll('.dm-row'));
+      const step = Math.max(70, Math.min(220, 2200 / Math.max(1, pins.length)));
+      const io = new IntersectionObserver((ents) => {
+        if (!ents.some(e => e.isIntersecting)) return;
+        io.disconnect();
+        nums.forEach(n => { if (!n.closest('.dm-row')) countUp(n, 1600); });
+        pins.forEach((p, i) => setTimeout(() => {
+          p.classList.add('in');
+          if (rows[i]){ rows[i].classList.add('in'); const n = rows[i].querySelector('.dm-n'); if (n) countUp(n, 900); }
+        }, 250 + i * step));
+      }, { threshold: 0.3 });
+      io.observe(host.querySelector('.dm-map') || sec);
+    })();
   }
 
   async function boot(){
