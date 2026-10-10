@@ -473,6 +473,55 @@
 
   .stat-label{font-size:13px;line-height:1.5;color:#6b5d4c;max-width:180px;padding-bottom:32px;}
 
+
+  /* ============ HERO PARALLAX (memakai properti translate/scale agar tidak bentrok dengan efek reveal) ============ */
+  .hero{--hs:0;--hp:0;}
+  .hero-bg{translate:0 calc(var(--hs) * 0.3px);scale:calc(1 + var(--hp) * 0.08);will-change:translate,scale;}
+  .hero-copy{translate:0 calc(var(--hs) * -0.16px);opacity:calc(1 - var(--hp) * 1.25);will-change:translate,opacity;}
+  .hero-proof{translate:0 calc(var(--hs) * -0.32px);}
+  .hero .hero-proof.is-visible{opacity:calc(1 - var(--hp) * 1.4);}
+  .hero .scroll-cue,.hero-slide-nav{opacity:calc(1 - var(--hp) * 2.5);}
+
+  /* ============ ANGKA HILOS ============ */
+  .stats-band{background:var(--ink);color:var(--sand);padding:70px clamp(20px,5vw,64px) 64px;position:relative;}
+  .stats-band .stat-row{margin:0 auto;}
+  .stats-band .stat-card{border-color:var(--on-dark-line);padding-top:30px;}
+  .stats-band .stat-icon{border-color:var(--on-dark-line);color:var(--gold-light);}
+  .stats-band .stat-number{color:#fff;font-size:clamp(34px,4vw,56px);}
+  .stats-band .stat-label{color:var(--on-dark-muted);padding-bottom:6px;}
+
+  /* ============ MENGAPA HILOS (scroll vertikal -> kartu bergeser ke samping) ============ */
+  .why{background:var(--sand);position:relative;}
+  .why-track{height:300vh;position:relative;}
+  .why-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:clamp(22px,4vh,44px);padding-top:96px;}
+  .why-head{padding:0 clamp(20px,5vw,64px);max-width:1360px;width:100%;margin:0 auto;}
+  .why-head .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-deep);}
+  .why-head .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);}
+  .why-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,4vw,50px);line-height:1.1;margin-top:14px;color:var(--ink);}
+  .why-head h2 em{font-style:normal;color:var(--gold);}
+  .why-rail{display:flex;gap:clamp(14px,2vw,26px);padding:0 clamp(20px,5vw,64px);width:max-content;will-change:transform;}
+  .why-card{position:relative;flex:0 0 auto;width:clamp(260px,34vw,440px);min-height:clamp(250px,40vh,360px);padding:30px 28px;background:#fff;border:1px solid var(--sand-line);border-radius:4px;display:flex;flex-direction:column;overflow:hidden;text-decoration:none;color:var(--ink);box-shadow:0 18px 40px -26px rgba(13,27,42,.4);}
+  .why-no{position:absolute;right:14px;top:-6px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(90px,10vw,140px);line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(28,74,115,.16);pointer-events:none;}
+  .why-ic{width:48px;height:48px;border-radius:50%;border:1px solid var(--sand-line);display:flex;align-items:center;justify-content:center;color:var(--gold-deep);margin-bottom:auto;background:var(--paper);}
+  .why-ic svg{width:22px;height:22px;}
+  .why-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(19px,1.8vw,24px);margin-top:26px;}
+  .why-card p{margin-top:10px;font-size:14px;line-height:1.65;color:#5b6b7b;}
+  .why-cta{background:var(--ink);color:#fff;justify-content:flex-end;border-color:var(--ink);}
+  .why-cta h3{color:#fff;margin-top:0;}
+  .why-cta p{color:var(--on-dark-muted);}
+  .why-cta .why-go{margin-top:20px;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);}
+  .why-cta:hover .why-go{gap:14px;}
+  .why-progress{margin:0 clamp(20px,5vw,64px);height:2px;background:var(--sand-line);position:relative;max-width:1360px;width:calc(100% - 2 * clamp(20px,5vw,64px));align-self:center;}
+  .why-progress i{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--gold);transform-origin:left;transform:scaleX(0);}
+  @media (max-width:700px){ .why-card{width:78vw;} .why-track{height:260vh;} }
+  @media (prefers-reduced-motion:reduce){
+    .why-track{height:auto;}
+    .why-stage{position:relative;height:auto;overflow:visible;padding:80px 0;}
+    .why-rail{width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;}
+    .why-card{scroll-snap-align:start;}
+    .why-progress{display:none;}
+  }
+
   /* ============ CHARITY ============ */
   .charity{background:var(--ink);color:var(--sand);padding:120px clamp(20px,5vw,64px);position:relative;overflow:hidden;}
   .charity::before{content:"";position:absolute;right:-180px;top:-180px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(111,163,212,0.16),transparent 65%);pointer-events:none;}
@@ -1005,6 +1054,64 @@
   </div>
 </section>
 
+<section class="stats-band" id="angka" aria-label="HILOS dalam angka">
+  <div class="stat-row">
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <span class="stat-number" data-target="1000" data-suffix="+">0</span>
+      <div class="stat-underline"></div>
+      <div class="stat-label">Mitra aktif di seluruh Indonesia</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <span class="stat-number" data-target="34">0</span>
+      <div class="stat-underline"></div>
+      <div class="stat-label">Provinsi terjangkau</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg></div>
+      <span class="stat-number" data-target="100" data-suffix="%">0</span>
+      <div class="stat-underline"></div>
+      <div class="stat-label">Customer puas</div>
+    </div>
+    <div class="stat-card reveal">
+      <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <span class="stat-number" data-static="2014">2014</span>
+      <div class="stat-underline"></div>
+      <div class="stat-label">Berdiri sejak, lebih dari satu dekade berpengalaman</div>
+    </div>
+  </div>
+</section>
+
+<section class="why" id="why" aria-label="Mengapa HILOS">
+  <div class="why-track" id="whyTrack">
+    <div class="why-stage">
+      <div class="why-head">
+        <span class="eyebrow">Mengapa HILOS</span>
+        <h2>Dibuat untuk <em>setiap langkah</em></h2>
+      </div>
+      <div class="why-rail" id="whyRail">
+        <article class="why-card"><span class="why-no">01</span>
+          <div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18c0-2 2-3 4-3h10c2 0 4 1 4 3v1H3v-1Z"/><path d="M7 15V8a3 3 0 0 1 3-3h2l3 4v6"/></svg></div>
+          <h3>Nyaman Seharian</h3><p>Desain modern yang ringan dan empuk, enak dipakai dari pagi sampai malam untuk semua aktivitas.</p></article>
+        <article class="why-card"><span class="why-no">02</span>
+          <div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Kualitas Terjamin</h3><p>Bahan berkualitas dan proses produksi yang terjaga, jadi tahan lama dan awet dipakai.</p></article>
+        <article class="why-card"><span class="why-no">03</span>
+          <div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.5"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-3.3 3-6 7-6s7 2.7 7 6M15 14.5c3 0 6 1.7 6 4.5"/></svg></div>
+          <h3>Untuk Satu Keluarga</h3><p>Pilihan sepatu dan sandal untuk pria, wanita, dan anak, semuanya dalam satu merek.</p></article>
+        <article class="why-card"><span class="why-no">04</span>
+          <div class="why-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg></div>
+          <h3>Ada di Seluruh Indonesia</h3><p>Dipercaya mitra di 34 provinsi, sehingga produk HILOS mudah ditemukan dan dipesan di kotamu.</p></article>
+        <a class="why-card why-cta" href="produk.html">
+          <h3>Temukan pasanganmu</h3><p>Lihat koleksi sepatu dan sandal HILOS terbaru.</p>
+          <span class="why-go">Lihat Produk &rarr;</span></a>
+      </div>
+      <div class="why-progress"><i id="whyBar"></i></div>
+    </div>
+  </div>
+</section>
+
 <section class="charity" id="tentang">
   <div class="charity-inner">
     <div class="charity-head">
@@ -1324,6 +1431,38 @@
     }, { threshold:0.25, rootMargin:'0px 0px -40px 0px' });
     revealTargets.forEach(el => revealObserver.observe(el));
   }
+
+  /* ---------- hero parallax saat scroll ---------- */
+  (function(){
+    const h = document.querySelector('.hero'); if (!h || prefersReducedMotion) return;
+    let t = false;
+    function u(){ t = false; const H = h.offsetHeight || 1, y = Math.min(Math.max(window.scrollY, 0), H); h.style.setProperty('--hs', y.toFixed(1)); h.style.setProperty('--hp', (y / H).toFixed(3)); }
+    window.addEventListener('scroll', () => { if (!t){ t = true; requestAnimationFrame(u); } }, { passive:true });
+    window.addEventListener('resize', u); u();
+  })();
+
+  /* ---------- "Mengapa HILOS": scroll ke bawah -> kartu bergeser ke samping ---------- */
+  (function(){
+    const track = document.getElementById('whyTrack'), rail = document.getElementById('whyRail'), bar = document.getElementById('whyBar');
+    if (!track || !rail || prefersReducedMotion) return;
+    let travel = 0, t = false;
+    function measure(){
+      travel = Math.max(0, rail.scrollWidth - window.innerWidth);
+      track.style.height = (travel + window.innerHeight) + 'px';   // jarak scroll = jarak geser kartu
+    }
+    function upd(){
+      t = false;
+      const top = track.getBoundingClientRect().top;
+      const p = Math.min(1, Math.max(0, -top / Math.max(1, track.offsetHeight - window.innerHeight)));
+      rail.style.transform = 'translate3d(' + (-travel * p).toFixed(1) + 'px,0,0)';
+      bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    }
+    const req = () => { if (!t){ t = true; requestAnimationFrame(upd); } };
+    window.addEventListener('scroll', req, { passive:true });
+    window.addEventListener('resize', () => { measure(); req(); });
+    window.addEventListener('load', () => { measure(); upd(); });
+    measure(); upd();
+  })();
 
   /* ---------- hero cursor-follow spotlight ---------- */
   const hero = document.querySelector('.hero');
