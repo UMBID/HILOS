@@ -520,6 +520,42 @@
   .hist-list .who{ font-weight:600; word-break:break-all; }
   .pager{ display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; margin:16px 0 8px; }
   @media (max-width:760px){ .adm-form{ grid-template-columns:1fr; } .topbar .who-mini{ display:none; } }
+
+  /* ---------- Konten Halaman ---------- */
+  .cm-bar{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .cm-bar select{ padding:10px 12px; border:1px solid var(--sand-line); border-radius:6px; background:#fff; font-size:14px; }
+  .cm-status{ font-size:12.5px; color:#6b6058; }
+  .cm-status b{ color:var(--gold-deep); }
+  .cm-sec{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; margin-bottom:16px; overflow:hidden; }
+  .cm-sec > summary{ list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:.03em; }
+  .cm-sec > summary::-webkit-details-marker{ display:none; }
+  .cm-sec > summary small{ font-family:'Inter',sans-serif; font-weight:400; text-transform:none; letter-spacing:0; color:#8a8078; font-size:12px; }
+  .cm-sec > summary::after{ content:"＋"; font-weight:400; color:var(--gold-deep); }
+  .cm-sec[open] > summary::after{ content:"－"; }
+  .cm-body{ padding:4px 20px 20px; border-top:1px solid var(--sand-line); }
+  .cm-help{ font-size:12px; color:#8a8078; margin:12px 0; }
+  .cm-list{ display:flex; flex-direction:column; gap:12px; }
+  .cm-item{ display:grid; grid-template-columns:96px 1fr auto; gap:14px; align-items:start; padding:12px; border:1px solid var(--sand-line); border-radius:8px; background:var(--paper); }
+  .cm-thumb{ position:relative; width:96px; height:96px; border-radius:6px; overflow:hidden; background:#dfe8f0; cursor:pointer; border:1px dashed #9db3c7; }
+  .cm-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .cm-thumb span{ position:absolute; inset:auto 0 0 0; background:rgba(13,27,42,.75); color:#fff; font-size:10.5px; text-align:center; padding:4px 2px; letter-spacing:.04em; text-transform:uppercase; }
+  .cm-thumb.busy::before{ content:"Mengunggah…"; position:absolute; inset:0; z-index:2; background:rgba(255,255,255,.85); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; }
+  .cm-fields{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+  .cm-fields input, .cm-fields textarea{ width:100%; padding:9px 11px; border:1px solid var(--sand-line); border-radius:6px; background:#fff; font-size:13px; font-family:inherit; }
+  .cm-fields textarea{ min-height:52px; resize:vertical; }
+  .cm-fields .cm-lbl{ font-size:11px; font-weight:600; color:#6b6058; text-transform:uppercase; letter-spacing:.04em; margin-bottom:-4px; }
+  .cm-ctrl{ display:flex; flex-direction:column; gap:6px; }
+  .cm-ctrl button{ width:32px; height:32px; border:1px solid var(--sand-line); background:#fff; border-radius:6px; font-size:14px; line-height:1; }
+  .cm-ctrl button:hover:not(:disabled){ border-color:var(--gold); }
+  .cm-ctrl button:disabled{ opacity:.35; cursor:default; }
+  .cm-ctrl .cm-del:hover{ border-color:var(--danger); color:var(--danger); }
+  .cm-add{ margin-top:12px; }
+  .cm-sub{ font-family:'Archivo',sans-serif; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--gold-deep); margin:16px 0 10px; }
+  .cm-outing-side{ display:grid; grid-template-columns:repeat(4,96px); gap:12px; }
+  .cm-savebar{ position:sticky; bottom:0; background:rgba(245,249,252,.95); backdrop-filter:blur(6px); border-top:1px solid var(--sand-line); padding:12px 0; margin-top:8px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; z-index:5; }
+  .cm-dirty{ font-size:12px; color:var(--danger); font-weight:600; display:none; }
+  .cm-dirty.show{ display:inline; }
+  @media (max-width:700px){ .cm-item{ grid-template-columns:80px 1fr; } .cm-thumb{ width:80px; height:80px; } .cm-ctrl{ grid-column:1 / -1; flex-direction:row; } .cm-outing-side{ grid-template-columns:repeat(2,96px); } }
 </style>
 </head>
 <body>
@@ -560,6 +596,7 @@
       <button class="tab-nav-btn active" data-view="produkView">Kelola Produk</button>
       <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
       <button class="tab-nav-btn" data-view="mapView">Peta Distribusi</button>
+      <button class="tab-nav-btn" data-view="contentView">Konten Halaman</button>
       <button class="tab-nav-btn" data-view="historyView">Riwayat</button>
       <button class="tab-nav-btn" data-view="adminsView" id="tabAdmins" style="display:none;">Kelola Admin</button>
     </div>
@@ -695,6 +732,29 @@
       </div>
     </div>
     <!-- /historyView -->
+
+    <div id="contentView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Konten Halaman</h1>
+          <p>Ganti foto dan teks tiap menu di website. Bagian yang belum pernah disimpan tetap memakai template bawaan.</p>
+        </div>
+      </div>
+      <div class="cm-bar">
+        <label for="cmPage" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#6b6058;">Menu</label>
+        <select id="cmPage"><option value="tentang">Tentang Kami</option></select>
+        <span class="cm-status" id="cmStatus"></span>
+      </div>
+      <div id="cmEditor"></div>
+      <div class="cm-savebar">
+        <button class="btn btn-gold" id="cmSave">Simpan Perubahan</button>
+        <button class="btn btn-outline" id="cmReset">Kembalikan ke Template</button>
+        <span class="cm-dirty" id="cmDirty">Ada perubahan yang belum disimpan</span>
+      </div>
+      <p class="hint" id="cmNote" style="margin-top:10px;"></p>
+      <input type="file" id="cmFile" accept="image/*" multiple style="display:none;">
+    </div>
+    <!-- /contentView -->
 
     <div id="adminsView" class="view" style="display:none;">
       <div class="page-head">
@@ -2551,11 +2611,218 @@
       document.querySelectorAll('.view').forEach(v => v.style.display = (v.id === btn.dataset.view) ? '' : 'none');
       if (btn.dataset.view === 'top10View') loadTop10();
       if (btn.dataset.view === 'mapView') loadCities();
+      if (btn.dataset.view === 'contentView') loadContent();
       if (btn.dataset.view === 'historyView') loadHistory(true);
       if (btn.dataset.view === 'adminsView') loadAdmins();
     });
   });
 
+
+
+  /* ---------------- KONTEN HALAMAN ---------------- */
+  const PX = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
+  const CM_DEFAULTS = {
+    tentang: {
+      banner: [PX(6633324,1600), PX(1904770,1600), PX(2529148,1600), PX(1478442,1600)],
+      pabrik: [
+        { img:PX(8973680,400), title:'Injection Molding', desc:'Teknologi injeksi modern untuk hasil presisi dan kuat.' },
+        { img:PX(19316517,400), title:'EVA Compounding', desc:'Bahan baku berkualitas dengan formulasi khusus HILOS.' },
+        { img:PX(5156696,400), title:'Automatic Production Line', desc:'Sistem otomatis untuk efisiensi dan konsistensi kualitas.' },
+        { img:PX(31451008,400), title:'Quality Control', desc:'Pengecekan ketat di setiap tahap produksi.' },
+        { img:PX(4480982,400), title:'Warehouse & Logistics', desc:'Manajemen stok rapi dan pengiriman tepat waktu ke seluruh Indonesia.' }
+      ],
+      event: [
+        { img:PX(7551659,400), title:'Pameran INAFOOTWEAR 2025', desc:'HILOS turut serta memamerkan koleksi terbaru.' },
+        { img:PX(8007127,400), title:'Sponsor Turnamen Futsal', desc:'Mendukung komunitas olahraga di sekitar pabrik.' },
+        { img:PX(6157228,400), title:'Gathering Mitra', desc:'Silaturahmi tahunan bersama reseller & distributor.' },
+        { img:PX(1595391,400), title:'Peluncuran Koleksi Baru', desc:'Perkenalan lini produk terbaru ke publik.' }
+      ],
+      csr: [
+        { img:PX(6647037,400), title:'Berbagi Kasih', desc:'Bantuan untuk panti asuhan dan yayasan: sandal, kebutuhan sehari-hari, dan kebersamaan.' },
+        { img:PX(8617815,400), title:'Berbagi Sembako Rutin', desc:'Pembagian paket sembako berkala untuk warga sekitar yang membutuhkan.' },
+        { img:PX(6646918,400), title:'Bantuan Korban Bencana', desc:'Penggalangan dan penyaluran bantuan langsung untuk korban bencana alam.' }
+      ],
+      outing: {
+        main: PX(7568952,800),
+        side: [PX(1963622,500), PX(8456270,500), PX(7693713,500), PX(7568964,500)],
+        video: { img:PX(1963622,1000), title:'Company Outing 2024', label:'Watch Video · 02:45' }
+      }
+    }
+  };
+  const CM_SECTIONS = {
+    tentang: [
+      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, help:'Disarankan foto lebar (landscape), minimal 1600 px.' },
+      { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, help:'Foto persegi lebih rapi. Urutan di sini = nomor 01, 02, … di website.' },
+      { key:'event', title:'Kebersamaan — Event', sub:'Tab Event', kind:'cards', max:8 },
+      { key:'csr', title:'Kebersamaan — CSR', sub:'Tab CSR', kind:'cards', max:6 },
+      { key:'outing', title:'Kebersamaan — Outing', sub:'Tab Outing: 1 foto besar, 4 foto kecil, 1 kartu video', kind:'outing' }
+    ]
+  };
+
+  let cmData = null, cmHasRow = false, cmDirty = false, cmUploadCb = null, cmUploadMulti = false;
+  const cmPageSel = document.getElementById('cmPage'), cmEditor = document.getElementById('cmEditor');
+  const cmNote = document.getElementById('cmNote'), cmStatus = document.getElementById('cmStatus'), cmFile = document.getElementById('cmFile');
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+  const escA = (t) => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+  function cmSetDirty(v){ cmDirty = v; document.getElementById('cmDirty').classList.toggle('show', v); }
+
+  async function loadContent(){
+    cmNote.textContent = '';
+    const page = cmPageSel.value;
+    const { data, error } = await sb.from('site_content').select('data, updated_at, updated_by').eq('page', page).maybeSingle();
+    if (error){
+      cmNote.innerHTML = 'Tabel konten belum dibuat. Jalankan file <code>supabase-content.sql</code> di Supabase SQL Editor, lalu muat ulang halaman ini.';
+    }
+    cmHasRow = !!(data && data.data);
+    const base = clone(CM_DEFAULTS[page]), saved = cmHasRow ? data.data : {};
+    cmData = {};
+    Object.keys(base).forEach(k => { cmData[k] = (saved[k] != null) ? saved[k] : base[k]; });
+    if (cmHasRow){
+      const d = data.updated_at ? new Date(data.updated_at).toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' }) : '';
+      cmStatus.innerHTML = 'Memakai <b>konten dari admin</b>' + (d ? ' · terakhir disimpan ' + d : '') + (data.updated_by ? ' oleh ' + escA(data.updated_by) : '');
+    } else {
+      cmStatus.innerHTML = 'Memakai <b>template bawaan</b> (belum pernah disimpan)';
+    }
+    cmSetDirty(false);
+    renderContentEditor();
+  }
+
+  function cmThumb(url, onPickPath){
+    return `<div class="cm-thumb" data-pick="${onPickPath}"><img src="${escA(url)}" alt=""><span>Ganti foto</span></div>`;
+  }
+
+  function renderContentEditor(){
+    const page = cmPageSel.value, open = {};
+    cmEditor.querySelectorAll('details.cm-sec').forEach(d => { open[d.dataset.key] = d.open; });
+    cmEditor.innerHTML = CM_SECTIONS[page].map(sec => {
+      let body = '';
+      const list = cmData[sec.key];
+      if (sec.kind === 'photos'){
+        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((u, i) => `
+          <div class="cm-item" data-i="${i}">
+            ${cmThumb(u, sec.key + '.' + i)}
+            <div class="cm-fields"><span class="cm-lbl">Foto ${i + 1}</span><span class="hint">Tampil bergantian sesuai urutan.</span></div>
+            ${ctrl(sec.key, i, list.length)}
+          </div>`).join('') + `</div>
+          <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah foto</button>`;
+      } else if (sec.kind === 'cards'){
+        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((it, i) => `
+          <div class="cm-item" data-i="${i}">
+            ${cmThumb(it.img, sec.key + '.' + i + '.img')}
+            <div class="cm-fields">
+              <span class="cm-lbl">Judul</span><input type="text" value="${escA(it.title)}" data-f="${sec.key}.${i}.title" maxlength="80">
+              <span class="cm-lbl">Keterangan</span><textarea data-f="${sec.key}.${i}.desc" maxlength="220">${escA(it.desc)}</textarea>
+            </div>
+            ${ctrl(sec.key, i, list.length)}
+          </div>`).join('') + `</div>
+          <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah kartu</button>`;
+      } else if (sec.kind === 'outing'){
+        const o = list;
+        body = `<div class="cm-sub">Foto besar</div>
+          <div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(o.main, 'outing.main')}<div class="cm-fields"><span class="hint">Foto utama di sisi kiri.</span></div></div>
+          <div class="cm-sub">4 foto kecil</div>
+          <div class="cm-outing-side">` + o.side.map((u, i) => cmThumb(u, 'outing.side.' + i)).join('') + `</div>
+          <div class="cm-sub">Kartu video</div>
+          <div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(o.video.img, 'outing.video.img')}
+            <div class="cm-fields">
+              <span class="cm-lbl">Judul</span><input type="text" value="${escA(o.video.title)}" data-f="outing.video.title" maxlength="80">
+              <span class="cm-lbl">Keterangan kecil</span><input type="text" value="${escA(o.video.label)}" data-f="outing.video.label" maxlength="80">
+              <span class="hint">Tombol putar masih berupa slot placeholder; video asli dipasang terpisah.</span>
+            </div></div>`;
+      }
+      return `<details class="cm-sec" data-key="${sec.key}" ${open[sec.key] ? 'open' : ''}><summary><span>${sec.title}<br><small>${sec.sub}</small></span></summary><div class="cm-body">${body}</div></details>`;
+    }).join('');
+  }
+  function ctrl(key, i, n){
+    return `<div class="cm-ctrl">
+      <button type="button" data-mv="${key}.${i}.-1" ${i === 0 ? 'disabled' : ''} title="Naik">↑</button>
+      <button type="button" data-mv="${key}.${i}.1" ${i === n - 1 ? 'disabled' : ''} title="Turun">↓</button>
+      <button type="button" class="cm-del" data-rm="${key}.${i}" ${n <= 1 ? 'disabled' : ''} title="Hapus">✕</button></div>`;
+  }
+  function cmGet(path){ return path.split('.').reduce((o, k) => (o == null ? o : o[k]), cmData); }
+  function cmSetPath(path, v){
+    const ks = path.split('.'), last = ks.pop();
+    const tgt = ks.reduce((o, k) => o[k], cmData); tgt[last] = v;
+  }
+
+  async function cmUpload(file){
+    const f = await compressImageFile(file, { maxDim:1600, quality:0.82 });
+    const path = `content/${cmPageSel.value}/${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const { error } = await sb.storage.from('product-images').upload(path, f, { contentType:f.type });
+    if (error) throw error;
+    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+  }
+
+  cmEditor.addEventListener('click', (e) => {
+    const pick = e.target.closest('[data-pick]');
+    if (pick){
+      cmUploadMulti = false;
+      cmUploadCb = async (files) => {
+        pick.classList.add('busy');
+        try {
+          const url = await cmUpload(files[0]);
+          cmSetPath(pick.dataset.pick, url); cmSetDirty(true); renderContentEditor();
+        } catch (err){ showToast('Gagal upload: ' + (err.message || err)); pick.classList.remove('busy'); }
+      };
+      cmFile.multiple = false; cmFile.value = ''; cmFile.click(); return;
+    }
+    const add = e.target.closest('[data-add]');
+    if (add){
+      const key = add.dataset.add, sec = CM_SECTIONS[cmPageSel.value].find(s => s.key === key);
+      cmFile.multiple = (sec.kind === 'photos');
+      cmUploadCb = async (files) => {
+        add.disabled = true; add.textContent = 'Mengunggah…';
+        try {
+          for (const file of Array.from(files)){
+            if (cmData[key].length >= sec.max) break;
+            const url = await cmUpload(file);
+            if (sec.kind === 'photos') cmData[key].push(url);
+            else cmData[key].push({ img:url, title:'Judul baru', desc:'Keterangan singkat.' });
+          }
+          cmSetDirty(true);
+        } catch (err){ showToast('Gagal upload: ' + (err.message || err)); }
+        renderContentEditor();
+      };
+      cmFile.value = ''; cmFile.click(); return;
+    }
+    const mv = e.target.closest('[data-mv]');
+    if (mv){
+      const [key, i, d] = mv.dataset.mv.split('.'), a = +i, b = a + (+d), arr = cmData[key];
+      if (b < 0 || b >= arr.length) return;
+      [arr[a], arr[b]] = [arr[b], arr[a]]; cmSetDirty(true); renderContentEditor(); return;
+    }
+    const rm = e.target.closest('[data-rm]');
+    if (rm){
+      const [key, i] = rm.dataset.rm.split('.');
+      if (cmData[key].length <= 1) return;
+      if (!confirm('Hapus item ini dari daftar?')) return;
+      cmData[key].splice(+i, 1); cmSetDirty(true); renderContentEditor();
+    }
+  });
+  cmEditor.addEventListener('input', (e) => {
+    const f = e.target.dataset && e.target.dataset.f;
+    if (f){ cmSetPath(f, e.target.value); cmSetDirty(true); }
+  });
+  cmFile.addEventListener('change', () => { if (cmFile.files.length && cmUploadCb) cmUploadCb(cmFile.files); });
+  cmPageSel.addEventListener('change', () => { if (!cmDirty || confirm('Perubahan belum disimpan akan hilang. Lanjut?')) loadContent(); });
+
+  document.getElementById('cmSave').addEventListener('click', async () => {
+    const btn = document.getElementById('cmSave'); btn.disabled = true; btn.textContent = 'Menyimpan…';
+    try {
+      const { error } = await sb.from('site_content').upsert({ page:cmPageSel.value, data:cmData, updated_at:new Date().toISOString(), updated_by:me.email });
+      if (error) throw error;
+      showToast('Konten halaman tersimpan.'); await loadContent();
+    } catch (err){ showToast('Gagal menyimpan: ' + (err.message || err)); }
+    finally { btn.disabled = false; btn.textContent = 'Simpan Perubahan'; }
+  });
+  document.getElementById('cmReset').addEventListener('click', async () => {
+    if (!confirm('Kembalikan halaman ini ke template bawaan? Foto & teks yang pernah Anda simpan akan dilepas dari website.')) return;
+    const { error } = await sb.from('site_content').delete().eq('page', cmPageSel.value);
+    if (error){ showToast('Gagal: ' + error.message); return; }
+    showToast('Dikembalikan ke template.'); loadContent();
+  });
+  window.addEventListener('beforeunload', (e) => { if (cmDirty){ e.preventDefault(); e.returnValue = ''; } });
 
   /* ---------------- PETA DISTRIBUSI ---------------- */
   let cityRows = [];         // [{id|null, name, partner_count, x, y, is_active}]
