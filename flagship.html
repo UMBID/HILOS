@@ -282,12 +282,10 @@
 
 <div class="ribbon">
   <div class="ribbon-track">
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Sandal Pria</span><span class="dot">•</span>
     <span>Wanita</span><span class="dot">•</span>
     <span>Anak</span><span class="dot">•</span>
     <span>100% Kualitas Terjamin</span><span class="dot">•</span>
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Sandal Pria</span><span class="dot">•</span>
     <span>Wanita</span><span class="dot">•</span>
     <span>Anak</span><span class="dot">•</span>
@@ -1107,6 +1105,85 @@
   </a>
 </div>
 
+
+<style>
+  /* ===== animasi & bar beli melayang (halaman produk unggulan) ===== */
+  .others-section h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;margin-bottom:22px;}
+  .fx{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1);}
+  .fx.fx-in{opacity:1;transform:none;}
+  .spec-row.fx{transform:translateX(18px);}
+  .spec-row.fx.fx-in{transform:none;}
+  .other-card.fx{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1),box-shadow .25s ease;}
+  .other-card.fx.fx-in:hover{transform:translateY(-4px);}
+  .feature-card{position:relative;transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1),box-shadow .3s;}
+  .feature-card .feature-icon{transform:scale(.4) rotate(-40deg);opacity:0;transition:transform .7s cubic-bezier(.34,1.56,.64,1) .2s,opacity .5s ease .2s;}
+  .feature-card.fx-in .feature-icon{transform:none;opacity:1;}
+  .feature-card.fx-in:hover{transform:translateY(-4px);}
+  .feature-card::after{content:"";position:absolute;left:0;bottom:-8px;height:2px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform .5s ease;}
+  .feature-card:hover::after{transform:scaleX(1);}
+  .spec-box{position:relative;overflow:hidden;}
+  .spec-box::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform 1.1s .2s cubic-bezier(.16,.84,.44,1);}
+  .spec-box.fx-in::before{transform:scaleX(1);}
+
+  .buy-bar{position:fixed;z-index:70;left:50%;bottom:22px;width:min(640px,calc(100vw - 140px));display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px;background:var(--ink);color:var(--sand);box-shadow:0 18px 44px rgba(13,27,42,.35);border-top:2px solid var(--gold);transform:translate(-50%,160%);opacity:0;pointer-events:none;transition:transform .5s cubic-bezier(.16,.84,.24,1),opacity .4s ease;}
+  .buy-bar.show{transform:translate(-50%,0);opacity:1;pointer-events:auto;}
+  .buy-bar .bb-name{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25;}
+  .buy-bar .bb-name small{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-dark-muted);}
+  .buy-bar .bb-name strong{font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .buy-bar .btn{padding:12px 20px;flex:0 0 auto;}
+  @media (max-width:640px){.buy-bar{left:14px;right:90px;width:auto;bottom:16px;transform:translateY(160%);padding:8px 8px 8px 14px;gap:10px;}.buy-bar.show{transform:none;}.buy-bar .bb-name small{display:none;}}
+  @media (prefers-reduced-motion:reduce){.fx,.feature-card .feature-icon{opacity:1 !important;transform:none !important;transition:none !important;}.buy-bar{transition:none;}}
+</style>
+<div class="buy-bar" id="buyBar" aria-hidden="true">
+  <div class="bb-name"><small>Produk Unggulan</small><strong id="bbName">HILOS</strong></div>
+  <a href="#" class="btn btn-fill" id="bbBtn"><span>Hubungi Sales</span></a>
+</div>
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* --- muncul saat di-scroll (konten dirender dinamis, jadi dipantau lewat MutationObserver) --- */
+  if (!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach(e => { if (e.isIntersecting){ e.target.classList.add('fx-in'); io.unobserve(e.target); } });
+    }, { threshold:.15, rootMargin:'0px 0px -40px 0px' });
+    const SEL = '.feature-card, .spec-row, .other-card, .spec-box, .feature-section h2, .others-section h2';
+    const mark = (root) => {
+      root.querySelectorAll(SEL).forEach(el => {
+        if (el.dataset.fx) return; el.dataset.fx = '1';
+        const sib = Array.from(el.parentElement.children).indexOf(el);
+        el.style.transitionDelay = Math.min(sib * 0.09, 0.5) + 's';
+        el.classList.add('fx'); io.observe(el);
+        setTimeout(() => { el.style.transitionDelay = ''; }, 2200);
+      });
+    };
+    ['pFeatureGrid','pSpecBox','othersGrid'].forEach(id => {
+      const c = document.getElementById(id); if (!c) return;
+      new MutationObserver(() => mark(document)).observe(c, { childList:true });
+    });
+    mark(document);
+  }
+
+  /* --- bar beli melayang: muncul setelah tombol Hubungi Sales utama lewat dari layar --- */
+  const bar = document.getElementById('buyBar'), main = document.getElementById('salesBtn2');
+  if (bar && main){
+    const title = main.closest('section') && main.closest('section').querySelector('h3');
+    const setName = () => { const t = title && title.textContent.trim(); if (t) document.getElementById('bbName').textContent = t; };
+    setName(); if (title) new MutationObserver(setName).observe(title, { childList:true, characterData:true, subtree:true });
+    document.getElementById('bbBtn').addEventListener('click', (e) => { e.preventDefault(); main.click(); });
+    let tk = false;
+    const upd = () => {
+      tk = false;
+      const r = main.getBoundingClientRect(), foot = document.querySelector('.site-footer');
+      const nearFoot = foot && foot.getBoundingClientRect().top < window.innerHeight - 40;
+      const on = r.bottom < 0 && !nearFoot;
+      bar.classList.toggle('show', on); bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+    };
+    addEventListener('scroll', () => { if (!tk){ tk = true; requestAnimationFrame(upd); } }, { passive:true });
+    addEventListener('resize', upd); upd();
+  }
+})();
+</script>
 </body>
 
 </html>
