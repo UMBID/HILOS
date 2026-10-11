@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html class="about-pending" lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -308,6 +308,7 @@
   @media (prefers-reduced-motion:reduce){.hero-slideshow{transform:none;border-radius:0;}.hw{opacity:1;}.proc-card .photo{clip-path:none;}.scroll-marquee-track{transform:none !important;}}
 
   /* ===== perapihan ===== */
+  .about-pending .hero-slideshow{visibility:hidden;}
   #kebersamaanSection .section-head,#kebersamaanSection .outing-grid{padding-left:0;padding-right:0;}
   @media (max-width:560px){.grid-3 .proc-card .photo{aspect-ratio:4/3;}}
   .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
@@ -622,6 +623,8 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/supabase-config.js"></script>
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -639,22 +642,21 @@
     HilosWA.open('general');
   });
 
-  /* scroll reveal */
-  const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
-  if (prefersReducedMotion){
-    revealTargets.forEach(el => el.classList.add('is-visible'));
-  } else {
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
-    revealTargets.forEach(el => io.observe(el));
+  /* scroll reveal (bisa dipanggil ulang untuk konten yang dimuat dari admin) */
+  let revealIO = null;
+  function observeReveal(root){
+    const targets = (root || document).querySelectorAll('.reveal, .reveal-scale');
+    if (prefersReducedMotion || !('IntersectionObserver' in window)){ targets.forEach(el => el.classList.add('is-visible')); return; }
+    if (!revealIO){
+      revealIO = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting){ entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }
+        });
+      }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
+    }
+    targets.forEach(el => { if (!el.classList.contains('is-visible')) revealIO.observe(el); });
   }
-
+  observeReveal(document);
 
   /* ---- judul per kata ---- */
   (function(){
@@ -666,13 +668,17 @@
   })();
 
   /* ---- jeda berurutan untuk kartu dalam satu grid ---- */
-  document.querySelectorAll('.stat-row,.grid-3,.grid-4,.grid-5,.cert-badges,.outing-side').forEach(g => {
-    Array.from(g.children).forEach((el, i) => {
-      if (!el.matches('.reveal,.reveal-scale')) return;
-      el.style.transitionDelay = Math.min(i * 0.09, 0.55) + 's';
-      setTimeout(() => { el.style.transitionDelay = ''; }, 2400);
+  function applyStagger(){
+    document.querySelectorAll('.stat-row,.grid-3,.grid-4,.grid-5,.cert-badges,.outing-side').forEach(g => {
+      Array.from(g.children).forEach((el, i) => {
+        if (!el.matches('.reveal,.reveal-scale') || el.dataset.sd) return;
+        el.dataset.sd = '1';
+        el.style.transitionDelay = Math.min(i * 0.09, 0.55) + 's';
+        setTimeout(() => { el.style.transitionDelay = ''; }, 2400);
+      });
     });
-  });
+  }
+  applyStagger();
 
   /* ---- angka pabrik menghitung naik ---- */
   (function(){
@@ -730,8 +736,9 @@
     const ss = document.getElementById('heroSlideshow');
     const mq = document.getElementById('scrollMarquee'), mqt = document.getElementById('scrollMarqueeTrack');
     const wrap = document.getElementById('procWrap');
-    const cards = wrap ? Array.from(wrap.querySelectorAll('.proc-card')) : [];
-    if (prefersReducedMotion){ words.forEach(w => w.classList.add('on')); cards.forEach(c => c.classList.add('lit')); wrap && wrap.style.setProperty('--pp', 1); return; }
+    const getCards = () => wrap ? Array.from(wrap.querySelectorAll('.proc-card')) : [];
+    window.__aboutFrame = null;
+    if (prefersReducedMotion){ words.forEach(w => w.classList.add('on')); getCards().forEach(c => c.classList.add('lit')); wrap && wrap.style.setProperty('--pp', 1); window.__aboutFrame = () => getCards().forEach(c => c.classList.add('lit')); return; }
 
     function frame(){
       const H = vh();
@@ -758,20 +765,22 @@
         const r = wrap.getBoundingClientRect();
         const p = clamp((H*0.8 - r.top) / (r.height * 0.85));
         wrap.style.setProperty('--pp', p.toFixed(3));
-        cards.forEach((c,i) => c.classList.toggle('lit', p >= (i + 0.4) / cards.length));
+        const cs = getCards(); cs.forEach((c,i) => c.classList.toggle('lit', p >= (i + 0.4) / cs.length));
       }
     }
     let tk = false;
     const req = () => { if (!tk){ tk = true; requestAnimationFrame(() => { tk = false; frame(); }); } };
     addEventListener('scroll', req, { passive:true }); addEventListener('resize', req);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(req);
+    window.__aboutFrame = frame;
     frame();
   })();
 
   /* ---- miring 3D mengikuti kursor (hanya perangkat dengan mouse) ---- */
-  (function(){
+  function bindTilt(){
     if (prefersReducedMotion || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
     document.querySelectorAll('.proc-card .photo, .outing-grid .photo, .outing-grid [data-tilt]').forEach(el => {
+      if (el.dataset.tiltBound) return; el.dataset.tiltBound = '1';
       el.classList.add('tilt');
       el.addEventListener('pointermove', e => {
         const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
@@ -783,7 +792,8 @@
         el.style.transform = '';
       });
     });
-  })();
+  }
+  bindTilt();
 
   /* outing video placeholder modal (reuse simple alert-style overlay) */
   document.getElementById('outingVideo').addEventListener('click', () => {
@@ -803,21 +813,66 @@
     });
   });
 
-  /* ---- hero slideshow auto-rotate ---- */
+  /* ---- hero slideshow auto-rotate (jumlah foto bisa berubah dari admin) ---- */
   (function(){
-    const slides = document.querySelectorAll('#heroSlideshow .hero-slide');
-    const dots = document.querySelectorAll('#heroSlideDots .dot');
-    if (!slides.length) return;
     let current = 0;
-
+    const slides = () => document.querySelectorAll('#heroSlideshow .hero-slide');
+    const dots = () => document.querySelectorAll('#heroSlideDots .dot');
     function show(i){
-      slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
-      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-      current = i;
+      const sl = slides(), dt = dots(); if (!sl.length) return;
+      current = ((i % sl.length) + sl.length) % sl.length;
+      sl.forEach((x, idx) => x.classList.toggle('active', idx === current));
+      dt.forEach((d, idx) => d.classList.toggle('active', idx === current));
     }
-    dots.forEach(dot => dot.addEventListener('click', () => show(Number(dot.dataset.i))));
+    document.getElementById('heroSlideDots').addEventListener('click', (e) => {
+      const d = e.target.closest('.dot'); if (d) show(Number(d.dataset.i));
+    });
+    window.__showSlide = show;
+    setInterval(() => show(current + 1), 4500);
+  })();
 
-    setInterval(() => { show((current + 1) % slides.length); }, 4500);
+  /* ---- konten dari admin (Konten Halaman > Tentang Kami); kalau kosong tetap pakai template di atas ---- */
+  (function(){
+    const esc = (t) => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    const arr = (v) => Array.isArray(v) && v.length ? v : null;
+    const card = (it, i, num) => '<div class="proc-card reveal">' + (num ? '\n      <span class="proc-no" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' : '') +
+      '<div class="photo"><img src="' + esc(it.img) + '" alt="' + esc(it.title) + '"></div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div>';
+    function render(d){
+      const b = arr(d.banner);
+      if (b){
+        document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img src="' + esc(u) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
+        document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
+        window.__showSlide && window.__showSlide(0);
+      }
+      const p = arr(d.pabrik); if (p) document.querySelector('#procWrap .grid-5').innerHTML = p.map((it, i) => card(it, i, true)).join('');
+      const ev = arr(d.event); if (ev) document.querySelector('#panel-event .grid-4').innerHTML = ev.map((it, i) => card(it, i)).join('');
+      const cs = arr(d.csr); if (cs) document.querySelector('#panel-csr .grid-3').innerHTML = cs.map((it, i) => card(it, i)).join('');
+      const o = d.outing;
+      if (o && o.main && Array.isArray(o.side)){
+        const g = document.querySelector('#panel-outing .outing-grid');
+        g.querySelector('.outing-main img').src = o.main;
+        const sides = g.querySelectorAll('.outing-side .photo img');
+        o.side.forEach((u, i) => { if (sides[i] && u) sides[i].src = u; });
+        if (o.video){
+          if (o.video.img) g.querySelector('.outing-video .photo img').src = o.video.img;
+          const vl = g.querySelector('.outing-video .vlabel');
+          if (vl){ vl.querySelector('strong').textContent = o.video.title || ''; vl.querySelector('span').textContent = o.video.label || ''; }
+        }
+      }
+      observeReveal(document.querySelector('.proc-wrap')); observeReveal(document.getElementById('kebersamaanSection'));
+      applyStagger(); bindTilt();
+      window.__aboutFrame && window.__aboutFrame();
+    }
+    let done = false;
+    const finish = () => { if (!done){ done = true; document.documentElement.classList.remove('about-pending'); } };
+    setTimeout(finish, 1800);
+    try {
+      const sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+      if (!sb){ finish(); return; }
+      Promise.resolve(sb.from('site_content').select('data').eq('page', 'tentang').maybeSingle()).then(res => {
+        if (res && res.data && res.data.data) render(res.data.data);
+      }).catch(() => {}).then(finish);
+    } catch (e){ finish(); }
   })();
 </script>
 
