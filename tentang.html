@@ -259,6 +259,7 @@
   .cert-badge{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1),box-shadow .3s,border-color .3s;}
   .cert-badge .mark{transform:scale(.5) rotate(-25deg);transition:transform .7s cubic-bezier(.34,1.56,.64,1) .25s;}
   .cert-badge.is-visible .mark{transform:none;}
+  .cert-badge .mark svg{width:21px;height:21px;}
   .cert-badge.is-visible:hover{border-color:var(--gold-deep);box-shadow:0 10px 24px rgba(13,27,42,.08);}
   .commit-card li{opacity:0;transform:translateX(-12px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(var(--i) * .14s + .3s);}
   .commit-card.is-visible li{opacity:1;transform:none;}
@@ -568,11 +569,11 @@
       <p class="reveal">Kami berkomitmen untuk kualitas, keamanan, dan kelestarian lingkungan.</p>
     </div>
     <div class="cert-badges">
-      <div class="cert-badge reveal"><div class="mark">ISO</div><span>ISO 9001</span><small>Quality Management</small></div>
-      <div class="cert-badge reveal"><div class="mark">BSCI</div><span>BSCI</span><small>Business Social Compliance</small></div>
-      <div class="cert-badge reveal"><div class="mark">REACH</div><span>REACH</span><small>EU Regulation Compliance</small></div>
-      <div class="cert-badge reveal"><div class="mark">RoHS</div><span>RoHS</span><small>Restriction of Hazardous Substances</small></div>
-      <div class="cert-badge reveal"><div class="mark" style="border-color:#5b7a4a;color:#5b7a4a;">🌱</div><span>Go Green</span><small>Sustainable Packaging</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>Bahan Aman</span><small>Material pilihan yang aman untuk kulit</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="m8.5 14.5-1.5 6.5 5-3 5 3-1.5-6.5"/></svg></div><span>Kualitas Terjaga</span><small>Dicek di setiap tahap produksi</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c-9 0-14 4-14 10 0 2 .8 3.6 2 4.7C9 12 13 9 17 8c-4 2-7 5-8.5 10.7C10 19.600 11 20 12 20c5 0 8-4.500 8-16Z"/></svg></div><span>Ramah Lingkungan</span><small>Produksi yang bertanggung jawab</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg></div><span>Nyaman Dipakai</span><small>Dirancang untuk pemakaian sehari-hari</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.8-6 7.5-6s6.700 2 7.500 6"/></svg></div><span>Pelanggan Utama</span><small>Kepuasan pelanggan jadi prioritas</small></div>
     </div>
   </div>
 
@@ -594,7 +595,6 @@
     <div class="about-social-icons">
       <a href="#" aria-label="Instagram HILOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
       <a href="#" aria-label="TikTok HILOS"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg></a>
-      <a href="#" aria-label="Facebook HILOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 9h3V6h-3a4 4 0 0 0-4 4v2H7v3h3v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1Z"/></svg></a>
     </div>
     <a href="kontak.html" class="about-social-more">Selengkapnya di halaman Contact Us →</a>
   </div>
