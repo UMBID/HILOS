@@ -93,7 +93,7 @@
 
   .detail-grid{
     display:grid;
-    grid-template-columns:84px minmax(300px,1fr) minmax(300px,360px) minmax(190px,220px);
+    grid-template-columns:84px minmax(300px,1.2fr) minmax(300px,1fr);
     gap:22px;
   }
 
@@ -255,8 +255,6 @@
 
   @media (max-width:1080px){
     .detail-grid{grid-template-columns:70px minmax(260px,1fr) minmax(260px,320px);}
-    .side-stack{grid-column:1 / -1;flex-direction:row;}
-    .side-card{aspect-ratio:1.6/1;}
     .feature-section{grid-template-columns:1fr;}
     .feature-grid{grid-template-columns:repeat(2,1fr);}
     .footer-grid{grid-template-columns:1fr 1fr;}
@@ -267,7 +265,6 @@
     .detail-grid{grid-template-columns:1fr;}
     .thumb-rail{flex-direction:row;overflow-x:auto;}
     .thumb-btn{width:64px;flex-shrink:0;}
-    .side-stack{flex-direction:column;}
   }
   @media (max-width:560px){
     .feature-grid{grid-template-columns:1fr 1fr;}
@@ -420,25 +417,6 @@
         </div>
       </div>
 
-      <div class="side-stack">
-        <div class="side-card" id="videoCard">
-          <img src="https://images.pexels.com/photos/14313235/pexels-photo-14313235.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Video produk HILOS">
-          <div class="side-scrim"></div>
-          <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-          <span class="side-label">Video Produk</span>
-        </div>
-        <div class="side-card" id="view3dCard">
-          <div class="side-scrim" style="background:linear-gradient(180deg, rgba(13,27,42,0.2), rgba(13,27,42,0.9));"></div>
-          <svg class="wire-thumb" style="position:absolute;top:8%;left:15%;" viewBox="0 0 400 260">
-            <g fill="none" stroke="#1c4a73" stroke-width="1.4" opacity="0.8">
-              <path d="M80 40 C40 40 24 90 30 140 C36 195 70 235 130 245 C210 258 300 250 340 210 C372 178 372 100 336 62 C300 26 220 18 150 24 C120 27 100 32 80 40 Z"/>
-              <path d="M70 95 C130 55 260 55 330 100 C345 110 345 150 330 162 C260 200 130 200 70 162 C55 150 55 108 70 95 Z"/>
-            </g>
-          </svg>
-          <span class="side-label">3D Animation</span>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -455,15 +433,6 @@
 <div class="others-section" id="othersSection">
   <h2 id="othersTitle">Produk Serupa</h2>
   <div class="others-grid" id="othersGrid"></div>
-</div>
-
-<div class="modal-overlay" id="videoModal">
-  <div class="modal-box">
-    <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-    <h4>Video Produk HILOS Wave Pro</h4>
-    <p>Slot video produk akan ditampilkan di sini. Placeholder ini siap diganti dengan video asli (MP4/embed) saat materi produksi tersedia.</p>
-    <button class="modal-close" id="closeModal">Tutup</button>
-  </div>
 </div>
 
 <footer class="site-footer">
@@ -563,7 +532,8 @@
 
     if (error || !data || data.length === 0) return null;
 
-    const rows = data.filter(r => r.products && r.products.is_3d);
+    // semua produk Top 5 ditampilkan (tidak hanya yang punya animasi 360°)
+    const rows = data.filter(r => r.products);
     if (!rows.length) return { blocked:true };
     const current = rows.find(r => r.rank === rankToShow);
     if (!current) return { blocked:true };
@@ -668,6 +638,7 @@
     document.getElementById('sizeValue').textContent = sizes[Math.floor(sizes.length/2)];
 
     /* grid navigasi bawah: Top 5 Lainnya (kalau mode rank) atau Produk Serupa (kalau mode id) */
+    document.getElementById('othersSection').style.display = (others && others.length) ? '' : 'none';
     document.getElementById('othersTitle').textContent = othersMode === 'rank' ? 'Top 5 Lainnya' : 'Produk Serupa';
     document.getElementById('othersGrid').innerHTML = others.map(o => {
       const op = o.products;
@@ -1009,18 +980,6 @@
       btn.classList.add('active');
       sizeValue.textContent = btn.textContent;
     });
-  });
-
-  /* ---- video modal ---- */
-  const videoModal = document.getElementById('videoModal');
-  document.getElementById('videoCard').addEventListener('click', () => videoModal.classList.add('open'));
-  document.getElementById('closeModal').addEventListener('click', () => videoModal.classList.remove('open'));
-  videoModal.addEventListener('click', (e) => { if (e.target === videoModal) videoModal.classList.remove('open'); });
-
-  /* ---- 3D card in side stack triggers stage 3D mode ---- */
-  document.getElementById('view3dCard').addEventListener('click', () => {
-    document.getElementById('mainStage').scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
-    set3dMode(true);
   });
 
   } // /initFlagshipInteractions
