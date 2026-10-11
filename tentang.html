@@ -305,6 +305,17 @@
   .page-head{overflow-x:clip;}
   .vm-grid,.cert-section > *{position:relative;z-index:1;}
   @media (prefers-reduced-motion:reduce){.hero-slideshow{transform:none;border-radius:0;}.hw{opacity:1;}.proc-card .photo{clip-path:none;}.scroll-marquee-track{transform:none !important;}}
+
+  /* ===== perapihan ===== */
+  #kebersamaanSection .section-head,#kebersamaanSection .outing-grid{padding-left:0;padding-right:0;}
+  @media (max-width:560px){.grid-3 .proc-card .photo{aspect-ratio:4/3;}}
+  .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
+  @media (max-width:560px){
+    .ghost-word{display:none;}
+    .grid-5 .proc-card:last-child{grid-column:1 / -1;}
+    .grid-5 .proc-card:last-child .photo{aspect-ratio:2/1;}
+    .cert-badges .cert-badge:last-child{grid-column:1 / -1;}
+  }
 </style>
 <script src="assets/wa-config.js"></script>
 </head>
