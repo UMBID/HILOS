@@ -6,7 +6,7 @@
 (function(){
   const CONFIG = {
     // Nomor format internasional: tanpa "+", tanpa "0" di depan, tanpa spasi/strip.
-    number: '6289507609765',
+    number: '6281234567890',
 
     // Template pesan. Baris "Nama:" dst. dibiarkan kosong supaya diisi pengunjung,
     // lalu tinggal menekan kirim. {produk} {kode} {warna} {ukuran} diisi otomatis.
@@ -35,7 +35,10 @@
     }
     return 'https://wa.me/' + CONFIG.number + '?text=' + encodeURIComponent(text);
   }
-  function open(type, data){ window.open(url(type, data), '_blank', 'noopener'); }
+  function open(type, data){
+    try { window.HilosTrack && window.HilosTrack.wa(type, data); } catch(e){}
+    window.open(url(type, data), '_blank', 'noopener');
+  }
 
   // Ambil detail produk yang sedang tampil di halaman (nama, warna, ukuran terpilih)
   function productFromPage(extra){
@@ -53,6 +56,7 @@
     document.querySelectorAll('a[data-wa]').forEach(a => {
       a.href = url(a.dataset.wa);
       a.target = '_blank'; a.rel = 'noopener';
+      if (!a.dataset.waTrack){ a.dataset.waTrack = '1'; a.addEventListener('click', () => { try { window.HilosTrack && window.HilosTrack.wa(a.dataset.wa); } catch(e){} }); }
     });
     document.querySelectorAll('a[data-wa-tel]').forEach(a => {
       a.href = 'tel:+' + CONFIG.number;
