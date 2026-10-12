@@ -6,7 +6,7 @@
 (function(){
   const CONFIG = {
     // Nomor format internasional: tanpa "+", tanpa "0" di depan, tanpa spasi/strip.
-    number: '6281234567890',
+    number: '628133333273',
 
     // Template pesan. Baris "Nama:" dst. dibiarkan kosong supaya diisi pengunjung,
     // lalu tinggal menekan kirim. {produk} {kode} {warna} {ukuran} diisi otomatis.
@@ -46,7 +46,7 @@
     return Object.assign({ name: t('.product-info h3'), color: t('#colorValue'), size: t('#sizeValue') }, extra || {});
   }
 
-  // 0812-3456-7890 dari 6281234567890
+  // 0813-3333-273 dari 628133333273
   function pretty(n){
     const local = '0' + String(n).replace(/^62/, '');
     return local.replace(/^(\d{4})(\d{4})(\d+)$/, '$1-$2-$3');
