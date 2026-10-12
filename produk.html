@@ -332,18 +332,17 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
 </head>
 <body>
 
 <div class="ribbon">
   <div class="ribbon-track">
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Man</span><span class="dot">•</span>
     <span>Ladies</span><span class="dot">•</span>
     <span>Kids</span><span class="dot">•</span>
     <span>100% Kualitas Terjamin</span><span class="dot">•</span>
-    <span>Sejak 2014</span><span class="dot">•</span>
     <span>Man</span><span class="dot">•</span>
     <span>Ladies</span><span class="dot">•</span>
     <span>Kids</span><span class="dot">•</span>
@@ -1036,6 +1035,7 @@
   function openQuickView(id){
     const p = products.find(x => x.id === id);
     if (!p) return;
+    try { window.HilosTrack && HilosTrack.productView({ sku:p.sku, name:p.name }, 'produk'); } catch(e){}
     document.getElementById('qvImage').dataset.defaultImg = p.img.replace('w=500','w=700');
     document.getElementById('qvImage').src = p.img.replace('w=500','w=700');
     document.getElementById('qvName').textContent = p.name;
