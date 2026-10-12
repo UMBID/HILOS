@@ -556,6 +556,36 @@
   .cm-dirty{ font-size:12px; color:var(--danger); font-weight:600; display:none; }
   .cm-dirty.show{ display:inline; }
   @media (max-width:700px){ .cm-item{ grid-template-columns:80px 1fr; } .cm-thumb{ width:80px; height:80px; } .cm-ctrl{ grid-column:1 / -1; flex-direction:row; } .cm-outing-side{ grid-template-columns:repeat(2,96px); } }
+
+  /* ---------- Statistik ---------- */
+  .st-kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .st-kpi{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:16px 18px; }
+  .st-kpi small{ display:block; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:#6b6058; }
+  .st-kpi b{ display:block; font-family:'Archivo',sans-serif; font-size:30px; font-weight:800; margin-top:6px; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .st-kpi span{ font-size:12px; color:#8a8078; }
+  .st-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .st-card{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:18px 20px; min-width:0; }
+  .st-card h3{ font-size:13px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px; }
+  .st-card.wide{ grid-column:1 / -1; }
+  .st-chart{ width:100%; height:150px; display:block; }
+  .st-chart .bar{ fill:var(--gold); }
+  .st-chart .bar.wa{ fill:#25a55f; }
+  .st-chart .bar:hover{ opacity:.7; }
+  .st-chart text{ font-size:10px; fill:#8a8078; font-family:'Inter',sans-serif; }
+  .st-chart .grid{ stroke:rgba(13,27,42,.1); stroke-width:1; }
+  .st-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .st-table th{ text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#6b6058; padding:8px 10px; border-bottom:1px solid var(--sand-line); }
+  .st-table th.n, .st-table td.n{ text-align:right; font-variant-numeric:tabular-nums; }
+  .st-table td{ padding:9px 10px; border-bottom:1px solid var(--sand-line); }
+  .st-table tr:last-child td{ border-bottom:none; }
+  .st-rank{ display:inline-flex; width:22px; height:22px; border-radius:50%; background:var(--sand); align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-right:8px; }
+  .st-hbar{ display:flex; align-items:center; gap:10px; margin:7px 0; font-size:13px; }
+  .st-hbar .lbl{ flex:0 0 120px; }
+  .st-hbar .trk{ flex:1; height:10px; background:var(--sand); border-radius:99px; overflow:hidden; }
+  .st-hbar .trk i{ display:block; height:100%; background:var(--gold); border-radius:99px; }
+  .st-hbar .v{ flex:0 0 46px; text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+  .st-empty{ color:#8a8078; font-size:13px; padding:10px 0; }
+  @media (max-width:900px){ .st-kpis{ grid-template-columns:1fr 1fr; } .st-grid{ grid-template-columns:1fr; } .st-hbar .lbl{ flex-basis:90px; } }
 </style>
 </head>
 <body>
@@ -597,6 +627,7 @@
       <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
       <button class="tab-nav-btn" data-view="mapView">Peta Distribusi</button>
       <button class="tab-nav-btn" data-view="contentView">Konten Halaman</button>
+      <button class="tab-nav-btn" data-view="statsView">Statistik</button>
       <button class="tab-nav-btn" data-view="historyView">Riwayat</button>
       <button class="tab-nav-btn" data-view="adminsView" id="tabAdmins" style="display:none;">Kelola Admin</button>
     </div>
@@ -755,6 +786,28 @@
       <input type="file" id="cmFile" accept="image/*" multiple style="display:none;">
     </div>
     <!-- /contentView -->
+
+    <div id="statsView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Statistik</h1>
+          <p>Kunjungan, produk yang dilihat, dan klik WhatsApp. Tanpa cookie dan tanpa data pribadi pengunjung.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <select id="stDays" style="padding:10px 12px;border:1px solid var(--sand-line);border-radius:6px;background:#fff;font-size:14px;">
+            <option value="7">7 hari terakhir</option>
+            <option value="30" selected>30 hari terakhir</option>
+            <option value="90">90 hari terakhir</option>
+            <option value="365">1 tahun terakhir</option>
+          </select>
+          <button class="btn btn-outline" id="stRefresh">Muat Ulang</button>
+          <button class="btn btn-outline" id="stCsv">Unduh CSV Produk</button>
+        </div>
+      </div>
+      <p class="hint" id="stNote" style="margin:-10px 0 14px;"></p>
+      <div id="stBody"></div>
+    </div>
+    <!-- /statsView -->
 
     <div id="adminsView" class="view" style="display:none;">
       <div class="page-head">
@@ -2612,6 +2665,7 @@
       if (btn.dataset.view === 'top10View') loadTop10();
       if (btn.dataset.view === 'mapView') loadCities();
       if (btn.dataset.view === 'contentView') loadContent();
+      if (btn.dataset.view === 'statsView') loadStats();
       if (btn.dataset.view === 'historyView') loadHistory(true);
       if (btn.dataset.view === 'adminsView') loadAdmins();
     });
@@ -2823,6 +2877,99 @@
     showToast('Dikembalikan ke template.'); loadContent();
   });
   window.addEventListener('beforeunload', (e) => { if (cmDirty){ e.preventDefault(); e.returnValue = ''; } });
+
+
+  /* ---------------- STATISTIK ---------------- */
+  const PAGE_LABEL = { index:'Beranda', tentang:'Tentang Kami', produk:'Produk', flagship:'Produk Unggulan', kerjasama:'Kerjasama', kontak:'Contact Us', 'social-media':'Social Media', pdp:'Detail Produk' };
+  const WA_KIND_LABEL = { general:'Umum (tombol WhatsApp / Hubungi Sales)', produk:'Dari halaman produk', kontak:'Dari halaman Contact Us', kerjasama:'Dari halaman Kerjasama' };
+  let stLast = null;
+  const stBody = document.getElementById('stBody'), stNote = document.getElementById('stNote');
+  const fmtN = (n) => Number(n || 0).toLocaleString('id-ID');
+
+  async function loadStats(){
+    stNote.textContent = 'Memuat…';
+    const days = +document.getElementById('stDays').value;
+    const { data, error } = await sb.rpc('get_site_stats', { p_days:days });
+    if (error){
+      stBody.innerHTML = '';
+      stNote.innerHTML = /get_site_stats|site_events|schema cache/i.test(error.message || '')
+        ? 'Statistik belum diaktifkan. Jalankan file <code>supabase-stats.sql</code> di Supabase SQL Editor, lalu klik Muat Ulang.'
+        : 'Gagal memuat statistik: ' + (error.message || error);
+      return;
+    }
+    stLast = data; stNote.textContent = '';
+    renderStats(data, days);
+  }
+
+  function dayRange(days){
+    const out = [], now = new Date();
+    for (let i = days - 1; i >= 0; i--){
+      const d = new Date(now.getTime() - i * 86400000);
+      out.push(new Date(d.getTime() + 7 * 3600000).toISOString().slice(0, 10));   // tanggal WIB
+    }
+    return out;
+  }
+  function barChart(labels, vals, cls){
+    const W = 600, H = 150, pl = 30, pb = 18, pt = 8, max = Math.max(1, ...vals), n = vals.length;
+    const bw = (W - pl) / n, step = Math.max(1, Math.ceil(n / 8));
+    const nice = max <= 4 ? max : Math.ceil(max / 4) * 4;
+    let g = '';
+    [0, .5, 1].forEach(f => { const y = pt + (H - pt - pb) * (1 - f); g += `<line class="grid" x1="${pl}" x2="${W}" y1="${y}" y2="${y}"/><text x="${pl - 5}" y="${y + 3}" text-anchor="end">${Math.round(nice * f)}</text>`; });
+    const bars = vals.map((v, i) => {
+      const h = (H - pt - pb) * (v / nice), x = pl + i * bw + bw * .15;
+      return `<rect class="bar ${cls || ''}" x="${x.toFixed(1)}" y="${(H - pb - h).toFixed(1)}" width="${(bw * .7).toFixed(1)}" height="${Math.max(h, v ? 1 : 0).toFixed(1)}" rx="2"><title>${labels[i]}: ${fmtN(v)}</title></rect>`;
+    }).join('');
+    const ticks = labels.map((l, i) => (i % step === 0 || i === n - 1) ? `<text x="${(pl + i * bw + bw / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle">${l.slice(8)}/${l.slice(5, 7)}</text>` : '').join('');
+    return `<svg class="st-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img">${g}${bars}${ticks}</svg>`;
+  }
+  function hbars(rows, labelFn){
+    if (!rows.length) return '<div class="st-empty">Belum ada data.</div>';
+    const max = Math.max(1, ...rows.map(r => r.n));
+    return rows.map(r => `<div class="st-hbar"><span class="lbl">${labelFn(r)}</span><span class="trk"><i style="width:${(r.n / max * 100).toFixed(1)}%"></i></span><span class="v">${fmtN(r.n)}</span></div>`).join('');
+  }
+
+  function renderStats(d, days){
+    const t = d.totals || {}, rate = t.product_views ? Math.round((t.wa_product || 0) / t.product_views * 100) : 0;
+    const labels = dayRange(Math.min(days, 90)), map = {}; (d.daily || []).forEach(x => { map[x.day] = x; });
+    const series = (k) => labels.map(l => (map[l] ? map[l][k] : 0));
+    // 1 tahun: ringkas per minggu agar tetap terbaca
+    let L = labels, pv = series('pv'), wa = series('wa');
+    if (days > 90){
+      const all = dayRange(days); const m2 = {}; (d.daily || []).forEach(x => { m2[x.day] = x; });
+      L = []; pv = []; wa = [];
+      for (let i = 0; i < all.length; i += 7){ const chunk = all.slice(i, i + 7); L.push(chunk[0]); pv.push(chunk.reduce((a, c) => a + (m2[c] ? m2[c].pv : 0), 0)); wa.push(chunk.reduce((a, c) => a + (m2[c] ? m2[c].wa : 0), 0)); }
+    }
+    const tp = d.top_products || [];
+    stBody.innerHTML = `
+      <div class="st-kpis">
+        <div class="st-kpi"><small>Kunjungan halaman</small><b>${fmtN(t.page_views)}</b><span>${fmtN(t.sessions)} sesi pengunjung</span></div>
+        <div class="st-kpi"><small>Produk dilihat</small><b>${fmtN(t.product_views)}</b><span>detail produk dibuka</span></div>
+        <div class="st-kpi"><small>Klik WhatsApp</small><b>${fmtN(t.wa_clicks)}</b><span>${fmtN(t.wa_product)} dari produk tertentu</span></div>
+        <div class="st-kpi"><small>Rasio klik produk</small><b>${rate}%</b><span>klik WhatsApp produk ÷ produk dilihat</span></div>
+      </div>
+      <div class="st-grid">
+        <div class="st-card"><h3>Kunjungan halaman per hari${days > 90 ? ' (per minggu)' : ''}</h3>${barChart(L, pv)}</div>
+        <div class="st-card"><h3>Klik WhatsApp per hari${days > 90 ? ' (per minggu)' : ''}</h3>${barChart(L, wa, 'wa')}</div>
+        <div class="st-card wide"><h3>Produk terpopuler</h3>
+          ${tp.length ? `<table class="st-table"><thead><tr><th>Produk</th><th class="n">Dilihat</th><th class="n">Klik WhatsApp</th><th class="n">Rasio</th></tr></thead><tbody>` +
+            tp.map((r, i) => `<tr><td><span class="st-rank">${i + 1}</span>${escA(r.name)}${r.sku ? ` <span class="hint">(${escA(r.sku)})</span>` : ''}</td><td class="n">${fmtN(r.views)}</td><td class="n">${fmtN(r.wa)}</td><td class="n">${r.views ? Math.round(r.wa / r.views * 100) + '%' : '–'}</td></tr>`).join('') + '</tbody></table>'
+            : '<div class="st-empty">Belum ada produk yang dilihat atau diklik pada periode ini.</div>'}
+          <p class="hint" style="margin-top:10px;">Dipakai sebagai bahan pertimbangan mengisi menu Top 5 Produk.</p>
+        </div>
+        <div class="st-card"><h3>Halaman paling banyak dikunjungi</h3>${hbars((d.top_pages || []).map(r => ({ n:r.n, p:r.page })), r => escA(PAGE_LABEL[r.p] || r.p || '-'))}</div>
+        <div class="st-card"><h3>Dari mana klik WhatsApp</h3>${hbars((d.wa_kinds || []).map(r => ({ n:r.n, k:r.kind })), r => escA(WA_KIND_LABEL[r.k] || r.k))}</div>
+      </div>`;
+  }
+
+  document.getElementById('stDays').addEventListener('change', loadStats);
+  document.getElementById('stRefresh').addEventListener('click', loadStats);
+  document.getElementById('stCsv').addEventListener('click', () => {
+    const rows = (stLast && stLast.top_products) || [];
+    if (!rows.length){ showToast('Belum ada data untuk diunduh.'); return; }
+    const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const csv = ['Produk,Kode,Dilihat,Klik WhatsApp'].concat(rows.map(r => [q(r.name), q(r.sku), r.views, r.wa].join(','))).join('\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type:'text/csv' })); a.download = 'statistik-produk.csv'; a.click();
+  });
 
   /* ---------------- PETA DISTRIBUSI ---------------- */
   let cityRows = [];         // [{id|null, name, partner_count, x, y, is_active}]
