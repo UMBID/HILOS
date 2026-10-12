@@ -273,6 +273,7 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
 </head>
 <body>
@@ -600,6 +601,7 @@
     const sizes = (p.sizes && p.sizes.length) ? p.sizes : [39,40,41,42,43];
     flagshipImages = images;
     window.__flagshipSku = p.sku || '';
+    try { window.HilosTrack && HilosTrack.productView({ sku:p.sku, name:p.name }, 'flagship'); } catch(e){}
     applyGenericCopy(p, colors, sizes);
     flagshipColorsData = colors; // dipakai initFlagshipInteractions untuk panel 360°
 
