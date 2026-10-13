@@ -63,17 +63,28 @@
   /* ===== Banner: 3 foto bulat menyatu -> pecah saat scroll ===== */
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
   .px{--hdr:80px;position:relative;background:var(--ink);}
-  .px-track{height:300vh;position:relative;}
+  .px-track{height:240vh;position:relative;}
   .px-stage{
-    position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));min-height:480px;overflow:hidden;color:#fff;
-    background:radial-gradient(ellipse at 50% 55%,#1f3a57 0%,#102235 45%,#0a1624 100%);
-    --D:clamp(150px,min(30vw,44vh),400px);   /* diameter bulatan */
-    --dx:calc(var(--D) * 1.18);               /* jarak geser kiri/kanan */
-    --sx:0;--lab:0;--intro:1;--drift:0;
+    position:sticky;top:var(--hdr);height:calc(100vh - var(--hdr));height:calc(100svh - var(--hdr));min-height:500px;overflow:hidden;color:#fff;
+    background:radial-gradient(ellipse at 50% 58%,#1f3a57 0%,#102235 45%,#0a1624 100%);
+    --D:clamp(120px,min(25vw,34vh),330px);   /* diameter bulatan */
+    --dx:calc(var(--D) * 1.14);               /* jarak antar bulatan saat sejajar */
+    --R1:calc(var(--D) * .64);                /* jarak pecahan dari pusat (tahap 1) */
+    --s1:0;--s2:0;--lab:0;--intro:1;--wy:0;
   }
-  .px-ghost{position:absolute;left:50%;top:50%;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(120px,24vw,380px);letter-spacing:-.02em;line-height:1;color:transparent;
-    -webkit-text-stroke:2px rgba(234,241,248,.07);white-space:nowrap;pointer-events:none;user-select:none;
-    transform:translate(calc(-50% + var(--gx,0) * 1px),-50%);}
+  /* HILOS: huruf meluncur masuk dari atas / bawah / samping saat scroll, lalu berhenti di atas barisan bulatan (tidak tertutup) */
+  .px-word{position:absolute;z-index:1;left:0;right:0;top:clamp(10px,3.2vh,40px);display:flex;justify-content:center;gap:.02em;pointer-events:none;user-select:none;
+    font-family:'Archivo',sans-serif;font-weight:800;font-size:min(19vw,21vh);line-height:.95;letter-spacing:-.01em;text-transform:uppercase;
+    transform:translate3d(0,calc(var(--wy) * 1px),0);filter:drop-shadow(0 10px 28px rgba(0,0,0,.45));}
+  .px-word span{display:inline-block;
+    background:linear-gradient(180deg,#ffffff 0%,#eaf1f8 38%,var(--gold-light) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+    opacity:calc(var(--li,0) * 1.4);
+    transform:translate3d(calc((1 - var(--li,0)) * var(--fx,0) * 1vw),calc((1 - var(--li,0)) * var(--fy,0) * 1vh),0) rotate(calc((1 - var(--li,0)) * var(--fr,0) * 1deg));}
+  .px-word span:nth-child(1){--fx:-80;--fy:0;--fr:-14;}
+  .px-word span:nth-child(2){--fx:0;--fy:-90;--fr:10;}
+  .px-word span:nth-child(3){--fx:0;--fy:90;--fr:-10;}
+  .px-word span:nth-child(4){--fx:0;--fy:-90;--fr:-12;}
+  .px-word span:nth-child(5){--fx:80;--fy:0;--fr:14;}
   .px-intro{position:absolute;z-index:4;left:0;right:0;top:clamp(18px,6vh,64px);text-align:center;padding:0 20px;pointer-events:none;
     opacity:var(--intro);transform:translate3d(0,calc((1 - var(--intro)) * -30px),0);}
   .px-eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);}
@@ -81,18 +92,23 @@
   .px-intro h2{margin-top:12px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,4.6vw,58px);line-height:1.02;text-transform:uppercase;letter-spacing:.01em;}
   .px-intro p{margin:10px auto 0;max-width:460px;font-size:clamp(13px,1.4vw,16px);color:rgba(234,241,248,.8);line-height:1.6;}
 
-  .px-group{position:absolute;left:50%;top:54%;width:0;height:0;transform:rotate(calc((1 - var(--sx)) * -24deg));}
+  .px-group{position:absolute;z-index:2;left:50%;top:60%;width:0;height:0;transform:rotate(calc((1 - var(--s1)) * -24deg));}
   .px-item{
     position:absolute;left:calc(var(--D) / -2);top:calc(var(--D) / -2);width:var(--D);height:var(--D);
     background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;text-align:center;
-    transform:translate3d(calc(var(--sx) * var(--ix,0) * var(--dx)),calc(var(--sx) * var(--iy,0) * var(--D) + var(--drift) * var(--dr,0) * 1px),0) scale(calc(1 + var(--sx) * var(--is,0)));
+    transform:translate3d(
+      calc((1 - var(--s2)) * var(--s1) * var(--cx,0) * var(--R1) + var(--s2) * var(--ix,0) * var(--dx)),
+      calc((1 - var(--s2)) * var(--s1) * var(--cy,0) * var(--R1)),0) scale(calc(1 + var(--s2) * var(--is,0)));
     filter:drop-shadow(0 22px 28px rgba(0,0,0,.35));will-change:transform;
   }
-  .px-item[data-px="sepatu"]{--ix:-1;--iy:0;--dr:1;z-index:1;}
-  .px-item[data-px="wanita"]{--ix:0;--iy:0;--dr:0;--is:.1;z-index:3;}
-  .px-item[data-px="pria"]{--ix:1;--iy:0;--dr:-1;z-index:2;}
+  /* cx/cy = arah pecahan (tahap 1, membentuk segitiga); ix = posisi di barisan sejajar (tahap 2) */
+  .px-item[data-px="sepatu"]{--cx:-.866;--cy:.5;--ix:-1;z-index:1;}
+  .px-item[data-px="wanita"]{--cx:0;--cy:-1;--ix:0;--is:.08;z-index:3;}
+  .px-item[data-px="pria"]{--cx:.866;--cy:.5;--ix:1;z-index:2;}
   .px-orb{position:absolute;inset:0;overflow:hidden;border-radius:50%;}
   .px-orb .px-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
+  .px-item:focus-visible{outline:none;}
+  .px-item:focus-visible .px-orb{box-shadow:0 0 0 4px var(--gold-light);}
   .px-item:hover .px-img,.px-item:focus-visible .px-img{transform:scale(1.07);}
   .px-item:focus-visible{outline:none;}
   .px-item:focus-visible .px-orb{box-shadow:0 0 0 4px var(--gold-light);}
@@ -104,24 +120,24 @@
   .px-label span{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);}
   .px-label span::after{content:"→";transition:transform .25s;}
   .px-item:hover .px-label span::after{transform:translateX(4px);}
-  .px-item[data-px="wanita"] .px-label{top:calc(100% + var(--D) * .1);}
   .px-hint{position:absolute;z-index:4;left:50%;bottom:16px;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(234,241,248,.7);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:var(--intro);pointer-events:none;}
   .px-hint::after{content:"";width:1px;height:26px;background:linear-gradient(var(--gold-light),transparent);animation:pxHint 1.8s ease-in-out infinite;}
   @keyframes pxHint{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
   @media (max-width:700px){
-    .px-track{height:280vh;}
-    .px-stage{--D:clamp(96px,28vw,150px);--dx:calc(var(--D) * 1.06);}
-    .px-group{top:50%;}
-    .px-item[data-px="sepatu"]{--iy:-.32;}
-    .px-item[data-px="pria"]{--iy:.32;}
-    .px-item[data-px="wanita"]{--is:.06;--iy:0;}
-    .px-label{width:max(100%,110px);}
-    .px-label h3{font-size:13px;}
-    .px-label span{font-size:10px;}
+    .px-track{height:240vh;}
+    .px-stage{--D:clamp(90px,28vw,150px);--dx:calc(var(--D) * 1.08);}
+    .px-group{top:57%;}
+    .px-word{font-size:min(24vw,19vh);}
+    .px-label{width:max(100%,100px);}
+    .px-label h3{font-size:12px;}
+    .px-label span{font-size:9.5px;}
   }
   @media (prefers-reduced-motion:reduce){
     .px-track{height:auto;}
-    .px-stage{position:relative;top:0;min-height:0;height:auto;padding:150px 0 130px;--sx:1;--lab:1;--intro:1;}
+    .px-stage{position:relative;top:0;height:auto;min-height:calc(var(--D) * 1.7 + 230px);--s1:1;--s2:1;--lab:1;--intro:0;}
+    .px-group{top:calc(100% - var(--D) * .95 - 40px);}
+    .px-word span{--li:1;}
+    .px-intro{display:none;}
     .px-hint{display:none;}
   }
 
@@ -372,7 +388,7 @@
 <section class="px" id="pxBanner" aria-label="Kategori utama HILOS">
   <div class="px-track">
     <div class="px-stage" id="pxStage">
-      <div class="px-ghost" aria-hidden="true">HILOS</div>
+      <div class="px-word" id="pxWord" aria-hidden="true"><span>H</span><span>I</span><span>L</span><span>O</span><span>S</span></div>
       <div class="px-intro">
         <div class="px-eyebrow">Koleksi HILOS</div>
         <h2>Tiga Pilihan, Satu Langkah</h2>
@@ -875,31 +891,37 @@
       }
       return 'polygon(' + pts.join(',') + ')';
     }
+    const letters = [...root.querySelectorAll('.px-word span')];
     let ticking = false, lastKey = '';
     function paint(p){
-      const split = ease(clamp((p - 0.10) / 0.50));      // 10%..60% scroll: pecah
-      const lab = clamp((p - 0.55) / 0.2);                 // label muncul setelah pecah
-      const intro = 1 - clamp((p - 0.05) / 0.3);           // judul awal memudar
-      const drift = clamp((p - 0.6) / 0.4);                // setelah pecah: bergeser pelan (parallax)
-      const key = [split, lab, intro, drift].map(v => v.toFixed(3)).join('|');
+      // 2 tahap scroll: (1) bulatan pecah jadi 3, (2) ketiganya bergeser sejajar
+      const s1 = ease(clamp((p - 0.05) / 0.40));
+      const s2 = ease(clamp((p - 0.52) / 0.38));
+      const lab = clamp((s2 - 0.45) / 0.55);
+      const intro = 1 - clamp((p - 0.03) / 0.2);
+      const li = letters.map((_, i) => ease(clamp((p - (0.22 + i * 0.07)) / 0.22)));
+      const wy = (p - 0.6) * -26;                       // parallax halus setelah huruf mendarat
+      const key = [s1, s2, lab, intro, wy].concat(li).map(v => v.toFixed(3)).join('|');
       if (key === lastKey) return; lastKey = key;
-      stage.style.setProperty('--sx', split.toFixed(4));
+      stage.style.setProperty('--s1', s1.toFixed(4));
+      stage.style.setProperty('--s2', s2.toFixed(4));
       stage.style.setProperty('--lab', lab.toFixed(3));
       stage.style.setProperty('--intro', intro.toFixed(3));
-      stage.style.setProperty('--drift', (drift * -40).toFixed(2));
-      stage.style.setProperty('--gx', ((p - 0.5) * -160).toFixed(1));
-      const te = clamp(split * 1.8);   // bentuk bulat selesai lebih dulu, baru bergeser menjauh
+      stage.style.setProperty('--wy', wy.toFixed(1));
+      letters.forEach((el, i) => el.style.setProperty('--li', li[i].toFixed(3)));
+      const te = clamp(s1 * 1.5);     // bentuk bulat penuh lebih dulu, sambil bergeser keluar
+      const on = s2 > 0.6;
       items.forEach(it => {
         it.orb.style.clipPath = te >= 0.999 ? 'none' : wedgeClip(it.a, te);
         it.orb.style.webkitClipPath = it.orb.style.clipPath;
-        it.el.style.pointerEvents = lab > 0.4 ? 'auto' : 'none';
-        it.el.tabIndex = lab > 0.4 ? 0 : -1;
+        it.el.style.pointerEvents = on ? 'auto' : 'none';
+        it.el.tabIndex = on ? 0 : -1;
       });
     }
     function update(){
       ticking = false;
       root.style.setProperty('--hdr', hdr() + 'px');
-      if (reduce.matches){ lastKey = ''; paint(1); items.forEach(it => { it.orb.style.clipPath = 'none'; it.el.style.pointerEvents = 'auto'; it.el.tabIndex = 0; }); return; }
+      if (reduce.matches){ lastKey = ''; paint(1); letters.forEach(el => el.style.setProperty('--li', 1)); items.forEach(it => { it.orb.style.clipPath = 'none'; it.el.style.pointerEvents = 'auto'; it.el.tabIndex = 0; }); return; }
       const top = track.getBoundingClientRect().top;
       paint(clamp((hdr() - top) / range()));
     }
