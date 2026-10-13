@@ -70,24 +70,11 @@
     --D:clamp(120px,min(25vw,34vh),330px);   /* diameter bulatan */
     --dx:calc(var(--D) * 1.14);               /* jarak antar bulatan saat sejajar */
     --R1:calc(var(--D) * .64);                /* jarak pecahan dari pusat (tahap 1) */
-    --F:min(19vw,21vh);                       /* ukuran huruf HILOS */
-    --T:clamp(10px,3.2vh,40px);               /* jarak HILOS dari atas */
-    --wb:calc(var(--T) + var(--F) * .95);     /* tepi bawah HILOS */
-    --s1:0;--s2:0;--lab:0;--intro:1;--wy:0;
+    --s1:0;--s2:0;--lab:0;--intro:1;--gx:0;
   }
-  /* HILOS: huruf meluncur masuk dari atas / bawah / samping saat scroll, lalu berhenti di atas barisan bulatan (tidak tertutup) */
-  .px-word{position:absolute;z-index:1;left:0;right:0;top:var(--T);display:flex;justify-content:center;gap:.02em;pointer-events:none;user-select:none;
-    font-family:'Archivo',sans-serif;font-weight:800;font-size:var(--F);line-height:.95;letter-spacing:-.01em;text-transform:uppercase;
-    transform:translate3d(0,calc(var(--wy) * 1px),0);filter:drop-shadow(0 10px 28px rgba(0,0,0,.45));}
-  .px-word span{display:inline-block;
-    background:linear-gradient(180deg,#ffffff 0%,#eaf1f8 38%,var(--gold-light) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-    opacity:calc(var(--li,0) * 1.4);
-    transform:translate3d(calc((1 - var(--li,0)) * var(--fx,0) * 1vw),calc((1 - var(--li,0)) * var(--fy,0) * 1vh),0) rotate(calc((1 - var(--li,0)) * var(--fr,0) * 1deg));}
-  .px-word span:nth-child(1){--fx:-80;--fy:0;--fr:-14;}
-  .px-word span:nth-child(2){--fx:0;--fy:-90;--fr:10;}
-  .px-word span:nth-child(3){--fx:0;--fy:90;--fr:-10;}
-  .px-word span:nth-child(4){--fx:0;--fy:-90;--fr:-12;}
-  .px-word span:nth-child(5){--fx:80;--fy:0;--fr:14;}
+  .px-ghost{position:absolute;left:50%;top:50%;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(120px,24vw,380px);letter-spacing:-.02em;line-height:1;color:transparent;
+    -webkit-text-stroke:2px rgba(234,241,248,.07);white-space:nowrap;pointer-events:none;user-select:none;
+    transform:translate(calc(-50% + var(--gx,0) * 1px),-50%);}
   .px-intro{position:absolute;z-index:4;left:0;right:0;top:clamp(18px,6vh,64px);text-align:center;padding:0 20px;pointer-events:none;
     opacity:var(--intro);transform:translate3d(0,calc((1 - var(--intro)) * -30px),0);}
   .px-eyebrow{display:inline-flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);}
@@ -95,7 +82,7 @@
   .px-intro h2{margin-top:12px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,4.6vw,58px);line-height:1.02;text-transform:uppercase;letter-spacing:.01em;}
   .px-intro p{margin:10px auto 0;max-width:460px;font-size:clamp(13px,1.4vw,16px);color:rgba(234,241,248,.8);line-height:1.6;}
 
-  .px-group{position:absolute;z-index:2;left:50%;top:calc(var(--wb) + (100% - var(--wb) - var(--D) - 58px) / 2 + var(--D) / 2);width:0;height:0;transform:rotate(calc((1 - var(--s1)) * -24deg));}
+  .px-group{position:absolute;z-index:2;left:50%;top:calc(50% - 29px);width:0;height:0;transform:rotate(calc((1 - var(--s1)) * -24deg));}
   .px-item{
     position:absolute;left:calc(var(--D) / -2);top:calc(var(--D) / -2);width:var(--D);height:var(--D);
     background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;text-align:center;
@@ -128,7 +115,7 @@
   @keyframes pxHint{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
   @media (max-width:700px){
     .px-track{height:240vh;}
-    .px-stage{--D:clamp(88px,28vw,150px);--dx:calc(var(--D) * 1.08);--F:min(24vw,19vh);}
+    .px-stage{--D:clamp(88px,28vw,150px);--dx:calc(var(--D) * 1.08)}
     .px-item[data-px="wanita"]{--is:0;}
     .px-label{width:var(--dx);}
     .px-label h3{font-size:clamp(10px,3.1vw,13px);letter-spacing:.01em;}
@@ -136,9 +123,8 @@
   }
   @media (prefers-reduced-motion:reduce){
     .px-track{height:auto;}
-    .px-stage{position:relative;top:0;height:auto;min-height:calc(var(--D) * 1.7 + 230px);--s1:1;--s2:1;--lab:1;--intro:0;}
-    .px-group{top:calc(var(--wb) + 40px + var(--D) / 2);}
-    .px-word span{--li:1;}
+    .px-stage{position:relative;top:0;height:auto;min-height:calc(var(--D) + 330px);--s1:1;--s2:1;--lab:1;--intro:0;}
+    .px-group{top:calc(50% - 29px);}
     .px-intro{display:none;}
     .px-hint{display:none;}
   }
@@ -390,7 +376,7 @@
 <section class="px" id="pxBanner" aria-label="Kategori utama HILOS">
   <div class="px-track">
     <div class="px-stage" id="pxStage">
-      <div class="px-word" id="pxWord" aria-hidden="true"><span>H</span><span>I</span><span>L</span><span>O</span><span>S</span></div>
+      <div class="px-ghost" aria-hidden="true">HILOS</div>
       <div class="px-intro">
         <div class="px-eyebrow">Koleksi HILOS</div>
         <h2>Tiga Pilihan, Satu Langkah</h2>
@@ -894,7 +880,6 @@
       }
       return 'polygon(' + pts.join(',') + ')';
     }
-    const letters = [...root.querySelectorAll('.px-word span')];
     let ticking = false, lastKey = '';
     function paint(p){
       // 2 tahap scroll: (1) bulatan pecah jadi 3, (2) ketiganya bergeser sejajar
@@ -902,16 +887,14 @@
       const s2 = ease(clamp((p - 0.52) / 0.38));
       const lab = clamp((s2 - 0.45) / 0.55);
       const intro = 1 - clamp((p - 0.03) / 0.2);
-      const li = letters.map((_, i) => ease(clamp((p - (0.22 + i * 0.07)) / 0.22)));
-      const wy = (p - 0.6) * -26;                       // parallax halus setelah huruf mendarat
-      const key = [s1, s2, lab, intro, wy].concat(li).map(v => v.toFixed(3)).join('|');
+      const gx = (p - 0.5) * -160;                      // watermark HILOS bergeser pelan
+      const key = [s1, s2, lab, intro, gx].map(v => v.toFixed(3)).join('|');
       if (key === lastKey) return; lastKey = key;
       stage.style.setProperty('--s1', s1.toFixed(4));
       stage.style.setProperty('--s2', s2.toFixed(4));
       stage.style.setProperty('--lab', lab.toFixed(3));
       stage.style.setProperty('--intro', intro.toFixed(3));
-      stage.style.setProperty('--wy', wy.toFixed(1));
-      letters.forEach((el, i) => el.style.setProperty('--li', li[i].toFixed(3)));
+      stage.style.setProperty('--gx', gx.toFixed(1));
       const te = clamp(s1 * 1.5);     // bentuk bulat penuh lebih dulu, sambil bergeser keluar
       const on = s2 > 0.6;
       items.forEach(it => {
@@ -924,7 +907,7 @@
     function update(){
       ticking = false;
       root.style.setProperty('--hdr', hdr() + 'px');
-      if (reduce.matches){ lastKey = ''; paint(1); letters.forEach(el => el.style.setProperty('--li', 1)); items.forEach(it => { it.orb.style.clipPath = 'none'; it.el.style.pointerEvents = 'auto'; it.el.tabIndex = 0; }); return; }
+      if (reduce.matches){ lastKey = ''; paint(1); items.forEach(it => { it.orb.style.clipPath = 'none'; it.el.style.pointerEvents = 'auto'; it.el.tabIndex = 0; }); return; }
       const top = track.getBoundingClientRect().top;
       paint(clamp((hdr() - top) / range()));
     }
