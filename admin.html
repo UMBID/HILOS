@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1b2a">
 <title>Admin Produk — HILOS</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/supabase-config.js"></script>
+<script src="assets/storage-config.js"></script>
 <script src="assets/dist-map.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -1725,17 +1727,43 @@
   /* ---- kebersihan Storage: frame lama yang diganti/dihapus ikut dibersihkan ---- */
   const pendingDelete = new Set();    // frame tersimpan di DB yang diganti -> dihapus setelah klik Simpan
   const sessionUploaded = new Set();  // frame yang diupload sesi ini -> dihapus kalau modal dibatalkan
+  /* ---- penyimpanan foto: Supabase Storage (bawaan) atau hosting (bila assets/storage-config.js diisi) ---- */
+  const HOST_UP = (window.HILOS_STORAGE && window.HILOS_STORAGE.uploadUrl) || '';
+  async function authToken(){ const { data } = await sb.auth.getSession(); return data && data.session ? data.session.access_token : ''; }
+  async function hostCall(fd){
+    const res = await fetch(HOST_UP, { method:'POST', headers:{ Authorization:'Bearer ' + await authToken() }, body:fd });
+    let j = null; try { j = await res.json(); } catch (e){}
+    if (!res.ok || !j || !j.ok) throw new Error((j && j.error) || ('Server hosting menolak (' + res.status + ')'));
+    return j;
+  }
+  async function storeUpload(path, file, contentType){
+    if (!HOST_UP){
+      const { error } = await sb.storage.from('product-images').upload(path, file, contentType ? { contentType } : undefined);
+      if (error) throw error;
+      return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    }
+    const fd = new FormData(); fd.append('path', path); fd.append('file', file, path.split('/').pop());
+    return (await hostCall(fd)).url;
+  }
+  async function storeRemoveUrls(urls){
+    const sbPaths = [], hostPaths = [];
+    urls.forEach(u => {
+      u = String(u || '');
+      let i = u.indexOf('/product-images/');
+      if (i >= 0){ const p = decodeURIComponent(u.slice(i + 16).split('?')[0]); if (p.startsWith('spin/')) sbPaths.push(p); return; }
+      i = u.indexOf('/uploads/');
+      if (i >= 0 && HOST_UP){ const p = decodeURIComponent(u.slice(i + 9).split('?')[0]); if (p.startsWith('spin/')) hostPaths.push(p); }
+    });
+    if (sbPaths.length){ try { await sb.storage.from('product-images').remove([...new Set(sbPaths)]); } catch (e){} }
+    if (hostPaths.length){ try { const fd = new FormData(); fd.append('action', 'delete'); fd.append('paths', JSON.stringify([...new Set(hostPaths)])); await hostCall(fd); } catch (e){} }
+  }
   function spinPathFromUrl(u){
     const i = String(u || '').indexOf('/product-images/');
     if (i < 0) return null;
     const path = decodeURIComponent(u.slice(i + 16).split('?')[0]);
     return path.startsWith('spin/') ? path : null;
   }
-  async function removeSpinUrls(urls){
-    const paths = [...new Set(urls.map(spinPathFromUrl).filter(Boolean))];
-    if (!paths.length) return;
-    try { await sb.storage.from('product-images').remove(paths); } catch (e){ /* abaikan */ }
-  }
+  async function removeSpinUrls(urls){ await storeRemoveUrls(urls); }
   function queueOrphans(urls){
     urls.filter(Boolean).forEach(u => {
       if (sessionUploaded.has(u)){ sessionUploaded.delete(u); removeSpinUrls([u]); }
@@ -1745,9 +1773,7 @@
 
   async function uploadSpinBlob(blob, name){
     const path = `spin/${Date.now()}-${Math.random().toString(36).slice(2)}-${name}`;
-    const { error } = await sb.storage.from('product-images').upload(path, blob, blob.type ? { contentType: blob.type } : undefined);
-    if (error) throw error;
-    const url = sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    const url = await storeUpload(path, blob, blob.type);
     sessionUploaded.add(url);
     return url;
   }
@@ -2415,10 +2441,9 @@
       sizeBefore += original.size; sizeAfter += file.size;
 
       const path = `colors/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
-      const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
-      if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
-      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
-      currentColors.push({ hex: '#8a8a86', name: 'Warna baru', image: pub.publicUrl });
+      let imgUrl;
+      try { imgUrl = await storeUpload(path, file); } catch (upErr){ showToast('Gagal upload: ' + (upErr.message || upErr)); continue; }
+      currentColors.push({ hex: '#8a8a86', name: 'Warna baru', image: imgUrl });
       renderColorList();
     }
     statusEl.textContent = '';
@@ -2457,10 +2482,9 @@
       sizeBefore += original.size; sizeAfter += file.size;
 
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
-      const { error: upErr } = await sb.storage.from('product-images').upload(path, file);
-      if (upErr){ showToast('Gagal upload: ' + upErr.message); continue; }
-      const { data: pub } = sb.storage.from('product-images').getPublicUrl(path);
-      currentImages.push(pub.publicUrl);
+      let imgUrl;
+      try { imgUrl = await storeUpload(path, file); } catch (upErr){ showToast('Gagal upload: ' + (upErr.message || upErr)); continue; }
+      currentImages.push(imgUrl);
       renderImgList();
     }
     statusEl.textContent = sizeBefore ? `Selesai — ukuran total ${formatKB(sizeBefore)} → ${formatKB(sizeAfter)}.` : '';
@@ -2803,9 +2827,7 @@
   async function cmUpload(file){
     const f = await compressImageFile(file, { maxDim:1600, quality:0.82 });
     const path = `content/${cmPageSel.value}/${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const { error } = await sb.storage.from('product-images').upload(path, f, { contentType:f.type });
-    if (error) throw error;
-    return sb.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    return await storeUpload(path, f, f.type);
   }
 
   cmEditor.addEventListener('click', (e) => {
