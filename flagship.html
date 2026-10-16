@@ -188,6 +188,8 @@
 
   .cta-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
   .cta-row .btn{padding:14px 22px;font-size:11.5px;}
+  .share-btn{background:transparent;color:#eaf1f8;border:1px solid rgba(234,241,248,.3);display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+  .share-btn:hover{border-color:#6fa3d4;color:#fff;}
 
   .trust-row{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid var(--on-dark-line);}
   .trust-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--on-dark-muted);}
@@ -276,6 +278,7 @@
 <script src="assets/supabase-config.js"></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
+<script src="assets/ux.js" defer></script>
 </head>
 <body>
 
@@ -411,6 +414,7 @@
 
         <div class="cta-row">
           <a href="#" class="btn btn-fill" id="salesBtn2"><span>Hubungi Sales</span></a>
+          <button type="button" class="btn share-btn" id="shareBtn" aria-label="Bagikan produk ini"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4.2M8.6 13.4l6.8 4.2"/></svg><span id="shareLbl">Bagikan</span></button>
         </div>
 
         <div class="trust-row">
@@ -683,6 +687,28 @@
       + '<a href="produk.html" style="display:inline-block;padding:12px 22px;border-radius:8px;border:1px solid #111;color:#111;text-decoration:none">Lihat semua produk</a>';
     const r = document.getElementById('fpRetry'); if (r) r.onclick = () => location.reload();
   }
+  (function(){
+    const btn = document.getElementById('shareBtn'), lbl = document.getElementById('shareLbl');
+    if (!btn) return;
+    let t;
+    function flash(msg){ lbl.textContent = msg; clearTimeout(t); t = setTimeout(() => { lbl.textContent = 'Bagikan'; }, 2000); }
+    btn.addEventListener('click', async () => {
+      const h = document.querySelector('.product-info h3');
+      const name = h ? h.textContent.trim() : 'Produk HILOS';
+      const url = location.href.split('#')[0];
+      if (navigator.share){
+        try { await navigator.share({ title: name + ' — HILOS', text: 'Lihat ' + name + ' dari HILOS', url }); } catch (e){ /* dibatalkan pengunjung */ }
+        return;
+      }
+      try { await navigator.clipboard.writeText(url); flash('Tautan disalin'); }
+      catch (e){
+        const ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); flash('Tautan disalin'); } catch (_) { flash('Salin dari bilah alamat'); }
+        ta.remove();
+      }
+    });
+  })();
+
   fpLoading();
   Promise.race([
     loadFlagshipProduct(),
