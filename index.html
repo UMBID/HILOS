@@ -863,6 +863,18 @@
      SECTION 6 — SOCIAL MEDIA TEASER
      ================================================== */
 
+
+  /* ---- Ajakan kemitraan ---- */
+  .partner-cta{max-width:1200px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,64px) 0;}
+  .partner-cta-inner{position:relative;overflow:hidden;background:linear-gradient(135deg,#163049,#0f2236);border:1px solid rgba(111,163,212,.28);color:var(--sand);padding:clamp(32px,5vw,56px) clamp(24px,5vw,56px);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:clamp(24px,4vw,48px);align-items:center;}
+  .partner-cta-inner::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(111,163,212,.28),transparent 70%);pointer-events:none;}
+  .partner-cta .eyebrow{color:#6fa3d4;}
+  .partner-cta h2{font-size:clamp(24px,3.2vw,38px);line-height:1.15;margin:10px 0 14px;color:#fff;}
+  .partner-cta p{font-size:15px;line-height:1.7;color:#b9c9d9;max-width:520px;}
+  .partner-types{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1;}
+  .partner-types li{border:1px solid rgba(234,241,248,.18);padding:14px 16px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+  .partner-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;position:relative;z-index:1;}
+  @media (max-width:820px){ .partner-cta-inner{grid-template-columns:minmax(0,1fr);} }
   .socmed-teaser{max-width:1200px;margin:0 auto;padding:60px clamp(20px,5vw,64px);}
   .socmed-teaser-inner{
     background:linear-gradient(180deg, var(--sand-deep) 0%, transparent 100%);
@@ -974,6 +986,7 @@
 <script src="assets/supabase-config.js"></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
+<script src="assets/ux.js" defer></script>
 </head>
 <body>
 
@@ -1222,6 +1235,23 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+<section class="partner-cta" id="mitra" aria-label="Kemitraan HILOS">
+  <div class="partner-cta-inner reveal">
+    <div>
+      <span class="eyebrow">Kemitraan</span>
+      <h2>Tumbuh Bersama HILOS</h2>
+      <p>Kami membuka kerjasama untuk distributor, e-commerce, wholesale, dan mitra manufaktur di seluruh Indonesia. Ceritakan kebutuhan Anda, tim kami akan menghubungi kembali.</p>
+      <div class="partner-actions">
+        <a href="kerjasama.html" class="btn btn-fill"><span>Lihat Peluang Kerjasama</span></a>
+        <a href="#" class="btn btn-outline" data-wa="kerjasama"><span>Tanya via WhatsApp</span></a>
+      </div>
+    </div>
+    <ul class="partner-types">
+      <li>Distributor</li><li>E-Commerce</li><li>Wholesale</li><li>Manufacture</li>
+    </ul>
   </div>
 </section>
 
