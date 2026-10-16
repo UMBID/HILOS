@@ -65,7 +65,33 @@ Deno.serve(async (req) => {
     const targetId = String(body.user_id || '');
     const { data: target } = await db.from('admin_profiles').select('user_id,email,role').eq('user_id', targetId).maybeSingle();
     if (!target) return reply({ ok: false, error: 'Admin tidak ditemukan.' });
-    if (target.role === 'super_admin' || target.user_id === user.id) return reply({ ok: false, error: 'Akun Super Admin tidak bisa diubah dari sini.' });
+    // akun sendiri tidak boleh diubah di sini (supaya tidak terkunci); minta Super Admin lain
+    if (target.user_id === user.id) return reply({ ok: false, error: 'Akun Anda sendiri tidak bisa diubah dari sini. Minta Super Admin lain jika perlu.' });
+
+    // pengaman: harus selalu tersisa minimal 1 Super Admin aktif selain target
+    const lastSuperGuard = async () => {
+      if (target.role !== 'super_admin') return true;
+      const { count } = await db.from('admin_profiles').select('user_id', { count: 'exact', head: true })
+        .eq('role', 'super_admin').eq('is_active', true).neq('user_id', targetId);
+      return (count ?? 0) >= 1;
+    };
+
+    if (action === 'promote') {
+      if (target.role === 'super_admin') return reply({ ok: false, error: 'Akun ini sudah Super Admin.' });
+      const { data: t2 } = await db.from('admin_profiles').select('is_active').eq('user_id', targetId).maybeSingle();
+      if (!t2?.is_active) return reply({ ok: false, error: 'Aktifkan akun ini dulu sebelum dijadikan Super Admin.' });
+      await db.from('admin_profiles').update({ role: 'super_admin' }).eq('user_id', targetId);
+      await audit('jadikan_super_admin', target.email);
+      return reply({ ok: true });
+    }
+
+    if (action === 'demote') {
+      if (target.role !== 'super_admin') return reply({ ok: false, error: 'Akun ini bukan Super Admin.' });
+      if (!(await lastSuperGuard())) return reply({ ok: false, error: 'Harus tersisa minimal 1 Super Admin aktif.' });
+      await db.from('admin_profiles').update({ role: 'admin' }).eq('user_id', targetId);
+      await audit('cabut_super_admin', target.email);
+      return reply({ ok: true });
+    }
 
     if (action === 'reset_password') {
       const password = String(body.password || '');
@@ -79,6 +105,7 @@ Deno.serve(async (req) => {
 
     if (action === 'set_active') {
       const active = !!body.active;
+      if (!active && !(await lastSuperGuard())) return reply({ ok: false, error: 'Harus tersisa minimal 1 Super Admin aktif.' });
       await db.from('admin_profiles').update({ is_active: active }).eq('user_id', targetId);
       await db.auth.admin.updateUserById(targetId, { ban_duration: active ? 'none' : '876000h' });
       await audit(active ? 'aktifkan' : 'nonaktifkan', target.email);
@@ -86,6 +113,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'delete') {
+      if (!(await lastSuperGuard())) return reply({ ok: false, error: 'Harus tersisa minimal 1 Super Admin aktif.' });
       await audit('hapus_admin', target.email);
       const { error } = await db.auth.admin.deleteUser(targetId);
       if (error) return reply({ ok: false, error: error.message });
