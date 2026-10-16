@@ -2407,15 +2407,21 @@
             } catch (err){ hasAlpha = true; } // gagal baca (mis. CORS) — aman-kan sebagai PNG
           }
 
-          const outType = hasAlpha ? 'image/png' : 'image/jpeg';
-          canvas.toBlob((blob) => {
+          const finish = (blob, outType) => {
             if (!blob){ resolve(file); return; } // gagal kompres — pakai file asli, jangan sampai gagal total
-            const ext = outType === 'image/png' ? 'png' : 'jpg';
+            outType = blob.type || outType;
+            const ext = outType === 'image/webp' ? 'webp' : (outType === 'image/png' ? 'png' : 'jpg');
             const newName = file.name.replace(/\.[^.]+$/, '') + '.' + ext;
             const compressed = new File([blob], newName, { type: outType });
             // kalau hasil kompresi malah lebih besar dari aslinya (jarang, tapi bisa terjadi di file kecil), pakai yang asli
             resolve(compressed.size < file.size ? compressed : file);
-          }, outType, outType === 'image/jpeg' ? quality : undefined);
+          };
+          // utamakan WebP (±25-35% lebih kecil, transparansi tetap terjaga); browser yang tak bisa encode WebP (mis. Safari lama) otomatis pakai JPEG/PNG
+          canvas.toBlob((wb) => {
+            if (wb && wb.type === 'image/webp') return finish(wb, 'image/webp');
+            const fbType = hasAlpha ? 'image/png' : 'image/jpeg';
+            canvas.toBlob((blob) => finish(blob, fbType), fbType, fbType === 'image/jpeg' ? quality : undefined);
+          }, 'image/webp', quality);
         };
         img.onerror = () => resolve(file); // gagal decode — fallback ke file asli
         img.src = e.target.result;
@@ -2633,13 +2639,18 @@
     if (error){ box.innerHTML = '<p class="hint">Gagal memuat: ' + escHtml(error.message) + '</p>'; return; }
     box.innerHTML = data.map(a => {
       const sup = a.role === 'super_admin';
+      const self = (a.email || '').toLowerCase() === (me.email || '').toLowerCase();
       const status = !a.is_active ? '<span class="st off">Nonaktif</span>' : (a.must_change_password ? '<span class="st warn">Belum ganti password</span>' : '<span class="st ok">Aktif</span>');
-      return `<div class="adm-row"><div class="adm-main"><b>${escHtml(a.email)}</b>${sup ? '<span class="st sup">Super Admin</span>' : status}
-        <small>${sup ? 'Akun utama' : 'Dibuat ' + fmtDT(a.created_at) + (a.created_by ? ' oleh ' + escHtml(a.created_by) : '')}</small></div>
-        ${sup ? '' : `<div class="adm-actions">
-          <button class="icon-btn" data-adm="reset" data-id="${a.user_id}" data-email="${escHtml(a.email)}">Reset Password</button>
-          <button class="icon-btn" data-adm="${a.is_active ? 'off' : 'on'}" data-id="${a.user_id}" data-email="${escHtml(a.email)}">${a.is_active ? 'Nonaktifkan' : 'Aktifkan'}</button>
-          <button class="icon-btn" data-adm="del" data-id="${a.user_id}" data-email="${escHtml(a.email)}" style="color:var(--danger);">Hapus</button></div>`}</div>`;
+      const em = escHtml(a.email);
+      const btn = (act, label, extra) => `<button class="icon-btn" data-adm="${act}" data-id="${a.user_id}" data-email="${em}" ${extra || ''}>${label}</button>`;
+      const actions = self ? '' : `<div class="adm-actions">
+          ${sup ? btn('demote', 'Jadikan Admin Biasa') : (a.is_active ? btn('promote', 'Jadikan Super Admin') : '')}
+          ${btn('reset', 'Reset Password')}
+          ${btn(a.is_active ? 'off' : 'on', a.is_active ? 'Nonaktifkan' : 'Aktifkan')}
+          ${btn('del', 'Hapus', 'style="color:var(--danger);"')}</div>`;
+      return `<div class="adm-row"><div class="adm-main"><b>${em}</b>${sup ? '<span class="st sup">Super Admin</span>' : ''}${status}
+        <small>${self ? 'Akun Anda' : 'Dibuat ' + fmtDT(a.created_at) + (a.created_by ? ' oleh ' + escHtml(a.created_by) : '')}</small></div>
+        ${actions}</div>`;
     }).join('') || '<p class="hint">Belum ada akun.</p>';
   }
   document.getElementById('admGen').addEventListener('click', () => { document.getElementById('admPw').value = genPw(); });
@@ -2672,6 +2683,14 @@
       if (act === 'off' && !confirm('Nonaktifkan ' + email + '? Admin ini langsung tidak bisa mengubah data.')) return;
       r = await callAdminFn({ action:'set_active', user_id:id, active: act === 'on' });
       if (r.ok) showToast(act === 'on' ? 'Akun diaktifkan.' : 'Akun dinonaktifkan.');
+    } else if (act === 'promote'){
+      if (!confirm('Jadikan ' + email + ' sebagai SUPER ADMIN?\n\nSuper Admin bisa mengelola semua admin (termasuk menghapus akun Super Admin lain) dan melihat semua riwayat.')) return;
+      r = await callAdminFn({ action:'promote', user_id:id });
+      if (r.ok) showToast(email + ' sekarang Super Admin.');
+    } else if (act === 'demote'){
+      if (!confirm('Turunkan ' + email + ' menjadi admin biasa?')) return;
+      r = await callAdminFn({ action:'demote', user_id:id });
+      if (r.ok) showToast('Diturunkan menjadi admin biasa.');
     } else if (act === 'del'){
       if (!confirm('Hapus akun ' + email + ' secara permanen? Tindakan tidak bisa dibatalkan.')) return;
       r = await callAdminFn({ action:'delete', user_id:id });
