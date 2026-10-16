@@ -12,13 +12,13 @@
     // lalu tinggal menekan kirim. {produk} {kode} {warna} {ukuran} diisi otomatis.
     templates: {
       general:
-        'Halo HILOS 👋\nSaya ingin bertanya tentang produk HILOS.\n\nNama: \nKota: \nPertanyaan: ',
+        'Halo Tim HILOS,\n\nSaya ingin bertanya tentang produk HILOS.\n\nNama: \nKota & Alamat: \nPertanyaan: \nSkema Kerjasama: ',
       kontak:
-        'Halo HILOS 👋\nSaya ingin menghubungi tim HILOS.\n\nNama: \nTopik (Pertanyaan Produk / Status Pesanan / Komplain-Garansi / Lainnya): \nPesan: ',
+        'Halo Tim HILOS,\n\nSaya ingin menghubungi tim HILOS.\n\nNama: \nKota & Alamat: \nTopik (Pertanyaan Produk / Status Pesanan / Komplain-Garansi / Lainnya): \nPesan: ',
       kerjasama:
-        'Halo HILOS 👋\nSaya tertarik untuk bekerjasama dengan HILOS.\n\nNama: \nNama Perusahaan/Toko: \nJenis kerjasama (Distributor / E-Commerce / Wholesale / Manufacture Partner): \nKota: \n\nMohon info syarat dan ketentuannya. Terima kasih.',
+        'Halo Tim HILOS,\n\nSaya tertarik untuk bekerjasama dengan HILOS.\n\nNama: \nNama Perusahaan/Toko: \nKota & Alamat: \nSkema Kerjasama (Distributor / E-Commerce / Wholesale / Manufacture Partner): \nPertanyaan: ',
       produk:
-        'Halo HILOS 👋\nSaya tertarik dengan produk berikut:\n{detail}\n\nNama: \nKota: \n\nMohon info ketersediaan dan cara pemesanannya. Terima kasih.'
+        'Halo Tim HILOS,\n\nSaya ingin bertanya tentang produk berikut:\n{detail}\n\nNama: \nKota & Alamat: \nPertanyaan: \nSkema Kerjasama: '
     }
   };
 
@@ -64,8 +64,33 @@
     });
     document.querySelectorAll('[data-wa-text]').forEach(el => { el.textContent = pretty(CONFIG.number); });
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
-  else apply();
+
+  /* ---- tombol WhatsApp melayang: tidak menutupi konten di HP ----
+     - mengikuti area aman layar (notch / bar bawah iPhone)
+     - menyingkir saat pengunjung scroll ke bawah, muncul lagi saat scroll ke atas atau berhenti sebentar
+     - ruang ekstra di dasar halaman supaya baris terakhir footer tidak tertutup */
+  function floatBehavior(){
+    const w = document.querySelector('.wa-widget'); if (!w) return;
+    const st = document.createElement('style');
+    st.textContent =
+      '.wa-widget{right:max(16px,env(safe-area-inset-right)) !important;bottom:max(16px,env(safe-area-inset-bottom)) !important;transition:transform .3s ease,opacity .3s ease;}' +
+      '.wa-widget.wa-away{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none;}' +
+      '@media (max-width:640px){.footer-bottom{padding-bottom:88px !important;}}' +
+      '@media (prefers-reduced-motion:reduce){.wa-widget{transition:none;}.wa-widget.wa-away{transform:none;opacity:1;pointer-events:auto;}}';
+    document.head.appendChild(st);
+    const mq = window.matchMedia('(max-width:640px)');
+    let last = window.scrollY, idle = 0;
+    const show = () => w.classList.remove('wa-away');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY, d = y - last; last = y;
+      if (!mq.matches || document.querySelector('.wa-popup.open')){ show(); return; }
+      if (d > 6 && y > 240) w.classList.add('wa-away'); else if (d < -6 || y <= 240) show();
+      clearTimeout(idle); idle = setTimeout(show, 1400);
+    }, { passive:true });
+  }
+  const init = () => { apply(); floatBehavior(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 
   window.HilosWA = { config: CONFIG, url, open, productFromPage, pretty, apply };
 })();
