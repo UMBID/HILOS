@@ -14,7 +14,7 @@
     --ink-2:#16283d;
     --sand:#eaf1f8;
     --sand-deep:#cddfec;
-    --sand-line:rgba(13,27,42,0.14); 
+    --sand-line:rgba(13,27,42,0.14);
     --gold:#2f6fb0;
     --gold-light:#6fa3d4;
     --gold-deep:#1c4a73;
@@ -28,8 +28,8 @@
   a{color:inherit;}
 
   .photo{position:relative;overflow:hidden;background:var(--ink-2);}
-  .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(0.4) saturate(1.6) brightness(0.85) contrast(1.05);}
-  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(155deg, rgba(198,154,88,0.38), rgba(13,27,42,0.55));mix-blend-mode:multiply;}
+  .photo img{width:100%;height:100%;object-fit:cover;}
+  /* foto tampil dengan warna aslinya (tanpa overlay) */
 
   .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
   .ribbon-track{display:inline-flex;align-items:center;animation:marquee 26s linear infinite;}
@@ -250,7 +250,6 @@
   .proc-card{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1);}
   .proc-card .photo img{transform:scale(1.3);transition:transform 1.4s cubic-bezier(.16,.84,.44,1),filter .6s ease;}
   .proc-card.is-visible .photo img{transform:scale(1);}
-  .proc-card.is-visible:hover .photo img{transform:scale(1.07);filter:grayscale(.1) sepia(.1) saturate(1.1) brightness(.95);}
   .proc-card h4{transition:color .3s;}
   .proc-card:hover h4{color:var(--gold-deep);}
 
@@ -267,7 +266,6 @@
   .commit-card svg polyline{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .6s ease;transition-delay:calc(var(--i) * .14s + .55s);}
   .commit-card.is-visible svg polyline{stroke-dashoffset:0;}
   .outing-grid .photo img{transition:transform .8s cubic-bezier(.16,.84,.44,1),filter .6s;}
-  .outing-grid .photo:hover img{transform:scale(1.05);filter:grayscale(.1) sepia(.1) saturate(1.1);}
   @media (prefers-reduced-motion:reduce){
     .page-head h1 .w > span,.vm-card li,.commit-card li,.stat-icon,.cert-badge .mark{transform:none !important;opacity:1 !important;transition:none !important;}
     .hero-slide.active img{animation:none;transform:none;}.kebersamaan-panel.active{animation:none;}
@@ -314,9 +312,8 @@
   @media (max-width:560px){.grid-3 .proc-card .photo{aspect-ratio:4/3;}}
   /* Foto Kebersamaan (Event/CSR): tampil UTUH tanpa terpotong, baik landscape maupun portrait.
      Sisi kosong diisi salinan foto yang sama (diburamkan) supaya kartu tetap rapi. */
-  .kebersamaan-panel .proc-card .photo::before{content:"";position:absolute;inset:-24px;background:var(--bg,none) center/cover no-repeat;filter:grayscale(1) sepia(.4) saturate(1.4) blur(18px) brightness(.8);}
+  .kebersamaan-panel .proc-card .photo::before{content:"";position:absolute;inset:-24px;background:var(--bg,none) center/cover no-repeat;filter:blur(18px) brightness(.85);}
   .kebersamaan-panel .proc-card .photo img{position:relative;z-index:1;object-fit:contain;}
-  .kebersamaan-panel .proc-card .photo::after{z-index:2;}
 
   .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
   @media (max-width:560px){
@@ -787,6 +784,7 @@
 
   /* ---- miring 3D mengikuti kursor (hanya perangkat dengan mouse) ---- */
   function bindTilt(){
+    return; // efek miring/hover pada foto dimatikan (foto tampil statis dengan warna aslinya)
     if (prefersReducedMotion || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
     document.querySelectorAll('.proc-card .photo, .outing-grid .photo, .outing-grid [data-tilt]').forEach(el => {
       if (el.dataset.tiltBound) return; el.dataset.tiltBound = '1';
