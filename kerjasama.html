@@ -681,9 +681,69 @@
   /* form kerjasama: dikirim ke email lewat Web3Forms (lihat assets/form-config.js) */
   HilosForm.init({ formId: 'kerjasamaForm', successId: 'formSuccess', kind: 'Kerjasama' });
 
-  /* mitra video placeholder */
-  document.getElementById('mitraVideo').addEventListener('click', () => {
-    alert('Video review mitra akan ditampilkan di sini — slot ini siap diisi video asli.');
+  /* ---- Apa Kata Mitra Kami: isi bisa diubah dari admin (Konten Halaman > Kerjasama) ---- */
+  document.addEventListener('DOMContentLoaded', function(){
+    const S = window.HilosSafe, esc = S.esc;
+    let ytUrl = '';
+    const vcard = document.getElementById('mitraVideo');
+    function ytEmbed(u){
+      u = S.youtube(u); if (!u) return '';
+      const m = u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{11})/);
+      return m ? 'https://www.youtube-nocookie.com/embed/' + m[1] + '?autoplay=1&rel=0' : '';
+    }
+    function openVideo(){
+      const src = ytEmbed(ytUrl);
+      if (!src){ return; }
+      let m = document.getElementById('mitraModal');
+      if (!m){
+        m = document.createElement('div'); m.id = 'mitraModal';
+        m.style.cssText = 'position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px;';
+        m.innerHTML = '<div style="position:relative;width:min(960px,100%);aspect-ratio:16/9;background:#000;"><iframe style="width:100%;height:100%;border:0;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Video review mitra"></iframe><button type="button" aria-label="Tutup" style="position:absolute;top:-38px;right:0;background:none;border:0;color:#fff;font-size:28px;cursor:pointer;">&times;</button></div>';
+        document.body.appendChild(m);
+        const close = () => { m.style.display = 'none'; m.querySelector('iframe').src = 'about:blank'; };
+        m.addEventListener('click', (e) => { if (e.target === m || e.target.tagName === 'BUTTON') close(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+      }
+      m.querySelector('iframe').src = src; m.style.display = 'flex';
+    }
+    vcard.addEventListener('click', openVideo);
+
+    function render(d){
+      const h = d.head;
+      if (h && typeof h === 'object'){
+        const sec = document.getElementById('review');
+        if (h.title) sec.querySelector('.section-head-center h2').textContent = h.title;
+        if (h.sub) sec.querySelector('.section-head-center p').textContent = h.sub;
+      }
+      const v = d.video;
+      if (v && typeof v === 'object'){
+        if (S.url(v.img)) vcard.querySelector('.photo img').src = S.url(v.img);
+        vcard.querySelector('h4').textContent = v.title || '';
+        vcard.querySelector('.loc').textContent = v.loc || '';
+        vcard.querySelector('p.quote').textContent = v.quote ? '"' + v.quote + '"' : '';
+        ytUrl = v.url || '';
+        vcard.querySelector('.play-btn').style.display = ytEmbed(ytUrl) ? '' : 'none';
+        vcard.style.cursor = ytEmbed(ytUrl) ? 'pointer' : 'default';
+      }
+      if (Array.isArray(d.testi) && d.testi.length){
+        document.querySelector('#review .testimonial-row').innerHTML = d.testi.map(t => `
+      <div class="testimonial-card reveal is-visible">
+        <div class="stars">★★★★★</div>
+        <div class="testimonial-person">
+          <div class="photo"><img loading="lazy" decoding="async" src="${esc(S.url(t.avatar))}" alt="${esc(t.name)}"></div>
+          <div><strong>${esc(t.name)}</strong><span>${esc(t.role)}</span></div>
+        </div>
+        <p>"${esc(t.quote)}"</p>
+        ${S.url(t.img) ? `<div class="photo shop-photo"><img loading="lazy" decoding="async" src="${esc(S.url(t.img))}" alt="Toko mitra"></div>` : ''}
+      </div>`).join('');
+      }
+    }
+    try {
+      const sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+      if (sb) Promise.resolve(sb.from('site_content').select('data').eq('page', 'kerjasama').maybeSingle()).then(res => {
+        if (res && res.data && res.data.data) render(res.data.data);
+      }).catch(() => {});
+    } catch(e){}
   });
 
 </script>
