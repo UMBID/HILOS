@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1b2a">
@@ -609,7 +611,7 @@
       bar.style.transform = 'scaleX(' + (step/3) + ')';
       back.hidden = step === 1; next.hidden = step === 3;
       if (step === 3){
-        sum.innerHTML = 'Pilihan Anda: ' + (out.value ? out.value.split(', ').map(v => '<span>'+v+'</span>').join('') : '-');
+        sum.innerHTML = 'Pilihan Anda: ' + (out.value ? out.value.split(', ').map(v => '<span>'+HilosSafe.esc(v)+'</span>').join('') : '-');
       }
       if (focus){
         const f = panels[step-1].querySelector('input:not([type=checkbox]):not([type=hidden]), textarea');
@@ -765,7 +767,8 @@
   </a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/safe.js"></script>
+<script src="assets/supabase.js"></script>
 <script src="assets/supabase-config.js"></script>
 <script src="assets/dist-map.js"></script>
 </body>
