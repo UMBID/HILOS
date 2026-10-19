@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html class="about-pending" lang="id">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1b2a">
@@ -629,7 +631,8 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/safe.js"></script>
+<script src="assets/supabase.js"></script>
 <script src="assets/supabase-config.js"></script>
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -852,14 +855,14 @@
 
   /* ---- konten dari admin (Konten Halaman > Tentang Kami); kalau kosong tetap pakai template di atas ---- */
   (function(){
-    const esc = (t) => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    const esc = HilosSafe.esc, U = HilosSafe.url;
     const arr = (v) => Array.isArray(v) && v.length ? v : null;
     const card = (it, i, num) => '<div class="proc-card reveal">' + (num ? '\n      <span class="proc-no" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' : '') +
-      '<div class="photo"><img loading="lazy" decoding="async" src="' + esc(it.img) + '" alt="' + esc(it.title) + '"></div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div>';
+      '<div class="photo"><img loading="lazy" decoding="async" src="' + esc(U(it.img)) + '" alt="' + esc(it.title) + '"></div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div>';
     function render(d){
       const b = arr(d.banner);
       if (b){
-        document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(u) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
+        document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(U(u)) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
         document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
         window.__showSlide && window.__showSlide(0);
       }
@@ -869,11 +872,11 @@
       const o = d.outing;
       if (o && o.main && Array.isArray(o.side)){
         const g = document.querySelector('#panel-outing .outing-grid');
-        g.querySelector('.outing-main img').src = o.main;
+        g.querySelector('.outing-main img').src = U(o.main) || g.querySelector('.outing-main img').src;
         const sides = g.querySelectorAll('.outing-side .photo img');
-        o.side.forEach((u, i) => { if (sides[i] && u) sides[i].src = u; });
+        o.side.forEach((u, i) => { if (sides[i] && U(u)) sides[i].src = U(u); });
         if (o.video){
-          if (o.video.img) g.querySelector('.outing-video .photo img').src = o.video.img;
+          if (U(o.video.img)) g.querySelector('.outing-video .photo img').src = U(o.video.img);
           const vl = g.querySelector('.outing-video .vlabel');
           if (vl){ vl.querySelector('strong').textContent = o.video.title || ''; vl.querySelector('span').textContent = o.video.label || ''; }
         }
