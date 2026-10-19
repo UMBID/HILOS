@@ -12,15 +12,28 @@
 // =====================================================================
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// KEAMANAN: batasi asal permintaan. Di Supabase > Edge Functions > admin-users > Secrets,
+// tambahkan ALLOWED_ORIGINS = https://www.hilos.id,https://umbid.github.io
+// (pisahkan dengan koma). Kalau belum diisi, semua asal diizinkan (seperti sebelumnya).
+const ALLOWED = (Deno.env.get('ALLOWED_ORIGINS') ?? '').split(',').map((x) => x.trim()).filter(Boolean);
+const corsFor = (req: Request) => {
+  const origin = req.headers.get('Origin') ?? '';
+  const allow = ALLOWED.length === 0 ? '*' : (ALLOWED.includes(origin) ? origin : ALLOWED[0]);
+  return {
+    'Access-Control-Allow-Origin': allow,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Vary': 'Origin',
+  };
 };
-const reply = (obj: unknown) =>
-  new Response(JSON.stringify(obj), { headers: { ...cors, 'Content-Type': 'application/json' } });
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (req) => {
+  const cors = corsFor(req);
+  const reply = (obj: unknown) =>
+    new Response(JSON.stringify(obj), { headers: { ...cors, 'Content-Type': 'application/json' } });
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
+  if (req.method !== 'POST') return reply({ ok: false, error: 'Metode tidak didukung.' });
+  if (ALLOWED.length && !ALLOWED.includes(req.headers.get('Origin') ?? '')) return reply({ ok: false, error: 'Asal permintaan tidak diizinkan.' });
   try {
     const url = Deno.env.get('SUPABASE_URL')!;
     const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -37,7 +50,11 @@ Deno.serve(async (req) => {
     const { data: me } = await db.from('admin_profiles').select('role,is_active').eq('user_id', user.id).maybeSingle();
     if (!me || !me.is_active || me.role !== 'super_admin') return reply({ ok: false, error: 'Hanya Super Admin yang boleh melakukan ini.' });
 
-    const body = await req.json();
+    const raw = await req.text();
+    if (raw.length > 4000) return reply({ ok: false, error: 'Permintaan terlalu besar.' });
+    let body: any;
+    try { body = JSON.parse(raw); } catch { return reply({ ok: false, error: 'Permintaan tidak valid.' }); }
+    if (!body || typeof body !== 'object') return reply({ ok: false, error: 'Permintaan tidak valid.' });
     const action = String(body.action || '');
     const audit = (act: string, target: string) =>
       db.from('admin_audit').insert({ actor_email: user.email, action: act, target_email: target });
@@ -47,7 +64,8 @@ Deno.serve(async (req) => {
       const email = String(body.email || '').trim().toLowerCase();
       const password = String(body.password || '');
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return reply({ ok: false, error: 'Format email tidak valid.' });
-      if (password.length < 8) return reply({ ok: false, error: 'Password sementara minimal 8 karakter.' });
+      if (email.length > 254) return reply({ ok: false, error: 'Email terlalu panjang.' });
+      if (password.length < 8 || password.length > 72) return reply({ ok: false, error: 'Password sementara 8–72 karakter.' });
       const { data, error } = await db.auth.admin.createUser({ email, password, email_confirm: true });
       if (error || !data.user) {
         const m = (error?.message || '').toLowerCase();
@@ -63,6 +81,7 @@ Deno.serve(async (req) => {
 
     // aksi lain butuh target admin biasa
     const targetId = String(body.user_id || '');
+    if (!UUID.test(targetId)) return reply({ ok: false, error: 'ID akun tidak valid.' });
     const { data: target } = await db.from('admin_profiles').select('user_id,email,role').eq('user_id', targetId).maybeSingle();
     if (!target) return reply({ ok: false, error: 'Admin tidak ditemukan.' });
     // akun sendiri tidak boleh diubah di sini (supaya tidak terkunci); minta Super Admin lain
@@ -95,7 +114,8 @@ Deno.serve(async (req) => {
 
     if (action === 'reset_password') {
       const password = String(body.password || '');
-      if (password.length < 8) return reply({ ok: false, error: 'Password sementara minimal 8 karakter.' });
+      if (email.length > 254) return reply({ ok: false, error: 'Email terlalu panjang.' });
+      if (password.length < 8 || password.length > 72) return reply({ ok: false, error: 'Password sementara 8–72 karakter.' });
       const { error } = await db.auth.admin.updateUserById(targetId, { password });
       if (error) return reply({ ok: false, error: error.message });
       await db.from('admin_profiles').update({ must_change_password: true }).eq('user_id', targetId);
