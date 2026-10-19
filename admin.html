@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'none'; connect-src 'self' https: https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1b2a">
@@ -9,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/safe.js"></script>
+<script src="assets/supabase.js"></script>
 <script src="assets/supabase-config.js"></script>
 <script src="assets/storage-config.js"></script>
 <script src="assets/dist-map.js"></script>
@@ -619,6 +622,7 @@
     <div style="display:flex;gap:8px;">
       <span class="who-mini" id="whoMini"></span>
       <button class="btn btn-outline" id="pwBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Ganti Password</button>
+      <button class="btn btn-outline" id="backupBtn" title="Unduh cadangan data (produk, Top 5, kota, konten)" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Backup Data</button>
       <button class="btn btn-outline" id="logoutBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Keluar</button>
     </div>
   </div>
@@ -1182,6 +1186,26 @@
     checkSession();
   });
 
+  /* ---------------- BACKUP DATA (JSON) ---------------- */
+  document.getElementById('backupBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('backupBtn'); btn.disabled = true;
+    try {
+      const out = { dibuat: new Date().toISOString(), versi: 1 };
+      for (const t of ['products','top10_rankings','distribution_cities','site_content']){
+        const { data, error } = await sb.from(t).select('*');
+        out[t] = error ? { error: error.message } : data;
+      }
+      const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'hilos-backup-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      showToast('Backup berhasil diunduh. Simpan di tempat aman.');
+    } catch(e){ alert('Backup gagal: ' + (e.message || e)); }
+    finally { btn.disabled = false; }
+  });
+
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await sb.auth.signOut();
     checkSession();
@@ -1289,6 +1313,26 @@
       openPwModal(true);
     }
   });
+
+  /* ---------------- KEAMANAN: keluar otomatis kalau tidak aktif ---------------- */
+  (function(){
+    const IDLE_MS = 30 * 60 * 1000, WARN_MS = 28 * 60 * 1000;
+    let last = Date.now(), warned = false;
+    const bump = () => { last = Date.now(); warned = false; };
+    ['mousemove','keydown','click','touchstart','scroll'].forEach(ev => window.addEventListener(ev, bump, { passive:true }));
+    setInterval(async () => {
+      if (app.style.display === 'none') { bump(); return; }
+      const idle = Date.now() - last;
+      if (idle >= IDLE_MS){
+        try { await sb.auth.signOut(); } catch(e){}
+        alert('Anda keluar otomatis karena tidak ada aktivitas selama 30 menit. Silakan login lagi.');
+        location.reload();
+      } else if (idle >= WARN_MS && !warned){
+        warned = true;
+        try { showToast('Tidak ada aktivitas, Anda akan keluar otomatis dalam 2 menit.'); } catch(e){}
+      }
+    }, 15000);
+  })();
 
   /* ---------------- LOAD & RENDER ---------------- */
   let allProducts = [];
