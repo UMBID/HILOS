@@ -779,7 +779,7 @@
       </div>
       <div class="cm-bar">
         <label for="cmPage" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#6b6058;">Menu</label>
-        <select id="cmPage"><option value="tentang">Tentang Kami</option></select>
+        <select id="cmPage"><option value="tentang">Tentang Kami</option><option value="kerjasama">Kerjasama — Apa Kata Mitra</option></select>
         <span class="cm-status" id="cmStatus"></span>
       </div>
       <div id="cmEditor"></div>
@@ -2788,6 +2788,15 @@
         side: [PX(1963622,500), PX(8456270,500), PX(7693713,500), PX(7568964,500)],
         video: { img:PX(1963622,1000), title:'Company Outing 2024', label:'Watch Video · 02:45' }
       }
+    },
+    kerjasama: {
+      head: { title:'Apa Kata Mitra Kami?', sub:'Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.' },
+      video: { img:PX(7289741,500), title:'Toko Abadi Jaya — Surabaya', loc:'Distributor sejak 2019', quote:'Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS.', url:'' },
+      testi: [
+        { avatar:PX(3791554,120), name:'Linda Wijaya', role:'Mitra E-Commerce · Jakarta', quote:'Pelayanan tim HILOS sangat responsif, pengiriman cepat dan produk selalu ready stok. Sangat membantu bisnis kami.', img:PX(19294576,400) },
+        { avatar:PX(19456424,120), name:'Hendra Gunawan', role:'Distributor · Medan', quote:'Margin keuntungan sangat menguntungkan, dukungan promosi yang diberikan juga sangat membantu penjualan di daerah kami.', img:PX(8973680,400) },
+        { avatar:PX(2324638,120), name:'Yuni Astuti', role:'Wholesale · Makassar', quote:'Produk HILOS diminati semua kalangan, dari anak-anak sampai dewasa. Kualitas bagus, harga bersaing!', img:PX(5156696,400) }
+      ]
     }
   };
   const CM_SECTIONS = {
@@ -2800,6 +2809,11 @@
     ]
   };
 
+  CM_SECTIONS.kerjasama = [
+    { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
+    { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video' },
+    { key:'testi', title:'Testimoni Mitra', sub:'Foto profil, nama, kota, kutipan, dan foto toko', kind:'testi', max:6, help:'Foto profil persegi, foto toko landscape.' }
+  ];
   let cmData = null, cmHasRow = false, cmDirty = false, cmUploadCb = null, cmUploadMulti = false;
   const cmPageSel = document.getElementById('cmPage'), cmEditor = document.getElementById('cmEditor');
   const cmNote = document.getElementById('cmNote'), cmStatus = document.getElementById('cmStatus'), cmFile = document.getElementById('cmFile');
@@ -2858,6 +2872,32 @@
             ${ctrl(sec.key, i, list.length)}
           </div>`).join('') + `</div>
           <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah kartu</button>`;
+      } else if (sec.kind === 'head'){
+        body = `<div class="cm-fields"><span class="cm-lbl">Judul</span><input type="text" value="${escA(list.title)}" data-f="head.title" maxlength="80">
+          <span class="cm-lbl">Kalimat pendek</span><input type="text" value="${escA(list.sub)}" data-f="head.sub" maxlength="160"></div>`;
+      } else if (sec.kind === 'video'){
+        const v = list;
+        body = `<div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(v.img, 'video.img')}
+          <div class="cm-fields">
+            <span class="cm-lbl">Nama toko / mitra</span><input type="text" value="${escA(v.title)}" data-f="video.title" maxlength="80">
+            <span class="cm-lbl">Keterangan kecil</span><input type="text" value="${escA(v.loc)}" data-f="video.loc" maxlength="80">
+            <span class="cm-lbl">Kutipan</span><textarea data-f="video.quote" maxlength="300">${escA(v.quote)}</textarea>
+            <span class="cm-lbl">Link YouTube (opsional)</span><input type="url" value="${escA(v.url)}" data-f="video.url" maxlength="200" placeholder="https://www.youtube.com/watch?v=...">
+            <span class="hint">Kalau link diisi, tombol putar aktif dan video diputar di pop-up. Kalau kosong, tombol putar disembunyikan.</span>
+          </div></div>`;
+      } else if (sec.kind === 'testi'){
+        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((it, i) => `
+          <div class="cm-item" data-i="${i}">
+            <div style="display:flex;flex-direction:column;gap:8px;">${cmThumb(it.avatar, sec.key + '.' + i + '.avatar')}${cmThumb(it.img, sec.key + '.' + i + '.img')}</div>
+            <div class="cm-fields">
+              <span class="cm-lbl">Nama</span><input type="text" value="${escA(it.name)}" data-f="${sec.key}.${i}.name" maxlength="60">
+              <span class="cm-lbl">Jenis usaha · Kota</span><input type="text" value="${escA(it.role)}" data-f="${sec.key}.${i}.role" maxlength="80">
+              <span class="cm-lbl">Kutipan</span><textarea data-f="${sec.key}.${i}.quote" maxlength="300">${escA(it.quote)}</textarea>
+              <span class="hint">Foto atas = foto profil, foto bawah = foto toko.</span>
+            </div>
+            ${ctrl(sec.key, i, list.length)}
+          </div>`).join('') + `</div>
+          <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah testimoni</button>`;
       } else if (sec.kind === 'outing'){
         const o = list;
         body = `<div class="cm-sub">Foto besar</div>
@@ -2917,6 +2957,7 @@
             if (cmData[key].length >= sec.max) break;
             const url = await cmUpload(file);
             if (sec.kind === 'photos') cmData[key].push(url);
+            else if (sec.kind === 'testi') cmData[key].push({ avatar:url, name:'Nama mitra', role:'Jenis usaha · Kota', quote:'Tulis kutipan mitra di sini.', img:url });
             else cmData[key].push({ img:url, title:'Judul baru', desc:'Keterangan singkat.' });
           }
           cmSetDirty(true);
