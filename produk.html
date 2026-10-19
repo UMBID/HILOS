@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1b2a">
@@ -344,7 +346,8 @@
   @media (hover:none){.product-cta{transform:none;background:none;color:var(--gold-deep);position:static;padding:0 16px 14px;}}
   @media (prefers-reduced-motion:reduce){.product-thumb{animation:none;}.product-cta,.product-card::after{transition:none;}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/safe.js"></script>
+<script src="assets/supabase.js"></script>
 <script src="assets/supabase-config.js"></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
@@ -624,23 +627,25 @@
       if (!isLocalPreview){ showCatalogState(error ? 'error' : 'empty'); return; }
       products = fallbackProducts();
     } else {
+      const S = window.HilosSafe;
+      const FALLBACK_IMG = 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500';
       products = data.map(p => {
-        const rawColors = p.colors || [];
+        const rawColors = (Array.isArray(p.colors) ? p.colors : []).filter(c => c && typeof c === 'object');
         const firstColorImg = rawColors.find(c => c.image) ? rawColors.find(c => c.image).image : '';
+        const cat = ['pria','wanita','anak'].includes(p.category) ? p.category : 'pria';
         return {
-          id: p.id,
-          name: p.name,
-          model: p.model,
-          category: p.category,
-          price: p.price,
-          img: (p.images && p.images[0]) ? p.images[0] : (firstColorImg || 'https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=500'),
-          colors: rawColors.map(c => c.hex),
-          colorNamesMap: rawColors.reduce((acc, c) => { acc[c.hex] = c.name; return acc; }, {}),
-          // peta warna -> foto khusus warna itu (kalau ada), dipakai untuk ganti foto saat klik warna
-          colorImages: rawColors.reduce((acc, c) => { if (c.image) acc[c.hex] = c.image; return acc; }, {}),
-          sizes: p.sizes || [],
-          badge: p.badge || null,
-          sku: p.sku || '',
+          id: String(p.id).replace(/[^\w\-]/g, ''),
+          name: String(p.name == null ? '' : p.name),
+          model: String(p.model == null ? '' : p.model),
+          category: cat,
+          price: Number(p.price) || 0,
+          img: S.url((p.images && p.images[0]) ? p.images[0] : firstColorImg) || FALLBACK_IMG,
+          colors: rawColors.map(c => S.hex(c.hex)),
+          colorNamesMap: rawColors.reduce((acc, c) => { acc[S.hex(c.hex)] = String(c.name || ''); return acc; }, {}),
+          colorImages: rawColors.reduce((acc, c) => { if (S.url(c.image)) acc[S.hex(c.hex)] = S.url(c.image); return acc; }, {}),
+          sizes: (Array.isArray(p.sizes) ? p.sizes : []).map(Number).filter(n => isFinite(n)),
+          badge: p.badge === 'best' || p.badge === 'new' ? p.badge : null,
+          sku: String(p.sku || ''),
           is3d: !!p.is_3d
         };
       });
@@ -674,7 +679,7 @@
 
   const uniqueModels = [...new Set(products.map(p => p.model))];
   document.getElementById('modelChecks').innerHTML = uniqueModels.map(m => `
-    <label class="check-row"><input type="checkbox" data-filter="model" value="${m}"> ${m}</label>
+    <label class="check-row"><input type="checkbox" data-filter="model" value="${HilosSafe.esc(m)}"> ${HilosSafe.esc(m)}</label>
   `).join('');
 
   const uniqueSizes = [...new Set(products.flatMap(p => p.sizes))].sort((a,b) => a - b);
@@ -684,7 +689,7 @@
 
   const uniqueColors = [...new Set(products.flatMap(p => p.colors))];
   document.getElementById('colorSwatches').innerHTML = uniqueColors.map(c => `
-    <button class="swatch-toggle" data-filter="color" value="${c}" style="background:${c}" title="${colorNames[c] || ''}"></button>
+    <button class="swatch-toggle" data-filter="color" value="${c}" style="background:${c}" title="${HilosSafe.esc(colorNames[c] || '')}"></button>
   `).join('');
 
   // HARGA DINONAKTIFKAN — uncomment 2 baris ini kalau harga dipakai lagi:
@@ -738,8 +743,8 @@
     if (chips.length === 0){ wrap.innerHTML = ''; return; }
 
     wrap.innerHTML = chips.map(c => `
-      <span class="active-chip" data-type="${c.type}" data-value="${c.value}">
-        ${c.label}
+      <span class="active-chip" data-type="${c.type}" data-value="${HilosSafe.esc(c.value)}">
+        ${HilosSafe.esc(c.label)}
         <button aria-label="Hapus filter">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -833,12 +838,12 @@
               <svg viewBox="0 0 24 24" fill="${wishlist.has(p.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg>
             </button>
           </div>
-          <img src="${p.img}" alt="${p.name}" loading="lazy" onload="this.parentNode.classList.add('loaded')" onerror="this.parentNode.classList.add('loaded')">
+          <img src="${HilosSafe.esc(p.img)}" alt="${HilosSafe.esc(p.name)}" loading="lazy" onload="this.parentNode.classList.add('loaded')" onerror="this.parentNode.classList.add('loaded')">
           <div class="product-cta"><span>Lihat Cepat</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
         </div>
         <div class="product-info">
-          <h4>${p.name}</h4>
-          <div class="model-tag">Lini ${p.model}</div>
+          <h4>${HilosSafe.esc(p.name)}</h4>
+          <div class="model-tag">Lini ${HilosSafe.esc(p.model)}</div>
           <!-- HARGA DINONAKTIFKAN: sebelumnya ada <div class="price">${'$'}{formatRupiah(p.price)}</div> di sini, uncomment kalau harga dipakai lagi -->
           <div class="product-colors">${p.colors.map(c => `<span style="background:${c}"></span>`).join('')}</div>
         </div>
@@ -853,7 +858,7 @@
     const cnt = {}; products.forEach(p => { cnt[p.category] = (cnt[p.category] || 0) + 1; });
     const only = state.categories.size === 1 ? [...state.categories][0] : null;
     const items = [{ k:'', l:'Semua', n:products.length }].concat(Object.keys(categoryLabels).filter(k => cnt[k]).map(k => ({ k, l:categoryLabels[k], n:cnt[k] })));
-    bar.innerHTML = items.map(it => `<button type="button" class="quick-pill${(it.k === (only || '') && state.categories.size <= 1) ? ' active' : ''}" role="tab" data-cat="${it.k}">${it.l}<em>${it.n}</em></button>`).join('');
+    bar.innerHTML = items.map(it => `<button type="button" class="quick-pill${(it.k === (only || '') && state.categories.size <= 1) ? ' active' : ''}" role="tab" data-cat="${it.k}">${HilosSafe.esc(it.l)}<em>${it.n}</em></button>`).join('');
   }
   document.getElementById('quickBar').addEventListener('click', (e) => {
     const b = e.target.closest('.quick-pill'); if (!b) return;
@@ -1079,7 +1084,7 @@
     document.getElementById('qvImage').src = p.img.replace('w=500','w=700');
     document.getElementById('qvName').textContent = p.name;
     // HARGA DINONAKTIFKAN: document.getElementById('qvPrice').textContent = formatRupiah(p.price);
-    document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}" data-img="${(p.colorImages && p.colorImages[c]) || ''}"></span>`).join('');
+    document.getElementById('qvColors').innerHTML = p.colors.map((c,i) => `<span style="background:${c}" class="${i===0 ? 'active' : ''}" data-color="${c}" data-img="${HilosSafe.esc((p.colorImages && p.colorImages[c]) || '')}"></span>`).join('');
     // kalau warna pertama punya foto sendiri, langsung tampilkan itu
     if (p.colors.length && p.colorImages && p.colorImages[p.colors[0]]){
       document.getElementById('qvImage').src = p.colorImages[p.colors[0]];
@@ -1161,7 +1166,7 @@
     const defaultMonth = months.includes(currentMonth) ? currentMonth : months[0];
 
     const select = document.getElementById('top10MonthSelect');
-    select.innerHTML = months.map(m => `<option value="${m}" ${m === defaultMonth ? 'selected' : ''}>${monthLabel(m)}</option>`).join('');
+    select.innerHTML = months.map(m => `<option value="${HilosSafe.esc(m)}" ${m === defaultMonth ? 'selected' : ''}>${HilosSafe.esc(monthLabel(m))}</option>`).join('');
     select.addEventListener('change', () => renderTop10(select.value));
 
     document.getElementById('top10Section').style.display = 'block';
@@ -1192,14 +1197,15 @@
 
     grid.innerHTML = data.filter(r => r.products).map(r => {
       const p = r.products;
-      const img = (p.images && p.images[0]) ? p.images[0] : '';
-      const href = p.is_3d ? (r.rank === 1 ? 'flagship.html' : `flagship.html?rank=${r.rank}`) : '';
+      const img = HilosSafe.url((p.images && p.images[0]) ? p.images[0] : '');
+      const rk = Math.max(1, Math.min(99, parseInt(r.rank, 10) || 1));
+      const href = p.is_3d ? (r.rank === 1 ? 'flagship.html' : `flagship.html?rank=${rk}`) : '';
       return `
         <a class="top10-card" ${href ? `href="${href}"` : 'style="cursor:default"'}>
-          <span class="top10-rank-badge${r.rank <= 3 ? ' is-top3' : ''}">#${r.rank}</span>
-          <div class="top10-thumb">${img ? `<img src="${img}" alt="${p.name}" loading="lazy">` : ''}</div>
+          <span class="top10-rank-badge${r.rank <= 3 ? ' is-top3' : ''}">#${rk}</span>
+          <div class="top10-thumb">${img ? `<img src="${HilosSafe.esc(img)}" alt="${HilosSafe.esc(p.name)}" loading="lazy">` : ''}</div>
           <div class="top10-info">
-            <h4>${p.name}</h4>
+            <h4>${HilosSafe.esc(p.name)}</h4>
             <!-- HARGA DINONAKTIFKAN: sebelumnya ada <div class="price">${'$'}{formatRupiah(p.price)}</div> di sini, uncomment kalau harga dipakai lagi -->
           </div>
         </a>
