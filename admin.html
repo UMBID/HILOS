@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'none'; connect-src 'self' https: https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'self'; connect-src 'self' https: https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -560,6 +560,31 @@
   .cm-ctrl .cm-del:hover{ border-color:var(--danger); color:var(--danger); }
   .cm-add{ margin-top:12px; }
   .cm-sub{ font-family:'Archivo',sans-serif; font-weight:800; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--gold-deep); margin:16px 0 10px; }
+
+  /* Pratinjau Website / Mobile */
+  .cm-layout{ display:block; }
+  .cm-preview{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:12px; margin-top:18px; }
+  .cmp-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .cmp-head b{ font-family:'Archivo',sans-serif; font-size:13px; text-transform:uppercase; letter-spacing:.05em; margin-right:auto; }
+  .cmp-tabs{ display:flex; border:1px solid var(--sand-line); border-radius:100px; overflow:hidden; }
+  .cmp-tabs button{ border:0; background:transparent; padding:7px 14px; font-size:12px; font-weight:600; cursor:pointer; color:#5b6b7b; }
+  .cmp-tabs button.on{ background:#0d1b2a; color:#fff; }
+  .cmp-ico{ width:32px; height:32px; border:1px solid var(--sand-line); border-radius:50%; background:#fff; cursor:pointer; font-size:15px; line-height:1; }
+  .cmp-stage{ position:relative; width:100%; background:#dfe8f0; border-radius:8px; overflow:hidden; display:flex; justify-content:center; align-items:flex-start; }
+  .cmp-device{ position:absolute; top:0; left:0; box-sizing:border-box; transform-origin:top left; background:#fff; }
+  .cmp-device iframe{ display:block; width:100%; height:100%; border:0; background:#fff; }
+  .cmp-device.mobile{ border:10px solid #0d1b2a; border-radius:34px; box-shadow:0 8px 24px rgba(0,0,0,.25); }
+  .cmp-device.mobile iframe{ border-radius:24px; }
+  .cmp-note{ margin-top:8px; }
+  @media (min-width:1280px){
+    .cm-layout{ display:grid; grid-template-columns:minmax(0,1fr) 520px; gap:24px; align-items:start; }
+    .cm-preview{ position:sticky; top:86px; margin-top:0; }
+  }
+  .cm-preview.full{ position:fixed; inset:16px; z-index:90; margin:0; display:flex; flex-direction:column; box-shadow:0 0 0 100vmax rgba(13,27,42,.6); }
+  .cm-preview.full .cmp-stage{ flex:1; }
+  .cm-slots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; margin-top:10px; }
+  .cm-slot{ display:flex; flex-direction:column; gap:8px; }
+  .cm-slot .cm-thumb{ width:100%; height:auto; aspect-ratio:4/3; }
   .cm-outing-side{ display:grid; grid-template-columns:repeat(4,96px); gap:12px; }
   .cm-savebar{ position:sticky; bottom:0; background:rgba(245,249,252,.95); backdrop-filter:blur(6px); border-top:1px solid var(--sand-line); padding:12px 0; margin-top:8px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; z-index:5; }
   .cm-dirty{ font-size:12px; color:var(--danger); font-weight:600; display:none; }
@@ -783,9 +808,11 @@
       </div>
       <div class="cm-bar">
         <label for="cmPage" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#6b6058;">Menu</label>
-        <select id="cmPage"><option value="tentang">Tentang Kami</option><option value="kerjasama">Kerjasama — Apa Kata Mitra</option></select>
+        <select id="cmPage"><option value="beranda">Beranda</option><option value="tentang">Tentang Kami</option><option value="produk">Produk</option><option value="kerjasama">Kerjasama — Apa Kata Mitra</option></select>
         <span class="cm-status" id="cmStatus"></span>
       </div>
+      <div class="cm-layout">
+      <div class="cm-main">
       <div id="cmEditor"></div>
       <div class="cm-savebar">
         <button class="btn btn-gold" id="cmSave">Simpan Perubahan</button>
@@ -794,6 +821,21 @@
       </div>
       <p class="hint" id="cmNote" style="margin-top:10px;"></p>
       <input type="file" id="cmFile" accept="image/*" multiple style="display:none;">
+      </div>
+      <aside class="cm-preview" id="cmPreview" aria-label="Pratinjau halaman">
+        <div class="cmp-head">
+          <b>Pratinjau</b>
+          <div class="cmp-tabs" role="tablist">
+            <button type="button" class="on" data-dev="desktop">Website</button>
+            <button type="button" data-dev="mobile">Mobile</button>
+          </div>
+          <button type="button" class="cmp-ico" id="cmpFull" title="Perbesar / kecilkan" aria-label="Perbesar pratinjau">⤢</button>
+          <button type="button" class="cmp-ico" id="cmpReload" title="Muat ulang pratinjau" aria-label="Muat ulang pratinjau">↻</button>
+        </div>
+        <div class="cmp-stage" id="cmpStage"><div class="cmp-device" id="cmpDevice"><iframe id="cmpFrame" title="Pratinjau halaman website" loading="lazy"></iframe></div></div>
+        <p class="hint cmp-note">Pratinjau langsung ikut berubah saat Anda mengganti foto atau teks, sebelum disimpan. Klik bagian di kiri untuk melompat ke bagian itu di halaman.</p>
+      </aside>
+      </div>
     </div>
     <!-- /contentView -->
 
@@ -2793,6 +2835,12 @@
         video: { img:PX(1963622,1000), title:'Company Outing 2024', label:'Watch Video · 02:45' }
       }
     },
+    beranda: {
+      hero: [PX(7872865,1800), PX(1308324,1800), PX(35903658,1800)]
+    },
+    produk: {
+      kategori: [PX(2529148,900), PX(1272328,900), PX(6633324,900)]
+    },
     kerjasama: {
       head: { title:'Apa Kata Mitra Kami?', sub:'Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.' },
       video: { img:PX(7289741,500), title:'Toko Abadi Jaya — Surabaya', loc:'Distributor sejak 2019', quote:'Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS.', url:'' },
@@ -2813,6 +2861,12 @@
     ]
   };
 
+  CM_SECTIONS.beranda = [
+    { key:'hero', title:'Foto Utama Beranda', sub:'3 foto yang berganti otomatis di bagian paling atas Beranda', kind:'slots', labels:['Slide 1 — Pria','Slide 2 — Wanita','Slide 3 — Anak'], help:'Pakai foto landscape (lebar), minimal 1600 px. Foto yang sama juga dipakai untuk bulatan kecil di sudut kanan bawah.' }
+  ];
+  CM_SECTIONS.produk = [
+    { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], help:'Foto persegi atau produk di tengah foto lebih bagus, karena ditampilkan dalam bentuk lingkaran.' }
+  ];
   CM_SECTIONS.kerjasama = [
     { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
     { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video' },
@@ -2824,7 +2878,7 @@
   const clone = (o) => JSON.parse(JSON.stringify(o));
   const escA = (t) => String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
-  function cmSetDirty(v){ cmDirty = v; document.getElementById('cmDirty').classList.toggle('show', v); }
+  function cmSetDirty(v){ cmDirty = v; document.getElementById('cmDirty').classList.toggle('show', v); if (v) cmpSchedule(); }
 
   async function loadContent(){
     cmNote.textContent = '';
@@ -2845,7 +2899,64 @@
     }
     cmSetDirty(false);
     renderContentEditor();
+    if (cmpPage !== page) cmpLoad(); else cmpPush();
   }
+
+  /* ---------------- PRATINJAU WEBSITE / MOBILE ---------------- */
+  const CMP = {
+    url: { beranda:'index.html', tentang:'tentang.html', produk:'produk.html', kerjasama:'kerjasama.html' },
+    scroll: {
+      beranda:{ hero:'#beranda' },
+      tentang:{ banner:'.about-hero', pabrik:'#procWrap', event:'#kebersamaanSection', csr:'#kebersamaanSection', outing:'#kebersamaanSection' },
+      produk:{ kategori:'#pxBanner' },
+      kerjasama:{ head:'#review', video:'#review', testi:'#review' }
+    }
+  };
+  const cmpBox = document.getElementById('cmPreview'), cmpStage = document.getElementById('cmpStage'),
+        cmpDevice = document.getElementById('cmpDevice'), cmpFrame = document.getElementById('cmpFrame');
+  let cmpDev = 'desktop', cmpReady = false, cmpPage = null, cmpTimer = null;
+
+  function cmpLayout(){
+    const sw = cmpStage.clientWidth; if (!sw) return;
+    const mob = cmpDev === 'mobile', bz = mob ? 20 : 0, full = cmpBox.classList.contains('full'), vw = mob ? 390 : 1280;
+    let scale = Math.min(1, (sw - (mob ? 24 : 0)) / (vw + bz)), vh;
+    if (full){
+      const sh = cmpStage.clientHeight;
+      if (mob){ scale = Math.min(scale, (sh - 12) / (844 + bz)); vh = 844; }
+      else vh = Math.max(500, Math.floor(sh / scale) - bz);
+    } else vh = mob ? 780 : 800;
+    cmpDevice.style.width = (vw + bz) + 'px'; cmpDevice.style.height = (vh + bz) + 'px';
+    cmpDevice.style.transform = 'scale(' + scale + ')';
+    cmpDevice.style.left = Math.max(0, (sw - (vw + bz) * scale) / 2) + 'px';
+    cmpDevice.style.top = mob ? '6px' : '0';
+    cmpDevice.classList.toggle('mobile', mob);
+    if (!full) cmpStage.style.height = Math.ceil((vh + bz) * scale + (mob ? 12 : 0)) + 'px'; else cmpStage.style.height = '';
+  }
+  function cmpLoad(){
+    const page = cmPageSel.value; cmpPage = page; cmpReady = false;
+    cmpFrame.src = CMP.url[page] + '?preview=1';
+    cmpLayout();
+  }
+  function cmpPush(key){
+    if (!cmpReady || !cmpFrame.contentWindow) return;
+    const sel = key && CMP.scroll[cmPageSel.value] ? CMP.scroll[cmPageSel.value][key] : null;
+    cmpFrame.contentWindow.postMessage({ type:'hilos-preview', data:cmData, scroll:sel || null }, location.origin);
+  }
+  function cmpSchedule(){ clearTimeout(cmpTimer); cmpTimer = setTimeout(() => cmpPush(), 250); }
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin || e.source !== cmpFrame.contentWindow) return;
+    if (e.data && e.data.type === 'hilos-preview-ready'){ cmpReady = true; cmpPush(); }
+  });
+  cmpBox.querySelectorAll('.cmp-tabs button').forEach(b => b.addEventListener('click', () => {
+    cmpDev = b.dataset.dev;
+    cmpBox.querySelectorAll('.cmp-tabs button').forEach(x => x.classList.toggle('on', x === b));
+    cmpLayout();
+  }));
+  document.getElementById('cmpFull').addEventListener('click', () => { cmpBox.classList.toggle('full'); cmpLayout(); });
+  document.getElementById('cmpReload').addEventListener('click', cmpLoad);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cmpBox.classList.contains('full')){ cmpBox.classList.remove('full'); cmpLayout(); } });
+  if (window.ResizeObserver) new ResizeObserver(cmpLayout).observe(cmpStage); else window.addEventListener('resize', cmpLayout);
+  cmEditor.addEventListener('toggle', (e) => { const d = e.target; if (d && d.matches && d.matches('details.cm-sec') && d.open) cmpPush(d.dataset.key); }, true);
 
   function cmThumb(url, onPickPath){
     return `<div class="cm-thumb" data-pick="${onPickPath}"><img src="${escA(url)}" alt=""><span>Ganti foto</span></div>`;
@@ -2865,6 +2976,9 @@
             ${ctrl(sec.key, i, list.length)}
           </div>`).join('') + `</div>
           <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah foto</button>`;
+      } else if (sec.kind === 'slots'){
+        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-slots">` + list.map((u, i) => `
+          <div class="cm-slot">${cmThumb(u, sec.key + '.' + i)}<span class="cm-lbl">${sec.labels[i] || ('Foto ' + (i + 1))}</span></div>`).join('') + `</div>`;
       } else if (sec.kind === 'cards'){
         body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((it, i) => `
           <div class="cm-item" data-i="${i}">
