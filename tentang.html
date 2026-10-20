@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html class="about-pending" lang="id">
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -10,7 +10,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1264AC">
-<title>Contact Us — HILOS</title>
+<title>Tentang Kami — HILOS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -35,6 +35,10 @@
   body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased;}
   img{display:block;max-width:100%;}
   a{color:inherit;}
+
+  .photo{position:relative;overflow:hidden;background:var(--ink-2);}
+  .photo img{width:100%;height:100%;object-fit:cover;}
+  /* foto tampil dengan warna aslinya (tanpa overlay) */
 
   .ribbon{position:sticky;top:0;z-index:31;background:var(--ink);border-bottom:1px solid var(--on-dark-line);overflow:hidden;white-space:nowrap;}
   .ribbon-track{display:inline-flex;align-items:center;animation:marquee 60s linear infinite;}
@@ -61,6 +65,7 @@
   .btn-fill:hover::before{transform:translateY(0);}
   .btn-fill:hover{transform:translateY(-2px);}
 
+  /* reveal engine */
   .reveal{opacity:0;transform:translateY(26px);transition:opacity 0.8s cubic-bezier(.16,.84,.44,1), transform 0.8s cubic-bezier(.16,.84,.44,1);}
   .reveal.is-visible{opacity:1;transform:translateY(0);}
   .reveal-scale{opacity:0;transform:scale(0.95);transition:opacity 0.9s ease, transform 0.9s cubic-bezier(.16,.84,.44,1);}
@@ -74,66 +79,117 @@
   .page-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,3.2vw,38px);text-transform:uppercase;margin-top:14px;}
   .page-head p{margin-top:10px;font-size:14.5px;color:#3F566D;max-width:560px;}
 
-  /* ============ CONTACT ============ */
-  .contact-section{max-width:1360px;margin:0 auto;padding:46px clamp(20px,5vw,64px) 90px;}
-  .contact-grid{display:grid;grid-template-columns:0.85fr 1.3fr 0.9fr;gap:20px;align-items:stretch;}
+  /* stat row (reused pattern) */
+  .stat-row{max-width:1360px;margin:0 auto;padding:30px clamp(20px,5vw,64px) 0;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+  .stat-card{border-top:1px solid var(--sand-line);padding-top:18px;}
+  .stat-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(10,62,112,0.16);border-radius:50%;color:var(--gold-deep);margin-bottom:14px;}
+  .stat-icon svg{width:19px;height:19px;}
+  .stat-number{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(24px,2.2vw,30px);color:var(--text);display:block;}
+  .stat-label{margin-top:6px;font-size:12.5px;color:#4A6178;}
 
-  .contact-cta{background:var(--ink);color:var(--sand);padding:30px 26px;display:flex;flex-direction:column;justify-content:center;}
-  .contact-cta h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase;line-height:1.2;margin-bottom:10px;}
-  .contact-cta p{font-size:13px;color:var(--on-dark-muted);line-height:1.6;margin-bottom:20px;}
-  .contact-cta .hint{font-size:11.5px;color:var(--on-dark-muted);margin-top:14px;}
+  /* facility photo band */
+  .about-hero-banner{max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);}
+  .hero-slideshow{position:relative;width:100%;aspect-ratio:21/8;overflow:hidden;}
+  .hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;}
+  .hero-slide.active{opacity:1;}
+  .hero-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+  .hero-slide-dots{display:flex;justify-content:center;gap:8px;margin-top:14px;}
+  .hero-slide-dots .dot{width:8px;height:8px;border-radius:50%;border:none;background:var(--sand-line);cursor:pointer;padding:0;}
+  .hero-slide-dots .dot.active{background:var(--gold-deep);}
 
-  .contact-form{background:#fff;border:1px solid var(--sand-line);padding:26px;}
-  .contact-form h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;}
-  /* skema kerjasama (muncul bila topik = Kerjasama) */
-  .kj-group{border:0;padding:0;margin:0 0 14px;min-width:0;display:none;}
-  .kj-group.show{display:block;}
-  .kj-group legend{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:8px;padding:0;}
-  .kj-group legend em{font-style:normal;font-weight:400;color:#5E7389;}
-  .kj-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .kj-chip{position:relative;display:block;cursor:pointer;}
-  .contact-form .kj-chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;cursor:pointer;}
-  .kj-chip span{display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid var(--sand-line);background:#fff;font-size:13px;line-height:1.2;transition:border-color .2s,background .2s,color .2s;}
-  .kj-chip span::before{content:"";flex:0 0 16px;height:16px;border:1.5px solid #9aa7b5;border-radius:3px;background:#fff center/11px no-repeat;transition:all .2s;}
-  .kj-chip:hover span{border-color:var(--gold-deep);}
-  .kj-chip input:checked + span{border-color:var(--gold-deep);background:rgba(30,120,188,.07);font-weight:600;}
-  .kj-chip input:checked + span::before{background-color:var(--gold-deep);border-color:var(--gold-deep);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.2l2.4 2.4 4.6-5'/%3E%3C/svg%3E");}
-  .kj-chip input:focus-visible + span{outline:2px solid var(--gold-deep);outline-offset:2px;}
-  .kj-error{display:none;margin-top:8px;font-size:12px;color:#b3261e;}
-  .kj-group.bad .kj-error{display:block;}
-  .kj-group.bad .kj-chip span{border-color:#d9a09b;}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-  .contact-form input, .contact-form select, .contact-form textarea{
-    width:100%;padding:11px 12px;border:1px solid var(--sand-line);background:var(--paper);
-    font-family:inherit;font-size:13px;color:var(--text);
+  .about-video-wrap{max-width:1000px;margin:48px auto 0;padding:0 clamp(20px,5vw,64px);text-align:center;}
+  .about-video-embed{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;}
+  .about-video-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .about-video-caption{margin-top:14px;font-size:13px;color:var(--text);opacity:0.65;}
+
+  .vision-mission-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px);}
+
+  .about-social-strip{
+    margin-top:40px;padding:24px clamp(20px,5vw,64px);background:#fff;border:1px solid var(--sand-line);
+    display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;text-align:center;
   }
-  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus{outline:none;border-color:var(--gold-deep);}
-  .contact-form textarea{min-height:110px;resize:vertical;margin-bottom:16px;}
-  .form-success{display:none;margin-top:14px;padding:12px 14px;background:#eef6ec;border:1px solid #b9dcae;color:#3a6b2e;font-size:12.5px;}
-  .form-success.show{display:block;}
-
-  .info-card{background:#fff;border:1px solid var(--sand-line);padding:26px;display:flex;flex-direction:column;gap:18px;}
-  .info-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
-  .info-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#2F4760;line-height:1.5;}
-  .info-row svg{width:16px;height:16px;color:var(--gold-deep);flex-shrink:0;margin-top:1px;}
-  .info-row a{text-decoration:none;color:inherit;}
-  .info-row a:hover{color:var(--gold-deep);}
-
-  .social-inline{display:flex;gap:10px;margin-top:2px;}
-  .social-inline a{
-    width:34px;height:34px;border-radius:50%;border:1px solid var(--sand-line);
+  .about-social-strip > span{font-size:13.5px;color:var(--text);opacity:0.75;}
+  .about-social-icons{display:flex;gap:12px;}
+  .about-social-icons a{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--sand-line);
     display:flex;align-items:center;justify-content:center;color:var(--gold-deep);
-    transition:border-color .2s ease, color .2s ease;
   }
-  .social-inline a:hover{border-color:var(--gold-deep);}
-  .social-inline svg{width:16px;height:16px;}
+  .about-social-icons svg{width:18px;height:18px;}
+  .about-social-more{font-size:12.5px;color:var(--gold-deep);text-decoration:underline;}
 
-  @media (max-width:1080px){ .contact-grid{grid-template-columns:minmax(0,1fr);} }
-  @media (max-width:760px){
-    .nav-links,.nav-cta{display:none;}
-    .nav-toggle{display:flex;}
-    .form-row{grid-template-columns:1fr;}
+  .kebersamaan-tabs{display:flex;gap:8px;max-width:1360px;margin:0 auto 28px;padding:0 clamp(20px,5vw,64px);flex-wrap:wrap;}
+  .tab-btn{
+    font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;
+    padding:10px 22px;border:1px solid var(--sand-line);background:#fff;color:var(--text);
+    cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease;
   }
+  .tab-btn:hover{border-color:var(--gold-deep);}
+  .tab-btn.active{background:var(--ink);border-color:var(--ink);color:var(--sand);}
+  .kebersamaan-panel{display:none;}
+  .kebersamaan-panel.active{display:block;}
+  .vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .vm-card{background:#fff;border:1px solid var(--sand-line);padding:32px 28px;}
+  .vm-label{display:inline-block;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px;}
+  .vm-card p{font-size:14.5px;line-height:1.7;}
+  .vm-card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;}
+  .vm-card li{font-size:14px;line-height:1.6;}
+  @media (max-width:760px){ .vm-grid{grid-template-columns:1fr;} }
+
+  .facility-visual{max-width:1360px;margin:36px auto 0;padding:0 clamp(20px,5vw,64px);}
+  .facility-visual svg{width:100%;height:auto;display:block;border:1px solid var(--sand-line);}
+
+  /* process grid */
+  .process-section{max-width:1360px;margin:0 auto;padding:60px clamp(20px,5vw,64px);}
+  .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  .grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+  .proc-card .photo{aspect-ratio:1/1;margin-bottom:12px;}
+  .proc-card h4{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .proc-card p{font-size:12px;line-height:1.55;color:#4A6178;}
+
+  /* section band alternation */
+  .section-dark{background:var(--ink);color:var(--sand);}
+  .section-dark .section-head p{color:var(--on-dark-muted);}
+  .section-dark .proc-card h4{color:var(--sand);}
+  .section-dark .proc-card p{color:var(--on-dark-muted);}
+  .section-dark .stat-card{border-top-color:var(--on-dark-line);}
+  .section-dark .stat-icon{border-color:var(--on-dark-line);color:var(--gold-light);}
+  .section-dark .stat-number{color:var(--sand);}
+  .section-dark .stat-label{color:var(--on-dark-muted);}
+
+  .section-head{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 30px;}
+  .section-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;}
+  .section-head p{margin-top:8px;font-size:14px;color:#3F566D;max-width:520px;}
+
+  /* outing collage */
+  .outing-section{padding:70px 0;}
+  .outing-grid{max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px);display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  .outing-main .photo{aspect-ratio:4/3;}
+  .outing-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .outing-side .photo{aspect-ratio:1/1;}
+  .outing-video{grid-column:1/-1;position:relative;}
+  .outing-video .photo{aspect-ratio:3/1.1;}
+  .outing-video .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(10,62,112,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;cursor:pointer;}
+  .outing-video .play-btn svg{width:18px;height:18px;margin-left:2px;}
+  .outing-video:hover .play-btn{background:var(--gold);color:var(--text);transform:translate(-50%,-50%) scale(1.08);}
+  .outing-video .vlabel{position:absolute;left:20px;bottom:16px;z-index:2;color:var(--sand);font-family:'Archivo',sans-serif;}
+  .outing-video .vlabel strong{display:block;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;}
+  .outing-video .vlabel span{font-size:11.5px;color:var(--on-dark-muted);}
+
+  /* certifications */
+  .cert-section{max-width:1360px;margin:0 auto;padding:70px clamp(20px,5vw,64px) 90px;display:grid;grid-template-columns:1fr 320px;gap:36px;align-items:start;}
+  .cert-badges{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .cert-badge{background:#fff;border:1px solid var(--sand-line);padding:20px 12px;text-align:center;}
+  .cert-badge .mark{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;border:1.5px solid var(--gold-deep);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;color:var(--gold-deep);}
+  .cert-badge span{display:block;font-size:11.5px;font-weight:600;color:#2F4760;}
+  .cert-badge small{display:block;font-size:10px;color:#5E7389;margin-top:2px;}
+
+  .commit-card{background:var(--ink);color:var(--sand);padding:26px 24px;border-top:3px solid var(--gold);}
+  .commit-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;margin-bottom:14px;}
+  .commit-card ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .commit-card li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--on-dark-muted);}
+  .commit-card svg{width:14px;height:14px;flex-shrink:0;margin-top:2px;color:var(--gold-light);}
 
   /* footer */
   .site-footer{background:var(--ink);color:var(--on-dark-muted);padding:70px clamp(20px,5vw,64px) 0;margin-top:0;}
@@ -144,16 +200,144 @@
   .footer-col a{font-size:13px;color:var(--on-dark-muted);text-decoration:none;}
   .footer-col a:hover{color:var(--gold-light);}
   .footer-bottom{max-width:1360px;margin:0 auto;padding:24px 0;text-align:center;font-size:12px;color:var(--on-dark-muted);}
-  @media (max-width:1080px){ .footer-grid{grid-template-columns:1fr 1fr;} }
-  @media (max-width:560px){ .footer-grid{grid-template-columns:1fr;} }
+
+  @media (max-width:1080px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .grid-5,.grid-4{grid-template-columns:repeat(3,1fr);}
+    .grid-6{grid-template-columns:repeat(3,1fr);}
+    .outing-grid{grid-template-columns:1fr;}
+    .cert-section{grid-template-columns:1fr;}
+    .cert-badges{grid-template-columns:repeat(3,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-cta{display:none;}
+    .nav-toggle{display:flex;}
+  }
+  @media (max-width:560px){
+    .stat-row{grid-template-columns:1fr 1fr;}
+    .grid-5,.grid-4,.grid-6{grid-template-columns:1fr 1fr;}
+    .grid-3{grid-template-columns:1fr;}
+    .outing-side{grid-template-columns:1fr;}
+    .cert-badges{grid-template-columns:1fr 1fr;}
+    .footer-grid{grid-template-columns:1fr;}
+  }
+
+  /* ===== animasi halaman Tentang ===== */
+  #readBar{position:fixed;left:0;top:0;height:3px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;z-index:60;pointer-events:none;}
+  .page-head h1.split{overflow:visible;}
+  .page-head h1 .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em;}
+  .page-head h1 .w > span{display:inline-block;transform:translateY(112%);transition:transform .9s cubic-bezier(.16,.84,.24,1);transition-delay:calc(var(--i) * .08s + .1s);}
+  .page-head h1.go .w > span{transform:none;}
+  .page-head .eyebrow::before{transform:scaleX(0);transform-origin:left;transition:transform .9s .2s cubic-bezier(.16,.84,.44,1);}
+  .page-head .eyebrow.is-visible::before{transform:scaleX(1);}
+  .hero-slideshow{--py:0px;}
+  .hero-slide img{position:absolute;left:0;top:-9%;height:118%;translate:0 var(--py);transform:scale(1.14);}
+  .hero-slide.active img{animation:kenburns 7s ease-out both;}
+  @keyframes kenburns{from{transform:scale(1.14);}to{transform:scale(1);}}
+  .hero-slide-dots .dot{transition:width .4s ease,background .3s ease;}
+  .hero-slide-dots .dot.active{width:28px;border-radius:99px;}
+  .about-hero-banner .hero-slideshow::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,62,112,.28),rgba(10,62,112,0) 45%);pointer-events:none;}
+
+  .vm-card{position:relative;overflow:hidden;transition:transform .35s ease,box-shadow .35s ease;}
+  .vm-card:hover{transform:translateY(-4px);box-shadow:0 18px 36px rgba(10,62,112,.09);}
+  .vm-card::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform 1.1s .25s cubic-bezier(.16,.84,.44,1);}
+  .vm-card.is-visible::before{transform:scaleX(1);}
+  .vm-card ul{list-style:none;padding-left:0;counter-reset:m;}
+  .vm-card li{position:relative;padding-left:34px;counter-increment:m;opacity:0;transform:translateX(-14px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,.84,.44,1);transition-delay:calc(var(--i) * .13s + .35s);}
+  .vm-card li::before{content:counter(m);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--gold-deep);color:var(--gold-deep);font-family:'Archivo',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .vm-card.is-visible li{opacity:1;transform:none;}
+
+  .stat-card{position:relative;border-top:0;}
+  .stat-card::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--sand-line);}
+  .stat-card::after{content:"";position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--gold-deep);transform:scaleX(0);transform-origin:left;transition:transform 1.2s .2s cubic-bezier(.16,.84,.44,1);}
+  .stat-card.is-visible::after{transform:scaleX(.28);}
+  .stat-icon{transform:scale(.4) rotate(-40deg);opacity:0;transition:transform .7s cubic-bezier(.34,1.56,.64,1) .15s,opacity .5s ease .15s;}
+  .stat-card.is-visible .stat-icon{transform:none;opacity:1;}
+  .stat-number{font-variant-numeric:tabular-nums;}
+
+  .proc-card{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1);}
+  .proc-card .photo img{transform:scale(1.3);transition:transform 1.4s cubic-bezier(.16,.84,.44,1),filter .6s ease;}
+  .proc-card.is-visible .photo img{transform:scale(1);}
+  .proc-card h4{transition:color .3s;}
+  .proc-card:hover h4{color:var(--gold-deep);}
+
+  .kebersamaan-panel.active{animation:panelIn .55s ease both;}
+  @keyframes panelIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  .cert-badge{transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1),box-shadow .3s,border-color .3s;}
+  .cert-badge .mark{transform:scale(.5) rotate(-25deg);transition:transform .7s cubic-bezier(.34,1.56,.64,1) .25s;}
+  .cert-badge.is-visible .mark{transform:none;}
+  .cert-badge .mark svg{width:21px;height:21px;}
+  .cert-badge.is-visible:hover{border-color:var(--gold-deep);box-shadow:0 10px 24px rgba(10,62,112,.08);}
+  .commit-card li{opacity:0;transform:translateX(-12px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(var(--i) * .14s + .3s);}
+  .commit-card.is-visible li{opacity:1;transform:none;}
+  .commit-card svg polyline{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .6s ease;transition-delay:calc(var(--i) * .14s + .55s);}
+  .commit-card.is-visible svg polyline{stroke-dashoffset:0;}
+  .outing-grid .photo img{transition:transform .8s cubic-bezier(.16,.84,.44,1),filter .6s;}
+  @media (prefers-reduced-motion:reduce){
+    .page-head h1 .w > span,.vm-card li,.commit-card li,.stat-icon,.cert-badge .mark{transform:none !important;opacity:1 !important;transition:none !important;}
+    .hero-slide.active img{animation:none;transform:none;}.kebersamaan-panel.active{animation:none;}
+    .stat-card::after{transition:none;}.proc-card .photo img{transform:none;}.commit-card svg polyline{stroke-dashoffset:0;transition:none;}
+  }
+
+  /* ===== parallax & scroll-scrub tambahan ===== */
+  .page-head{position:relative;}
+  .ghost-word{position:absolute;right:clamp(10px,4vw,60px);top:34px;font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(96px,17vw,240px);line-height:.9;letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1.5px rgba(28,74,115,.30);pointer-events:none;user-select:none;z-index:0;white-space:nowrap;}
+  .page-head > *:not(.ghost-word){position:relative;z-index:1;}
+  .hero-slideshow{transform:none !important;border-radius:0 !important;}
+  .about-hero-banner{overflow:hidden;position:relative;z-index:1;}
+  .hw{transition:opacity .35s ease,color .35s ease;opacity:.28;}
+  .hw.on{opacity:1;}
+  .vm-card.vision p{font-size:clamp(17px,1.7vw,21px);line-height:1.65;font-weight:600;}
+
+  .scroll-marquee{background:var(--ink);overflow:hidden;padding:20px 0;margin:10px 0 50px;position:relative;}
+  .scroll-marquee-track{display:flex;align-items:center;gap:40px;white-space:nowrap;width:max-content;will-change:transform;}
+  .scroll-marquee-track span{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(20px,2.6vw,32px);text-transform:uppercase;letter-spacing:.06em;line-height:1;color:#fff;}
+  .scroll-marquee-track i{font-style:normal;color:rgba(255,255,255,.7);font-size:clamp(20px,2.6vw,32px);line-height:1;}
+
+  .proc-wrap{position:relative;}
+  .proc-rail{position:relative;height:2px;background:var(--sand-line);margin:0 0 22px;}
+  .proc-rail i{position:absolute;left:0;top:-1px;height:4px;width:100%;background:var(--gold-deep);transform-origin:left;transform:scaleX(var(--pp,0));}
+  .proc-card{position:relative;}
+  .proc-no{position:absolute;top:10px;left:10px;z-index:3;min-width:34px;height:34px;padding:0 8px;border-radius:99px;background:rgba(10,62,112,.82);color:var(--sand);display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;letter-spacing:.06em;transition:background .5s,color .5s,transform .5s cubic-bezier(.34,1.56,.64,1);}
+  .proc-card.lit .proc-no{background:var(--gold);color:var(--text);transform:scale(1.12);}
+  .proc-card .photo{clip-path:inset(0 0 100% 0);transition:clip-path 1.1s cubic-bezier(.16,.84,.24,1);}
+  .proc-card.is-visible .photo{clip-path:inset(0 0 0 0);}
+  .tilt{transform-style:preserve-3d;will-change:transform;}
+  [data-par]{will-change:transform;}
+  .orb-deco{position:absolute;border-radius:50%;border:1.5px solid rgba(28,74,115,.16);pointer-events:none;z-index:0;}
+  .orb-deco.fill{border:0;background:radial-gradient(circle at 30% 30%,rgba(30,120,188,.16),rgba(30,120,188,0) 70%);}
+  .vision-mission-section,.cert-section,.process-section{position:relative;}
+  .vision-mission-section{overflow-x:clip;}
+  .page-head{overflow-x:clip;}
+  .vm-grid,.cert-section > *{position:relative;z-index:1;}
+  @media (prefers-reduced-motion:reduce){.hero-slideshow{transform:none;border-radius:0;}.hw{opacity:1;}.proc-card .photo{clip-path:none;}.scroll-marquee-track{transform:none !important;}}
+
+  /* ===== perapihan ===== */
+  .about-pending .hero-slideshow{visibility:hidden;}
+  #kebersamaanSection .section-head,#kebersamaanSection .outing-grid{padding-left:0;padding-right:0;}
+  @media (max-width:560px){.grid-3 .proc-card .photo{aspect-ratio:4/3;}}
+  /* Foto Kebersamaan (Event/CSR): tampil UTUH tanpa terpotong, baik landscape maupun portrait.
+     Sisi kosong diisi salinan foto yang sama (diburamkan) supaya kartu tetap rapi. */
+  .kebersamaan-panel .proc-card .photo::before{content:"";position:absolute;inset:-24px;background:var(--bg,none) center/cover no-repeat;filter:blur(18px) brightness(.85);}
+  .kebersamaan-panel .proc-card .photo img{position:relative;z-index:1;object-fit:contain;}
+
+  .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
+  @media (max-width:560px){
+    .ghost-word{display:none;}
+    .grid-5 .proc-card:last-child{grid-column:1 / -1;}
+    .grid-5 .proc-card:last-child .photo{aspect-ratio:2/1;}
+    .cert-badges .cert-badge:last-child{grid-column:1 / -1;}
+  }
 </style>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
-<script src="assets/safe.js"></script>
 <script src="assets/ux.js" defer></script>
 <link rel="stylesheet" href="assets/theme-hilos.css">
 </head>
 <body>
+<div id="readBar" aria-hidden="true"></div>
 
 <div class="ribbon">
   <div class="ribbon-track">
@@ -196,10 +380,10 @@
   <a href="index.html" class="logo" style="text-decoration:none;"><img class="logo-img" src="assets/logo-hilos-putih.png" alt="HILOS" width="100" height="44" decoding="async"></a>
   <ul class="nav-links">
     <li><a href="index.html">Beranda</a></li>
-    <li><a href="tentang.html">Tentang Kami</a></li>
+    <li><a href="tentang.html" class="active">Tentang Kami</a></li>
     <li><a href="produk.html">Produk</a></li>
     <li><a href="kerjasama.html">Kerjasama</a></li>
-    <li><a href="kontak.html" class="active">Contact Us</a></li>
+    <li><a href="kontak.html">Contact Us</a></li>
   </ul>
   <a class="nav-cta" href="#" id="salesBtn">
     Hubungi Sales
@@ -210,78 +394,239 @@
   </button>
 </nav>
 
+<!-- ============ HERO: BANNER SANDAL + VIDEO PROFIL ============ -->
 <div class="page-head">
-  <span class="eyebrow reveal">Hubungi Kami</span>
-  <h1 class="reveal">Contact Us</h1>
-  <p class="reveal">Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.</p>
+  <div class="ghost-word" data-par-top="0.28" aria-hidden="true">HILOS</div>
+  <span class="eyebrow reveal">Tentang HILOS</span>
+  <h1 class="split" id="aboutH1">Cerita di Balik Setiap Langkah</h1>
+  <p class="reveal">Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.</p>
 </div>
 
-<section class="contact-section">
-  <div class="contact-grid">
-    <div class="contact-cta reveal">
-      <h2>Ngobrol Langsung?</h2>
-      <p>Cara tercepat untuk dapat jawaban — tim kami biasanya balas dalam hitungan menit di jam kerja.</p>
-      <a href="#" class="btn btn-fill" id="waBtn"><span>Chat via WhatsApp</span></a>
-      <span class="hint">Atau isi formulir di samping, kami akan hubungi balik</span>
-    </div>
+<div class="about-hero-banner reveal-scale">
+  <div class="hero-slideshow" id="heroSlideshow">
+    <div class="hero-slide active"><img src="https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 1"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/1904770/pexels-photo-1904770.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 2"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 3"></div>
+    <div class="hero-slide"><img src="https://images.pexels.com/photos/1478442/pexels-photo-1478442.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Koleksi sandal HILOS 4"></div>
+  </div>
+  <div class="hero-slide-dots" id="heroSlideDots">
+    <button class="dot active" data-i="0" aria-label="Slide 1"></button>
+    <button class="dot" data-i="1" aria-label="Slide 2"></button>
+    <button class="dot" data-i="2" aria-label="Slide 3"></button>
+    <button class="dot" data-i="3" aria-label="Slide 4"></button>
+  </div>
+</div>
 
-    <div class="contact-form reveal">
-      <h3>Kirim Pesan</h3>
-      <form id="contactForm">
-        <div class="form-row">
-          <input type="text" placeholder="Nama Lengkap" required>
-          <input type="tel" placeholder="Nomor WhatsApp" required>
-        </div>
-        <div class="form-row">
-          <input type="email" placeholder="Email" style="grid-column:1/-1;">
-        </div>
-        <select id="topicSel" style="margin-bottom:12px;">
-          <option value="">Topik Pesan</option>
-          <option>Pertanyaan Produk</option>
-          <option>Status Pesanan</option>
-          <option>Komplain / Garansi</option>
-          <option>Kerjasama / Partnership</option>
-          <option>Lainnya</option>
-        </select>
-        <fieldset class="kj-group" id="kjGroup">
-          <legend>Skema Kerjasama yang Diminati <em>(boleh pilih lebih dari satu)</em></legend>
-          <div class="kj-options">
-            <label class="kj-chip"><input type="checkbox" value="Distributor"><span>Distributor</span></label>
-            <label class="kj-chip"><input type="checkbox" value="E-Commerce"><span>E-Commerce</span></label>
-            <label class="kj-chip"><input type="checkbox" value="Wholesale"><span>Wholesale</span></label>
-            <label class="kj-chip"><input type="checkbox" value="Manufacture Partner"><span>Manufacture Partner</span></label>
-          </div>
-          <!-- diisi otomatis dari centang; dibaca oleh form-mailer.js seperti isian biasa -->
-          <input type="hidden" id="kjValue" placeholder="Skema Kerjasama yang Diminati">
-          <p class="kj-error" id="kjError">Pilih minimal satu skema kerjasama.</p>
-        </fieldset>
-        <textarea placeholder="Tulis pesan Anda di sini"></textarea>
-        <button type="submit" class="btn btn-fill" style="width:100%;"><span>Kirim Pesan</span></button>
-      </form>
-      <div class="form-success" id="formSuccess">Terima kasih! Pesan Anda sudah kami terima, tim kami akan segera menghubungi Anda.</div>
-    </div>
+<!-- Video profil perusahaan HILOS (YouTube ID: hO51j6M-obc) — ganti ID di src iframe kalau videonya diganti -->
+<div class="about-video-wrap reveal-scale">
+  <div class="about-video-embed">
+    <iframe src="https://www.youtube.com/embed/hO51j6M-obc" title="Profil Perusahaan HILOS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <p class="about-video-caption">Video Profil Perusahaan HILOS</p>
+</div>
 
-    <div class="info-card reveal">
-      <div>
-        <h3>Informasi Kontak</h3>
-        <div class="info-row" style="margin-top:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"/></svg><a href="#" data-wa-tel>0813-3333-273</a></div>
-        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg><a href="mailto:hilosindonesia@gmail.com">hilosindonesia@gmail.com</a></div>
-        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>www.hilos.id</div>
+<!-- ============ VISI & MISI ============ -->
+<div class="vision-mission-section">
+  <div class="orb-deco" data-par="0.12" style="width:260px;height:260px;left:-90px;top:20px;" aria-hidden="true"></div>
+  <div class="orb-deco fill" data-par="-0.18" style="width:340px;height:340px;right:-120px;bottom:-40px;" aria-hidden="true"></div>
+  <div class="vm-grid">
+    <div class="vm-card vision reveal">
+      <span class="vm-label">Visi</span>
+      <p>Menjadi mitra manufaktur sandal unggul yang mengedepankan efisiensi, inovasi, dan pelayanan prima, serta menciptakan nilai bisnis dan pertumbuhan berkelanjutan bagi pasar nasional maupun internasional.</p>
+    </div>
+    <div class="vm-card reveal">
+      <span class="vm-label">Misi</span>
+      <ul>
+        <li style="--i:0">Berinovasi secara berkelanjutan dalam desain dan teknologi guna mengikuti tren pasar.</li>
+        <li style="--i:1">Menjamin ketepatan produksi serta distribusi untuk mendukung kelancaran bisnis.</li>
+        <li style="--i:2">Membangun hubungan jangka panjang yang saling menguntungkan dengan seluruh mitra bisnis.</li>
+        <li style="--i:3">Mewujudkan pertumbuhan perusahaan bersama seluruh mitra dan karyawan.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="scroll-marquee" id="scrollMarquee" aria-hidden="true">
+  <div class="scroll-marquee-track" id="scrollMarqueeTrack">
+    <span>Kenyamanan</span><i>·</i><span>Kualitas</span><i>·</i><span>Keberlanjutan</span><i>·</i><span>Kenyamanan</span><i>·</i><span>Kualitas</span><i>·</i><span>Keberlanjutan</span><i>·</i><span>Kenyamanan</span><i>·</i><span>Kualitas</span><i>·</i><span>Keberlanjutan</span><i>·</i>
+  </div>
+</div>
+
+<!-- ============ PABRIK & MESIN PRODUKSI ============ -->
+<div class="page-head" style="padding-top:0;">
+  <span class="eyebrow reveal">Fasilitas</span>
+  <h2 class="reveal">Pabrik &amp; Mesin Produksi</h2>
+  <p class="reveal">Didukung fasilitas dan sistem produksi yang terintegrasi untuk menghasilkan sandal berkualitas secara konsisten.</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/></svg></div>
+    <span class="stat-number">Terintegrasi</span>
+    <p class="stat-label">Fasilitas Produksi</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="M9 8.7 15 8.7M8.3 9.3 11 15M15.7 9.3 13 15"/></svg></div>
+    <span class="stat-number">Terstruktur</span>
+    <p class="stat-label">Alur Produksi</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+    <span class="stat-number">Konsisten</span>
+    <p class="stat-label">Kapasitas Produksi</p>
+  </div>
+  <div class="stat-card reveal">
+    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <span class="stat-number">Terjaga</span>
+    <p class="stat-label">Standar Kualitas</p>
+  </div>
+</div>
+
+
+
+<div class="process-section">
+  <div class="proc-wrap" id="procWrap">
+  <div class="proc-rail" aria-hidden="true"><i></i></div>
+  <div class="grid-5">
+    <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">01</span>
+      <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8973680/pexels-photo-8973680.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Persiapan Bahan Baku"></div>
+      <h4>Persiapan Bahan Baku</h4>
+      <p>Pemilihan dan persiapan bahan baku sebagai dasar kualitas produk.</p>
+    </div>
+    <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">02</span>
+      <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/19316517/pexels-photo-19316517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Proses Produksi"></div>
+      <h4>Proses Produksi</h4>
+      <p>Tahap produksi yang dijalankan dengan prosedur yang terukur.</p>
+    </div>
+    <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">03</span>
+      <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/5156696/pexels-photo-5156696.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Perakitan dan Finishing"></div>
+      <h4>Perakitan &amp; Finishing</h4>
+      <p>Penyelesaian akhir yang rapi agar tiap produk nyaman dipakai.</p>
+    </div>
+    <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">04</span>
+      <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/31451008/pexels-photo-31451008.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Kontrol Kualitas"></div>
+      <h4>Kontrol Kualitas</h4>
+      <p>Pemeriksaan di setiap tahap untuk menjaga kualitas tetap konsisten.</p>
+    </div>
+    <div class="proc-card reveal">
+      <span class="proc-no" aria-hidden="true">05</span>
+      <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/4480982/pexels-photo-4480982.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pengemasan dan Pengiriman"></div>
+      <h4>Pengemasan &amp; Pengiriman</h4>
+      <p>Pengemasan dan penyaluran produk ke mitra di berbagai daerah.</p>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ============ KEBERSAMAAN ============ -->
+<div class="process-section" id="kebersamaanSection">
+  <div class="section-head">
+    <h2 class="reveal">Kebersamaan</h2>
+    <p class="reveal">Momen kebersamaan HILOS — dari acara yang kami ikuti, kegiatan sosial, sampai kebersamaan tim.</p>
+  </div>
+
+  <div class="kebersamaan-tabs">
+    <button class="tab-btn active" data-tab="event">Event</button>
+    <button class="tab-btn" data-tab="csr">CSR</button>
+    <button class="tab-btn" data-tab="outing">Outing</button>
+  </div>
+
+  <div class="kebersamaan-panel active" id="panel-event">
+    <div class="grid-4">
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7551659/pexels-photo-7551659.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Pameran INAFOOTWEAR"></div>
+        <h4>Pameran INAFOOTWEAR 2025</h4>
+        <p>HILOS turut serta memamerkan koleksi terbaru.</p>
       </div>
-      <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
-        <h3>Jam Operasional</h3>
-        <p style="font-size:12.5px;color:#2F4760;margin-top:8px;">Setiap Hari<br>24 Jam — Siap Melayani Kapan Saja</p>
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8007127/pexels-photo-8007127.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Sponsor Turnamen Futsal"></div>
+        <h4>Sponsor Turnamen Futsal</h4>
+        <p>Mendukung komunitas olahraga di sekitar pabrik.</p>
       </div>
-      <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
-        <h3>Ikuti Kami</h3>
-        <div class="social-inline" style="margin-top:10px;">
-          <a href="#socmed" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
-          <a href="#socmed" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg></a>
-        </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/6157228/pexels-photo-6157228.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Gathering Reseller & Distributor"></div>
+        <h4>Gathering Mitra</h4>
+        <p>Silaturahmi tahunan bersama reseller &amp; distributor.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1595391/pexels-photo-1595391.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Peluncuran Koleksi Baru"></div>
+        <h4>Peluncuran Koleksi Baru</h4>
+        <p>Perkenalan lini produk terbaru ke publik.</p>
       </div>
     </div>
   </div>
-</section>
+
+  <div class="kebersamaan-panel" id="panel-csr" hidden>
+    <div class="grid-3">
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/6647037/pexels-photo-6647037.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Berbagi Kasih"></div>
+        <h4>Berbagi Kasih</h4>
+        <p>Bantuan untuk panti asuhan dan yayasan: sandal, kebutuhan sehari-hari, dan kebersamaan.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8617815/pexels-photo-8617815.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Berbagi Sembako Rutin"></div>
+        <h4>Berbagi Sembako Rutin</h4>
+        <p>Pembagian paket sembako berkala untuk warga sekitar yang membutuhkan.</p>
+      </div>
+      <div class="proc-card reveal">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Bantuan Korban Bencana"></div>
+        <h4>Bantuan Korban Bencana</h4>
+        <p>Penggalangan dan penyaluran bantuan langsung untuk korban bencana alam.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kebersamaan-panel" id="panel-outing" hidden>
+    <div class="outing-grid">
+      <div class="outing-main photo reveal-scale" data-tilt>
+        <img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
+      </div>
+      <div class="outing-side">
+        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
+        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
+        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
+        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
+      </div>
+      <div class="outing-video reveal-scale" id="outingVideo">
+        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
+        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+        <div class="vlabel"><strong>Company Outing 2024</strong><span>Watch Video · 02:45</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ KOMITMEN KUALITAS & KEBERLANJUTAN ============ -->
+<div class="cert-section">
+  <div>
+    <div class="section-head" style="padding:0 0 24px;">
+      <h2 class="reveal">Komitmen Kualitas &amp; Keberlanjutan</h2>
+      <p class="reveal">Kami berkomitmen untuk kualitas, keamanan, dan kelestarian lingkungan.</p>
+    </div>
+    <div class="cert-badges">
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div><span>Bahan Aman</span><small>Material pilihan yang aman untuk kulit</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="m8.5 14.5-1.5 6.5 5-3 5 3-1.5-6.5"/></svg></div><span>Kualitas Terjaga</span><small>Dicek di setiap tahap produksi</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c-9 0-14 4-14 10 0 2 .8 3.6 2 4.7C9 12 13 9 17 8c-4 2-7 5-8.5 10.7C10 19.600 11 20 12 20c5 0 8-4.500 8-16Z"/></svg></div><span>Ramah Lingkungan</span><small>Produksi yang bertanggung jawab</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></svg></div><span>Nyaman Dipakai</span><small>Dirancang untuk pemakaian sehari-hari</small></div>
+      <div class="cert-badge reveal"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.8-6 7.5-6s6.700 2 7.500 6"/></svg></div><span>Pelanggan Utama</span><small>Kepuasan pelanggan jadi prioritas</small></div>
+    </div>
+  </div>
+
+  <div class="commit-card reveal-scale">
+    <h3>Komitmen Kami</h3>
+    <ul>
+      <li style="--i:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bahan baku aman dan berkualitas</li>
+      <li style="--i:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Proses produksi ramah lingkungan</li>
+      <li style="--i:2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Produk tahan lama dan nyaman digunakan</li>
+      <li style="--i:3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kepuasan pelanggan adalah prioritas utama</li>
+    </ul>
+  </div>
+</div>
 
 <style>
   .map-section{max-width:1360px;margin:0 auto;padding:10px clamp(20px,5vw,64px) 80px;}
@@ -311,83 +656,17 @@
   </div>
 </section>
 
-<style>
-  .socmed-section{max-width:1200px;margin:0 auto;padding:10px clamp(20px,5vw,64px) 90px;}
-  .socmed-section .section-head-center{max-width:620px;margin:0 auto 36px;text-align:center;}
-  .socmed-section .section-head-center h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(20px,2.4vw,26px);text-transform:uppercase;}
-  .socmed-section .section-head-center p{margin-top:8px;font-size:14px;color:#3F566D;}
-  .socmed-grid{display:flex;justify-content:center;gap:70px;flex-wrap:wrap;margin-top:10px;}
-  .socmed-card{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;}
-  .socmed-card .phone-mock{transition:transform .3s ease;}
-  .socmed-card:hover .phone-mock{transform:translateY(-8px) scale(1.02);}
-
-  .socmed-label{
-    display:flex;align-items:center;gap:12px;margin-top:24px;
-    background:#fff;border:1px solid var(--sand-line);
-    padding:10px 20px 10px 10px;border-radius:100px;
-    box-shadow:0 6px 18px rgba(10,62,112,0.08);
-  }
-  .socmed-label svg{width:22px;height:22px;color:#fff;flex-shrink:0;}
-  .socmed-label strong{display:block;font-family:'Archivo',sans-serif;font-size:15px;line-height:1.2;}
-  .socmed-label span{font-size:12.5px;color:var(--text);opacity:0.65;}
-  .socmed-label > svg, .socmed-label-ig svg, .socmed-label-tiktok svg{
-    width:40px;height:40px;padding:9px;border-radius:50%;
-  }
-  .socmed-label-ig svg{background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);}
-  .socmed-label-tiktok svg{background:#000;}
-
-  .phone-mock{
-    position:relative;
-    width:250px;height:520px;
-    background:#111;
-    border-radius:32px;
-    border:6px solid #111;
-    box-shadow:0 40px 70px rgba(0,0,0,0.35);
-    overflow:hidden;
-  }
-  .phone-mock .screen{
-    position:absolute;inset:0;
-    background:#fff;
-    overflow:hidden;
-  }
-  .phone-mock .screen img{
-    width:100%;height:100%;
-    object-fit:cover;object-position:top center;
-    display:block;
-  }
-</style>
-
-<section class="socmed-section" id="socmed">
-  <div class="section-head-center">
-    <h2 class="reveal">Ikuti Kami di Media Sosial</h2>
-    <p class="reveal">Lihat keseharian, promo, dan produk terbaru HILOS di Instagram &amp; TikTok kami.</p>
+<!-- ============ SELINGAN SOCIAL MEDIA ============ -->
+<div style="max-width:1360px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 70px;">
+  <div class="about-social-strip reveal">
+    <span>Ikuti keseharian &amp; kegiatan HILOS lainnya:</span>
+    <div class="about-social-icons">
+      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" aria-label="Instagram HILOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" aria-label="TikTok HILOS"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg></a>
+    </div>
+    <a href="kontak.html" class="about-social-more">Selengkapnya di halaman Contact Us →</a>
   </div>
-  <div class="socmed-grid">
-    <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-card reveal-scale">
-      <div class="phone-mock">
-        <div class="screen">
-          <img loading="lazy" decoding="async" src="assets/socmed-ig.jpg" alt="Instagram HILOS - hilos.id.official">
-        </div>
-      </div>
-      <div class="socmed-label socmed-label-ig">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-        <div><strong>Instagram</strong><span>@hilos.id.official</span></div>
-      </div>
-    </a>
-
-    <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-card reveal-scale">
-      <div class="phone-mock">
-        <div class="screen">
-          <img loading="lazy" decoding="async" src="assets/socmed-tiktok.jpg" alt="TikTok HILOS - hilos.official_">
-        </div>
-      </div>
-      <div class="socmed-label socmed-label-tiktok">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
-        <div><strong>TikTok</strong><span>@hilos.official_</span></div>
-      </div>
-    </a>
-  </div>
-</section>
+</div>
 
 <footer class="site-footer">
   <div class="footer-grid">
@@ -411,8 +690,9 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
-<script src="assets/form-config.js"></script>
-<script src="assets/form-mailer.js"></script>
+<script src="assets/safe.js"></script>
+<script src="assets/supabase.js"></script>
+<script src="assets/supabase-config.js"></script>
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -429,63 +709,254 @@
     e.preventDefault();
     HilosWA.open('general');
   });
-  document.getElementById('waBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    HilosWA.open('kontak');
-  });
 
-  /* ---- mobile nav ---- */
-  const toggle = document.querySelector('.nav-toggle');
-  const links = document.querySelector('.nav-links');
-  const cta = document.querySelector('.nav-cta');
-  toggle.addEventListener('click', () => {
-    const isOpen = links.style.display === 'flex';
-    links.style.display = isOpen ? 'none' : 'flex';
-    cta.style.display = isOpen ? 'none' : 'inline-flex';
-    if (!isOpen){
-      links.style.cssText += 'position:absolute;top:64px;left:20px;right:20px;flex-direction:column;background:#1c140f;border:1px solid rgba(234,241,248,0.16);padding:20px;border-radius:8px;z-index:20;gap:16px;';
-      cta.style.cssText += 'position:absolute;top:256px;left:20px;right:20px;justify-content:center;z-index:20;';
+  /* scroll reveal (bisa dipanggil ulang untuk konten yang dimuat dari admin) */
+  let revealIO = null;
+  function observeReveal(root){
+    const targets = (root || document).querySelectorAll('.reveal, .reveal-scale');
+    if (prefersReducedMotion || !('IntersectionObserver' in window)){ targets.forEach(el => el.classList.add('is-visible')); return; }
+    if (!revealIO){
+      revealIO = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting){ entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }
+        });
+      }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
     }
+    targets.forEach(el => { if (!el.classList.contains('is-visible')) revealIO.observe(el); });
+  }
+  observeReveal(document);
+
+  /* ---- judul per kata ---- */
+  (function(){
+    const h = document.getElementById('aboutH1'); if (!h) return;
+    const words = h.textContent.trim().split(/\s+/);
+    h.setAttribute('aria-label', h.textContent.trim());
+    h.innerHTML = words.map((w,i) => '<span class="w" aria-hidden="true" style="--i:'+i+'"><span>'+w+'</span></span>').join(' ');
+    requestAnimationFrame(() => requestAnimationFrame(() => h.classList.add('go')));
+  })();
+
+  /* ---- jeda berurutan untuk kartu dalam satu grid ---- */
+  function applyStagger(){
+    document.querySelectorAll('.stat-row,.grid-3,.grid-4,.grid-5,.cert-badges,.outing-side').forEach(g => {
+      Array.from(g.children).forEach((el, i) => {
+        if (!el.matches('.reveal,.reveal-scale') || el.dataset.sd) return;
+        el.dataset.sd = '1';
+        el.style.transitionDelay = Math.min(i * 0.09, 0.55) + 's';
+        setTimeout(() => { el.style.transitionDelay = ''; }, 2400);
+      });
+    });
+  }
+  applyStagger();
+
+  /* ---- angka pabrik menghitung naik ---- */
+  (function(){
+    const nums = Array.from(document.querySelectorAll('.stat-row .stat-number'));
+    const parsed = nums.map(el => {
+      const m = el.textContent.trim().match(/^(\D*)([\d.,]+)(.*)$/);
+      return m ? { el, pre:m[1], to:parseInt(m[2].replace(/[.,]/g,''),10), suf:m[3], orig:el.textContent } : null;
+    }).filter(Boolean);
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
+    parsed.forEach(o => { o.el.textContent = o.pre + '0' + o.suf; });
+    const io2 = new IntersectionObserver((ents) => {
+      ents.forEach(e => {
+        if (!e.isIntersecting) return; io2.unobserve(e.target);
+        const o = parsed.find(x => x.el === e.target), t0 = performance.now() + 250, dur = 1700;
+        (function tick(t){
+          const k = Math.max(0, Math.min(1, (t - t0) / dur)), v = Math.round(o.to * (1 - Math.pow(1 - k, 4)));
+          o.el.textContent = o.pre + v.toLocaleString('id-ID') + o.suf;
+          if (k < 1) requestAnimationFrame(tick); else o.el.textContent = o.orig;
+        })(t0);
+      });
+    }, { threshold:.6 });
+    parsed.forEach(o => io2.observe(o.el));
+  })();
+
+  /* ---- parallax foto banner + progress baca ---- */
+  (function(){
+    const ss = document.getElementById('heroSlideshow'), bar = document.getElementById('readBar');
+    let tk = false;
+    function upd(){
+      tk = false;
+      const de = document.documentElement, max = de.scrollHeight - innerHeight;
+      if (bar) bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, scrollY / max) : 0).toFixed(4) + ')';
+      if (ss && !prefersReducedMotion){
+        const r = ss.getBoundingClientRect(), c = (r.top + r.height/2 - innerHeight/2) / innerHeight;   // -1..1
+        ss.style.setProperty('--py', (Math.max(-1, Math.min(1, c)) * -r.height * 0.07).toFixed(1) + 'px');
+      }
+    }
+    addEventListener('scroll', () => { if (!tk){ tk = true; requestAnimationFrame(upd); } }, { passive:true });
+    addEventListener('resize', upd); upd();
+  })();
+
+
+  /* ---- mesin scroll: parallax, scrub banner, sorot teks visi, marquee, rel proses ---- */
+  (function(){
+    const clamp = (v,a=0,b=1) => Math.min(b, Math.max(a, v));
+    const vh = () => window.innerHeight;
+    // pecah teks Visi jadi kata
+    const vp = document.querySelector('.vm-card.vision p');
+    let words = [];
+    if (vp){
+      vp.innerHTML = vp.textContent.trim().split(/\s+/).map(w => '<span class="hw">'+w+'</span>').join(' ');
+      words = Array.from(vp.querySelectorAll('.hw'));
+    }
+    const pars = Array.from(document.querySelectorAll('[data-par]'));
+    const ss = document.getElementById('heroSlideshow');
+    const mq = document.getElementById('scrollMarquee'), mqt = document.getElementById('scrollMarqueeTrack');
+    const wrap = document.getElementById('procWrap');
+    const getCards = () => wrap ? Array.from(wrap.querySelectorAll('.proc-card')) : [];
+    window.__aboutFrame = null;
+    if (prefersReducedMotion){ words.forEach(w => w.classList.add('on')); getCards().forEach(c => c.classList.add('lit')); wrap && wrap.style.setProperty('--pp', 1); window.__aboutFrame = () => getCards().forEach(c => c.classList.add('lit')); return; }
+
+    function frame(){
+      const H = vh();
+      const gw = document.querySelector('[data-par-top]');
+      if (gw){ const y = window.scrollY; gw.style.translate = '0 ' + (y * parseFloat(gw.dataset.parTop)).toFixed(1) + 'px'; gw.style.opacity = (1 - clamp(y / (H * 0.7))).toFixed(3); }
+      pars.forEach(el => {
+        const r = el.parentElement.getBoundingClientRect();
+        const c = (r.top + r.height/2 - H/2);
+        el.style.translate = '0 ' + (c * -parseFloat(el.dataset.par)).toFixed(1) + 'px';
+      });
+      if (ss){ const r = ss.parentElement.getBoundingClientRect(); ss.style.setProperty('--bp', clamp((H*0.95 - r.top) / (H*0.55)).toFixed(3)); }
+      if (words.length){
+        const r = vp.getBoundingClientRect();
+        const p = clamp((H*0.85 - r.top) / (H*0.45));
+        const n = Math.round(p * words.length);
+        words.forEach((w,i) => w.classList.toggle('on', i < n));
+      }
+      if (mq){
+        const r = mq.getBoundingClientRect(), p = (r.top + r.height/2) / H;     // ~1.1 -> -0.1
+        const half = mqt.scrollWidth / 3;
+        mqt.style.transform = 'translateX(' + (-half * clamp(1 - p + 0.05, 0, 1.2)).toFixed(1) + 'px)';
+      }
+      if (wrap){
+        const r = wrap.getBoundingClientRect();
+        const p = clamp((H*0.8 - r.top) / (r.height * 0.85));
+        wrap.style.setProperty('--pp', p.toFixed(3));
+        const cs = getCards(); cs.forEach((c,i) => c.classList.toggle('lit', p >= (i + 0.4) / cs.length));
+      }
+    }
+    let tk = false;
+    const req = () => { if (!tk){ tk = true; requestAnimationFrame(() => { tk = false; frame(); }); } };
+    addEventListener('scroll', req, { passive:true }); addEventListener('resize', req);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(req);
+    window.__aboutFrame = frame;
+    frame();
+  })();
+
+  /* ---- miring 3D mengikuti kursor (hanya perangkat dengan mouse) ---- */
+  function bindTilt(){
+    return; // efek miring/hover pada foto dimatikan (foto tampil statis dengan warna aslinya)
+    if (prefersReducedMotion || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    document.querySelectorAll('.proc-card .photo, .outing-grid .photo, .outing-grid [data-tilt]').forEach(el => {
+      if (el.dataset.tiltBound) return; el.dataset.tiltBound = '1';
+      el.classList.add('tilt');
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.style.transition = 'transform .08s linear, clip-path 1.1s cubic-bezier(.16,.84,.24,1)';
+        el.style.transform = 'perspective(800px) rotateY(' + (x*9).toFixed(2) + 'deg) rotateX(' + (-y*9).toFixed(2) + 'deg) scale(1.02)';
+      });
+      el.addEventListener('pointerleave', () => {
+        el.style.transition = 'transform .6s cubic-bezier(.16,.84,.24,1), clip-path 1.1s cubic-bezier(.16,.84,.24,1)';
+        el.style.transform = '';
+      });
+    });
+  }
+  bindTilt();
+
+  /* outing video placeholder modal (reuse simple alert-style overlay) */
+  document.getElementById('outingVideo').addEventListener('click', () => {
+    alert('Video Company Outing 2024 akan ditampilkan di sini — slot ini siap diisi video asli.');
   });
 
-  /* ---- scroll reveal ---- */
-  const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
-  if (prefersReducedMotion){
-    revealTargets.forEach(el => el.classList.add('is-visible'));
-  } else {
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          obs.unobserve(entry.target);
-        }
+  /* ---- tab switching: Event / CSR / Outing ---- */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.kebersamaan-panel').forEach(panel => {
+        const isTarget = panel.id === 'panel-' + target;
+        panel.classList.toggle('active', isTarget);
+        panel.hidden = !isTarget;
       });
-    }, { threshold:0.15, rootMargin:'0px 0px -40px 0px' });
-    revealTargets.forEach(el => io.observe(el));
-  }
+    });
+  });
 
-  /* ---- contact form (static demo — no real backend, shows a success message) ---- */
+  /* ---- hero slideshow auto-rotate (jumlah foto bisa berubah dari admin) ---- */
   (function(){
-    const form = document.getElementById('contactForm'), sel = document.getElementById('topicSel');
-    const grp = document.getElementById('kjGroup'), out = document.getElementById('kjValue');
-    const boxes = () => Array.from(grp.querySelectorAll('input[type=checkbox]'));
-    const isKj = () => /kerjasama/i.test(sel.value);
-    const sync = () => { out.value = isKj() ? boxes().filter(b => b.checked).map(b => b.value).join(', ') : ''; if (out.value) grp.classList.remove('bad'); };
-    sel.addEventListener('change', () => {
-      grp.classList.toggle('show', isKj());
-      if (!isKj()){ boxes().forEach(b => b.checked = false); grp.classList.remove('bad'); }
-      sync();
+    let current = 0;
+    const slides = () => document.querySelectorAll('#heroSlideshow .hero-slide');
+    const dots = () => document.querySelectorAll('#heroSlideDots .dot');
+    function show(i){
+      const sl = slides(), dt = dots(); if (!sl.length) return;
+      current = ((i % sl.length) + sl.length) % sl.length;
+      sl.forEach((x, idx) => x.classList.toggle('active', idx === current));
+      dt.forEach((d, idx) => d.classList.toggle('active', idx === current));
+    }
+    document.getElementById('heroSlideDots').addEventListener('click', (e) => {
+      const d = e.target.closest('.dot'); if (d) show(Number(d.dataset.i));
     });
-    grp.addEventListener('change', sync);
-    // dipasang sebelum HilosForm.init supaya bisa menahan pengiriman bila skema belum dipilih
-    form.addEventListener('submit', (e) => {
-      sync();
-      if (isKj() && !out.value){ e.preventDefault(); e.stopImmediatePropagation(); grp.classList.add('bad'); grp.scrollIntoView({ block:'center', behavior:'smooth' }); }
-    });
-    form.addEventListener('reset', () => setTimeout(() => { grp.classList.remove('show', 'bad'); sync(); }, 0));
+    window.__showSlide = show;
+    setInterval(() => show(current + 1), 4500);
   })();
-  HilosForm.init({ formId: 'contactForm', successId: 'formSuccess', kind: 'Kontak' });
+
+  /* Foto Kebersamaan: isi latar blur dari foto yang sama (supaya foto landscape/portrait tampil utuh) */
+  (function(){
+    const sec = document.getElementById('kebersamaanSection'); if (!sec) return;
+    const fit = () => sec.querySelectorAll('.kebersamaan-panel .proc-card .photo').forEach(ph => {
+      const im = ph.querySelector('img'); if (!im) return;
+      const src = im.getAttribute('src') || ''; if (ph.dataset.bg === src) return;
+      ph.dataset.bg = src; ph.style.setProperty('--bg', 'url("' + src.replace(/"/g, '%22') + '")');
+    });
+    fit();
+    new MutationObserver(fit).observe(sec, { childList:true, subtree:true, attributes:true, attributeFilter:['src'] });
+  })();
+
+  /* ---- konten dari admin (Konten Halaman > Tentang Kami); kalau kosong tetap pakai template di atas ---- */
+  (function(){
+    const esc = HilosSafe.esc, U = HilosSafe.url;
+    const arr = (v) => Array.isArray(v) && v.length ? v : null;
+    const card = (it, i, num) => '<div class="proc-card reveal">' + (num ? '\n      <span class="proc-no" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' : '') +
+      '<div class="photo"><img loading="lazy" decoding="async" src="' + esc(U(it.img)) + '" alt="' + esc(it.title) + '"></div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div>';
+    function render(d){
+      const b = arr(d.banner);
+      if (b){
+        document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(U(u)) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
+        document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
+        window.__showSlide && window.__showSlide(0);
+      }
+      const p = arr(d.pabrik); if (p) document.querySelector('#procWrap .grid-5').innerHTML = p.map((it, i) => card(it, i, true)).join('');
+      const ev = arr(d.event); if (ev) document.querySelector('#panel-event .grid-4').innerHTML = ev.map((it, i) => card(it, i)).join('');
+      const cs = arr(d.csr); if (cs) document.querySelector('#panel-csr .grid-3').innerHTML = cs.map((it, i) => card(it, i)).join('');
+      const o = d.outing;
+      if (o && o.main && Array.isArray(o.side)){
+        const g = document.querySelector('#panel-outing .outing-grid');
+        g.querySelector('.outing-main img').src = U(o.main) || g.querySelector('.outing-main img').src;
+        const sides = g.querySelectorAll('.outing-side .photo img');
+        o.side.forEach((u, i) => { if (sides[i] && U(u)) sides[i].src = U(u); });
+        if (o.video){
+          if (U(o.video.img)) g.querySelector('.outing-video .photo img').src = U(o.video.img);
+          const vl = g.querySelector('.outing-video .vlabel');
+          if (vl){ vl.querySelector('strong').textContent = o.video.title || ''; vl.querySelector('span').textContent = o.video.label || ''; }
+        }
+      }
+      observeReveal(document.querySelector('.proc-wrap')); observeReveal(document.getElementById('kebersamaanSection'));
+      applyStagger(); bindTilt();
+      window.__aboutFrame && window.__aboutFrame();
+    }
+    let done = false;
+    const finish = () => { if (!done){ done = true; document.documentElement.classList.remove('about-pending'); } };
+    setTimeout(finish, 1800);
+    try {
+      const sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+      if (!sb){ finish(); return; }
+      Promise.resolve(sb.from('site_content').select('data').eq('page', 'tentang').maybeSingle()).then(res => {
+        if (res && res.data && res.data.data) render(res.data.data);
+      }).catch(() => {}).then(finish);
+    } catch (e){ finish(); }
+  })();
 </script>
+
 
 <style>
   .wa-widget{ position:fixed; right:22px; bottom:22px; z-index:999; }
