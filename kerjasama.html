@@ -769,10 +769,11 @@
       </div>`).join('');
       }
     }
+    window.__hilosApply = render;
     try {
       const sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
       if (sb) Promise.resolve(sb.from('site_content').select('data').eq('page', 'kerjasama').maybeSingle()).then(res => {
-        if (res && res.data && res.data.data) render(res.data.data);
+        if (res && res.data && res.data.data && !window.__hilosDraft) render(res.data.data);
       }).catch(() => {});
     } catch(e){}
   });
