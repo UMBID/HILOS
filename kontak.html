@@ -435,18 +435,7 @@
   });
 
   /* ---- mobile nav ---- */
-  const toggle = document.querySelector('.nav-toggle');
-  const links = document.querySelector('.nav-links');
-  const cta = document.querySelector('.nav-cta');
-  toggle.addEventListener('click', () => {
-    const isOpen = links.style.display === 'flex';
-    links.style.display = isOpen ? 'none' : 'flex';
-    cta.style.display = isOpen ? 'none' : 'inline-flex';
-    if (!isOpen){
-      links.style.cssText += 'position:absolute;top:64px;left:20px;right:20px;flex-direction:column;background:#1c140f;border:1px solid rgba(234,241,248,0.16);padding:20px;border-radius:8px;z-index:20;gap:16px;';
-      cta.style.cssText += 'position:absolute;top:256px;left:20px;right:20px;justify-content:center;z-index:20;';
-    }
-  });
+  /* menu mobile: ditangani assets/ux.js */
 
   /* ---- scroll reveal ---- */
   const revealTargets = document.querySelectorAll('.reveal, .reveal-scale');
