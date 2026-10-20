@@ -1413,6 +1413,21 @@
     mainNav.classList.toggle('scrolled', window.scrollY > 40);
   }, { passive:true });
 
+  /* ---------- foto hero dari Admin (Konten Halaman > Beranda) ---------- */
+  function applyBeranda(d){
+    if (!d || !Array.isArray(d.hero)) return;
+    const U = HilosSafe.url;
+    document.querySelectorAll('.hero-bg .hero-slide img').forEach((im, k) => { const u = U(d.hero[k]); if (u) im.src = u; });
+    document.querySelectorAll('.proof-thumbs .photo img').forEach((im, k) => { const u = U(d.hero[k]); if (u) im.src = u; });
+  }
+  window.__hilosApply = applyBeranda;
+  try {
+    const sbc = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+    if (sbc) Promise.resolve(sbc.from('site_content').select('data').eq('page', 'beranda').maybeSingle()).then(r => {
+      if (r && r.data && r.data.data && !window.__hilosDraft) applyBeranda(r.data.data);
+    }).catch(() => {});
+  } catch (e){}
+
   /* ---------- hero image carousel ---------- */
   const heroSlides = document.querySelectorAll('.hero-slide');
   const heroDots = document.querySelectorAll('.hero-slide-nav .dot');
