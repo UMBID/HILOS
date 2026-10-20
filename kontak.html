@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
@@ -280,6 +280,34 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<style>
+  .map-section{max-width:1360px;margin:0 auto;padding:10px clamp(20px,5vw,64px) 80px;}
+  .map-section .section-head-center{max-width:620px;margin:0 auto 28px;text-align:center;}
+  .map-section .section-head-center .eyebrow{display:inline-block;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-deep);}
+  .map-section .section-head-center h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:8px;}
+  .map-section .section-head-center p{margin-top:8px;font-size:14px;color:#3F566D;}
+  .map-frame{position:relative;border:1px solid var(--sand-line);background:#e8eef5;overflow:hidden;box-shadow:0 14px 34px rgba(10,62,112,.08);}
+  .map-frame iframe{display:block;width:100%;height:clamp(280px,42vw,460px);border:0;}
+  .map-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:#2F4760;}
+  .map-bar strong{font-family:'Archivo',sans-serif;color:var(--ink);}
+  .map-bar a{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--gold-deep);color:var(--gold-deep);font-family:'Archivo',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:background .2s,color .2s;}
+  .map-bar a:hover{background:var(--gold-deep);color:#fff;}
+</style>
+<section class="map-section" id="lokasi">
+  <div class="section-head-center reveal">
+    <span class="eyebrow">Lokasi Kami</span>
+    <h2>Kunjungi HILOS</h2>
+    <p>Temukan kantor pusat HILOS lewat peta di bawah ini.</p>
+  </div>
+  <div class="map-frame reveal">
+    <iframe src="https://www.google.com/maps?q=-6.1927851,106.6349228&hl=id&z=17&output=embed" title="Peta lokasi Hilos Headquarters" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+  </div>
+  <div class="map-bar reveal">
+    <span><strong>Hilos Headquarters</strong></span>
+    <a href="https://maps.app.goo.gl/DyuNbZGzvqcj4rVU6" target="_blank" rel="noopener">Buka di Google Maps →</a>
   </div>
 </section>
 
