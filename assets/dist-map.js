@@ -1,7 +1,7 @@
 /* =====================================================================
    PETA PERSEBARAN / JARINGAN DISTRIBUSI HILOS
    Dipakai di index.html dan kerjasama.html:
-     <div id="distMap" data-cta-href="kerjasama.html#kontak"></div>
+     <div id="distMap" data-cta-href="/kerjasama#kontak"></div>
      <script src="assets/dist-map.js"></script>   (letakkan sebelum </body>)
 
    Data kota dikelola dari halaman Admin (tab "Peta Distribusi") dan disimpan
@@ -182,7 +182,7 @@
   async function boot(){
     const host = document.getElementById('distMap');
     if (!host) return;
-    const ctaHref = host.dataset.ctaHref || 'kerjasama.html#kontak';
+    const ctaHref = host.dataset.ctaHref || '/kerjasama#kontak';
     let cities = null;
     try {
       const sb = window.getSupabaseClient && window.getSupabaseClient();
