@@ -3,6 +3,10 @@
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src 'none'; connect-src 'self' https: https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0d1b2a">
@@ -598,7 +602,7 @@
 <!-- ============ LOGIN ============ -->
 <div class="login-wrap" id="loginWrap">
   <div class="login-box">
-    <div class="logo">HILOS</div>
+    <div class="logo"><img src="assets/logo-hilos.png" alt="HILOS" style="height:54px;width:auto;display:block;margin:0 0 6px;"></div>
     <p class="sub">Admin Produk — khusus internal</p>
     <div class="field">
       <label>Email</label>
@@ -618,7 +622,7 @@
 <!-- ============ APP ============ -->
 <div id="app">
   <div class="topbar">
-    <div class="logo">HILOS <span>ADMIN</span><span class="role-badge" id="roleBadge"></span></div>
+    <div class="logo" style="display:flex;align-items:center;gap:10px;"><img src="assets/logo-hilos-putih.png" alt="HILOS" style="height:34px;width:auto;display:block;"> <span>ADMIN</span><span class="role-badge" id="roleBadge"></span></div>
     <div style="display:flex;gap:8px;">
       <span class="who-mini" id="whoMini"></span>
       <button class="btn btn-outline" id="pwBtn" style="color:var(--sand);border-color:rgba(234,241,248,0.3);">Ganti Password</button>
