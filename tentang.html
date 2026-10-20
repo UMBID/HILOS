@@ -323,6 +323,17 @@
   .kebersamaan-panel .proc-card .photo{background:none !important;}
   .kebersamaan-panel .proc-card .photo img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;object-position:center;}
 
+
+  /* ===== Galeri Kebersamaan: foto tampil UTUH mengikuti rasio aslinya (tanpa crop, tanpa bingkai) ===== */
+  .kebersamaan-panel .grid-3,.kebersamaan-panel .grid-4,.kebersamaan-panel .outing-grid{display:flex;flex-direction:column;gap:20px;}
+  .kb-row{display:flex;gap:20px;align-items:flex-start;}
+  .kb-row.kb-hero{justify-content:center;}
+  .kb-item{flex:var(--ar,1.5) 1 0;min-width:0;max-width:calc(var(--maxh,560px) * var(--ar,1.5));}
+  .kb-row.kb-hero .kb-item{--maxh:min(68vh,640px);}
+  .kb-item.photo,.kb-item > .photo{aspect-ratio:var(--ar,1.5) !important;height:auto !important;position:relative;overflow:hidden;background:none !important;}
+  .kb-item.photo img,.kb-item > .photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .kb-item.outing-video .photo{aspect-ratio:var(--ar,1.5) !important;}
+  @media (max-width:640px){.kb-row{flex-direction:column;gap:16px;}.kb-item{flex:none;width:100%;max-width:100%;}}
   .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
   @media (max-width:560px){
     .ghost-word{display:none;}
@@ -586,10 +597,10 @@
         <img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568952/pexels-photo-7568952.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Outing tim HILOS di pantai">
       </div>
       <div class="outing-side">
-        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
-        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
-        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
-        <div class="photo reveal-scale"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
+        <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Foto bersama tim"></div>
+        <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/8456270/pexels-photo-8456270.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Aktivitas tim di pantai"></div>
+        <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
+        <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
       </div>
       <div class="outing-video reveal-scale" id="outingVideo">
         <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
@@ -900,16 +911,65 @@
     setInterval(() => show(current + 1), 4500);
   })();
 
-  /* Foto Kebersamaan: isi latar blur dari foto yang sama (supaya foto landscape/portrait tampil utuh) */
+  /* Galeri Kebersamaan: susun foto menurut rasio aslinya supaya tidak ada yang terpotong.
+     Foto pertama landscape -> tampil besar di atas, sisanya berjajar di bawah. */
   (function(){
     const sec = document.getElementById('kebersamaanSection'); if (!sec) return;
-    const fit = () => sec.querySelectorAll('.kebersamaan-panel .proc-card .photo').forEach(ph => {
-      const im = ph.querySelector('img'); if (!im) return;
-      const src = im.getAttribute('src') || ''; if (ph.dataset.bg === src) return;
-      ph.dataset.bg = src; ph.style.setProperty('--bg', 'url("' + src.replace(/"/g, '%22') + '")');
-    });
-    fit();
-    new MutationObserver(fit).observe(sec, { childList:true, subtree:true, attributes:true, attributeFilter:['src'] });
+    const cache = {};
+    function ratio(src){
+      return new Promise(res => {
+        if (cache[src]) return res(cache[src]);
+        let done = false;
+        const fin = v => { if (done) return; done = true; cache[src] = v; res(v); };
+        const im = new Image();
+        im.onload = () => fin(im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 1.5);
+        im.onerror = () => fin(1.5);
+        setTimeout(() => fin(1.5), 4000);
+        im.src = src;
+      });
+    }
+    function chunk(list){
+      if (list.length <= 4) return [list];
+      const out = []; for (let i = 0; i < list.length; i += 3) out.push(list.slice(i, i + 3));
+      return out;
+    }
+    function rowsOf(items){
+      if (!items.length) return [];
+      const rows = [];
+      let rest = items;
+      if (items.length > 1 && items[0].ar >= 1.2){ rows.push({ hero:true, list:[items[0]] }); rest = items.slice(1); }
+      chunk(rest).forEach(l => rows.push({ hero:false, list:l }));
+      return rows;
+    }
+    async function build(container, selectors, videoSel){
+      const tk = container.__kb = (container.__kb || 0) + 1;
+      const els = Array.from(container.querySelectorAll(selectors));
+      const vid = videoSel ? container.querySelector(videoSel) : null;
+      const all = vid ? els.concat([vid]) : els;
+      if (!all.length) return;
+      const info = await Promise.all(all.map(async el => {
+        const im = el.querySelector('img'); const src = im ? (im.currentSrc || im.getAttribute('src') || '') : '';
+        return { el, ar: src ? await ratio(src) : 1.5 };
+      }));
+      if (tk !== container.__kb) return;
+      const photos = info.filter(i => i.el !== vid);
+      const rows = rowsOf(photos);
+      const vidInfo = info.find(i => i.el === vid);
+      if (vidInfo) rows.push({ hero:true, list:[vidInfo] });
+      const nodes = rows.map(r => {
+        const row = document.createElement('div'); row.className = 'kb-row' + (r.hero ? ' kb-hero' : '');
+        r.list.forEach(i => { i.el.classList.add('kb-item'); i.el.style.setProperty('--ar', i.ar.toFixed(4)); row.appendChild(i.el); });
+        return row;
+      });
+      container.replaceChildren(...nodes);
+    }
+    window.__kbLayout = function(){
+      const ev = document.querySelector('#panel-event .grid-4'), cs = document.querySelector('#panel-csr .grid-3'), og = document.querySelector('#panel-outing .outing-grid');
+      if (ev) build(ev, '.proc-card');
+      if (cs) build(cs, '.proc-card');
+      if (og) build(og, '.outing-main, [data-slot=side]', '.outing-video');
+    };
+    window.__kbLayout();
   })();
 
   /* ---- konten dari admin (Konten Halaman > Tentang Kami); kalau kosong tetap pakai template di atas ---- */
@@ -932,7 +992,7 @@
       if (o && o.main && Array.isArray(o.side)){
         const g = document.querySelector('#panel-outing .outing-grid');
         g.querySelector('.outing-main img').src = U(o.main) || g.querySelector('.outing-main img').src;
-        const sides = g.querySelectorAll('.outing-side .photo img');
+        const sides = g.querySelectorAll('[data-slot=side] img');
         o.side.forEach((u, i) => { if (sides[i] && U(u)) sides[i].src = U(u); });
         if (o.video){
           if (U(o.video.img)) g.querySelector('.outing-video .photo img').src = U(o.video.img);
@@ -940,6 +1000,7 @@
           if (vl){ vl.querySelector('strong').textContent = o.video.title || ''; vl.querySelector('span').textContent = o.video.label || ''; }
         }
       }
+      window.__kbLayout && window.__kbLayout();
       observeReveal(document.querySelector('.proc-wrap')); observeReveal(document.getElementById('kebersamaanSection'));
       applyStagger(); bindTilt();
       window.__aboutFrame && window.__aboutFrame();
