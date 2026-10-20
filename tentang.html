@@ -316,12 +316,12 @@
 
   /* ===== perapihan ===== */
   .about-pending .hero-slideshow{visibility:hidden;}
-  #kebersamaanSection .section-head,#kebersamaanSection .outing-grid{padding-left:0;padding-right:0;}
+  #kebersamaanSection .section-head,#kebersamaanSection .outing-grid,#kebersamaanSection .kebersamaan-tabs{padding-left:0;padding-right:0;}
   @media (max-width:560px){.grid-3 .proc-card .photo{aspect-ratio:4/3;}}
-  /* Foto Kebersamaan (Event/CSR): tampil UTUH tanpa terpotong, baik landscape maupun portrait.
-     Sisi kosong diisi salinan foto yang sama (diburamkan) supaya kartu tetap rapi. */
-  .kebersamaan-panel .proc-card .photo::before{content:"";position:absolute;inset:-24px;background:var(--bg,none) center/cover no-repeat;filter:blur(18px) brightness(.85);}
-  .kebersamaan-panel .proc-card .photo img{position:relative;z-index:1;object-fit:contain;}
+  /* Foto Kebersamaan (Event/CSR): memenuhi kartu penuh (tanpa bingkai/sisi kosong), sama seperti Outing. */
+  .kebersamaan-panel .proc-card .photo::before{display:none !important;}
+  .kebersamaan-panel .proc-card .photo{background:none !important;}
+  .kebersamaan-panel .proc-card .photo img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;object-position:center;}
 
   .page-head h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;margin-top:12px;}
   @media (max-width:560px){
