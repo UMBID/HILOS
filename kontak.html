@@ -3,29 +3,36 @@
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.web3forms.com; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com mailto:">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#1264AC">
 <title>Contact Us — HILOS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0d1b2a;
-    --ink-2:#16283d;
+    --ink:#1264AC;
+    --text:#0B2C4D;
+    --text-soft:#3F566D;
+    --muted:#5E7389;
+    --ink-2:#0E4F8C;
     --sand:#eaf1f8;
     --sand-deep:#cddfec;
-    --sand-line:rgba(13,27,42,0.14);
-    --gold:#2f6fb0;
-    --gold-light:#6fa3d4;
-    --gold-deep:#1c4a73;
+    --sand-line:rgba(10,62,112,0.14);
+    --gold:#1478BC;
+    --gold-light:#6FC3EE;
+    --gold-deep:#0E5A9A;
     --paper:#f5f9fc;
-    --on-dark-line:rgba(234,241,248,0.16);
-    --on-dark-muted:rgba(234,241,248,0.68);
+    --on-dark-line:rgba(255,255,255,0.28);
+    --on-dark-muted:rgba(255,255,255,0.88);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased;}
   img{display:block;max-width:100%;}
   a{color:inherit;}
 
@@ -43,13 +50,13 @@
   .nav-links a.active{color:var(--sand);}
   .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);}
   .nav-cta{display:flex;align-items:center;gap:8px;padding:11px 20px;border:1px solid var(--on-dark-line);border-radius:999px;background:rgba(234,241,248,0.04);color:var(--sand);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;transition:border-color 0.25s ease, background 0.25s ease;}
-  .nav-cta:hover{border-color:var(--gold);background:rgba(198,154,88,0.1);}
+  .nav-cta:hover{border-color:var(--gold);background:rgba(41,192,242,0.1);}
   .nav-cta svg{width:14px;height:14px;}
   .nav-toggle{display:none;width:38px;height:38px;border:1px solid var(--on-dark-line);border-radius:50%;background:transparent;color:var(--sand);align-items:center;justify-content:center;cursor:pointer;}
 
   .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:14px 26px;font-size:12px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;text-decoration:none;overflow:hidden;transition:transform 0.3s ease;cursor:pointer;border:none;}
   .btn span{position:relative;z-index:2;}
-  .btn-fill{background:var(--gold);color:var(--ink);}
+  .btn-fill{background:var(--gold);color:var(--text);}
   .btn-fill::before{content:"";position:absolute;inset:0;z-index:1;background:var(--gold-light);transform:translateY(101%);transition:transform 0.35s cubic-bezier(.7,0,.2,1);}
   .btn-fill:hover::before{transform:translateY(0);}
   .btn-fill:hover{transform:translateY(-2px);}
@@ -65,7 +72,7 @@
   .page-head .eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold-deep);}
   .page-head .eyebrow::before{content:"";width:24px;height:1px;background:var(--gold-deep);}
   .page-head h1{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(26px,3.2vw,38px);text-transform:uppercase;margin-top:14px;}
-  .page-head p{margin-top:10px;font-size:14.5px;color:#5c4f40;max-width:560px;}
+  .page-head p{margin-top:10px;font-size:14.5px;color:#3F566D;max-width:560px;}
 
   /* ============ CONTACT ============ */
   .contact-section{max-width:1360px;margin:0 auto;padding:46px clamp(20px,5vw,64px) 90px;}
@@ -81,15 +88,15 @@
   /* skema kerjasama (muncul bila topik = Kerjasama) */
   .kj-group{border:0;padding:0;margin:0 0 14px;min-width:0;display:none;}
   .kj-group.show{display:block;}
-  .kj-group legend{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:8px;padding:0;}
-  .kj-group legend em{font-style:normal;font-weight:400;color:#8a7c68;}
+  .kj-group legend{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:8px;padding:0;}
+  .kj-group legend em{font-style:normal;font-weight:400;color:#5E7389;}
   .kj-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .kj-chip{position:relative;display:block;cursor:pointer;}
   .contact-form .kj-chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;cursor:pointer;}
   .kj-chip span{display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid var(--sand-line);background:#fff;font-size:13px;line-height:1.2;transition:border-color .2s,background .2s,color .2s;}
   .kj-chip span::before{content:"";flex:0 0 16px;height:16px;border:1.5px solid #9aa7b5;border-radius:3px;background:#fff center/11px no-repeat;transition:all .2s;}
   .kj-chip:hover span{border-color:var(--gold-deep);}
-  .kj-chip input:checked + span{border-color:var(--gold-deep);background:rgba(47,111,176,.07);font-weight:600;}
+  .kj-chip input:checked + span{border-color:var(--gold-deep);background:rgba(30,120,188,.07);font-weight:600;}
   .kj-chip input:checked + span::before{background-color:var(--gold-deep);border-color:var(--gold-deep);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.2l2.4 2.4 4.6-5'/%3E%3C/svg%3E");}
   .kj-chip input:focus-visible + span{outline:2px solid var(--gold-deep);outline-offset:2px;}
   .kj-error{display:none;margin-top:8px;font-size:12px;color:#b3261e;}
@@ -98,7 +105,7 @@
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
   .contact-form input, .contact-form select, .contact-form textarea{
     width:100%;padding:11px 12px;border:1px solid var(--sand-line);background:var(--paper);
-    font-family:inherit;font-size:13px;color:var(--ink);
+    font-family:inherit;font-size:13px;color:var(--text);
   }
   .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus{outline:none;border-color:var(--gold-deep);}
   .contact-form textarea{min-height:110px;resize:vertical;margin-bottom:16px;}
@@ -107,7 +114,7 @@
 
   .info-card{background:#fff;border:1px solid var(--sand-line);padding:26px;display:flex;flex-direction:column;gap:18px;}
   .info-card h3{font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
-  .info-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#4a3f32;line-height:1.5;}
+  .info-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#2F4760;line-height:1.5;}
   .info-row svg{width:16px;height:16px;color:var(--gold-deep);flex-shrink:0;margin-top:1px;}
   .info-row a{text-decoration:none;color:inherit;}
   .info-row a:hover{color:var(--gold-deep);}
@@ -144,6 +151,7 @@
 <script src="assets/wa-config.js"></script>
 <script src="assets/safe.js"></script>
 <script src="assets/ux.js" defer></script>
+<link rel="stylesheet" href="assets/theme-hilos.css">
 </head>
 <body>
 
@@ -234,11 +242,11 @@
         <h3>Informasi Kontak</h3>
         <div class="info-row" style="margin-top:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"/></svg><a href="#" data-wa-tel>0813-3333-273</a></div>
         <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg><a href="mailto:hilosindonesia@gmail.com">hilosindonesia@gmail.com</a></div>
-        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>www.hilos.co.id</div>
+        <div class="info-row" style="margin-top:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>www.hilos.id</div>
       </div>
       <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
         <h3>Jam Operasional</h3>
-        <p style="font-size:12.5px;color:#4a3f32;margin-top:8px;">Setiap Hari<br>24 Jam — Siap Melayani Kapan Saja</p>
+        <p style="font-size:12.5px;color:#2F4760;margin-top:8px;">Setiap Hari<br>24 Jam — Siap Melayani Kapan Saja</p>
       </div>
       <div style="border-top:1px solid var(--sand-line);padding-top:16px;">
         <h3>Ikuti Kami</h3>
@@ -255,7 +263,7 @@
   .socmed-section{max-width:1200px;margin:0 auto;padding:10px clamp(20px,5vw,64px) 90px;}
   .socmed-section .section-head-center{max-width:620px;margin:0 auto 36px;text-align:center;}
   .socmed-section .section-head-center h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(20px,2.4vw,26px);text-transform:uppercase;}
-  .socmed-section .section-head-center p{margin-top:8px;font-size:14px;color:#5c4f40;}
+  .socmed-section .section-head-center p{margin-top:8px;font-size:14px;color:#3F566D;}
   .socmed-grid{display:flex;justify-content:center;gap:70px;flex-wrap:wrap;margin-top:10px;}
   .socmed-card{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;}
   .socmed-card .phone-mock{transition:transform .3s ease;}
@@ -265,11 +273,11 @@
     display:flex;align-items:center;gap:12px;margin-top:24px;
     background:#fff;border:1px solid var(--sand-line);
     padding:10px 20px 10px 10px;border-radius:100px;
-    box-shadow:0 6px 18px rgba(13,27,42,0.08);
+    box-shadow:0 6px 18px rgba(10,62,112,0.08);
   }
   .socmed-label svg{width:22px;height:22px;color:#fff;flex-shrink:0;}
   .socmed-label strong{display:block;font-family:'Archivo',sans-serif;font-size:15px;line-height:1.2;}
-  .socmed-label span{font-size:12.5px;color:var(--ink);opacity:0.65;}
+  .socmed-label span{font-size:12.5px;color:var(--text);opacity:0.65;}
   .socmed-label > svg, .socmed-label-ig svg, .socmed-label-tiktok svg{
     width:40px;height:40px;padding:9px;border-radius:50%;
   }
@@ -474,7 +482,7 @@
     width:38px; height:38px; border-radius:50%; flex-shrink:0;
     background:linear-gradient(155deg, var(--gold-light), var(--gold-deep));
     display:flex; align-items:center; justify-content:center;
-    font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:var(--ink);
+    font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:var(--text);
   }
   .wa-popup-header strong{ display:block; font-family:'Archivo',sans-serif; font-size:14px; }
   .wa-status{ display:flex; align-items:center; gap:5px; font-size:11px; color:var(--on-dark-muted); }
