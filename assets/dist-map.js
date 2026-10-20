@@ -76,7 +76,7 @@
   .dm-pre .dm-row.in{opacity:1;transform:none;}
   .dm-row{transition:border-color .2s,transform .45s ease,background .2s,opacity .45s ease;}
   .dm-n{text-decoration:none;font-variant-numeric:tabular-nums;}
-  @media (max-width:900px){.dm{padding:76px 18px;}.dm-grid{grid-template-columns:1fr;gap:28px;}.dm-pin text{font-size:34px;}}
+  @media (max-width:900px){.dm{padding:76px 18px;}.dm-grid{grid-template-columns:1fr;gap:28px;}.dm-pin text{font-size:34px;}.dm-map{margin-bottom:64px;}.dm-pop{left:0;right:0;top:100%;bottom:auto;margin-top:10px;min-width:0;max-width:none;padding:10px 14px;transform:translateY(-6px);box-shadow:0 8px 20px rgba(0,0,0,.18);}.dm-pop b{font-size:13px;}.dm-pop span{font-size:11px;}}
   @media (prefers-reduced-motion:reduce){.dm-pin .pin-ping{animation:none;}}
   `;
 
