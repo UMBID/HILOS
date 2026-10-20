@@ -352,6 +352,29 @@
   @media (max-width:900px){.filter-sidebar{max-height:none;top:0 !important;}}
   @media (hover:none){.product-cta{transform:none;background:none;color:var(--gold-deep);position:static;padding:0 16px 14px;}}
   @media (prefers-reduced-motion:reduce){.product-thumb{animation:none;}.product-cta,.product-card::after{transition:none;}}
+
+  /* ===== Produk lebih besar & jelas (Top 5 + katalog) ===== */
+  .top10-section,.catalog-layout{max-width:1560px;}
+  .top10-card{flex:0 0 clamp(250px,30vw,400px);}
+  .top10-thumb{aspect-ratio:1/1;background:#fff;border-bottom:0;padding:4%;box-sizing:border-box;}
+  .top10-thumb img{object-fit:contain;}
+  .top10-rank-badge{width:38px;height:38px;font-size:14px;top:14px;left:14px;}
+  .top10-info{padding:14px 18px 20px;border-top:1px solid var(--sand-line);}
+  .top10-info h4{font-size:15px;font-weight:700;line-height:1.35;}
+  .catalog-layout{grid-template-columns:230px minmax(0,1fr);gap:28px;}
+  .product-grid{gap:18px;}
+  .product-card{background:#fff;}
+  .product-thumb{aspect-ratio:1/1;background:#fff;}
+  .product-thumb.loaded{background:#fff;}
+  .product-thumb img{object-fit:contain;padding:4%;box-sizing:border-box;}
+  .product-info{padding:14px 18px 20px;border-top:1px solid var(--sand-line);}
+  .product-info h4{font-size:15px;line-height:1.35;}
+  .product-info .model-tag{font-size:12px;}
+  .product-colors span{width:16px;height:16px;}
+  .product-grid.list-view .product-thumb{width:120px;height:120px;}
+  @media (max-width:1180px){.product-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  @media (max-width:1080px){.catalog-layout{grid-template-columns:minmax(0,1fr);}}
+  @media (max-width:640px){.top10-card{flex:0 0 72vw;}.top10-info{padding:12px 14px 16px;}.product-info{padding:10px 12px 14px;}.product-info h4{font-size:13.5px;}.product-grid{gap:12px;}}
 </style>
 <script src="assets/safe.js"></script>
 <script src="assets/supabase.js"></script>
