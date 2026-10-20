@@ -7,7 +7,7 @@
   // jangan hitung kunjungan admin yang sedang login di browser yang sama
   var isAdmin = false;
   try { for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (/^sb-.*auth-token$/.test(k)) { isAdmin = true; break; } } } catch(e){}
-  var off = dnt || isAdmin || location.protocol === 'file:';
+  var off = dnt || isAdmin || location.protocol === 'file:' || /[?&]preview=1/.test(location.search);
 
   var sid = '';
   try { sid = sessionStorage.getItem('hilos_sid') || ''; if (!sid){ sid = Math.random().toString(36).slice(2, 12); sessionStorage.setItem('hilos_sid', sid); } } catch(e){ sid = 'x' + Math.random().toString(36).slice(2, 8); }
