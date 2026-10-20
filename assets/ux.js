@@ -73,3 +73,18 @@
     } catch (_) {}
   }
 })();
+
+
+/* Menu mobile (semua halaman): buka/tutup dengan tombol hamburger */
+(function(){
+  var nav = document.querySelector('nav.nav'), t = document.querySelector('.nav-toggle');
+  if (!nav || !t || t.__hilosNav) return;
+  t.__hilosNav = true;
+  t.setAttribute('aria-expanded', 'false');
+  function set(o){ nav.classList.toggle('menu-open', o); t.setAttribute('aria-expanded', o ? 'true' : 'false'); }
+  t.addEventListener('click', function(e){ e.stopPropagation(); set(!nav.classList.contains('menu-open')); });
+  nav.addEventListener('click', function(e){ if (e.target.closest && e.target.closest('.nav-links a')) set(false); });
+  document.addEventListener('click', function(e){ if (!nav.contains(e.target)) set(false); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') set(false); });
+  window.addEventListener('resize', function(){ if (window.innerWidth > 1023) set(false); });
+})();
