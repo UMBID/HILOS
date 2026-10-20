@@ -331,13 +331,13 @@
 </div>
 
 <nav class="nav">
-  <a href="index.html" class="logo" style="text-decoration:none;"><img class="logo-img" src="assets/logo-hilos-putih.png" alt="HILOS" width="100" height="44" decoding="async"></a>
+  <a href="/" class="logo" style="text-decoration:none;"><img class="logo-img" src="assets/logo-hilos-putih.png" alt="HILOS" width="100" height="44" decoding="async"></a>
   <ul class="nav-links">
-    <li><a href="index.html">Beranda</a></li>
-    <li><a href="tentang.html">Tentang Kami</a></li>
-    <li><a href="produk.html">Produk</a></li>
-    <li><a href="kerjasama.html">Kerjasama</a></li>
-    <li><a href="kontak.html">Contact Us</a></li>
+    <li><a href="/">Beranda</a></li>
+    <li><a href="/tentang">Tentang Kami</a></li>
+    <li><a href="/produk">Produk</a></li>
+    <li><a href="/kerjasama">Kerjasama</a></li>
+    <li><a href="/kontak">Contact Us</a></li>
   </ul>
   <a class="nav-cta" href="#" id="salesBtn">
     Hubungi Sales
@@ -349,7 +349,7 @@
 </nav>
 
 <div class="breadcrumb">
-  <a href="index.html">Beranda</a><span class="sep">/</span><a href="produk.html">Produk</a><span class="sep">/</span><span class="current">Wave Pro</span>
+  <a href="/">Beranda</a><span class="sep">/</span><a href="/produk">Produk</a><span class="sep">/</span><span class="current">Wave Pro</span>
 </div>
 
 <section class="detail-produk" id="produk">
@@ -479,16 +479,16 @@
 <footer class="site-footer">
   <div class="footer-grid">
     <div class="footer-brand">
-      <a href="index.html" class="logo" style="text-decoration:none;"><img class="logo-img" src="assets/logo-hilos-putih.png" alt="HILOS" width="100" height="44" decoding="async"></a>
+      <a href="/" class="logo" style="text-decoration:none;"><img class="logo-img" src="assets/logo-hilos-putih.png" alt="HILOS" width="100" height="44" decoding="async"></a>
       <p>HILOS berkomitmen menghadirkan sandal berkualitas tinggi yang nyaman, stylish, dan tahan lama untuk setiap langkah Anda.</p>
     </div>
     <div class="footer-col">
       <h4>Produk</h4>
-      <ul><li><a href="produk.html">Semua Produk</a></li><li><a href="produk.html">Koleksi Terbaru</a></li><li><a href="flagship.html">Best Seller</a></li></ul>
+      <ul><li><a href="/produk">Semua Produk</a></li><li><a href="/produk">Koleksi Terbaru</a></li><li><a href="/flagship">Best Seller</a></li></ul>
     </div>
     <div class="footer-col">
       <h4>Perusahaan</h4>
-      <ul><li><a href="tentang.html">Tentang Kami</a></li><li><a href="kontak.html">Contact Us</a></li></ul>
+      <ul><li><a href="/tentang">Tentang Kami</a></li><li><a href="/kontak">Contact Us</a></li></ul>
     </div>
     <div class="footer-col">
       <h4>Hubungi Kami</h4>
@@ -690,7 +690,7 @@
       const op = o.products;
       const img = S.url((op.images && op.images[0]) ? op.images[0] : '') || FALLBACK_IMG;
       const orank = Math.max(1, Math.min(99, parseInt(o.rank, 10) || 1));
-      const href = othersMode === 'rank' ? `flagship.html?rank=${orank}` : `flagship.html?id=${encodeURIComponent(op.id)}`;
+      const href = othersMode === 'rank' ? `/flagship?rank=${orank}` : `/flagship?id=${encodeURIComponent(op.id)}`;
       const rankBadge = othersMode === 'rank' ? `<span class="other-rank${orank <= 3 ? ' is-top3' : ''}">#${orank}</span>` : '';
       return `
         <a class="other-card" href="${href}">
@@ -724,7 +724,7 @@
     stateBox.innerHTML = '<h2 style="margin:0 0 8px">'+(err?'Produk belum bisa dimuat':'Produk tidak ditemukan')+'</h2>'
       + '<p style="color:#666;margin:0 0 20px">'+(err?'Periksa koneksi internet Anda lalu coba lagi.':'Produk ini mungkin sudah tidak tersedia.')+'</p>'
       + (err?'<button id="fpRetry" style="padding:12px 22px;border:0;border-radius:8px;background:#111;color:#fff;cursor:pointer;margin-right:8px">Coba lagi</button>':'')
-      + '<a href="produk.html" style="display:inline-block;padding:12px 22px;border-radius:8px;border:1px solid #111;color:#111;text-decoration:none">Lihat semua produk</a>';
+      + '<a href="/produk" style="display:inline-block;padding:12px 22px;border-radius:8px;border:1px solid #111;color:#111;text-decoration:none">Lihat semua produk</a>';
     const r = document.getElementById('fpRetry'); if (r) r.onclick = () => location.reload();
   }
   (function(){
@@ -754,7 +754,7 @@
     loadFlagshipProduct(),
     new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),12000))
   ]).then(result => {
-    if (result && result.blocked){ location.replace('produk.html'); return; }
+    if (result && result.blocked){ location.replace('/produk'); return; }
     if (!result && !isLocalPreview){ fpFail(false); return; }
     if (result) applyFlagshipProduct(result.current, result.others, result.othersMode);
     prodSec.style.display = ''; stateBox.style.display = 'none';
