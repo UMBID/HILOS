@@ -26,12 +26,14 @@
 
   const CSS = `
   .dm{background:var(--paper,#f5f9fc);color:var(--ink,#0d1b2a);padding:100px clamp(20px,5vw,64px);}
-  .dm-inner{max-width:1200px;margin:0 auto;}
+  .dm-inner{max-width:2400px;margin:0 auto;}
   .dm-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Archivo',sans-serif;font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-deep,#1c4a73);}
   .dm-eyebrow::before{content:"";width:26px;height:1px;background:var(--gold-deep,#1c4a73);}
   .dm h2{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(28px,3.4vw,42px);line-height:1.15;margin-top:14px;max-width:640px;}
   .dm-sub{margin-top:14px;max-width:560px;font-size:15px;line-height:1.75;color:#5c4f40;}
-  .dm-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);margin-top:48px;align-items:center;}
+  .dm-grid{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(300px,1fr);gap:clamp(24px,4vw,64px);align-items:start;}
+  .dm-left .dm-map{margin-top:clamp(-70px,-3.4vw,-10px);}
+  .dm-side{padding-top:6px;}
   .dm-map{position:relative;}
   .dm-map svg{width:100%;height:auto;display:block;}
   .dm-map .island-shapes{fill:var(--sand-deep,#cddfec);}
@@ -105,16 +107,18 @@
   <style>${CSS}</style>
   <section class="dm" aria-labelledby="dmTitle">
     <div class="dm-inner">
-      <span class="dm-eyebrow">Jaringan Distribusi</span>
-      <h2 id="dmTitle">Mitra HILOS tersebar di seluruh Indonesia</h2>
-      <p class="dm-sub">Dari Sumatra sampai Sulawesi, produk HILOS sudah dipercaya mitra di berbagai kota. Pilih kota untuk melihat detailnya.</p>
       <div class="dm-grid">
+        <div class="dm-left">
+          <span class="dm-eyebrow">Jaringan Distribusi</span>
+          <h2 id="dmTitle">Mitra HILOS tersebar di seluruh Indonesia</h2>
+          <p class="dm-sub">Dari Sumatra sampai Sulawesi, produk HILOS sudah dipercaya mitra di berbagai kota. Pilih kota untuk melihat detailnya.</p>
         <div class="dm-map">
           <svg viewBox="0 0 ${MAP_W} ${MAP_H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peta persebaran mitra HILOS di Indonesia">
             ${SHAPES}
             ${pins}
           </svg>
           <div class="dm-pop" id="dmPop"><b id="dmPopName"></b><span id="dmPopCount"></span></div>
+        </div>
         </div>
         <div class="dm-side">
           <div class="dm-total"><b class="dm-n" data-n="${CITIES.length}">${CITIES.length}</b><span>kota dengan <u class="dm-n" data-n="${totalPartner}">${totalPartner}</u> mitra aktif</span></div>
