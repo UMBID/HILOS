@@ -1,0 +1,62 @@
+/* HILOS - tema biru logo (palet nyaman di mata). Dimuat paling akhir di setiap halaman publik.
+   Permukaan biru  : #1264AC (gradasi ke #1C7EC6)   Kartu/kedalaman : #0E4F8C
+   Aksen di biru   : cyan terang #7DDBF9 / #BDEFFF  Aksen di putih  : #1478BC
+   Teks di putih   : #0B2C4D (judul), #3F566D (isi), #5E7389 (redup)  */
+:root{
+  --hl-grad:linear-gradient(135deg,#0F5AA0 0%,#1264AC 48%,#1A78C0 100%);
+  --hl-btn:linear-gradient(135deg,#46CDF6,#2DB5EC);
+  --hl-btn-hover:linear-gradient(135deg,#7FDDF9,#52CAF4);
+}
+
+/* area biru: aksen jadi cyan terang supaya jelas di atas biru */
+.ribbon,.nav,.site-footer,.stats-band,.charity,.section-dark,.scroll-marquee,.px,.detail-produk,
+.review-section,.contact-cta,.why-cta,.buy-bar,.breadcrumb,.side-card,.commit-card,.wa-popup,
+.hero,.kerjasama-hero,.about-hero-banner,.modal-box,.proof-card,.hero-stat,.video-review-card,.testimonial-card,
+.stage,.product-card,.pd-tab,.collage-badge{
+  --gold:#7DDBF9;
+  --gold-light:#BDEFFF;
+  --gold-deep:#3FB2E6;
+  --on-dark-muted:rgba(255,255,255,.88);
+}
+.nav,.site-footer,.stats-band,.charity,.section-dark,.review-section,.contact-cta,.why-cta,.detail-produk{
+  background-image:var(--hl-grad);
+}
+.ribbon{background:#0F5AA0;}
+.nav.scrolled{background-image:none;background-color:rgba(15,90,160,.94);}
+
+/* tombol utama: cyan terang + teks biru tua (kontras tinggi di latar biru maupun putih) */
+.btn-fill{background:var(--hl-btn) !important;color:#06335C !important;}
+.btn-fill::before{background:var(--hl-btn-hover) !important;}
+.btn-fill:hover{color:#06335C !important;}
+.badge-best,.t10t-rank.is-top3,.top10-rank-badge.is-top3,.quick-pill.active em{background:var(--hl-btn) !important;color:#06335C !important;}
+.modal-box .play-btn{background:#46CDF6;color:#06335C;}
+
+/* tombol garis di area biru: putih jelas */
+.btn-line-light,.nav-cta,.hero .btn-line{border-color:rgba(255,255,255,.7);}
+
+/* foto tampil natural (tanpa efek duotone), hanya tipis kesan biru supaya menyatu */
+.photo img{filter:none !important;}
+.photo::before{display:none !important;}
+.photo::after{background:linear-gradient(155deg,rgba(18,100,172,.06),rgba(8,48,96,.22)) !important;mix-blend-mode:multiply;}
+
+/* hero beranda: sisi kiri lebih gelap agar teks terbaca, sisi kanan foto tetap hidup */
+.hero-bg-scrim{
+  background:
+    radial-gradient(ellipse 55% 45% at var(--mx,70%) var(--my,40%),rgba(70,205,246,.14),transparent 60%),
+    linear-gradient(90deg,rgba(7,44,90,.82) 0%,rgba(7,44,90,.52) 42%,rgba(7,44,90,.10) 82%),
+    linear-gradient(0deg,#1264AC 2%,rgba(18,100,172,0) 40%) !important;
+}
+/* hero kerjasama */
+.kerjasama-hero-scrim{
+  background:
+    linear-gradient(90deg,rgba(7,44,90,.80) 0%,rgba(7,44,90,.48) 50%,rgba(7,44,90,.12) 100%),
+    linear-gradient(0deg,#1264AC 3%,rgba(18,100,172,0) 45%) !important;
+}
+.btn-fill{position:relative;overflow:hidden;}
+
+/* blok "Terhubung dengan kami" (di atas latar biru) */
+.socmed-teaser-inner{background:rgba(255,255,255,.10) !important;border:1px solid rgba(255,255,255,.28);}
+.socmed-teaser-inner h2{color:#fff;}
+.socmed-teaser-inner .eyebrow{color:#BDEFFF;}
+.socmed-teaser-link{color:#fff !important;border-color:rgba(255,255,255,.7) !important;}
+.socmed-teaser-link:hover{color:#BDEFFF !important;border-color:#BDEFFF !important;}
