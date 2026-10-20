@@ -1024,6 +1024,7 @@
       applyStagger(); bindTilt();
       window.__aboutFrame && window.__aboutFrame();
     }
+    window.__hilosApply = render;
     let done = false;
     const finish = () => { if (!done){ done = true; document.documentElement.classList.remove('about-pending'); } };
     setTimeout(finish, 1800);
@@ -1031,7 +1032,7 @@
       const sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
       if (!sb){ finish(); return; }
       Promise.resolve(sb.from('site_content').select('data').eq('page', 'tentang').maybeSingle()).then(res => {
-        if (res && res.data && res.data.data) render(res.data.data);
+        if (res && res.data && res.data.data && !window.__hilosDraft) render(res.data.data);
       }).catch(() => {}).then(finish);
     } catch (e){ finish(); }
   })();
