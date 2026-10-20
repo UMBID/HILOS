@@ -60,3 +60,9 @@
 .socmed-teaser-inner .eyebrow{color:#BDEFFF;}
 .socmed-teaser-link{color:#fff !important;border-color:rgba(255,255,255,.7) !important;}
 .socmed-teaser-link:hover{color:#BDEFFF !important;border-color:#BDEFFF !important;}
+
+/* logo gambar HILOS (versi putih di atas latar biru) */
+.logo{display:inline-flex;align-items:center;line-height:0;}
+.logo .logo-img{height:46px;width:auto;display:block;}
+.site-footer .logo .logo-img{height:56px;}
+@media (max-width:820px){ .logo .logo-img{height:38px;} .site-footer .logo .logo-img{height:48px;} }
