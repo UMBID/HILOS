@@ -353,6 +353,16 @@
   @media (hover:none){.product-cta{transform:none;background:none;color:var(--gold-deep);position:static;padding:0 16px 14px;}}
   @media (prefers-reduced-motion:reduce){.product-thumb{animation:none;}.product-cta,.product-card::after{transition:none;}}
 
+  /* ===== Pemilih bulan Top 5 ===== */
+  .month-pick{position:relative;display:inline-flex;align-items:center;color:var(--gold-deep);}
+  .month-pick .mp-ico,.month-pick .mp-chev{position:absolute;pointer-events:none;width:18px;height:18px;}
+  .month-pick .mp-ico{left:16px;}
+  .month-pick .mp-chev{right:14px;width:16px;height:16px;transition:transform .2s ease;}
+  .month-pick:hover .mp-chev{transform:translateY(2px);}
+  #top10MonthSelect{appearance:none;-webkit-appearance:none;-moz-appearance:none;min-width:190px;padding:13px 42px 13px 44px;border:1.5px solid var(--sand-line);border-radius:100px;background:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:.02em;color:var(--ink);cursor:pointer;box-shadow:0 4px 14px rgba(10,62,112,.08);transition:border-color .2s,box-shadow .2s;}
+  #top10MonthSelect:hover{border-color:var(--gold-deep);box-shadow:0 6px 18px rgba(10,62,112,.14);}
+  #top10MonthSelect:focus-visible{outline:none;border-color:var(--gold-deep);box-shadow:0 0 0 4px rgba(37,150,215,.22);}
+  @media (max-width:640px){.month-pick,#top10MonthSelect{width:100%;}}
   /* ===== Produk lebih besar & jelas (Top 5 + katalog) ===== */
   .top10-section,.catalog-layout{max-width:1760px;}
   .top10-card{flex:0 0 clamp(250px,30vw,400px);}
@@ -476,7 +486,11 @@
       <p class="eyebrow-top10">Sorotan</p>
       <h2 id="top10Title">Top 5 Produk</h2>
     </div>
-    <select id="top10MonthSelect"></select>
+    <label class="month-pick" for="top10MonthSelect">
+      <svg class="mp-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+      <select id="top10MonthSelect" aria-label="Pilih bulan Top 5"></select>
+      <svg class="mp-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </label>
   </div>
   <div class="top10-scroll" id="top10Grid"></div>
 </section>
