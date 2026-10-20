@@ -392,6 +392,26 @@
 <script src="assets/supabase-config.js"></script>
 <script src="assets/analytics.js" defer></script>
 <script src="assets/wa-config.js"></script>
+<script>
+/* Foto 3 kategori dari Admin (Konten Halaman > Produk) */
+document.addEventListener('DOMContentLoaded', function(){
+  var order = ['i-sepatu', 'i-pria', 'i-wanita'];
+  function apply(d){
+    if (!d || !Array.isArray(d.kategori)) return;
+    order.forEach(function(cls, k){
+      var u = window.HilosSafe && HilosSafe.url(d.kategori[k]); if (!u) return;
+      document.querySelectorAll('.px-img.' + cls).forEach(function(el){ el.style.backgroundImage = 'url("' + u.replace(/"/g, '%22') + '")'; });
+    });
+  }
+  window.__hilosApply = apply;
+  try {
+    var sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+    if (sb) Promise.resolve(sb.from('site_content').select('data').eq('page', 'produk').maybeSingle()).then(function(r){
+      if (r && r.data && r.data.data && !window.__hilosDraft) apply(r.data.data);
+    }).catch(function(){});
+  } catch (e) {}
+});
+</script>
 <script src="assets/ux.js" defer></script>
 <link rel="stylesheet" href="assets/theme-hilos.css">
 </head>
