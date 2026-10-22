@@ -280,6 +280,26 @@
   .upload-drop:hover{ border-color:var(--gold); color:var(--gold-deep); }
 
   .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:26px; }
+  .sec-h .req{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9c4726; background:#fbe9e0; border-radius:4px; padding:2px 7px; }
+  .checklist{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px; }
+  .checklist span{ font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:100px; background:#f1ede6; color:#8a8078; }
+  .checklist span.ok{ background:#e3f3e7; color:#1f6b35; }
+  .checklist span.opt{ background:transparent; border:1px dashed var(--sand-line); }
+  .cover-row{ display:flex; gap:16px; align-items:flex-start; margin:0 0 4px 0; }
+  .cover-box{ width:150px; flex-shrink:0; border:1px solid var(--sand-line); border-radius:10px; overflow:hidden; background:#fff; }
+  .cover-box .ph{ aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:var(--sand); color:#a39a90; font-size:11.5px; text-align:center; padding:8px; }
+  .cover-box img{ display:block; width:100%; aspect-ratio:1/1; object-fit:cover; }
+  .cover-box .cap{ padding:7px 9px; font-size:11.5px; font-weight:600; border-top:1px solid var(--sand-line); }
+  .cover-box .cap small{ display:block; font-weight:400; color:#8a8078; }
+  .cover-side{ flex:1; min-width:0; }
+  .cover-side .btn-mini{ margin-top:6px; }
+  .img-thumb.g{ width:92px; height:auto; background:none; overflow:visible; }
+  .img-thumb.g .im{ width:92px; height:92px; border-radius:8px; overflow:hidden; background:var(--sand); }
+  .img-thumb.g .mk{ display:block; width:100%; margin-top:4px; font-size:10.5px; font-weight:600; color:var(--gold-deep); background:none; border:1px solid var(--sand-line); border-radius:6px; padding:3px 0; position:static; height:auto; line-height:1.3; }
+  .img-thumb.g .rm{ position:absolute; top:2px; right:2px; width:20px; height:20px; border-radius:50%; border:none; background:rgba(13,27,42,.75); color:#fff; font-size:12px; line-height:1; }
+  .upload-drop.drag{ border-color:var(--gold); background:#fbf6ea; color:var(--gold-deep); }
+  .modal-actions{ position:sticky; bottom:0; background:#fff; padding:14px 0; margin-top:20px; border-top:1px solid var(--sand-line); z-index:5; }
+
   .toast{
     position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--sand);
     padding:14px 20px; border-radius:8px; font-size:13px; z-index:60; display:none;
@@ -1072,6 +1092,7 @@
   <div class="modal">
     <h2 id="modalTitle">Tambah Produk</h2>
     <p class="hint" id="modalActivity" style="margin:-12px 0 8px;"></p>
+    <div class="checklist" id="prodChecklist"></div>
     <div class="sec-h" style="margin-top:14px;border-top:none;padding-top:0"><span class="n">1</span><h3>Informasi Produk</h3></div>
     <input type="hidden" id="fId">
 
@@ -1129,40 +1150,31 @@
       <p class="hint">Pisahkan dengan koma.</p>
     </div>
 
-    <!-- ② FOTO GALERI -->
-    <div class="sec-h"><span class="n">2</span><h3>Foto Galeri Produk</h3></div>
-    <p class="sec-help">Foto yang tampil di katalog dan di galeri halaman detail (tampak depan, samping, detail sol, dll). Ini <strong>berbeda</strong> dari foto warna dan foto 360° di bawah.</p>
+    <!-- ② FOTO KATALOG -->
+    <div class="sec-h"><span class="n">2</span><h3>Foto Katalog</h3><span class="req">Wajib</span></div>
+    <p class="sec-help">Satu foto utama yang tampil di <strong>daftar produk (kartu katalog)</strong>. Disarankan 1200 × 1200 px, latar putih, produk di tengah.</p>
+    <div class="cover-row">
+      <div class="cover-box" id="coverBox"></div>
+      <div class="cover-side">
+        <label class="upload-drop" for="fCover" id="coverDrop" style="margin-top:0">+ Pilih foto katalog</label>
+        <input type="file" id="fCover" accept="image/*" style="display:none;">
+        <p class="hint" id="coverStatus"></p>
+        <p class="hint">Seperti inilah tampilannya di katalog &rarr;</p>
+      </div>
+    </div>
+
+    <!-- ③ FOTO SAAT DIKLIK -->
+    <div class="sec-h"><span class="n">3</span><h3>Foto Saat Produk Diklik</h3><span class="opt">Opsional</span></div>
+    <p class="sec-help">Foto tambahan yang muncul di jendela detail setelah pengunjung mengklik produk (tampak samping, detail sol, dll). Foto warna diatur di langkah 4, foto 360° di langkah 5.</p>
     <div class="field" style="margin-top:0">
       <div class="thumb-list" id="imgList"></div>
-      <label class="upload-drop" for="fImages">+ Pilih foto galeri (bisa lebih dari satu)</label>
+      <label class="upload-drop" for="fImages" id="galDrop">+ Pilih foto tambahan (bisa lebih dari satu)</label>
       <input type="file" id="fImages" accept="image/*" multiple style="display:none;">
       <p class="hint" id="uploadStatus"></p>
     </div>
 
-    <!-- ③ 3D -->
-    <div class="sec-h"><span class="n">3</span><h3>Tampilan 3D (360°)</h3><span class="opt">Opsional</span></div>
-    <div class="field" style="margin-top:8px">
-      <label class="toggle-3d" for="fIs3d">
-        <input type="checkbox" id="fIs3d">
-        <span class="sw"></span>
-        <span><strong>Aktifkan 3D untuk produk ini</strong><span class="d">ON: ada halaman detail flagship dengan putaran 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
-      </label>
-      <div class="guide-3d only-3d">
-        <h4>Cara membuat tampilan 360°</h4>
-        Cara termudah: <strong>satu video produk berputar</strong>. Sistem mengambil 36 foto sudut sendiri, merapikan latarnya, dan hanya foto hasilnya yang disimpan (videonya tidak). Upload di kartu warna pada langkah 4, tombol <strong>"Upload video putar"</strong>.
-        <ol>
-          <li>Taruh produk di piringan putar beralas <strong>putih polos</strong>, HP di tripod, cahaya merata.</li>
-          <li>Rekam <strong>satu putaran penuh</strong> mulai dari tampak depan, kecepatan stabil, 10–15 detik.</li>
-          <li>Upload videonya, cek pratinjau, lalu klik <strong>Pakai hasil ini</strong> dan Simpan produk.</li>
-        </ol>
-        Cara lain (lebih manual): upload gambar grid atau 8–16 foto. Hasilnya kurang halus karena sudutnya lebih sedikit.
-      </div>
-
-      <div class="spin3d-panel only-3d" id="spin3dPanel"></div>
-    </div>
-
     <!-- ④ WARNA -->
-    <div class="sec-h"><span class="n">4</span><h3>Warna Produk</h3></div>
+    <div class="sec-h"><span class="n">4</span><h3>Warna &amp; Foto Warna</h3></div>
     <p class="sec-help" style="background:#eef5fb;border:1px solid #cfe0ef;border-radius:8px;padding:10px 12px;color:#0A3E70"><strong>Ukuran foto yang disarankan:</strong> <strong>1200 × 1200 px (1:1, persegi)</strong>, latar putih polos, produk di tengah dengan jarak ± 8% dari tepi. Foto tampil UTUH (tidak dipotong) di kartu produk, Top 5, dan detail produk. Foto 360° (tiap frame): ukuran dan rasio sama 1:1. Format JPG/PNG/WebP; ukuran file dikecilkan otomatis saat diunggah.</p>
     <p class="sec-help">Satu kartu = satu warna. <strong>Foto warna</strong> adalah foto produk saat warna itu dipilih pengunjung. Kalau 3D aktif, tiap kartu punya kotak <strong>Foto 360°</strong> sendiri.</p>
     <div class="field" style="margin-top:0">
@@ -1181,6 +1193,28 @@
           <button class="btn btn-outline" type="button" id="addColorBtn">Tambah</button>
         </div>
       </details>
+    </div>
+
+    <!-- ③ 3D -->
+    <div class="sec-h"><span class="n">5</span><h3>Tampilan 3D (360°)</h3><span class="opt">Opsional</span></div>
+    <div class="field" style="margin-top:8px">
+      <label class="toggle-3d" for="fIs3d">
+        <input type="checkbox" id="fIs3d">
+        <span class="sw"></span>
+        <span><strong>Aktifkan 3D untuk produk ini</strong><span class="d">ON: ada halaman detail flagship dengan putaran 360°. OFF: tidak ada 3D dan halaman flagship tidak bisa diakses.</span></span>
+      </label>
+      <div class="guide-3d only-3d">
+        <h4>Cara membuat tampilan 360°</h4>
+        Cara termudah: <strong>satu video produk berputar</strong>. Sistem mengambil 36 foto sudut sendiri, merapikan latarnya, dan hanya foto hasilnya yang disimpan (videonya tidak). Upload di kartu warna pada langkah 4, tombol <strong>"Upload video putar"</strong>.
+        <ol>
+          <li>Taruh produk di piringan putar beralas <strong>putih polos</strong>, HP di tripod, cahaya merata.</li>
+          <li>Rekam <strong>satu putaran penuh</strong> mulai dari tampak depan, kecepatan stabil, 10–15 detik.</li>
+          <li>Upload videonya, cek pratinjau, lalu klik <strong>Pakai hasil ini</strong> dan Simpan produk.</li>
+        </ol>
+        Cara lain (lebih manual): upload gambar grid atau 8–16 foto. Hasilnya kurang halus karena sudutnya lebih sedikit.
+      </div>
+
+      <div class="spin3d-panel only-3d" id="spin3dPanel"></div>
     </div>
 
     <!-- input tersembunyi dipakai tombol "+ Foto 360°" di tiap baris warna -->
@@ -2599,11 +2633,21 @@
 
   /* ---- images ---- */
   function renderImgList(){
+    // [0] = foto katalog (cover); sisanya = foto saat diklik
+    const cover = currentImages[0];
+    const box = document.getElementById('coverBox');
+    const nm = (document.getElementById('fName').value || '').trim() || 'Nama produk';
+    const mdl = document.getElementById('fModel').value || '';
+    box.innerHTML = (cover ? `<img src="${cover}" alt="">` : `<div class="ph">Belum ada foto katalog</div>`)
+      + `<div class="cap">${HilosSafe.esc(nm)}<small>${HilosSafe.esc(mdl)}</small></div>`;
+    document.getElementById('coverDrop').textContent = cover ? 'Ganti foto katalog' : '+ Pilih foto katalog';
     const wrap = document.getElementById('imgList');
-    wrap.innerHTML = currentImages.map((url, i) => `
-      <div class="img-thumb">
-        <img src="${url}" alt="">
-        <button type="button" data-remove-img="${i}">×</button>
+    const rest = currentImages.slice(1);
+    wrap.innerHTML = rest.map((url, k) => `
+      <div class="img-thumb g">
+        <div class="im"><img src="${url}" alt=""></div>
+        <button type="button" class="rm" data-remove-img="${k+1}" title="Hapus">×</button>
+        <button type="button" class="mk" data-make-cover="${k+1}">★ Jadikan katalog</button>
       </div>
     `).join('');
     wrap.querySelectorAll('[data-remove-img]').forEach(btn => {
@@ -2612,7 +2656,74 @@
         renderImgList();
       });
     });
+    wrap.querySelectorAll('[data-make-cover]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.makeCover);
+        const [it] = currentImages.splice(i, 1);
+        currentImages.unshift(it);
+        renderImgList();
+        showToast('Foto dijadikan foto katalog.');
+      });
+    });
+    renderChecklist();
   }
+
+  function renderChecklist(){
+    const el = document.getElementById('prodChecklist'); if (!el) return;
+    const ok1 = !!document.getElementById('fName').value.trim();
+    const ok2 = !!document.getElementById('fSku').value.trim();
+    const ok3 = currentImages.length > 0;
+    const nCol = currentColors.length;
+    const is3 = document.getElementById('fIs3d').checked;
+    const has3 = currentColors.some(c => Array.isArray(c.spin) && c.spin.length > 1 || c.spinGrid || c.spin_grid);
+    const chip = (ok, t, opt) => `<span class="${ok ? 'ok' : (opt ? 'opt' : '')}">${ok ? '✓' : '○'} ${t}</span>`;
+    el.innerHTML = chip(ok1,'Nama') + chip(ok2,'SKU') + chip(ok3,'Foto katalog')
+      + chip(nCol > 0, nCol > 0 ? nCol + ' warna' : 'Warna', true)
+      + (is3 ? chip(has3,'Foto 360°', true) : '');
+  }
+  ['fName','fSku','fModel'].forEach(id => {
+    const e = document.getElementById(id);
+    e.addEventListener('input', () => { renderImgList(); });
+    e.addEventListener('change', () => { renderImgList(); });
+  });
+  document.getElementById('fIs3d').addEventListener('change', renderChecklist);
+  { const _rc = renderColorList; renderColorList = function(){ _rc.apply(this, arguments); renderChecklist(); }; }
+
+  // upload helper (kompres + simpan) -> url atau null
+  async function uploadOne(original, statusEl, label){
+    statusEl.textContent = label;
+    const file = await compressImageFile(original);
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
+    try { const url = await storeUpload(path, file); return { url, before: original.size, after: file.size }; }
+    catch (upErr){ showToast('Gagal upload: ' + (upErr.message || upErr)); return null; }
+  }
+
+  document.getElementById('fCover').addEventListener('change', async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const st = document.getElementById('coverStatus');
+    const r = await uploadOne(f, st, 'Mengompres & mengunggah foto katalog...');
+    e.target.value = '';
+    if (r){
+      if (currentImages.length) currentImages[0] = r.url; else currentImages.push(r.url);
+      st.textContent = `Selesai — ${formatKB(r.before)} → ${formatKB(r.after)}.`;
+      renderImgList();
+    } else st.textContent = '';
+    setTimeout(() => { st.textContent = ''; }, 4000);
+  });
+
+  // drag & drop untuk kotak upload
+  function wireDrop(labelId, inputId){
+    const l = document.getElementById(labelId), inp = document.getElementById(inputId);
+    ['dragenter','dragover'].forEach(ev => l.addEventListener(ev, e => { e.preventDefault(); l.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(ev => l.addEventListener(ev, e => { e.preventDefault(); l.classList.remove('drag'); }));
+    l.addEventListener('drop', e => {
+      const files = Array.from(e.dataTransfer.files || []).filter(f => /^image\//.test(f.type));
+      if (!files.length) return;
+      const dt = new DataTransfer(); (inp.multiple ? files : [files[0]]).forEach(f => dt.items.add(f));
+      inp.files = dt.files; inp.dispatchEvent(new Event('change'));
+    });
+  }
+  wireDrop('coverDrop','fCover'); wireDrop('galDrop','fImages');
 
   document.getElementById('fImages').addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
