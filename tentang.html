@@ -1004,14 +1004,16 @@
       const im = ss.querySelector('.hero-slide img');
       if (im && im.naturalWidth && im.naturalHeight){
         const r = im.naturalWidth / im.naturalHeight;
-        if (r > 0.6 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
+        if (r > 0.4 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
       }
     }
     (function(){ const ss = document.getElementById('heroSlideshow'); if (ss){ ss.addEventListener('load', syncAboutRatio, true); syncAboutRatio(); } })();
     function renderBanner(d){
       if (!d) return;
-      const b = (mqHP.matches && arr(d.bannerM)) || arr(d.banner);
+      const hp = mqHP.matches && arr(d.bannerM);
+      const b = hp || arr(d.banner);
       if (!b) return;
+      const ah = document.querySelector('.about-hero'); if (ah) ah.classList.toggle('about-hp', !!hp);
       const key = JSON.stringify(b); if (key === bannerKey) return; bannerKey = key;
       document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(U(u)) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
       document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
@@ -1137,6 +1139,12 @@
     .about-hero .hero-slideshow{min-height:0;height:auto !important;}
     .about-hero .about-hero-banner .hero-slideshow::after{display:none;}
     .about-hero .hero-slide-dots{bottom:14px;}
+  }
+  @media (max-width:900px){
+    /* foto HP 9:16: judul menumpuk di bagian bawah foto */
+    .about-hero.about-hp .page-head{position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,5vw,64px) 52px;pointer-events:none;order:0;}
+    .about-hero.about-hp .about-hero-banner .hero-slideshow::after{display:block;background:linear-gradient(0deg,rgba(8,44,88,.94) 0%,rgba(8,44,88,.72) 32%,rgba(8,44,88,0) 64%);}
+    .about-hero.about-hp .hero-slide-dots{bottom:18px;}
   }
 </style>
 
