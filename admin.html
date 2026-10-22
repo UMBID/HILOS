@@ -840,7 +840,7 @@
       </div>
       <div class="cm-bar">
         <label for="cmPage" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#6b6058;">Menu</label>
-        <select id="cmPage"><option value="beranda">Beranda</option><option value="tentang">Tentang Kami</option><option value="produk">Produk</option>
+        <select id="cmPage"><option value="beranda">Beranda</option><option value="tentang">Tentang Kami</option><option value="produk">Produk</option><option value="kontak">Contact Us — Media Sosial</option>
           <option value="kerjasama">Kerjasama — Apa Kata Mitra</option></select>
         <span class="cm-status" id="cmStatus"></span>
       </div>
@@ -2878,6 +2878,20 @@
     produk: {
       kategori: [PX(2529148,900), PX(1272328,900), PX(6633324,900)]
     },
+    kontak: {
+      phones: [
+        { img:'assets/socmed-ig.jpg', url:'https://www.instagram.com/hilos.id.official/', handle:'@hilos.id.official' },
+        { img:'assets/socmed-tiktok.jpg', url:'https://www.tiktok.com/@hilos.official_', handle:'@hilos.official_' }
+      ],
+      socL: [
+        { img:'assets/soc-ig-1.jpg', url:'https://www.instagram.com/p/DeQ6YtukVXJ/' },
+        { img:'assets/soc-ig-2.jpg', url:'https://www.instagram.com/p/Degh1YyCS5G/' }
+      ],
+      socR: [
+        { img:'assets/soc-tt-1.jpg', url:'https://www.tiktok.com/@hilos.official_/video/7687819601379396885' },
+        { img:'assets/soc-tt-2.jpg', url:'https://www.tiktok.com/@hilos.official_/video/7698565289348254996' }
+      ]
+    },
     kerjasama: {
       head: { title:'Apa Kata Mitra Kami?', sub:'Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.' },
       video: { img:PX(7289741,500), title:'Toko Abadi Jaya — Surabaya', loc:'Distributor sejak 2019', quote:'Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS.', url:'' },
@@ -2905,6 +2919,11 @@
 
   CM_SECTIONS.produk = [
     { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], spec:{ web:'900 × 900 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Ditampilkan dalam bentuk lingkaran, jadi taruh produk di tengah foto.' }, help:'' }
+  ];
+  CM_SECTIONS.kontak = [
+    { key:'phones', title:'Tampilan HP di Tengah (Instagram & TikTok)', sub:'Screenshot profil, link tujuan, dan nama akun — 750 × 1520 px', kind:'linkslots', labels:['Instagram','TikTok'], handle:true, spec:{ web:'750 × 1520 px (±1:2, portrait) — screenshot profil HP', hp:'Sama dengan Website', ar:750/1520, note:'Foto tampil UTUH di dalam bingkai HP, tidak terpotong. Link = halaman profil yang dibuka saat diklik; tombol Instagram/TikTok di bawah galeri memakai link yang sama.' } },
+    { key:'socL', title:'Galeri Kiri — Instagram', sub:'2 foto di kiri HP, tiap foto punya link tujuan — 1080 × 1350 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1350 px (4:5, portrait)', hp:'Sama dengan Website', ar:4/5, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = postingan Instagram yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } },
+    { key:'socR', title:'Galeri Kanan — TikTok', sub:'2 foto di kanan HP, tiap foto punya link tujuan — 1080 × 1920 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1920 px (9:16, portrait)', hp:'Sama dengan Website', ar:9/16, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = video TikTok yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } }
   ];
   CM_SECTIONS.kerjasama = [
     { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
@@ -2947,12 +2966,13 @@
 
   /* ---------------- PRATINJAU WEBSITE / MOBILE ---------------- */
   const CMP = {
-    url: { beranda:'index.html', tentang:'tentang.html', produk:'produk.html', kerjasama:'kerjasama.html' },
+    url: { beranda:'index.html', tentang:'tentang.html', produk:'produk.html', kerjasama:'kerjasama.html', kontak:'kontak.html' },
     scroll: {
       beranda:{ hero:'#beranda' },
       tentang:{ banner:'.about-hero', pabrik:'#procWrap', event:'#kebersamaanSection', csr:'#kebersamaanSection', outing:'#kebersamaanSection' },
       produk:{ kategori:'#pxBanner' },
-      kerjasama:{ head:'#review', video:'#review', testi:'#review' }
+      kerjasama:{ head:'#review', video:'#review', testi:'#review' },
+      kontak:{ phones:'#socmed', socL:'#socmed', socR:'#socmed' }
     }
   };
   const cmpBox = document.getElementById('cmPreview'), cmpStage = document.getElementById('cmpStage'),
@@ -3057,6 +3077,15 @@
             ${ctrl(sec.key, i, list.length)}
           </div>`).join('') + `</div>
           <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah kartu</button>`;
+      } else if (sec.kind === 'linkslots'){
+        body = cmSpec(sec) + `<div class="cm-list">` + list.map((it, i) => `
+          <div class="cm-item" data-i="${i}" style="grid-template-columns:96px 1fr;">
+            ${cmThumb(it.img, sec.key + '.' + i + '.img')}
+            <div class="cm-fields">
+              <span class="cm-lbl">${escA(sec.labels[i] || ('Foto ' + (i + 1)))} — link tujuan</span><input type="url" value="${escA(it.url)}" data-f="${sec.key}.${i}.url" maxlength="300" placeholder="https://...">
+              ${sec.handle ? `<span class="cm-lbl">Nama akun (tulisan di tombol)</span><input type="text" value="${escA(it.handle)}" data-f="${sec.key}.${i}.handle" maxlength="60" placeholder="@namaakun">` : ''}
+            </div>
+          </div>`).join('') + `</div>`;
       } else if (sec.kind === 'head'){
         body = `<div class="cm-fields"><span class="cm-lbl">Judul</span><input type="text" value="${escA(list.title)}" data-f="head.title" maxlength="80">
           <span class="cm-lbl">Kalimat pendek</span><input type="text" value="${escA(list.sub)}" data-f="head.sub" maxlength="160"></div>`;
