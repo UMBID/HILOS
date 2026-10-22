@@ -1523,9 +1523,9 @@
     if (heroNavH) hero.style.setProperty('--navh', heroNavH + 'px');
     const r2 = parseFloat(hero.dataset.ar) || (16/9);
     if (window.innerWidth > 900){
-      /* desktop: tinggi hero TETAP (rasio target 2,1:1) supaya ukurannya tidak berubah antar slide */
+      /* desktop: tinggi hero TETAP (rasio target 2,4:1) supaya ukurannya tidak berubah antar slide */
       hero.dataset.fixed = '1';
-      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.min(window.innerHeight, Math.round(hero.clientWidth / 2.1) + heroNavH)) + 'px';
+      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.min(window.innerHeight, Math.round(hero.clientWidth / 2.4) + heroNavH)) + 'px';
     } else {
       hero.style.height = '';
       hero.style.minHeight = hero.classList.contains('hero-hp') ? (Math.round(hero.clientWidth / r2) + heroNavH) + 'px' : '';
