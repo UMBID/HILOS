@@ -402,6 +402,11 @@
   .color-card .cc-title{ font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#8a8078; margin:0 0 8px 2px; }
   .color-card .color-chip{ border:none; padding:0; }
   .color-card .photo-cap{ font-size:9.5px; color:#8a8078; text-align:center; display:block; margin-top:2px; }
+  .spin-opts{ display:grid; gap:8px; margin:6px 0; }
+  .spin-opt{ border:1px solid var(--sand-line); border-radius:8px; padding:10px 12px; background:#fff; }
+  .spin-opt strong{ display:block; font-size:12.5px; }
+  .spin-opt span{ display:block; font-size:11.5px; color:#6d645b; margin:2px 0 8px; line-height:1.45; }
+  .spin-opt .spin-actions{ margin:0; }
   .spin-box{ margin-top:12px; border-top:1px dashed var(--sand-line); padding-top:12px; }
   .spin-head{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; justify-content:space-between; margin-bottom:8px; }
   .spin-head strong{ font-size:12.5px; }
@@ -1213,7 +1218,7 @@
           <li>Rekam <strong>satu putaran penuh</strong> mulai dari tampak depan, kecepatan stabil, 10–15 detik.</li>
           <li>Upload videonya, cek pratinjau, lalu klik <strong>Pakai hasil ini</strong> dan Simpan produk.</li>
         </ol>
-        Cara lain (lebih manual): upload gambar grid atau 8–16 foto. Hasilnya kurang halus karena sudutnya lebih sedikit.
+        Cara lain: <strong>foto per sudut</strong> (8, 12, atau 16 sudut sesuai derajat: 0°, 45°, 90°, ...), banyak foto sekaligus, atau satu gambar grid. Pilih di kartu warna langkah 4. Hasilnya kurang halus karena sudutnya lebih sedikit.
       </div>
 
       <div class="spin3d-panel only-3d" id="spin3dPanel"></div>
@@ -1758,18 +1763,26 @@
       return;
     }
     box.innerHTML = `
-      <h4>Upload video 360° per warna</h4>
-      <p class="sp-note">Pilih warna yang ingin diberi tampilan 360°, lalu upload video produk berputar.</p>
+      <h4>Isi 360° per warna</h4>
+      <p class="sp-note">Pilih warna yang ingin diberi tampilan 360°, lalu pilih cara: <strong>video putar</strong> (otomatis) atau <strong>foto per sudut</strong> (sesuai derajat, 8/12/16 sudut).</p>
       ${currentColors.map((c, i) => {
         const done = filledCount(c);
         return `<div class="sp-row">
           <span class="sp-sw" style="background:${c.hex}"></span>
           <span class="sp-name">${escHtml(c.name || ('Warna ' + (i + 1)))}</span>
           <span class="spin-status${done >= SPIN_MIN ? ' ok' : ''}">${done ? done + ' foto sudut' : 'Belum ada'}</span>
-          <button type="button" class="bulk-sec-btn primary" data-sp-video="${i}">${done ? 'Ganti dengan video baru' : 'Upload video putar'}</button>
+          <button type="button" class="bulk-sec-btn primary" data-sp-video="${i}">${done ? 'Ganti dengan video' : 'Upload video putar'}</button>
+          <button type="button" class="bulk-sec-btn" data-sp-photo="${i}">Foto per sudut</button>
         </div>`;
       }).join('')}`;
     box.querySelectorAll('[data-sp-video]').forEach(b => b.addEventListener('click', () => vidOpen(Number(b.dataset.spVideo))));
+    box.querySelectorAll('[data-sp-photo]').forEach(b => b.addEventListener('click', () => {
+      const i = Number(b.dataset.spPhoto), c = currentColors[i]; if (!c) return;
+      if (!slotCount(c)){ c.spin = Array(8).fill(''); renderColorList(); }
+      const card = document.querySelectorAll('#colorList .color-card')[i];
+      if (card) card.scrollIntoView({ behavior:'smooth', block:'center' });
+      showToast('Isi foto tiap sudut di kartu warna ini. Mau 12 atau 16 sudut? Hapus 360° lalu pilih jumlah sudut.');
+    }));
   }
 
   function renderColorList(){
@@ -1812,17 +1825,30 @@
                 <button type="button" class="bulk-sec-btn primary" data-spin-video="${i}">Ganti dengan video baru</button>
                 <button type="button" class="bulk-sec-btn danger" data-spin-clear="${i}">Hapus 360°</button>
               </div>` : `
-              ${n ? `<div class="slot-grid">${slots}</div>` : `<p class="hint" style="margin:0 0 4px">Belum ada tampilan 360° untuk warna ini. Cara termudah: upload <strong>satu video produk berputar</strong>, foto sudutnya dibuat otomatis.</p>`}
-              <div class="spin-actions">
-                <button type="button" class="bulk-sec-btn primary" data-spin-video="${i}">Upload video putar (disarankan)</button>
-              </div>
-              <details class="spin-more"><summary>Cara lain: gambar grid / beberapa foto</summary>
-                <div class="spin-actions">
-                  <button type="button" class="bulk-sec-btn" data-spin-grid="${i}" title="Satu gambar berisi banyak sudut, otomatis dipotong dan dipetakan">Upload 1 gambar grid</button>
-                  <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}" title="Pilih 8–16 foto, urut berdasarkan nama file">Upload beberapa foto (8–16)</button>
+              ${n ? `<div class="slot-grid">${slots}</div>
+                <p class="hint" style="margin:6px 0 0">Klik kotak mana pun untuk mengisi/mengganti foto di sudut itu. Urutan putaran: ${n} sudut, tiap ${Math.round(360 / n)}°.</p>` : `<p class="hint" style="margin:0 0 6px">Pilih cara membuat 360° untuk warna ini:</p>`}
+              <div class="spin-opts">
+                <div class="spin-opt">
+                  <strong>A. Video putar</strong><span>Satu video produk berputar, 36 sudut dibuat otomatis (paling halus).</span>
+                  <button type="button" class="bulk-sec-btn primary" data-spin-video="${i}">Upload video putar</button>
                 </div>
-                <p class="hint" style="margin-top:6px">Gambar grid: susunan bebas (mis. 4×2 atau 4×3), urut kiri→kanan lalu atas→bawah, mulai dari tampak depan. Beberapa foto: urut nama file (01, 02, …). Klik satu kotak untuk mengganti foto sudut itu saja. Sudut lebih sedikit = putaran kurang halus.</p>
-              </details>`}
+                <div class="spin-opt">
+                  <strong>B. Foto per sudut</strong><span>Foto satu per satu sesuai derajat (0°, 45°, 90°, ...). Pilih jumlah sudut:</span>
+                  <div class="spin-actions">
+                    <button type="button" class="bulk-sec-btn" data-spin-start="${i}:8">8 sudut (tiap 45°)</button>
+                    <button type="button" class="bulk-sec-btn" data-spin-start="${i}:12">12 sudut (tiap 30°)</button>
+                    <button type="button" class="bulk-sec-btn" data-spin-start="${i}:16">16 sudut (tiap 22,5°)</button>
+                  </div>
+                </div>
+                <div class="spin-opt">
+                  <strong>C. Banyak foto / gambar grid</strong><span>Pilih 8–16 foto sekaligus (urut nama file 01, 02, ...) atau 1 gambar berisi banyak sudut.</span>
+                  <div class="spin-actions">
+                    <button type="button" class="bulk-sec-btn" data-spin-bulk="${i}">Upload beberapa foto (8–16)</button>
+                    <button type="button" class="bulk-sec-btn" data-spin-grid="${i}">Upload 1 gambar grid</button>
+                  </div>
+                </div>
+              </div>
+              ${n ? `<div class="spin-actions"><button type="button" class="bulk-sec-btn danger" data-spin-clear="${i}">Hapus 360° warna ini</button></div>` : ''}`}
           </div>
         </div>
       `;
@@ -1830,6 +1856,15 @@
 
     wrap.querySelectorAll('[data-spin-video]').forEach(btn => {
       btn.addEventListener('click', () => vidOpen(Number(btn.dataset.spinVideo)));
+    });
+    wrap.querySelectorAll('[data-spin-start]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const [ci, cnt] = btn.dataset.spinStart.split(':').map(Number);
+        const c = currentColors[ci]; if (!c) return;
+        c.spin = Array(cnt).fill('');
+        renderColorList();
+        showToast(`Kotak ${cnt} sudut siap. Klik tiap kotak untuk mengisi foto sesuai derajatnya.`);
+      });
     });
     wrap.querySelectorAll('[data-spin-clear]').forEach(btn => {
       btn.addEventListener('click', () => {
