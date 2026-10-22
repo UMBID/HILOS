@@ -211,9 +211,9 @@
 </nav>
 
 <div class="page-head">
-  <span class="eyebrow reveal">Hubungi Kami</span>
-  <h1 class="reveal">Contact Us</h1>
-  <p class="reveal">Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.</p>
+  <span class="eyebrow reveal" data-t="eyebrow">Hubungi Kami</span>
+  <h1 class="reveal" data-t="title">Contact Us</h1>
+  <p class="reveal" data-t="desc">Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.</p>
 </div>
 
 <section class="contact-section">
@@ -377,8 +377,8 @@
 
 <section class="socmed-section" id="socmed">
   <div class="section-head-center">
-    <h2 class="reveal">Ikuti Kami di Media Sosial</h2>
-    <p class="reveal">Lihat keseharian, promo, dan produk terbaru HILOS di Instagram &amp; TikTok kami.</p>
+    <h2 class="reveal" data-t="socTitle">Ikuti Kami di Media Sosial</h2>
+    <p class="reveal" data-t="socDesc">Lihat keseharian, promo, dan produk terbaru HILOS di Instagram &amp; TikTok kami.</p>
   </div>
   <div class="socmed-stage">
     <div class="soc-col soc-col-l">
@@ -448,6 +448,7 @@
   }
   function apply(d){
     if (!d) return;
+    if (S.teks) S.teks(d.teks);
     gal('socGalL', d.socL, 'Postingan Instagram HILOS'); gal('socGalR', d.socR, 'Video TikTok HILOS');
     if (Array.isArray(d.phones)) d.phones.slice(0, 2).forEach(function(p, i){
       if (!p) return;
