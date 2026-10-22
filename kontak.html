@@ -383,26 +383,26 @@
   <div class="socmed-stage">
     <div class="soc-col soc-col-l">
       <div class="soc-gal" id="socGalL"><a href="https://www.instagram.com/p/DeQ6YtukVXJ/" target="_blank" rel="noopener" aria-label="Postingan Instagram HILOS 1"><img loading="lazy" decoding="async" src="assets/soc-ig-1.jpg" width="746" height="1000" alt="Postingan Instagram HILOS 1"></a><a href="https://www.instagram.com/p/Degh1YyCS5G/" target="_blank" rel="noopener" aria-label="Postingan Instagram HILOS 2"><img loading="lazy" decoding="async" src="assets/soc-ig-2.jpg" width="736" height="1000" alt="Postingan Instagram HILOS 2"></a></div>
-      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-label socmed-label-ig">
+      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-label socmed-label-ig" id="socLb0">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
-        <div><strong>Instagram</strong><span>@hilos.id.official</span></div>
+        <div><strong>Instagram</strong><span data-h>@hilos.id.official</span></div>
       </a>
     </div>
 
     <div class="socmed-grid">
-      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-card reveal-scale" aria-label="Instagram HILOS">
+      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-card reveal-scale" id="socPh0" aria-label="Instagram HILOS">
         <div class="phone-mock"><div class="screen"><img loading="lazy" decoding="async" src="assets/socmed-ig.jpg" alt="Instagram HILOS - hilos.id.official"></div></div>
       </a>
-      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-card reveal-scale" aria-label="TikTok HILOS">
+      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-card reveal-scale" id="socPh1" aria-label="TikTok HILOS">
         <div class="phone-mock"><div class="screen"><img loading="lazy" decoding="async" src="assets/socmed-tiktok.jpg" alt="TikTok HILOS - hilos.official_"></div></div>
       </a>
     </div>
 
     <div class="soc-col soc-col-r">
       <div class="soc-gal" id="socGalR"><a href="https://www.tiktok.com/@hilos.official_/video/7687819601379396885" target="_blank" rel="noopener" aria-label="Video TikTok HILOS 1"><img loading="lazy" decoding="async" src="assets/soc-tt-1.jpg" width="496" height="1000" alt="Video TikTok HILOS 1"></a><a href="https://www.tiktok.com/@hilos.official_/video/7698565289348254996" target="_blank" rel="noopener" aria-label="Video TikTok HILOS 2"><img loading="lazy" decoding="async" src="assets/soc-tt-2.jpg" width="563" height="1000" alt="Video TikTok HILOS 2"></a></div>
-      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-label socmed-label-tiktok">
+      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-label socmed-label-tiktok" id="socLb1">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
-        <div><strong>TikTok</strong><span>@hilos.official_</span></div>
+        <div><strong>TikTok</strong><span data-h>@hilos.official_</span></div>
       </a>
     </div>
   </div>
@@ -430,6 +430,41 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
+<script src="assets/supabase.js"></script>
+<script src="assets/supabase-config.js"></script>
+<script>
+(function(){
+  var S = window.HilosSafe; if (!S) return;
+  function gal(id, arr, alt){
+    var el = document.getElementById(id); if (!el || !Array.isArray(arr)) return;
+    var h = '';
+    arr.slice(0, 2).forEach(function(it, i){
+      var src = S.url(it && it.img); if (!src) return;
+      var im = '<img loading="lazy" decoding="async" src="' + S.esc(src) + '" alt="' + alt + ' ' + (i + 1) + '">';
+      var href = S.url(it.url);
+      h += href ? '<a href="' + S.esc(href) + '" target="_blank" rel="noopener" aria-label="' + alt + ' ' + (i + 1) + '">' + im + '</a>' : '<a>' + im + '</a>';
+    });
+    el.innerHTML = h; el.style.display = h ? '' : 'none';
+  }
+  function apply(d){
+    if (!d) return;
+    gal('socGalL', d.socL, 'Postingan Instagram HILOS'); gal('socGalR', d.socR, 'Video TikTok HILOS');
+    if (Array.isArray(d.phones)) d.phones.slice(0, 2).forEach(function(p, i){
+      if (!p) return;
+      var a = document.getElementById('socPh' + i), l = document.getElementById('socLb' + i), href = S.url(p.url), src = S.url(p.img);
+      if (a){ if (href) a.href = href; var im = a.querySelector('img'); if (im && src) im.src = src; }
+      if (l){ if (href) l.href = href; var hs = l.querySelector('[data-h]'); if (hs && p.handle) hs.textContent = String(p.handle).slice(0, 60); }
+    });
+  }
+  window.__hilosApply = apply;
+  try {
+    var sb = window.getSupabaseClient && window.getSupabaseClient();
+    if (sb) Promise.resolve(sb.from('site_content').select('data').eq('page', 'kontak').maybeSingle()).then(function(r){
+      if (r && r.data && r.data.data && !window.__hilosDraft) apply(r.data.data);
+    }).catch(function(){});
+  } catch (e) {}
+})();
+</script>
 <script src="assets/form-config.js"></script>
 <script src="assets/form-mailer.js"></script>
 <script>
