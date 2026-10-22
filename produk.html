@@ -1045,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', function(){
     update();
 
     // klik bulatan -> terapkan filter lalu turun ke daftar produk
-    const isShoe = (m) => /sepatu/i.test(String(m || ''));
+    const isShoe = (m) => /sepatu|shoe/i.test(String(m || ''));
     items.forEach(it => it.el.addEventListener('click', () => {
       const kind = it.el.dataset.px;
       const all = [...new Set(products.map(p => p.model).filter(Boolean))];
@@ -1053,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function(){
       state.categories = new Set(); state.models = new Set();
       if (kind === 'sepatu'){
         const m = all.filter(isShoe);
-        state.models = new Set(m.length ? m : ['Sepatu']);
+        state.models = new Set(m.length ? m : ['Shoes']);
       } else {
         state.categories = new Set([kind]);
         state.models = new Set(all.filter(m => !isShoe(m)));
