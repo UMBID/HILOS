@@ -1414,10 +1414,23 @@
   }, { passive:true });
 
   /* ---------- foto hero dari Admin (Konten Halaman > Beranda) ---------- */
+  const mqHeroHP = window.matchMedia('(max-width:900px)');
+  function pickHeroSrc(){
+    document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => {
+      if (!im.dataset.d) im.dataset.d = im.getAttribute('src') || '';
+      const want = (mqHeroHP.matches && im.dataset.m) ? im.dataset.m : im.dataset.d;
+      if (want && im.getAttribute('src') !== want) im.src = want;
+    });
+  }
+  (mqHeroHP.addEventListener ? mqHeroHP.addEventListener('change', pickHeroSrc) : mqHeroHP.addListener(pickHeroSrc));
   function applyBeranda(d){
     if (!d || !Array.isArray(d.hero)) return;
     const U = HilosSafe.url;
-    document.querySelectorAll('.hero-bg .hero-slide img').forEach((im, k) => { const u = U(d.hero[k]); if (u) im.src = u; });
+    document.querySelectorAll('.hero-bg .hero-slide img').forEach((im, k) => {
+      const u = U(d.hero[k]); if (u) im.dataset.d = u;
+      im.dataset.m = (Array.isArray(d.heroM) && U(d.heroM[k])) || '';
+    });
+    pickHeroSrc();
     document.querySelectorAll('.proof-thumbs .photo img').forEach((im, k) => { const u = U(d.hero[k]); if (u) im.src = u; });
   }
   window.__hilosApply = applyBeranda;
