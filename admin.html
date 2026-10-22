@@ -727,11 +727,10 @@
       </select>
       <select id="filterProductType">
         <option value="">Semua Kategori Produk</option>
-        <option value="Crocs">Crocs</option>
-        <option value="Jepit">Jepit</option>
-        <option value="Slop">Slop</option>
-        <option value="Sepatu / Sol">Sepatu / Sol</option>
-        <option value="Baim">Baim</option>
+        <option value="Baim Collection">Baim Collection</option>
+        <option value="Slide Sandals">Slide Sandals</option>
+        <option value="Flip-Flop Sandals">Flip-Flop Sandals</option>
+        <option value="Shoes">Shoes</option>
       </select>
       <select id="filterBadge">
         <option value="">Semua Badge</option>
@@ -1091,11 +1090,10 @@
       <div class="field">
         <label>Kategori Produk</label>
         <select id="fModel">
-          <option value="Crocs">Crocs</option>
-          <option value="Jepit">Jepit</option>
-          <option value="Slop">Slop</option>
-          <option value="Sepatu / Sol">Sepatu / Sol</option>
-          <option value="Baim">Baim</option>
+          <option value="Baim Collection">Baim Collection</option>
+          <option value="Slide Sandals">Slide Sandals</option>
+          <option value="Flip-Flop Sandals">Flip-Flop Sandals</option>
+          <option value="Shoes">Shoes</option>
         </select>
       </div>
       <div class="field">
@@ -1214,7 +1212,7 @@
   let editingId = null;
 
   const GENDER_LABEL = { pria:'Man', wanita:'Ladies', anak:'Kids' };
-  const PRODUCT_TYPES = ['Crocs','Jepit','Slop','Sepatu / Sol','Baim'];
+  const PRODUCT_TYPES = ['Baim Collection','Slide Sandals','Flip-Flop Sandals','Shoes'];
 
   function showToast(msg){
     toast.textContent = msg;
@@ -1608,7 +1606,7 @@
     document.getElementById('fId').value = '';
     document.getElementById('fName').value = '';
     document.getElementById('fSku').value = '';
-    document.getElementById('fModel').value = 'Crocs';
+    document.getElementById('fModel').value = 'Slide Sandals';
     document.getElementById('fCategory').value = 'pria';
     // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = '';
     document.getElementById('fBadge').value = '';
@@ -1635,7 +1633,7 @@
     document.getElementById('fId').value = p.id;
     document.getElementById('fName').value = p.name;
     document.getElementById('fSku').value = p.sku || '';
-    document.getElementById('fModel').value = p.model;
+    { const fm = document.getElementById('fModel'); if (p.model && !Array.from(fm.options).some(o => o.value === p.model)){ const o = document.createElement('option'); o.value = p.model; o.textContent = p.model + ' (lama — pilih kategori baru)'; o.dataset.legacy = '1'; fm.appendChild(o); } fm.value = p.model; }
     document.getElementById('fCategory').value = p.category;
     // HARGA DINONAKTIFKAN: document.getElementById('fPrice').value = p.price;
     document.getElementById('fBadge').value = p.badge || '';
