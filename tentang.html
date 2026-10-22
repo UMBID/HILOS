@@ -1001,6 +1001,7 @@
     const mqHP = window.matchMedia('(max-width:900px)');
     function syncAboutRatio(){
       const ss = document.getElementById('heroSlideshow'); if (!ss) return;
+      ss.style.setProperty('--availh', Math.max(460, Math.round(window.innerHeight - (ss.getBoundingClientRect().top + window.scrollY))) + 'px');
       const im = ss.querySelector('.hero-slide img');
       if (im && im.naturalWidth && im.naturalHeight){
         const r = im.naturalWidth / im.naturalHeight;
@@ -1014,7 +1015,7 @@
     document.addEventListener('load', e => { if (e.target && e.target.matches && e.target.matches('#heroSlideshow .hero-slide img')) paint(e.target); }, true);
     document.querySelectorAll('#heroSlideshow .hero-slide img').forEach(im => { if (im.complete && im.naturalWidth) paint(im); });
   })();
-    (function(){ const ss = document.getElementById('heroSlideshow'); if (ss){ ss.addEventListener('load', syncAboutRatio, true); syncAboutRatio(); } })();
+    (function(){ const ss = document.getElementById('heroSlideshow'); if (ss){ ss.addEventListener('load', syncAboutRatio, true); syncAboutRatio(); window.addEventListener('resize', syncAboutRatio); window.addEventListener('load', syncAboutRatio); } })();
     function renderBanner(d){
       if (!d) return;
       const hp = mqHP.matches && arr(d.bannerM);
@@ -1136,7 +1137,7 @@
   }
 
   /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
-  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / var(--ar)), calc(100vh - 150px)) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);}
+  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / var(--ar)), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .about-hero .hero-slide{background-size:cover;background-position:center;}
   .about-hero .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
