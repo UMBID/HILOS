@@ -340,9 +340,9 @@
   <div class="kerjasama-hero-scrim"></div>
   <div class="kerjasama-hero-body">
     <div class="kerjasama-hero-copy">
-      <h1 class="reveal">Tumbuh Bersama<br><em>HILOS</em></h1>
-      <p class="reveal">Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.</p>
-      <a href="#skema" class="btn btn-fill reveal"><span>Lihat Bentuk Kerjasama</span></a>
+      <h1 class="reveal"><span data-t="l1">Tumbuh Bersama</span><br><em data-t="l2">HILOS</em></h1>
+      <p class="reveal" data-t="desc">Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.</p>
+      <a href="#skema" class="btn btn-fill reveal"><span data-t="btn1">Lihat Bentuk Kerjasama</span></a>
     </div>
     <div class="hero-stat-grid reveal-scale">
       <div class="hero-stat"><strong>1000+</strong><span>Mitra Aktif</span></div>
@@ -356,7 +356,7 @@
 <!-- ============ SKEMA KERJASAMA ============ -->
 <section class="scheme-section" id="skema">
   <div class="section-head-center">
-    <h2 class="reveal">Bentuk Kerjasama</h2>
+    <h2 class="reveal" data-t="formTitle">Bentuk Kerjasama</h2>
     <p class="reveal">Pilih bentuk kerjasama yang paling sesuai dengan model bisnis Anda.</p>
   </div>
 
@@ -403,7 +403,7 @@
 <!-- ============ ALUR MENJADI MITRA ============ -->
 <section class="flow-section" id="alur">
   <div class="section-head-center">
-    <h2 class="reveal">Alur Menjadi Mitra</h2>
+    <h2 class="reveal" data-t="flowTitle">Alur Menjadi Mitra</h2>
     <p class="reveal">Tiga langkah sederhana dari tanya-tanya sampai menjadi mitra.</p>
   </div>
   <ol class="flow-list" id="flowList">
@@ -481,7 +481,7 @@
 <section class="contact-section" id="kontak">
   <div class="contact-grid">
     <div class="contact-cta reveal">
-      <h2>Siap Memulai Kerjasama?</h2>
+      <h2 data-t="ctaTitle">Siap Memulai Kerjasama?</h2>
       <p>Hubungi tim sales kami sekarang untuk informasi lebih lanjut dan dapatkan penawaran terbaik!</p>
       <a href="#" class="btn btn-fill" id="waBtn"><span>Chat via WhatsApp</span></a>
       <span class="hint">Atau isi formulir di samping</span>
@@ -559,7 +559,7 @@
   <div class="market-inner">
     <div class="market-trust">
       <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.2 7.9-8 9-4.8-1.1-8-4.5-8-9V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg>100% Original</div>
-      <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Pengiriman Cepat</div>
+      <div class="market-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="6" width="14" height="12" rx="1"/><path d="M15 10h4l3 3v5h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg>Pengiriman Seluruh Indonesia</div>
     </div>
   </div>
 </div>
@@ -740,6 +740,7 @@
     vcard.addEventListener('click', openVideo);
 
     function render(d){
+      if (HilosSafe.teks) HilosSafe.teks(d.teks);
       const h = d.head;
       if (h && typeof h === 'object'){
         const sec = document.getElementById('review');
