@@ -1415,23 +1415,85 @@
 
   /* ---------- foto hero dari Admin (Konten Halaman > Beranda) ---------- */
   const mqHeroHP = window.matchMedia('(max-width:900px)');
+  let heroLabels = ['Pria', 'Wanita', 'Anak'];
+  let heroIndex = 0, heroTimer = null;
+  const heroSlideEls = () => document.querySelectorAll('.hero-bg .hero-slide');
   function pickHeroSrc(){
-    document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => {
+    heroSlideEls().forEach(sl => {
+      const im = sl.querySelector('img'); if (!im) return;
       if (!im.dataset.d) im.dataset.d = im.getAttribute('src') || '';
       const want = (mqHeroHP.matches && im.dataset.m) ? im.dataset.m : im.dataset.d;
       if (want && im.getAttribute('src') !== want) im.src = want;
     });
+    const first = heroSlideEls()[0], f = first && first.querySelector('img'), hero = document.getElementById('beranda');
+    if (hero) hero.classList.toggle('hero-hp', !!(mqHeroHP.matches && f && f.dataset.m));
   }
   (mqHeroHP.addEventListener ? mqHeroHP.addEventListener('change', pickHeroSrc) : mqHeroHP.addListener(pickHeroSrc));
+
+  function goToHeroSlide(i){
+    const sl = heroSlideEls(), ds = document.querySelectorAll('#heroDots .dot');
+    if (!sl.length) return;
+    i = ((i % sl.length) + sl.length) % sl.length; heroIndex = i;
+    sl.forEach((s2, idx) => s2.classList.toggle('active', idx === i));
+    ds.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    const lb = document.getElementById('heroSlideLabel'); if (lb) lb.textContent = heroLabels[i] || '';
+  }
+  function startHeroAutoplay(){
+    if (heroTimer) clearInterval(heroTimer); heroTimer = null;
+    if (prefersReducedMotion || heroSlideEls().length < 2) return;
+    heroTimer = setInterval(() => goToHeroSlide(heroIndex + 1), 5000);
+  }
+  document.getElementById('heroDots').addEventListener('click', (e) => {
+    const b = e.target.closest('.dot'); if (!b) return;
+    goToHeroSlide(parseInt(b.dataset.index, 10)); startHeroAutoplay();
+  });
+
+  /* jumlah slide mengikuti Admin (1–5): bangun ulang hanya bila jumlahnya berubah */
+  function ensureHeroSlides(n){
+    const bg = document.querySelector('.hero-bg'), scrim = document.getElementById('heroScrim');
+    let sl = heroSlideEls();
+    while (sl.length < n){
+      const d = document.createElement('div'); d.className = 'photo hero-slide'; d.dataset.slide = String(sl.length);
+      d.innerHTML = '<img alt="Koleksi sandal HILOS">'; bg.insertBefore(d, scrim);
+      d.querySelector('img').addEventListener('load', syncHeroRatio);
+      sl = heroSlideEls();
+    }
+    while (sl.length > n){ sl[sl.length - 1].remove(); sl = heroSlideEls(); }
+    const dots = document.getElementById('heroDots');
+    if (dots.querySelectorAll('.dot').length !== n){
+      dots.querySelectorAll('.dot').forEach(x => x.remove());
+      for (let k = 0; k < n; k++){
+        const b = document.createElement('button'); b.className = 'dot'; b.dataset.index = String(k); b.setAttribute('aria-label', 'Slide ' + (k + 1));
+        dots.appendChild(b);
+      }
+      dots.style.display = n > 1 ? '' : 'none';
+    }
+  }
   function applyBeranda(d){
     if (!d || !Array.isArray(d.hero)) return;
     const U = HilosSafe.url;
-    document.querySelectorAll('.hero-bg .hero-slide img').forEach((im, k) => {
-      const u = U(d.hero[k]); if (u) im.dataset.d = u;
-      im.dataset.m = (Array.isArray(d.heroM) && U(d.heroM[k])) || '';
+    const urls = d.hero.map(u => U(u)).filter(Boolean).slice(0, 5);
+    if (!urls.length) return;
+    // indeks asli (untuk foto HP & label) mengikuti foto yang valid
+    const idx = d.hero.map((u, k) => U(u) ? k : -1).filter(k => k >= 0).slice(0, 5);
+    ensureHeroSlides(urls.length);
+    heroSlideEls().forEach((sl, k) => {
+      const im = sl.querySelector('img');
+      im.dataset.d = urls[k];
+      im.dataset.m = (Array.isArray(d.heroM) && U(d.heroM[idx[k]])) || '';
+      im.alt = 'Koleksi sandal HILOS ' + (k + 1);
     });
+    heroLabels = idx.map(k => (Array.isArray(d.heroL) && typeof d.heroL[k] === 'string') ? d.heroL[k] : '');
     pickHeroSrc();
-    document.querySelectorAll('.proof-thumbs .photo img').forEach((im, k) => { const u = U(d.hero[k]); if (u) im.src = u; });
+    const th = document.querySelector('.proof-thumbs');
+    if (th){
+      const n = Math.min(3, urls.length);
+      while (th.children.length < n){ const p = document.createElement('div'); p.className = 'photo'; p.innerHTML = '<img alt="">'; th.appendChild(p); }
+      while (th.children.length > n) th.lastElementChild.remove();
+      Array.from(th.children).forEach((p, k) => { p.querySelector('img').src = urls[k]; });
+    }
+    goToHeroSlide(Math.min(heroIndex, urls.length - 1));
+    startHeroAutoplay(); syncHeroRatio();
   }
   window.__hilosApply = applyBeranda;
   try {
@@ -1450,7 +1512,7 @@
     if (!im || !hero) return;
     if (im.naturalWidth && im.naturalHeight){
       const r = im.naturalWidth / im.naturalHeight;
-      if (r > 0.6 && r < 3) hero.style.setProperty('--hero-ar', r.toFixed(4));
+      if (r > 0.4 && r < 3) hero.style.setProperty('--hero-ar', r.toFixed(4));
       hero.dataset.ar = r;
     }
     const nav = document.getElementById('mainNav');
@@ -1458,44 +1520,19 @@
     if (heroNavH) hero.style.setProperty('--navh', heroNavH + 'px');
     const r2 = parseFloat(hero.dataset.ar) || (16/9);
     if (window.innerWidth > 900){
-      hero.style.height = Math.max(560 + heroNavH, Math.round(hero.clientWidth / r2) + heroNavH) + 'px';
-    } else { hero.style.height = ''; }
+      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.round(hero.clientWidth / r2) + heroNavH) + 'px';
+    } else {
+      hero.style.height = '';
+      hero.style.minHeight = hero.classList.contains('hero-hp') ? (Math.round(hero.clientWidth / r2) + heroNavH) + 'px' : '';
+    }
   }
   document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => { im.addEventListener('load', syncHeroRatio); });
   window.addEventListener('resize', syncHeroRatio);
   window.addEventListener('load', syncHeroRatio);
   syncHeroRatio();
 
-  /* ---------- hero image carousel ---------- */
-  const heroSlides = document.querySelectorAll('.hero-slide');
-  const heroDots = document.querySelectorAll('.hero-slide-nav .dot');
-  const heroSlideLabel = document.getElementById('heroSlideLabel');
-  const slideLabels = ['Pria', 'Wanita', 'Anak'];
-  let heroIndex = 0;
-  let heroTimer = null;
-
-  function goToHeroSlide(i){
-    heroIndex = i;
-    heroSlides.forEach((s, idx) => s.classList.toggle('active', idx === i));
-    heroDots.forEach((d, idx) => d.classList.toggle('active', idx === i));
-    heroSlideLabel.textContent = slideLabels[i];
-  }
-
-  function startHeroAutoplay(){
-    if (prefersReducedMotion) return;
-    heroTimer = setInterval(() => {
-      goToHeroSlide((heroIndex + 1) % heroSlides.length);
-    }, 5000);
-  }
-
-  heroDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      goToHeroSlide(parseInt(dot.dataset.index, 10));
-      if (heroTimer) clearInterval(heroTimer);
-      startHeroAutoplay();
-    });
-  });
-
+  /* ---------- hero image carousel (fungsi di atas, dinamis) ---------- */
+  goToHeroSlide(0);
   startHeroAutoplay();
 
   /* ---------- reveal + counters ---------- */
@@ -1955,6 +1992,16 @@
     .hero-bg-scrim{background:linear-gradient(0deg,#1264AC 0%,rgba(18,100,172,0) 28%) !important;}
     .hero-body{padding:26px clamp(20px,5vw,64px) 96px !important;}
     .hero-copy{translate:none !important;opacity:1 !important;}
+  }
+  @media (max-width:900px){
+    /* foto HP 9:16: teks menumpuk di bagian bawah foto */
+    .hero.hero-hp{justify-content:flex-end;}
+    .hero.hero-hp .hero-bg{position:absolute;inset:auto;top:var(--navh);left:0;right:0;bottom:0;margin-top:0;width:auto;aspect-ratio:auto;}
+    .hero.hero-hp .hero-bg-scrim{background:linear-gradient(0deg,rgba(10,62,112,.96) 0%,rgba(10,62,112,.84) 30%,rgba(10,62,112,0) 62%) !important;}
+    .hero.hero-hp .hero-body{padding:24px clamp(20px,5vw,64px) 84px !important;}
+    .hero.hero-hp .hero-proof{display:none;}
+    .hero.hero-hp .hero-copy p{display:none;}
+    .hero.hero-hp .hero-actions{margin-top:22px;}
   }
 </style>
 
