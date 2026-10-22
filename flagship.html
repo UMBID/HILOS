@@ -528,7 +528,7 @@
     if (requestedId){
       const { data: product, error } = await sb
         .from('products')
-        .select('id,sku,name,model,category,price,images,colors,sizes,badge,is_3d')
+        .select('*')
         .eq('id', requestedId)
         .maybeSingle();
       if (error || !product) return null;
@@ -567,7 +567,7 @@
 
     const { data, error } = await sb
       .from('top10_rankings')
-      .select('rank, products(id,sku,name,model,category,price,images,colors,sizes,badge,is_3d)')
+      .select('rank, products(*)')
       .eq('month', month)
       .order('rank', { ascending: true });
 
@@ -618,14 +618,20 @@
     return /sepatu|sneaker|shoe|\bsol\b/i.test((p.model || '') + ' ' + (p.name || '')) ? 'sepatu' : 'sandal';
   }
   function applyGenericCopy(p, colors, sizes){
-    const c = PRODUCT_COPY[productKind(p)];
+    const base = PRODUCT_COPY[productKind(p)];
+    // teks buatan admin (kalau diisi) menggantikan teks otomatis
+    const S = window.HilosSafe;
+    const myDesc = (typeof p.description === 'string' ? p.description.trim() : '').slice(0, 400);
+    const myFeat = (Array.isArray(p.features) ? p.features : []).map(f => f && typeof f === 'object' ? [String(f.title || '').trim().slice(0, 40), String(f.desc || '').trim().slice(0, 140)] : null).filter(f => f && f[0]).slice(0, 4);
+    const mySpec = (Array.isArray(p.specs) ? p.specs : []).map(r => r && typeof r === 'object' ? [String(r.k || '').trim().slice(0, 40), String(r.v || '').trim().slice(0, 120)] : null).filter(r => r && r[0] && r[1]).slice(0, 6);
+    const c = Object.assign({}, base, { desc: myDesc || base.desc, features: myFeat.length ? myFeat : base.features, spec: mySpec.length ? mySpec : base.spec });
     const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
     document.getElementById('pDesc').textContent = c.desc;
-    document.getElementById('pFeatures').innerHTML = c.features.map(f => `<li>${check}${f[0]}</li>`).join('');
+    document.getElementById('pFeatures').innerHTML = c.features.map(f => `<li>${check}${HilosSafe.esc(f[0])}</li>`).join('');
     document.getElementById('pFeatureGrid').innerHTML = c.features.map((f, i) => `
       <div class="feature-card">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ICONS[i]}</svg></div>
-        <h4>${f[0]}</h4><p>${f[1]}</p>
+        <h4>${HilosSafe.esc(f[0])}</h4><p>${HilosSafe.esc(f[1] || '')}</p>
       </div>`).join('');
     const rows = [['Tipe', c.type + (p.model ? ' — ' + p.model : '')], ...c.spec,
       ['Ukuran', sizes[0] + ' – ' + sizes[sizes.length-1]], ['Pilihan Warna', colors.length + ' warna']];
