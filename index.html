@@ -1520,12 +1520,19 @@
     if (heroNavH) hero.style.setProperty('--navh', heroNavH + 'px');
     const r2 = parseFloat(hero.dataset.ar) || (16/9);
     if (window.innerWidth > 900){
-      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.round(hero.clientWidth / r2) + heroNavH) + 'px';
+      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.min(window.innerHeight, Math.round(hero.clientWidth / r2) + heroNavH)) + 'px';
     } else {
       hero.style.height = '';
       hero.style.minHeight = hero.classList.contains('hero-hp') ? (Math.round(hero.clientWidth / r2) + heroNavH) + 'px' : '';
     }
   }
+
+  /* isi latar blur tiap slide dari fotonya sendiri */
+  (function(){
+    function paint(im){ const p = im.parentElement, s = im.currentSrc || im.src; if (p && s && p.dataset.bgs !== s){ p.dataset.bgs = s; p.style.backgroundImage = 'url("' + s.replace(/"/g, '%22') + '")'; } }
+    document.addEventListener('load', e => { if (e.target && e.target.matches && e.target.matches('.hero-bg .hero-slide img')) paint(e.target); }, true);
+    document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => { if (im.complete && im.naturalWidth) paint(im); });
+  })();
   document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => { im.addEventListener('load', syncHeroRatio); });
   window.addEventListener('resize', syncHeroRatio);
   window.addEventListener('load', syncHeroRatio);
@@ -1985,6 +1992,10 @@
   .hero-bg{translate:none !important;top:var(--navh);}
   .hero-bg .photo{inset:0;}
   .hero-bg .photo img{object-fit:contain;transform:none;}
+  /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
+  .hero-bg .hero-slide{background-size:cover;background-position:center;}
+  .hero-bg .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
+  .hero-bg .hero-slide img{position:relative;z-index:1;}
   @media (max-width:900px){
     /* HP/tablet: foto utuh di atas, teks di bawahnya di latar biru */
     .hero{min-height:0;height:auto !important;justify-content:flex-start;background:#1264AC;}
