@@ -1510,7 +1510,7 @@
   /* ---------- tinggi hero mengikuti rasio foto (tanpa terpotong) ---------- */
   let heroNavH = 0;
   function syncHeroRatio(){
-    const im = document.querySelector('.hero-bg .hero-slide.active img') || document.querySelector('.hero-bg .hero-slide img');
+    const im = document.querySelector('.hero-bg .hero-slide img');
     const hero = document.getElementById('beranda');
     if (!im || !hero) return;
     if (im.naturalWidth && im.naturalHeight){
@@ -1523,7 +1523,9 @@
     if (heroNavH) hero.style.setProperty('--navh', heroNavH + 'px');
     const r2 = parseFloat(hero.dataset.ar) || (16/9);
     if (window.innerWidth > 900){
-      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.min(window.innerHeight, Math.round(hero.clientWidth / r2) + heroNavH)) + 'px';
+      /* desktop: tinggi hero TETAP (rasio target 2,1:1) supaya ukurannya tidak berubah antar slide */
+      hero.dataset.fixed = '1';
+      hero.style.minHeight = ''; hero.style.height = Math.max(560 + heroNavH, Math.min(window.innerHeight, Math.round(hero.clientWidth / 2.1) + heroNavH)) + 'px';
     } else {
       hero.style.height = '';
       hero.style.minHeight = hero.classList.contains('hero-hp') ? (Math.round(hero.clientWidth / r2) + heroNavH) + 'px' : '';
@@ -1995,7 +1997,7 @@
   .hero{--hero-ar:16/9;--navh:130px;aspect-ratio:auto;min-height:calc(560px + var(--navh));background:#0d4a86;}
   .hero-bg{translate:none !important;top:var(--navh);}
   .hero-bg .photo{inset:0;}
-  .hero-bg .photo img{object-fit:contain;transform:none;}
+  .hero-bg .photo img{object-fit:contain;object-position:center top;transform:none;}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .hero-bg .hero-slide{background-size:cover;background-position:center;}
   .hero-bg .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
