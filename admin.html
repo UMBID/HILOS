@@ -611,7 +611,7 @@
   .cm-hero-item .cm-ctrl{ grid-column:2; grid-row:1 / span 2; }
   .cm-slots:not(.has-hp) .cm-slot-pair{ grid-template-columns:1fr; }
   .cm-slots:not(.has-hp) .cm-slot-pair .cm-web .cm-thumb{ aspect-ratio:1/1; max-width:220px; }
-  .cm-slot-pair .cm-hp .cm-thumb{ width:100%; height:auto; aspect-ratio:4/5; }
+  .cm-slot-pair .cm-hp .cm-thumb{ width:100%; height:auto; aspect-ratio:9/16; }
   .cm-clear{ background:none; border:none; color:#a23a1e; font-size:11px; text-decoration:underline; cursor:pointer; padding:0; text-align:left; }
   .cm-slots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; margin-top:10px; }
   .cm-slot{ display:flex; flex-direction:column; gap:8px; }
@@ -2888,8 +2888,8 @@
   };
   const CM_SECTIONS = {
     tentang: [
-      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1350 px (4:5, portrait)', ar:16/9, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
-      { key:'bannerM', title:'Banner Awal — versi HP (opsional)', sub:'Kosongkan bila foto Website sudah cukup untuk HP', kind:'photos', optional:true, max:8, spec:{ web:'', hp:'1080 × 1350 px (4:5, portrait)', ar:4/5, note:'Bila diisi, tampil menggantikan foto Website di layar HP/tablet (di bawah 900 px).' }, help:'' },
+      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1920 px (9:16, portrait)', ar:16/9, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
+      { key:'bannerM', title:'Banner Awal — versi HP (opsional)', sub:'Kosongkan bila foto Website sudah cukup untuk HP', kind:'photos', optional:true, max:8, spec:{ web:'', hp:'1080 × 1920 px (9:16, portrait)', ar:9/16, note:'Bila diisi, tampil menggantikan foto Website di layar HP/tablet (di bawah 900 px). Taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar; judul halaman tampil di bagian bawah foto.' }, help:'' },
       { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, spec:{ web:'1000 × 1000 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Urutan di sini = nomor 01, 02, … di website.' }, help:'' },
       { key:'event', title:'Kebersamaan — Event', sub:'Tab Event', kind:'cards', max:8, spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } },
       { key:'csr', title:'Kebersamaan — CSR', sub:'Tab CSR', kind:'cards', max:6, spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } },
@@ -2898,7 +2898,7 @@
   };
 
   CM_SECTIONS.beranda = [
-    { key:'hero', title:'Foto Utama Beranda', sub:'Foto yang berganti otomatis di bagian paling atas Beranda (maksimal 5)', kind:'heroList', max:5, mobileKey:'heroM', labelKey:'heroL', spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1350 px (4:5, portrait) — opsional', ar:16/9, arHP:4/5, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk semua slide. Bisa 1 sampai 5 foto. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah (3 foto pertama). Label adalah tulisan kecil di dekat titik slide, misalnya Pria / Wanita / Anak.' }, help:'' }
+    { key:'hero', title:'Foto Utama Beranda', sub:'Foto yang berganti otomatis di bagian paling atas Beranda (maksimal 5)', kind:'heroList', max:5, mobileKey:'heroM', labelKey:'heroL', spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1920 px (9:16, portrait) — opsional', ar:16/9, arHP:9/16, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk semua slide. Bisa 1 sampai 5 foto. Foto HP: taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar, dan biarkan bagian bawah lebih kosong karena judul dan tombol tampil di sana. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah (3 foto pertama). Label adalah tulisan kecil di dekat titik slide, misalnya Pria / Wanita / Anak.' }, help:'' }
   ];
 
   CM_SECTIONS.produk = [
@@ -3107,7 +3107,12 @@
   function cmGet(path){ return path.split('.').reduce((o, k) => (o == null ? o : o[k]), cmData); }
   function cmSetPath(path, v){
     const ks = path.split('.'), last = ks.pop();
-    const tgt = ks.reduce((o, k) => o[k], cmData); tgt[last] = v;
+    let tgt = cmData;
+    ks.forEach((k, i) => {   // bila wadah belum ada (data lama), buat otomatis
+      if (tgt[k] == null) tgt[k] = /^\d+$/.test(ks[i + 1] != null ? ks[i + 1] : last) ? [] : {};
+      tgt = tgt[k];
+    });
+    tgt[last] = v;
   }
 
   function cmDims(file){
