@@ -2844,6 +2844,7 @@
   const PX = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
   const CM_DEFAULTS = {
     tentang: {
+      teks: { eyebrow:'Tentang HILOS', title:'Cerita di Balik Setiap Langkah', desc:'Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.' },
       banner: [PX(6633324,1600), PX(1904770,1600), PX(2529148,1600), PX(1478442,1600)],
       bannerM: [],
       pabrik: [
@@ -2871,14 +2872,17 @@
       }
     },
     beranda: {
+      teks: { eyebrow:'Sandal Premium Indonesia', l1:'Comfort', l2:'in every step', desc:'Sendal berkualitas tinggi dengan desain modern, nyaman dipakai dan tahan lama untuk setiap aktivitas Anda — dibuat untuk pria, wanita, dan anak.', btn1:'Lihat Produk', btn2:'Tentang HILOS' },
       hero: [PX(7872865,1800), PX(1308324,1800), PX(35903658,1800)],
       heroM: ['', '', ''],
       heroL: ['Pria', 'Wanita', 'Anak']
     },
     produk: {
+      teks: { eyebrow:'Koleksi HILOS', title:'Tiga Pilihan, Satu Langkah', desc:'Sepatu, sandal pria, dan sandal wanita. Scroll untuk memilih.' },
       kategori: [PX(2529148,900), PX(1272328,900), PX(6633324,900)]
     },
     kontak: {
+      teks: { eyebrow:'Hubungi Kami', title:'Contact Us', desc:'Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.', socTitle:'Ikuti Kami di Media Sosial', socDesc:'Lihat keseharian, promo, dan produk terbaru HILOS di Instagram & TikTok kami.' },
       phones: [
         { img:'assets/socmed-ig.jpg', url:'https://www.instagram.com/hilos.id.official/', handle:'@hilos.id.official' },
         { img:'assets/socmed-tiktok.jpg', url:'https://www.tiktok.com/@hilos.official_', handle:'@hilos.official_' }
@@ -2893,6 +2897,7 @@
       ]
     },
     kerjasama: {
+      teks: { l1:'Tumbuh Bersama', l2:'HILOS', desc:'Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.', btn1:'Lihat Bentuk Kerjasama' },
       head: { title:'Apa Kata Mitra Kami?', sub:'Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.' },
       video: { img:PX(7289741,500), title:'Toko Abadi Jaya — Surabaya', loc:'Distributor sejak 2019', quote:'Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS.', url:'' },
       testi: [
@@ -2904,7 +2909,8 @@
   };
   const CM_SECTIONS = {
     tentang: [
-      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait)', ar:2.4, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong. Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
+    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul',multi:0,max:90}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}] },
+      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait)', ar:2.4, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong (atas, bawah, kiri, kanan). Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
       { key:'bannerM', title:'Banner Awal — versi HP (opsional)', sub:'Kosongkan bila foto Website sudah cukup untuk HP', kind:'photos', optional:true, max:8, spec:{ web:'', hp:'1080 × 1920 px (9:16, portrait)', ar:9/16, note:'Bila diisi, tampil menggantikan foto Website di layar HP/tablet (di bawah 900 px). Taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar; judul halaman tampil di bagian bawah foto.' }, help:'' },
       { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, spec:{ web:'1000 × 1000 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Urutan di sini = nomor 01, 02, … di website.' }, help:'' },
       { key:'event', title:'Kebersamaan — Event', sub:'Tab Event', kind:'cards', max:8, spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } },
@@ -2914,18 +2920,22 @@
   };
 
   CM_SECTIONS.beranda = [
-    { key:'hero', title:'Foto Utama Beranda', sub:'Foto yang berganti otomatis di bagian paling atas Beranda (maksimal 5)', kind:'heroList', max:5, mobileKey:'heroM', labelKey:'heroL', spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait) — opsional', ar:2.4, arHP:9/16, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong. Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks (judul tampil di sana). Pakai rasio yang sama untuk semua slide. Bisa 1 sampai 5 foto. Foto HP: taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar, dan biarkan bagian bawah lebih kosong karena judul dan tombol tampil di sana. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah (3 foto pertama). Label adalah tulisan kecil di dekat titik slide, misalnya Pria / Wanita / Anak.' }, help:'' }
+    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'l1',label:'Judul baris 1',multi:0,max:40}, {k:'l2',label:'Judul baris 2 (berwarna)',multi:0,max:40}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}, {k:'btn1',label:'Tombol 1',multi:0,max:30}, {k:'btn2',label:'Tombol 2',multi:0,max:30}] },
+    { key:'hero', title:'Foto Utama Beranda', sub:'Foto yang berganti otomatis di bagian paling atas Beranda (maksimal 5)', kind:'heroList', max:5, mobileKey:'heroM', labelKey:'heroL', spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait) — opsional', ar:2.4, arHP:9/16, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong (atas, bawah, kiri, kanan). Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks (judul tampil di sana). Pakai rasio yang sama untuk semua slide. Bisa 1 sampai 5 foto. Foto HP: taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar, dan biarkan bagian bawah lebih kosong karena judul dan tombol tampil di sana. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah (3 foto pertama). Label adalah tulisan kecil di dekat titik slide, misalnya Pria / Wanita / Anak.' }, help:'' }
   ];
 
   CM_SECTIONS.produk = [
+    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul',multi:0,max:70}, {k:'desc',label:'Kalimat pendek',multi:1,max:160}] },
     { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], spec:{ web:'900 × 900 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Ditampilkan dalam bentuk lingkaran, jadi taruh produk di tengah foto.' }, help:'' }
   ];
   CM_SECTIONS.kontak = [
+    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul halaman',multi:0,max:60}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:260}, {k:'socTitle',label:'Judul bagian Media Sosial',multi:0,max:70}, {k:'socDesc',label:'Kalimat bagian Media Sosial',multi:1,max:200}] },
     { key:'phones', title:'Tampilan HP di Tengah (Instagram & TikTok)', sub:'Screenshot profil, link tujuan, dan nama akun — 750 × 1520 px', kind:'linkslots', labels:['Instagram','TikTok'], handle:true, spec:{ web:'750 × 1520 px (±1:2, portrait) — screenshot profil HP', hp:'Sama dengan Website', ar:750/1520, note:'Foto tampil UTUH di dalam bingkai HP, tidak terpotong. Link = halaman profil yang dibuka saat diklik; tombol Instagram/TikTok di bawah galeri memakai link yang sama.' } },
     { key:'socL', title:'Galeri Kiri — Instagram', sub:'2 foto di kiri HP, tiap foto punya link tujuan — 1080 × 1350 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1350 px (4:5, portrait)', hp:'Sama dengan Website', ar:4/5, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = postingan Instagram yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } },
     { key:'socR', title:'Galeri Kanan — TikTok', sub:'2 foto di kanan HP, tiap foto punya link tujuan — 1080 × 1920 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1920 px (9:16, portrait)', hp:'Sama dengan Website', ar:9/16, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = video TikTok yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } }
   ];
   CM_SECTIONS.kerjasama = [
+    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'l1',label:'Judul baris 1',multi:0,max:40}, {k:'l2',label:'Judul baris 2 (berwarna)',multi:0,max:40}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}, {k:'btn1',label:'Tulisan tombol',multi:0,max:40}] },
     { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
     { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video', spec:{ web:'Sampul 800 × 500 px (16:10)', hp:'Sama dengan Website' } },
     { key:'testi', title:'Testimoni Mitra', sub:'Foto profil, nama, kota, kutipan, dan foto toko', kind:'testi', max:6, spec:{ web:'Foto profil 300 × 300 px (1:1) · Foto toko 800 × 600 px (4:3)', hp:'Sama dengan Website' }, help:'' }
@@ -2968,11 +2978,11 @@
   const CMP = {
     url: { beranda:'index.html', tentang:'tentang.html', produk:'produk.html', kerjasama:'kerjasama.html', kontak:'kontak.html' },
     scroll: {
-      beranda:{ hero:'#beranda' },
-      tentang:{ banner:'.about-hero', pabrik:'#procWrap', event:'#kebersamaanSection', csr:'#kebersamaanSection', outing:'#kebersamaanSection' },
-      produk:{ kategori:'#pxBanner' },
-      kerjasama:{ head:'#review', video:'#review', testi:'#review' },
-      kontak:{ phones:'#socmed', socL:'#socmed', socR:'#socmed' }
+      beranda:{ teks:'#beranda', hero:'#beranda' },
+      tentang:{ teks:'.about-hero', banner:'.about-hero', pabrik:'#procWrap', event:'#kebersamaanSection', csr:'#kebersamaanSection', outing:'#kebersamaanSection' },
+      produk:{ teks:'#pxBanner', kategori:'#pxBanner' },
+      kerjasama:{ teks:'body', head:'#review', video:'#review', testi:'#review' },
+      kontak:{ teks:'body', phones:'#socmed', socL:'#socmed', socR:'#socmed' }
     }
   };
   const cmpBox = document.getElementById('cmPreview'), cmpStage = document.getElementById('cmpStage'),
@@ -3086,6 +3096,9 @@
               ${sec.handle ? `<span class="cm-lbl">Nama akun (tulisan di tombol)</span><input type="text" value="${escA(it.handle)}" data-f="${sec.key}.${i}.handle" maxlength="60" placeholder="@namaakun">` : ''}
             </div>
           </div>`).join('') + `</div>`;
+      } else if (sec.kind === 'text'){
+        const tv = cmData[sec.key] || {};
+        body = `<p class="cm-help" style="margin:0 0 10px">Ubah tulisan lalu klik Simpan. Kalau kolom dikosongkan, website memakai tulisan bawaan. Tulisan tampil di pratinjau sebelum disimpan.</p><div class="cm-fields">` + sec.fields.map(f => `<span class="cm-lbl">${escA(f.label)}</span>` + (f.multi ? `<textarea data-f="${sec.key}.${f.k}" maxlength="${f.max}">${escA(tv[f.k])}</textarea>` : `<input type="text" value="${escA(tv[f.k])}" data-f="${sec.key}.${f.k}" maxlength="${f.max}">`)).join('') + `</div>`;
       } else if (sec.kind === 'head'){
         body = `<div class="cm-fields"><span class="cm-lbl">Judul</span><input type="text" value="${escA(list.title)}" data-f="head.title" maxlength="80">
           <span class="cm-lbl">Kalimat pendek</span><input type="text" value="${escA(list.sub)}" data-f="head.sub" maxlength="160"></div>`;
