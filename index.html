@@ -1244,7 +1244,7 @@
         <h3 id="pName">HILOS</h3>
         <p class="pd-desc" id="pDesc">Desain ergonomis dengan material pilihan yang ringan, lentur, dan nyaman dipakai sepanjang hari.</p>
 
-        <ul class="feature-grid">
+        <ul class="feature-grid" id="pFeats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Sol empuk &amp; anti-slip</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Ringan &amp; fleksibel</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tahan air</li>
@@ -1535,7 +1535,11 @@
 
   /* isi latar blur tiap slide dari fotonya sendiri */
   (function(){
-    function paint(im){ const p = im.parentElement, s = im.currentSrc || im.src; if (p && s && p.dataset.bgs !== s){ p.dataset.bgs = s; p.style.backgroundImage = 'url("' + s.replace(/"/g, '%22') + '")'; } }
+    /* selisih rasio kecil (maks 10 persen): foto diisi penuh (terpotong maksimal sekitar 5 persen di tepi) supaya tidak ada garis tipis; selisih besar: foto tetap utuh */
+    function fit(im){ const p = im.parentElement; if (!p || !im.naturalWidth) return; const pw = p.clientWidth, ph = p.clientHeight; if (!pw || !ph) return;
+      const d = Math.abs((pw / ph) / (im.naturalWidth / im.naturalHeight) - 1); im.style.objectFit = d <= 0.10 ? 'cover' : ''; }
+    window.addEventListener('resize', () => document.querySelectorAll('.hero-bg .hero-slide img').forEach(fit));
+    function paint(im){ fit(im); const p = im.parentElement, s = im.currentSrc || im.src; if (p && s && p.dataset.bgs !== s){ p.dataset.bgs = s; p.style.backgroundImage = 'url("' + s.replace(/"/g, '%22') + '")'; } }
     document.addEventListener('load', e => { if (e.target && e.target.matches && e.target.matches('.hero-bg .hero-slide img')) paint(e.target); }, true);
     document.querySelectorAll('.hero-bg .hero-slide img').forEach(im => { if (im.complete && im.naturalWidth) paint(im); });
   })();
@@ -1748,6 +1752,15 @@
     pdTabs.querySelectorAll('.pd-tab').forEach((t, k) => t.classList.toggle('active', k === i));
 
     document.getElementById('pName').textContent = p.name || 'HILOS';
+    { // deskripsi & poin keunggulan dari admin (kosong = teks bawaan)
+      const dEl = document.getElementById('pDesc'), fEl = document.getElementById('pFeats');
+      if (dEl.dataset.def === undefined){ dEl.dataset.def = dEl.textContent; fEl.dataset.def = fEl.innerHTML; }
+      const myD = (typeof p.description === 'string' ? p.description.trim() : '').slice(0, 400);
+      const myF = (Array.isArray(p.features) ? p.features : []).map(f => f && typeof f === 'object' ? String(f.title || '').trim().slice(0, 40) : '').filter(Boolean).slice(0, 4);
+      dEl.textContent = myD || dEl.dataset.def;
+      const chk = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      fEl.innerHTML = myF.length ? myF.map(t => '<li>' + chk + esc(t) + '</li>').join('') : fEl.dataset.def;
+    }
     const chips = [];
     if (p.category && CAT_LABEL[p.category]) chips.push(`<span class="pd-chip">${CAT_LABEL[p.category]}</span>`);
     if (p.model) chips.push(`<span class="pd-chip">${esc(p.model)}</span>`);
@@ -1854,7 +1867,7 @@
     const cur = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     const month = months.includes(cur) ? cur : months[0];
     const { data, error } = await sb.from('top10_rankings')
-      .select('rank, products(id,sku,name,model,category,badge,images,colors,sizes,is_3d)')
+      .select('rank, products(*)')
       .eq('month', month).lte('rank', 5).order('rank', { ascending: true });
     if (error || !data) return;
     pdItems = data.filter(r => r.products).map(r => ({ rank: Math.max(1, Math.min(99, parseInt(r.rank, 10) || 1)), p: r.products }));
