@@ -1472,7 +1472,7 @@
   }
   function applyBeranda(d){
     if (!d) return;
-    HilosSafe.teks(d.teks);
+    if (HilosSafe.teks) HilosSafe.teks(d.teks);
     if (!Array.isArray(d.hero)) return;
     const U = HilosSafe.url;
     const urls = d.hero.map(u => U(u)).filter(Boolean).slice(0, 5);
