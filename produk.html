@@ -397,6 +397,7 @@
 document.addEventListener('DOMContentLoaded', function(){
   var order = ['i-sepatu', 'i-pria', 'i-wanita'];
   function apply(d){
+    if (d && window.HilosSafe && HilosSafe.teks) HilosSafe.teks(d.teks);
     if (!d || !Array.isArray(d.kategori)) return;
     order.forEach(function(cls, k){
       var u = window.HilosSafe && HilosSafe.url(d.kategori[k]); if (!u) return;
@@ -478,9 +479,9 @@ document.addEventListener('DOMContentLoaded', function(){
     <div class="px-stage" id="pxStage">
       <div class="px-ghost" aria-hidden="true">HILOS</div>
       <div class="px-intro">
-        <div class="px-eyebrow">Koleksi HILOS</div>
-        <h2>Tiga Pilihan, Satu Langkah</h2>
-        <p>Sepatu, sandal pria, dan sandal wanita. Scroll untuk memilih.</p>
+        <div class="px-eyebrow" data-t="eyebrow">Koleksi HILOS</div>
+        <h2 data-t="title">Tiga Pilihan, Satu Langkah</h2>
+        <p data-t="desc">Sepatu, sandal pria, dan sandal wanita. Scroll untuk memilih.</p>
       </div>
       <div class="px-group">
         <button type="button" class="px-item" data-px="sepatu" aria-label="Lihat koleksi Sepatu">
