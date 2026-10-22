@@ -1003,7 +1003,7 @@
     function syncAboutRatio(){
       const ss = document.getElementById('heroSlideshow'); if (!ss) return;
       ss.style.setProperty('--availh', Math.max(460, Math.round(window.innerHeight - (ss.getBoundingClientRect().top + window.scrollY))) + 'px');
-      const im = ss.querySelector('.hero-slide.active img') || ss.querySelector('.hero-slide img');
+      const im = ss.querySelector('.hero-slide img');
       if (im && im.naturalWidth && im.naturalHeight){
         const r = im.naturalWidth / im.naturalHeight;
         if (r > 0.4 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
@@ -1140,13 +1140,13 @@
   }
 
   /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
-  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / var(--ar)), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
+  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / 2.1), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .about-hero .hero-slide{background-size:cover;background-position:center;}
   .about-hero .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
   .about-hero .hero-slide img{position:relative;z-index:1;}
 
-  .about-hero .hero-slide img{top:0 !important;height:100% !important;translate:none !important;transform:none !important;animation:none !important;object-fit:contain;}
+  .about-hero .hero-slide img{top:0 !important;height:100% !important;translate:none !important;transform:none !important;animation:none !important;object-fit:contain;object-position:center top;}
   .about-hero .about-hero-banner{position:relative;}
   @media (max-width:900px){
     .about-hero{display:flex;flex-direction:column;}
