@@ -1473,6 +1473,7 @@
   function applyBeranda(d){
     if (!d) return;
     if (HilosSafe.teks) HilosSafe.teks(d.teks);
+    { const hh = document.getElementById('beranda'); if (hh) hh.classList.toggle('hero-clean', !!(d.teks && d.teks.mode === 'foto')); }
     if (!Array.isArray(d.hero)) return;
     const U = HilosSafe.url;
     const urls = d.hero.map(u => U(u)).filter(Boolean).slice(0, 5);
@@ -1998,6 +1999,9 @@
   .hero-bg{translate:none !important;top:var(--navh);}
   .hero-bg .photo{inset:0;}
   .hero-bg .photo img{object-fit:contain;object-position:center top;transform:none;}
+  /* mode 'Foto saja' (diatur dari Admin): foto desain tampil bersih tanpa lapisan gelap, judul, dan kartu */
+  .hero.hero-clean .hero-bg-scrim,.hero.hero-clean .hero-copy,.hero.hero-clean .hero-proof,.hero.hero-clean .scroll-cue{display:none !important;}
+  .hero.hero-clean .hero-slide-nav{text-shadow:0 1px 6px rgba(0,20,50,.6);}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .hero-bg .hero-slide{background-size:cover;background-position:center;}
   .hero-bg .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
