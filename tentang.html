@@ -997,13 +997,30 @@
     const arr = (v) => Array.isArray(v) && v.length ? v : null;
     const card = (it, i, num) => '<div class="proc-card reveal">' + (num ? '\n      <span class="proc-no" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' : '') +
       '<div class="photo"><img loading="lazy" decoding="async" src="' + esc(U(it.img)) + '" alt="' + esc(it.title) + '"></div><h4>' + esc(it.title) + '</h4><p>' + esc(it.desc) + '</p></div>';
-    function render(d){
-      const b = arr(d.banner);
-      if (b){
-        document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(U(u)) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
-        document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
-        window.__showSlide && window.__showSlide(0);
+    let lastD = null, bannerKey = '';
+    const mqHP = window.matchMedia('(max-width:900px)');
+    function syncAboutRatio(){
+      const ss = document.getElementById('heroSlideshow'); if (!ss) return;
+      const im = ss.querySelector('.hero-slide img');
+      if (im && im.naturalWidth && im.naturalHeight){
+        const r = im.naturalWidth / im.naturalHeight;
+        if (r > 0.6 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
       }
+    }
+    (function(){ const ss = document.getElementById('heroSlideshow'); if (ss){ ss.addEventListener('load', syncAboutRatio, true); syncAboutRatio(); } })();
+    function renderBanner(d){
+      if (!d) return;
+      const b = (mqHP.matches && arr(d.bannerM)) || arr(d.banner);
+      if (!b) return;
+      const key = JSON.stringify(b); if (key === bannerKey) return; bannerKey = key;
+      document.getElementById('heroSlideshow').innerHTML = b.map((u, i) => '<div class="hero-slide' + (i === 0 ? ' active' : '') + '"><img loading="lazy" decoding="async" src="' + esc(U(u)) + '" alt="Koleksi sandal HILOS ' + (i + 1) + '"></div>').join('');
+      document.getElementById('heroSlideDots').innerHTML = b.map((u, i) => '<button class="dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>').join('');
+      window.__showSlide && window.__showSlide(0);
+      syncAboutRatio();
+    }
+    (mqHP.addEventListener ? mqHP.addEventListener('change', () => renderBanner(lastD)) : mqHP.addListener(() => renderBanner(lastD)));
+    function render(d){
+      lastD = d; renderBanner(d);
       const p = arr(d.pabrik); if (p) document.querySelector('#procWrap .grid-5').innerHTML = p.map((it, i) => card(it, i, true)).join('');
       const ev = arr(d.event); if (ev) document.querySelector('#panel-event .grid-4').innerHTML = ev.map((it, i) => card(it, i)).join('');
       const cs = arr(d.csr); if (cs) document.querySelector('#panel-csr .grid-3').innerHTML = cs.map((it, i) => card(it, i)).join('');
@@ -1107,6 +1124,19 @@
     .wa-float{ width:52px; height:52px; }
     .wa-float svg{ width:25px; height:25px; }
     .wa-popup{ width:calc(100vw - 32px); right:-4px; }
+  }
+
+  /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
+  .about-hero .hero-slideshow{--ar:16/9;height:auto !important;aspect-ratio:var(--ar);min-height:460px;max-height:none;background:var(--ink);}
+  .about-hero .hero-slide img{top:0 !important;height:100% !important;translate:none !important;transform:none !important;animation:none !important;object-fit:contain;}
+  .about-hero .about-hero-banner{position:relative;}
+  @media (max-width:900px){
+    .about-hero{display:flex;flex-direction:column;}
+    .about-hero .about-hero-banner{order:1;}
+    .about-hero .page-head{order:2;position:static;padding:26px clamp(20px,5vw,64px) 44px;pointer-events:auto;}
+    .about-hero .hero-slideshow{min-height:0;height:auto !important;}
+    .about-hero .about-hero-banner .hero-slideshow::after{display:none;}
+    .about-hero .hero-slide-dots{bottom:14px;}
   }
 </style>
 
