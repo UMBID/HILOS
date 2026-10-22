@@ -426,9 +426,9 @@
 <section class="about-hero">
 <div class="page-head">
   <div class="ghost-word" data-par-top="0.28" aria-hidden="true">HILOS</div>
-  <span class="eyebrow reveal">Tentang HILOS</span>
+  <span class="eyebrow reveal" data-t="eyebrow">Tentang HILOS</span>
   <h1 class="split" id="aboutH1">Cerita di Balik Setiap Langkah</h1>
-  <p class="reveal">Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.</p>
+  <p class="reveal" data-t="desc">Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.</p>
 </div>
 
 <div class="about-hero-banner reveal-scale">
@@ -922,6 +922,7 @@
       current = ((i % sl.length) + sl.length) % sl.length;
       sl.forEach((x, idx) => x.classList.toggle('active', idx === current));
       dt.forEach((d, idx) => d.classList.toggle('active', idx === current));
+      if (window.__syncAbout) window.__syncAbout();
     }
     document.getElementById('heroSlideDots').addEventListener('click', (e) => {
       const d = e.target.closest('.dot'); if (d) show(Number(d.dataset.i));
@@ -1002,7 +1003,7 @@
     function syncAboutRatio(){
       const ss = document.getElementById('heroSlideshow'); if (!ss) return;
       ss.style.setProperty('--availh', Math.max(460, Math.round(window.innerHeight - (ss.getBoundingClientRect().top + window.scrollY))) + 'px');
-      const im = ss.querySelector('.hero-slide img');
+      const im = ss.querySelector('.hero-slide.active img') || ss.querySelector('.hero-slide img');
       if (im && im.naturalWidth && im.naturalHeight){
         const r = im.naturalWidth / im.naturalHeight;
         if (r > 0.4 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
@@ -1015,6 +1016,7 @@
     document.addEventListener('load', e => { if (e.target && e.target.matches && e.target.matches('#heroSlideshow .hero-slide img')) paint(e.target); }, true);
     document.querySelectorAll('#heroSlideshow .hero-slide img').forEach(im => { if (im.complete && im.naturalWidth) paint(im); });
   })();
+    window.__syncAbout = syncAboutRatio;
     (function(){ const ss = document.getElementById('heroSlideshow'); if (ss){ ss.addEventListener('load', syncAboutRatio, true); syncAboutRatio(); window.addEventListener('resize', syncAboutRatio); window.addEventListener('load', syncAboutRatio); } })();
     function renderBanner(d){
       if (!d) return;
@@ -1031,6 +1033,7 @@
     (mqHP.addEventListener ? mqHP.addEventListener('change', () => renderBanner(lastD)) : mqHP.addListener(() => renderBanner(lastD)));
     function render(d){
       lastD = d; renderBanner(d);
+      if (d && d.teks){ HilosSafe.teks(d.teks); const h1 = document.getElementById('aboutH1'), tt = d.teks.title; if (h1 && typeof tt === 'string' && tt.trim()){ const ws = tt.trim().slice(0, 120).split(/\s+/); h1.setAttribute('aria-label', tt.trim()); h1.innerHTML = ws.map((w,i) => '<span class="w" aria-hidden="true" style="--i:'+i+'"><span>'+HilosSafe.esc(w)+'</span></span>').join(' '); h1.classList.add('go'); } }
       const p = arr(d.pabrik); if (p) document.querySelector('#procWrap .grid-5').innerHTML = p.map((it, i) => card(it, i, true)).join('');
       const ev = arr(d.event); if (ev) document.querySelector('#panel-event .grid-4').innerHTML = ev.map((it, i) => card(it, i)).join('');
       const cs = arr(d.csr); if (cs) document.querySelector('#panel-csr .grid-3').innerHTML = cs.map((it, i) => card(it, i)).join('');
@@ -1137,7 +1140,7 @@
   }
 
   /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
-  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / var(--ar)), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);}
+  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / var(--ar)), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .about-hero .hero-slide{background-size:cover;background-position:center;}
   .about-hero .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
