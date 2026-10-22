@@ -355,6 +355,22 @@
     object-fit:cover;object-position:top center;
     display:block;
   }
+  /* ===== Media sosial: 2 HP di tengah + galeri kiri & kanan (foto tampil utuh) ===== */
+  .socmed-stage{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(24px,3vw,56px);align-items:center;max-width:1560px;margin:10px auto 0;}
+  .socmed-grid{flex-wrap:nowrap;gap:clamp(12px,1.6vw,24px);margin-top:0;}
+  .phone-mock{width:min(250px,calc((100vw - 54px) / 2));height:auto;}
+  .phone-mock .screen{position:static;inset:auto;aspect-ratio:750 / 1520;}
+  .phone-mock .screen img{object-fit:fill;}
+  .soc-col{display:flex;flex-direction:column;align-items:center;gap:20px;min-width:0;}
+  .soc-gal{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;width:100%;}
+  .soc-gal[data-n="1"]{grid-template-columns:minmax(0,1fr);max-width:420px;}
+  .soc-gal img{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 14px 30px rgba(10,62,112,.16);background:#e8eff6;}
+  .socmed-stage .socmed-label{margin-top:0;text-decoration:none;color:inherit;}
+  @media (max-width:1180px){
+    .socmed-stage{grid-template-columns:minmax(0,1fr);gap:34px;}
+    .socmed-grid{order:-1;}
+    .soc-col{max-width:560px;margin:0 auto;width:100%;}
+  }
 </style>
 
 <section class="socmed-section" id="socmed">
@@ -362,30 +378,31 @@
     <h2 class="reveal">Ikuti Kami di Media Sosial</h2>
     <p class="reveal">Lihat keseharian, promo, dan produk terbaru HILOS di Instagram &amp; TikTok kami.</p>
   </div>
-  <div class="socmed-grid">
-    <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-card reveal-scale">
-      <div class="phone-mock">
-        <div class="screen">
-          <img loading="lazy" decoding="async" src="assets/socmed-ig.jpg" alt="Instagram HILOS - hilos.id.official">
-        </div>
-      </div>
-      <div class="socmed-label socmed-label-ig">
+  <div class="socmed-stage">
+    <div class="soc-col soc-col-l">
+      <div class="soc-gal" id="socGalL" data-n="2"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Galeri Instagram HILOS"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1272328/pexels-photo-1272328.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Galeri Instagram HILOS"></div>
+      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-label socmed-label-ig">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
         <div><strong>Instagram</strong><span>@hilos.id.official</span></div>
-      </div>
-    </a>
+      </a>
+    </div>
 
-    <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-card reveal-scale">
-      <div class="phone-mock">
-        <div class="screen">
-          <img loading="lazy" decoding="async" src="assets/socmed-tiktok.jpg" alt="TikTok HILOS - hilos.official_">
-        </div>
-      </div>
-      <div class="socmed-label socmed-label-tiktok">
+    <div class="socmed-grid">
+      <a href="https://www.instagram.com/hilos.id.official/" target="_blank" rel="noopener" class="socmed-card reveal-scale" aria-label="Instagram HILOS">
+        <div class="phone-mock"><div class="screen"><img loading="lazy" decoding="async" src="assets/socmed-ig.jpg" alt="Instagram HILOS - hilos.id.official"></div></div>
+      </a>
+      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-card reveal-scale" aria-label="TikTok HILOS">
+        <div class="phone-mock"><div class="screen"><img loading="lazy" decoding="async" src="assets/socmed-tiktok.jpg" alt="TikTok HILOS - hilos.official_"></div></div>
+      </a>
+    </div>
+
+    <div class="soc-col soc-col-r">
+      <div class="soc-gal" id="socGalR" data-n="2"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/6633324/pexels-photo-6633324.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Galeri TikTok HILOS"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7872865/pexels-photo-7872865.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Galeri TikTok HILOS"></div>
+      <a href="https://www.tiktok.com/@hilos.official_" target="_blank" rel="noopener" class="socmed-label socmed-label-tiktok">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.83-2.47V9.66a5.71 5.71 0 1 0 4.92 5.66V9.4a7.29 7.29 0 0 0 4.51 1.55V7.86a4.28 4.28 0 0 1-3.45-2.04Z"/></svg>
         <div><strong>TikTok</strong><span>@hilos.official_</span></div>
-      </div>
-    </a>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -411,6 +428,28 @@
   <div class="footer-bottom">© 2026 HILOS. All Rights Reserved.</div>
 </footer>
 
+<script src="assets/supabase.js"></script>
+<script src="assets/supabase-config.js"></script>
+<script>
+(function(){
+  var S = window.HilosSafe; if (!S) return;
+  function fill(id, arr){
+    var el = document.getElementById(id); if (!el || !Array.isArray(arr)) return;
+    var list = arr.map(function(u){ return S.url(u); }).filter(Boolean).slice(0, 2);
+    el.dataset.n = String(list.length);
+    el.style.display = list.length ? '' : 'none';
+    el.innerHTML = list.map(function(u, i){ return '<img loading="lazy" decoding="async" src="' + S.esc(u) + '" alt="Galeri media sosial HILOS ' + (i + 1) + '">'; }).join('');
+  }
+  function apply(d){ if (!d) return; fill('socGalL', d.socL); fill('socGalR', d.socR); }
+  window.__hilosApply = apply;
+  try {
+    var sb = window.getSupabaseClient && window.supabase && window.getSupabaseClient();
+    if (sb) Promise.resolve(sb.from('site_content').select('data').eq('page', 'kontak').maybeSingle()).then(function(r){
+      if (r && r.data && r.data.data && !window.__hilosDraft) apply(r.data.data);
+    }).catch(function(){});
+  } catch (e) {}
+})();
+</script>
 <script src="assets/form-config.js"></script>
 <script src="assets/form-mailer.js"></script>
 <script>
