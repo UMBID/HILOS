@@ -1079,12 +1079,12 @@
 
   <div class="hero-body">
     <div class="hero-copy">
-      <span class="eyebrow reveal">Sandal Premium Indonesia</span>
-      <h1 class="reveal">Comfort<br><em>in every step</em></h1>
-      <p class="reveal">Sendal berkualitas tinggi dengan desain modern, nyaman dipakai dan tahan lama untuk setiap aktivitas Anda — dibuat untuk pria, wanita, dan anak.</p>
+      <span class="eyebrow reveal" data-t="eyebrow">Sandal Premium Indonesia</span>
+      <h1 class="reveal"><span data-t="l1">Comfort</span><br><em data-t="l2">in every step</em></h1>
+      <p class="reveal" data-t="desc">Sendal berkualitas tinggi dengan desain modern, nyaman dipakai dan tahan lama untuk setiap aktivitas Anda — dibuat untuk pria, wanita, dan anak.</p>
       <div class="hero-actions reveal">
-        <a href="/produk" class="btn btn-fill"><span>Lihat Produk</span></a>
-        <a href="/tentang" class="btn btn-outline"><span>Tentang HILOS</span></a>
+        <a href="/produk" class="btn btn-fill"><span data-t="btn1">Lihat Produk</span></a>
+        <a href="/tentang" class="btn btn-outline"><span data-t="btn2">Tentang HILOS</span></a>
       </div>
     </div>
 
@@ -1437,6 +1437,7 @@
     sl.forEach((s2, idx) => s2.classList.toggle('active', idx === i));
     ds.forEach((d, idx) => d.classList.toggle('active', idx === i));
     const lb = document.getElementById('heroSlideLabel'); if (lb) lb.textContent = heroLabels[i] || '';
+    if (typeof syncHeroRatio === 'function') syncHeroRatio();
   }
   function startHeroAutoplay(){
     if (heroTimer) clearInterval(heroTimer); heroTimer = null;
@@ -1470,7 +1471,9 @@
     }
   }
   function applyBeranda(d){
-    if (!d || !Array.isArray(d.hero)) return;
+    if (!d) return;
+    HilosSafe.teks(d.teks);
+    if (!Array.isArray(d.hero)) return;
     const U = HilosSafe.url;
     const urls = d.hero.map(u => U(u)).filter(Boolean).slice(0, 5);
     if (!urls.length) return;
@@ -1507,7 +1510,7 @@
   /* ---------- tinggi hero mengikuti rasio foto (tanpa terpotong) ---------- */
   let heroNavH = 0;
   function syncHeroRatio(){
-    const im = document.querySelector('.hero-bg .hero-slide img');
+    const im = document.querySelector('.hero-bg .hero-slide.active img') || document.querySelector('.hero-bg .hero-slide img');
     const hero = document.getElementById('beranda');
     if (!im || !hero) return;
     if (im.naturalWidth && im.naturalHeight){
@@ -1988,6 +1991,7 @@
   }
 
   /* ============ HERO: foto tidak terpotong (mengikuti rasio foto) ============ */
+  .hero{transition:height .6s ease;}
   .hero{--hero-ar:16/9;--navh:130px;aspect-ratio:auto;min-height:calc(560px + var(--navh));background:#0d4a86;}
   .hero-bg{translate:none !important;top:var(--navh);}
   .hero-bg .photo{inset:0;}
