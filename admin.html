@@ -402,6 +402,9 @@
   .color-card .cc-title{ font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#8a8078; margin:0 0 8px 2px; }
   .color-card .color-chip{ border:none; padding:0; }
   .color-card .photo-cap{ font-size:9.5px; color:#8a8078; text-align:center; display:block; margin-top:2px; }
+  .feat-row{ display:grid; grid-template-columns:1fr 1.6fr; gap:8px; margin-bottom:8px; }
+  .feat-row input{ padding:9px 10px; border:1px solid var(--sand-line); border-radius:6px; font:inherit; font-size:13px; min-width:0; }
+  @media (max-width:640px){ .feat-row{ grid-template-columns:1fr; } }
   .spin-opts{ display:grid; gap:8px; margin:6px 0; }
   .spin-opt{ border:1px solid var(--sand-line); border-radius:8px; padding:10px 12px; background:#fff; }
   .spin-opt strong{ display:block; font-size:12.5px; }
@@ -1224,6 +1227,25 @@
       <div class="spin3d-panel only-3d" id="spin3dPanel"></div>
     </div>
 
+    <!-- ⑥ DESKRIPSI -->
+    <div class="sec-h"><span class="n">6</span><h3>Deskripsi, Keunggulan &amp; Spesifikasi</h3><span class="opt">Opsional</span></div>
+    <p class="sec-help">Teks yang tampil di halaman detail produk (flagship) dan di bagian Produk Andalan Beranda. <strong>Kosongkan</strong> kalau mau memakai teks otomatis bawaan.</p>
+    <div class="field" style="margin-top:0">
+      <label>Deskripsi singkat</label>
+      <textarea id="fDesc" rows="3" maxlength="400" placeholder="Contoh: Sepatu dengan material pilihan yang kuat dan tahan lama..." style="width:100%;padding:10px 12px;border:1px solid var(--sand-line);border-radius:8px;font:inherit;resize:vertical"></textarea>
+      <p class="hint"><span id="fDescCount">0</span>/400 karakter</p>
+    </div>
+    <div class="field">
+      <label>Poin keunggulan (maksimal 4)</label>
+      <div class="feat-rows" id="featRows"></div>
+      <p class="hint">Judul pendek (mis. "Tahan Air") ditampilkan sebagai poin centang. Keterangan di sebelahnya hanya tampil di halaman flagship.</p>
+    </div>
+    <div class="field">
+      <label>Tabel Spesifikasi (maksimal 6 baris)</label>
+      <div class="feat-rows" id="specRows"></div>
+      <p class="hint">Contoh: Material &rarr; Mesh breathable, Sol &rarr; Karet anti-slip. Tampil di tabel Spesifikasi halaman flagship. Baris Tipe, Ukuran, dan Pilihan Warna terisi otomatis. Kosongkan semua untuk memakai spesifikasi otomatis.</p>
+    </div>
+
     <!-- input tersembunyi dipakai tombol "+ Foto 360°" di tiap baris warna -->
     <input type="file" id="spinFramesInput" accept="image/*" multiple style="display:none;">
     <input type="file" id="spinGridInput" accept="image/*" style="display:none;">
@@ -1637,6 +1659,39 @@
   }
   document.getElementById('fIs3d').addEventListener('change', sync3dToggle);
 
+(function(){ let h=''; for(let i=0;i<4;i++) h+=`<div class="feat-row"><input type="text" id="fFt${i}" maxlength="40" placeholder="Judul poin ${i+1}"><input type="text" id="fFd${i}" maxlength="140" placeholder="Keterangan (opsional)"></div>`; document.getElementById('featRows').innerHTML=h; let g=''; for(let i=0;i<6;i++) g+=`<div class="feat-row"><input type="text" id="fSk${i}" maxlength="40" placeholder="Nama ${i+1}, mis. Material"><input type="text" id="fSv${i}" maxlength="120" placeholder="Isi, mis. Mesh breathable"></div>`; document.getElementById('specRows').innerHTML=g; document.getElementById('fDesc').addEventListener('input',e=>{document.getElementById('fDescCount').textContent=e.target.value.length;}); })();
+  function setDescForm(p){
+    p = p || {};
+    document.getElementById('fDesc').value = typeof p.description === 'string' ? p.description : '';
+    document.getElementById('fDescCount').textContent = document.getElementById('fDesc').value.length;
+    const f = Array.isArray(p.features) ? p.features : [];
+    for (let i = 0; i < 4; i++){
+      document.getElementById('fFt'+i).value = f[i] && f[i].title ? f[i].title : '';
+      document.getElementById('fFd'+i).value = f[i] && f[i].desc ? f[i].desc : '';
+    }
+    const sp = Array.isArray(p.specs) ? p.specs : [];
+    for (let i = 0; i < 6; i++){
+      document.getElementById('fSk'+i).value = sp[i] && sp[i].k ? sp[i].k : '';
+      document.getElementById('fSv'+i).value = sp[i] && sp[i].v ? sp[i].v : '';
+    }
+  }
+  function readSpecs(){
+    const out = [];
+    for (let i = 0; i < 6; i++){
+      const k = document.getElementById('fSk'+i).value.trim(), v = document.getElementById('fSv'+i).value.trim();
+      if (k && v) out.push({ k, v });
+    }
+    return out;
+  }
+  function readFeatures(){
+    const out = [];
+    for (let i = 0; i < 4; i++){
+      const t = document.getElementById('fFt'+i).value.trim();
+      if (t) out.push({ title: t, desc: document.getElementById('fFd'+i).value.trim() });
+    }
+    return out;
+  }
+
   function resetForm(){
     pendingDelete.clear(); sessionUploaded.clear();
     editingId = null;
@@ -1653,6 +1708,7 @@
     document.getElementById('fBadge').value = '';
     document.getElementById('fSizes').value = '';
     document.getElementById('fIs3d').checked = false;
+    setDescForm(null);
     sync3dToggle();
     document.getElementById('uploadStatus').textContent = '';
     renderColorList();
@@ -1680,6 +1736,7 @@
     document.getElementById('fBadge').value = p.badge || '';
     document.getElementById('fSizes').value = (p.sizes || []).join(',');
     document.getElementById('fIs3d').checked = !!p.is_3d;
+    setDescForm(p);
     sync3dToggle();
     currentColors = Array.isArray(p.colors) ? p.colors.map(c => ({ ...c, spin: Array.isArray(c.spin) ? [...c.spin] : [] })) : [];
     currentImages = Array.isArray(p.images) ? [...p.images] : [];
@@ -2817,6 +2874,11 @@
     }
     // is_3d OFF: foto 360° yang sudah terlanjur diupload tetap disimpan (tidak hilang), hanya tidak ditampilkan
     const payload = { name, sku, model, category, badge, sizes, colors: cleanColors(), images: currentImages, is_3d };
+    { // deskripsi & keunggulan: hanya dikirim kalau diisi / sudah pernah ada, supaya tetap jalan sebelum SQL dijalankan
+      const d = document.getElementById('fDesc').value.trim(), ft = readFeatures(), sp = readSpecs();
+      const old = editingId ? allProducts.find(x => x.id === editingId) : null;
+      if (d || ft.length || sp.length || (old && ('description' in old || 'features' in old))){ payload.description = d; payload.features = ft; payload.specs = sp; }
+    }
 
     let error;
     if (editingId){
@@ -2828,6 +2890,8 @@
     if (error){
       if (error.code === '23505'){
         showToast('Kode produk sudah dipakai produk lain. Ganti dengan kode lain.');
+      } else if (/description|features|specs/.test(error.message || '') && ('description' in payload)){
+        showToast('Kolom deskripsi belum ada di database. Jalankan file supabase-deskripsi-produk.sql di Supabase dulu, lalu simpan lagi.');
       } else {
         showToast('Gagal simpan: ' + error.message);
       }
