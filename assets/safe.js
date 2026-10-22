@@ -13,5 +13,13 @@
   /* warna hex (#rgb/#rrggbb) saja -> aman dipakai di atribut style */
   function hex(v){ v = String(v == null ? '' : v).trim(); return /^#[0-9a-f]{3,8}$/i.test(v) ? v : '#cccccc'; }
   function youtube(v){ v = String(v == null ? '' : v); var m = v.match(/^https:\/\/(www\.)?(youtube\.com|youtu\.be|youtube-nocookie\.com)\//i); return m ? v : ''; }
-  window.HilosSafe = { esc: esc, url: url, hex: hex, youtube: youtube };
+  /* teks dari admin -> elemen bertanda data-t="nama" (textContent, bukan HTML). Kosong = pakai teks bawaan */
+  function teks(obj, root){
+    if (!obj || typeof obj !== 'object') return;
+    (root || document).querySelectorAll('[data-t]').forEach(function(el){
+      var v = obj[el.getAttribute('data-t')];
+      if (typeof v === 'string' && v.trim()) el.textContent = v.trim().slice(0, 400);
+    });
+  }
+  window.HilosSafe = { esc: esc, url: url, hex: hex, youtube: youtube, teks: teks };
 })();
