@@ -694,6 +694,7 @@
       <button class="tab-nav-btn" data-view="top10View">Top 5 Produk</button>
       <button class="tab-nav-btn" data-view="mapView">Peta Distribusi</button>
       <button class="tab-nav-btn" data-view="contentView">Konten Halaman</button>
+      <button class="tab-nav-btn" data-view="teksView">Teks Halaman</button>
       <button class="tab-nav-btn" data-view="statsView">Statistik</button>
       <button class="tab-nav-btn" data-view="historyView">Riwayat</button>
       <button class="tab-nav-btn" data-view="adminsView" id="tabAdmins" style="display:none;">Kelola Admin</button>
@@ -830,6 +831,22 @@
       </div>
     </div>
     <!-- /historyView -->
+
+    <div id="teksView" class="view" style="display:none;">
+      <div class="page-head">
+        <div>
+          <h1>Teks Halaman</h1>
+          <p>Ubah judul dan kalimat penting di website. Buka tiap halaman, ubah tulisannya, lalu klik Simpan. Kolom yang dikosongkan memakai tulisan bawaan.</p>
+        </div>
+      </div>
+      <div id="tkEditor"></div>
+      <div class="cm-actions" style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="tkSave">Simpan Perubahan</button>
+        <button class="btn btn-outline" id="tkReset">Kembalikan Teks ke Bawaan</button>
+        <span class="cm-status" id="tkStatus"></span>
+      </div>
+    </div>
+    <!-- /teksView -->
 
     <div id="contentView" class="view" style="display:none;">
       <div class="page-head">
@@ -2832,6 +2849,7 @@
       if (btn.dataset.view === 'top10View') loadTop10();
       if (btn.dataset.view === 'mapView') loadCities();
       if (btn.dataset.view === 'contentView') loadContent();
+      if (btn.dataset.view === 'teksView') loadTeks();
       if (btn.dataset.view === 'statsView') loadStats();
       if (btn.dataset.view === 'historyView') loadHistory(true);
       if (btn.dataset.view === 'adminsView') loadAdmins();
@@ -2844,7 +2862,7 @@
   const PX = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
   const CM_DEFAULTS = {
     tentang: {
-      teks: { eyebrow:'Tentang HILOS', title:'Cerita di Balik Setiap Langkah', desc:'Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.' },
+      teks: { eyebrow:'Tentang HILOS', title:'Cerita di Balik Setiap Langkah', desc:'Dari kepedulian terhadap kenyamanan sehari-hari, HILOS hadir menemani langkah jutaan orang Indonesia.', facTitle:'Pabrik & Mesin Produksi', togetherTitle:'Kebersamaan', qualTitle:'Komitmen Kualitas & Keberlanjutan' },
       banner: [PX(6633324,1600), PX(1904770,1600), PX(2529148,1600), PX(1478442,1600)],
       bannerM: [],
       pabrik: [
@@ -2872,7 +2890,7 @@
       }
     },
     beranda: {
-      teks: { eyebrow:'Sandal Premium Indonesia', l1:'Comfort', l2:'in every step', desc:'Sendal berkualitas tinggi dengan desain modern, nyaman dipakai dan tahan lama untuk setiap aktivitas Anda — dibuat untuk pria, wanita, dan anak.', btn1:'Lihat Produk', btn2:'Tentang HILOS', mode:'teks' },
+      teks: { eyebrow:'Sandal Premium Indonesia', l1:'Comfort', l2:'in every step', desc:'Sendal berkualitas tinggi dengan desain modern, nyaman dipakai dan tahan lama untuk setiap aktivitas Anda — dibuat untuk pria, wanita, dan anak.', btn1:'Lihat Produk', btn2:'Tentang HILOS', popTitle:'Pilihan favorit pelanggan HILOS', ctaTitle:'Tumbuh Bersama HILOS', socTitle:'Ikuti HILOS di Media Sosial', mode:'teks' },
       hero: [PX(7872865,1800), PX(1308324,1800), PX(35903658,1800)],
       heroM: ['', '', ''],
       heroL: ['Pria', 'Wanita', 'Anak']
@@ -2882,7 +2900,7 @@
       kategori: [PX(2529148,900), PX(1272328,900), PX(6633324,900)]
     },
     kontak: {
-      teks: { eyebrow:'Hubungi Kami', title:'Contact Us', desc:'Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.', socTitle:'Ikuti Kami di Media Sosial', socDesc:'Lihat keseharian, promo, dan produk terbaru HILOS di Instagram & TikTok kami.' },
+      teks: { eyebrow:'Hubungi Kami', title:'Contact Us', desc:'Ada pertanyaan soal produk, pesanan, atau hal lain? Tim HILOS siap membantu — kirim pesan lewat formulir di bawah atau langsung chat via WhatsApp.', socTitle:'Ikuti Kami di Media Sosial', socDesc:'Lihat keseharian, promo, dan produk terbaru HILOS di Instagram & TikTok kami.', chatTitle:'Ngobrol Langsung?' },
       phones: [
         { img:'assets/socmed-ig.jpg', url:'https://www.instagram.com/hilos.id.official/', handle:'@hilos.id.official' },
         { img:'assets/socmed-tiktok.jpg', url:'https://www.tiktok.com/@hilos.official_', handle:'@hilos.official_' }
@@ -2897,7 +2915,7 @@
       ]
     },
     kerjasama: {
-      teks: { l1:'Tumbuh Bersama', l2:'HILOS', desc:'Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.', btn1:'Lihat Bentuk Kerjasama' },
+      teks: { l1:'Tumbuh Bersama', l2:'HILOS', desc:'Bergabunglah dengan ribuan mitra kami dan dapatkan produk berkualitas tinggi dengan keuntungan kompetitif.', btn1:'Lihat Bentuk Kerjasama', formTitle:'Bentuk Kerjasama', flowTitle:'Alur Menjadi Mitra', ctaTitle:'Siap Memulai Kerjasama?' },
       head: { title:'Apa Kata Mitra Kami?', sub:'Kepercayaan mitra adalah kekuatan pertumbuhan HILOS.' },
       video: { img:PX(7289741,500), title:'Toko Abadi Jaya — Surabaya', loc:'Distributor sejak 2019', quote:'Kualitas produk HILOS konsisten, desainnya selalu up to date dan laris di pasaran. Penjualan kami meningkat signifikan sejak bekerja sama dengan HILOS.', url:'' },
       testi: [
@@ -2909,7 +2927,6 @@
   };
   const CM_SECTIONS = {
     tentang: [
-    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul',multi:0,max:90}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}] },
       { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait)', ar:2.4, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong (atas, bawah, kiri, kanan). Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
       { key:'bannerM', title:'Banner Awal — versi HP (opsional)', sub:'Kosongkan bila foto Website sudah cukup untuk HP', kind:'photos', optional:true, max:8, spec:{ web:'', hp:'1080 × 1920 px (9:16, portrait)', ar:9/16, note:'Bila diisi, tampil menggantikan foto Website di layar HP/tablet (di bawah 900 px). Taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar; judul halaman tampil di bagian bawah foto.' }, help:'' },
       { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, spec:{ web:'1000 × 1000 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Urutan di sini = nomor 01, 02, … di website.' }, help:'' },
@@ -2920,22 +2937,18 @@
   };
 
   CM_SECTIONS.beranda = [
-    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'l1',label:'Judul baris 1',multi:0,max:40}, {k:'l2',label:'Judul baris 2 (berwarna)',multi:0,max:40}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}, {k:'btn1',label:'Tombol 1',multi:0,max:30}, {k:'btn2',label:'Tombol 2',multi:0,max:30}, {k:'mode',label:'Tampilan hero',opts:[['teks','Foto + judul, tombol & kartu website'],['foto','Foto saja (desain foto sudah berisi tulisan)']]}] },
     { key:'hero', title:'Foto Utama Beranda', sub:'Foto yang berganti otomatis di bagian paling atas Beranda (maksimal 5)', kind:'heroList', max:5, mobileKey:'heroM', labelKey:'heroL', spec:{ web:'2400 × 1000 px (2,4:1, panorama lebar)', hp:'1080 × 1920 px (9:16, portrait) — opsional', ar:2.4, arHP:9/16, note:'Rasio 2,4:1 (2400 × 1000 px) paling pas: tampil penuh selebar layar laptop/desktop tanpa terpotong dan tanpa sisi kosong (atas, bawah, kiri, kanan). Foto 16:9 atau rasio lain tetap tampil utuh, hanya sisi kiri-kanannya diisi blur. Taruh subjek di tengah/kanan dan sisakan area kiri-bawah untuk teks (judul tampil di sana). Pakai rasio yang sama untuk semua slide. Bisa 1 sampai 5 foto. Foto HP: taruh subjek utama tepat di tengah, di bagian atas sampai tengah gambar, dan biarkan bagian bawah lebih kosong karena judul dan tombol tampil di sana. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah (3 foto pertama). Label adalah tulisan kecil di dekat titik slide, misalnya Pria / Wanita / Anak.' }, help:'' }
   ];
 
   CM_SECTIONS.produk = [
-    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul',multi:0,max:70}, {k:'desc',label:'Kalimat pendek',multi:1,max:160}] },
     { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], spec:{ web:'900 × 900 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Ditampilkan dalam bentuk lingkaran, jadi taruh produk di tengah foto.' }, help:'' }
   ];
   CM_SECTIONS.kontak = [
-    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'eyebrow',label:'Tulisan kecil di atas judul',multi:0,max:60}, {k:'title',label:'Judul halaman',multi:0,max:60}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:260}, {k:'socTitle',label:'Judul bagian Media Sosial',multi:0,max:70}, {k:'socDesc',label:'Kalimat bagian Media Sosial',multi:1,max:200}] },
     { key:'phones', title:'Tampilan HP di Tengah (Instagram & TikTok)', sub:'Screenshot profil, link tujuan, dan nama akun — 750 × 1520 px', kind:'linkslots', labels:['Instagram','TikTok'], handle:true, spec:{ web:'750 × 1520 px (±1:2, portrait) — screenshot profil HP', hp:'Sama dengan Website', ar:750/1520, note:'Foto tampil UTUH di dalam bingkai HP, tidak terpotong. Link = halaman profil yang dibuka saat diklik; tombol Instagram/TikTok di bawah galeri memakai link yang sama.' } },
     { key:'socL', title:'Galeri Kiri — Instagram', sub:'2 foto di kiri HP, tiap foto punya link tujuan — 1080 × 1350 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1350 px (4:5, portrait)', hp:'Sama dengan Website', ar:4/5, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = postingan Instagram yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } },
     { key:'socR', title:'Galeri Kanan — TikTok', sub:'2 foto di kanan HP, tiap foto punya link tujuan — 1080 × 1920 px', kind:'linkslots', labels:['Foto 1','Foto 2'], spec:{ web:'1080 × 1920 px (9:16, portrait)', hp:'Sama dengan Website', ar:9/16, note:'Foto tampil UTUH, kedua foto sejajar dengan tinggi sama. Link = video TikTok yang dibuka saat foto diklik (kosongkan bila tidak ingin bisa diklik).' } }
   ];
   CM_SECTIONS.kerjasama = [
-    { key:'teks', title:'Teks Utama', sub:'Tulisan judul & kalimat penting di bagian atas halaman', kind:'text', fields:[{k:'l1',label:'Judul baris 1',multi:0,max:40}, {k:'l2',label:'Judul baris 2 (berwarna)',multi:0,max:40}, {k:'desc',label:'Kalimat pendek di bawah judul',multi:1,max:240}, {k:'btn1',label:'Tulisan tombol',multi:0,max:40}] },
     { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
     { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video', spec:{ web:'Sampul 800 × 500 px (16:10)', hp:'Sama dengan Website' } },
     { key:'testi', title:'Testimoni Mitra', sub:'Foto profil, nama, kota, kutipan, dan foto toko', kind:'testi', max:6, spec:{ web:'Foto profil 300 × 300 px (1:1) · Foto toko 800 × 600 px (4:3)', hp:'Sama dengan Website' }, help:'' }
@@ -3263,6 +3276,86 @@
   });
   window.addEventListener('beforeunload', (e) => { if (cmDirty){ e.preventDefault(); e.returnValue = ''; } });
 
+
+
+  /* ---------------- TEKS HALAMAN ---------------- */
+  const TK_PAGES = [
+    { page:'beranda', title:'Beranda', fields:[
+      ['eyebrow','Tulisan kecil di atas judul',0,60],['l1','Judul baris 1',0,40],['l2','Judul baris 2 (berwarna)',0,40],['desc','Kalimat pendek di bawah judul',1,240],['btn1','Tombol 1',0,30],['btn2','Tombol 2',0,30],
+      ['mode','Tampilan hero',0,0,[['teks','Foto + judul, tombol & kartu website'],['foto','Foto saja (desain foto sudah berisi tulisan)']]],
+      ['popTitle','Judul bagian produk favorit',0,80],['ctaTitle','Judul ajakan kemitraan',0,80],['socTitle','Judul bagian Media Sosial',0,80]] },
+    { page:'tentang', title:'Tentang Kami', fields:[
+      ['eyebrow','Tulisan kecil di atas judul',0,60],['title','Judul',0,90],['desc','Kalimat pendek di bawah judul',1,240],
+      ['facTitle','Judul bagian Pabrik',0,80],['togetherTitle','Judul bagian Kebersamaan',0,80],['qualTitle','Judul bagian Komitmen Kualitas',0,90]] },
+    { page:'produk', title:'Produk', fields:[
+      ['eyebrow','Tulisan kecil di atas judul',0,60],['title','Judul',0,70],['desc','Kalimat pendek',1,160]] },
+    { page:'kerjasama', title:'Kerjasama', fields:[
+      ['l1','Judul baris 1',0,40],['l2','Judul baris 2 (berwarna)',0,40],['desc','Kalimat pendek di bawah judul',1,240],['btn1','Tulisan tombol',0,40],
+      ['formTitle','Judul bagian Bentuk Kerjasama',0,80],['flowTitle','Judul bagian Alur Menjadi Mitra',0,80],['ctaTitle','Judul ajakan di bagian bawah',0,80]] },
+    { page:'kontak', title:'Contact Us', fields:[
+      ['eyebrow','Tulisan kecil di atas judul',0,60],['title','Judul halaman',0,60],['desc','Kalimat pendek di bawah judul',1,260],['chatTitle','Judul kotak WhatsApp',0,60],
+      ['socTitle','Judul bagian Media Sosial',0,70],['socDesc','Kalimat bagian Media Sosial',1,200]] }
+  ];
+  const tkEditor = document.getElementById('tkEditor'), tkStatus = document.getElementById('tkStatus');
+  let tkRows = {}, tkData = {}, tkDirty = {};
+  async function loadTeks(){
+    tkStatus.textContent = 'Memuat…';
+    const { data, error } = await sb.from('site_content').select('page, data').in('page', TK_PAGES.map(p => p.page));
+    if (error){ tkStatus.textContent = 'Tabel konten belum dibuat (jalankan supabase-content.sql).'; return; }
+    tkRows = {}; (data || []).forEach(r => { tkRows[r.page] = r.data || {}; });
+    tkData = {}; tkDirty = {};
+    TK_PAGES.forEach(p => { const base = (CM_DEFAULTS[p.page] || {}).teks || {}, saved = (tkRows[p.page] || {}).teks || {}; tkData[p.page] = Object.assign({}, base, saved); });
+    tkStatus.textContent = '';
+    renderTeks();
+  }
+  function renderTeks(){
+    const open = {}; tkEditor.querySelectorAll('details.cm-sec').forEach(d => { open[d.dataset.key] = d.open; });
+    tkEditor.innerHTML = TK_PAGES.map(p => {
+      const tv = tkData[p.page] || {};
+      const body = `<div class="cm-fields">` + p.fields.map(f => {
+        const k = f[0], label = f[1], multi = f[2], mx = f[3], opts = f[4];
+        const path = p.page + '.' + k;
+        return `<span class="cm-lbl">${escA(label)}</span>` + (opts
+          ? `<select data-tp="${path}">${opts.map(o => `<option value="${o[0]}"${(tv[k] || opts[0][0]) === o[0] ? ' selected' : ''}>${escA(o[1])}</option>`).join('')}</select>`
+          : multi ? `<textarea data-tp="${path}" maxlength="${mx}">${escA(tv[k])}</textarea>` : `<input type="text" data-tp="${path}" value="${escA(tv[k])}" maxlength="${mx}">`);
+      }).join('') + `</div>`;
+      return `<details class="cm-sec" data-key="${p.page}" ${open[p.page] ? 'open' : ''}><summary><span>${p.title}<br><small>${p.fields.length} tulisan yang bisa diubah${tkDirty[p.page] ? ' · belum disimpan' : ''}</small></span></summary><div class="cm-body">${body}</div></details>`;
+    }).join('');
+  }
+  tkEditor.addEventListener('input', (e) => {
+    const f = e.target.dataset && e.target.dataset.tp; if (!f) return;
+    const [pg, k] = f.split('.'); (tkData[pg] = tkData[pg] || {})[k] = e.target.value; tkDirty[pg] = true;
+    const sm = tkEditor.querySelector(`details[data-key="${pg}"] summary small`); if (sm && !/belum disimpan/.test(sm.textContent)) sm.textContent += ' · belum disimpan';
+    tkStatus.textContent = 'Ada perubahan yang belum disimpan';
+  });
+  document.getElementById('tkSave').addEventListener('click', async () => {
+    const btn = document.getElementById('tkSave'), pages = Object.keys(tkDirty).filter(k => tkDirty[k]);
+    if (!pages.length){ showToast('Belum ada perubahan.'); return; }
+    btn.disabled = true; btn.textContent = 'Menyimpan…';
+    try {
+      for (const pg of pages){
+        const { data: cur } = await sb.from('site_content').select('data').eq('page', pg).maybeSingle();
+        const base = (cur && cur.data) ? cur.data : clone(CM_DEFAULTS[pg]);
+        const row = Object.assign({}, base, { teks: tkData[pg] });
+        const { error } = await sb.from('site_content').upsert({ page:pg, data:row, updated_at:new Date().toISOString(), updated_by:me.email });
+        if (error) throw error;
+      }
+      showToast('Teks halaman tersimpan.'); await loadTeks();
+    } catch (err){ showToast('Gagal menyimpan: ' + (err.message || err)); }
+    finally { btn.disabled = false; btn.textContent = 'Simpan Perubahan'; }
+  });
+  document.getElementById('tkReset').addEventListener('click', async () => {
+    if (!confirm('Kembalikan semua teks ke tulisan bawaan? Foto tidak ikut berubah.')) return;
+    try {
+      for (const p of TK_PAGES){
+        if (!tkRows[p.page]) continue;
+        const row = Object.assign({}, tkRows[p.page]); delete row.teks;
+        const { error } = await sb.from('site_content').upsert({ page:p.page, data:row, updated_at:new Date().toISOString(), updated_by:me.email });
+        if (error) throw error;
+      }
+      showToast('Teks dikembalikan ke bawaan.'); await loadTeks();
+    } catch (err){ showToast('Gagal: ' + (err.message || err)); }
+  });
 
   /* ---------------- STATISTIK ---------------- */
   const PAGE_LABEL = { index:'Beranda', tentang:'Tentang Kami', produk:'Produk', flagship:'Produk Unggulan', kerjasama:'Kerjasama', kontak:'Contact Us', 'social-media':'Social Media', pdp:'Detail Produk' };
