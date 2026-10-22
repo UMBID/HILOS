@@ -1140,9 +1140,9 @@
   }
 
   /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
-  .about-hero .hero-slideshow{--ar:1.7778;height:min(calc(100vw / 2.4), var(--availh, calc(100vh - 150px))) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
+  .about-hero .hero-slideshow{--ar:1.7778;height:var(--availh, calc(100vh - 150px)) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
-  .about-hero .hero-slide{background-size:cover;background-position:center;}
+  .about-hero .hero-slide{background-size:100% 100%;background-position:center;}
   .about-hero .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
   .about-hero .hero-slide img{position:relative;z-index:1;}
 
