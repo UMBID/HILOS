@@ -224,6 +224,12 @@
   .map-admin-grid{ display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:20px; align-items:start; }
   .map-admin-map{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:10px; position:sticky; top:12px; }
   .map-admin-map svg{ width:100%; height:auto; display:block; cursor:crosshair; }
+  .mz-bar{ display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+  .mz-bar .btn{ padding:6px 12px; min-width:36px; font-size:13px; }
+  .mz-bar #mzLabel{ min-width:44px; text-align:center; font-weight:700; font-size:12px; color:var(--ink); }
+  .mz-hint{ font-size:11.5px; color:var(--muted,#6b7785); margin-left:auto; }
+  .map-admin-map.panning svg{ cursor:grabbing; }
+  .map-admin-map svg{ touch-action:none; background:#f5f9fc; border-radius:6px; }
   .map-admin-map .island-shapes{ fill:#cddfec; }
   .map-admin-map .island-shapes path{ stroke:none; }
   .map-admin-map .apin circle{ fill:#1c4a73; stroke:#fff; stroke-width:4; }
@@ -584,6 +590,25 @@
   }
   .cm-preview.full{ position:fixed; inset:16px; z-index:90; margin:0; display:flex; flex-direction:column; box-shadow:0 0 0 100vmax rgba(13,27,42,.6); }
   .cm-preview.full .cmp-stage{ flex:1; }
+  .cm-spec{ background:#eef4fa; border:1px solid #d3e1ee; border-left:3px solid #2e6fb0; border-radius:8px; padding:10px 14px; margin:12px 0; font-size:12.5px; color:#2b3a4a; }
+  .cm-spec-t{ font-weight:700; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#1c4a73; margin-bottom:6px; }
+  .cm-spec-rows{ display:flex; flex-direction:column; gap:3px; }
+  .cm-spec-rows div{ display:flex; gap:10px; }
+  .cm-spec-rows b{ min-width:62px; color:#0d1b2a; }
+  .cm-spec-n{ margin-top:6px; color:#5a6a7a; font-size:12px; line-height:1.5; }
+  .cm-thumb.empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; background:#f5f9fc; color:#5a7592; }
+  .cm-thumb.empty b{ font-size:26px; line-height:1; font-weight:400; }
+  .cm-thumb.empty span{ position:static; background:none; color:#5a7592; font-size:10.5px; padding:2px 0 0; }
+  .cm-slots.has-hp{ grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); }
+  .cm-slot-pair{ display:grid; grid-template-columns:1.4fr 1fr; gap:10px; align-items:start; }
+  .cm-slot-pair .cm-slot-one{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .cm-slot-pair .cm-tag{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#5a6a7a; }
+  .cm-slot-pair .cm-tag i{ font-weight:400; text-transform:none; letter-spacing:0; }
+  .cm-slot-pair .cm-web .cm-thumb{ width:100%; height:auto; aspect-ratio:16/9; }
+  .cm-slots:not(.has-hp) .cm-slot-pair{ grid-template-columns:1fr; }
+  .cm-slots:not(.has-hp) .cm-slot-pair .cm-web .cm-thumb{ aspect-ratio:1/1; max-width:220px; }
+  .cm-slot-pair .cm-hp .cm-thumb{ width:100%; height:auto; aspect-ratio:4/5; }
+  .cm-clear{ background:none; border:none; color:#a23a1e; font-size:11px; text-decoration:underline; cursor:pointer; padding:0; text-align:left; }
   .cm-slots{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; margin-top:10px; }
   .cm-slot{ display:flex; flex-direction:column; gap:8px; }
   .cm-slot .cm-thumb{ width:100%; height:auto; aspect-ratio:4/3; }
@@ -2814,6 +2839,7 @@
   const CM_DEFAULTS = {
     tentang: {
       banner: [PX(6633324,1600), PX(1904770,1600), PX(2529148,1600), PX(1478442,1600)],
+      bannerM: [],
       pabrik: [
         { img:PX(8973680,400), title:'Persiapan Bahan Baku', desc:'Pemilihan dan persiapan bahan baku sebagai dasar kualitas produk.' },
         { img:PX(19316517,400), title:'Proses Produksi', desc:'Tahap produksi yang dijalankan dengan prosedur yang terukur.' },
@@ -2839,7 +2865,8 @@
       }
     },
     beranda: {
-      hero: [PX(7872865,1800), PX(1308324,1800), PX(35903658,1800)]
+      hero: [PX(7872865,1800), PX(1308324,1800), PX(35903658,1800)],
+      heroM: ['', '', '']
     },
     produk: {
       kategori: [PX(2529148,900), PX(1272328,900), PX(6633324,900)]
@@ -2856,24 +2883,25 @@
   };
   const CM_SECTIONS = {
     tentang: [
-      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, help:'Disarankan foto lebar (landscape), minimal 1600 px.' },
-      { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, help:'Foto persegi lebih rapi. Urutan di sini = nomor 01, 02, … di website.' },
-      { key:'event', title:'Kebersamaan — Event', sub:'Tab Event', kind:'cards', max:8 },
-      { key:'csr', title:'Kebersamaan — CSR', sub:'Tab CSR', kind:'cards', max:6 },
-      { key:'outing', title:'Kebersamaan — Outing', sub:'Tab Outing: 1 foto besar, 4 foto kecil, 1 kartu video', kind:'outing' }
+      { key:'banner', title:'Banner Awal', sub:'Foto yang berganti otomatis di bagian atas halaman', kind:'photos', max:8, spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1350 px (4:5, portrait)', ar:16/9, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk semua foto banner. Di layar lebar judul halaman menumpuk di bagian bawah foto, jadi sisakan area kosong di bawah; di HP judul berada di bawah foto.' }, help:'' },
+      { key:'bannerM', title:'Banner Awal — versi HP (opsional)', sub:'Kosongkan bila foto Website sudah cukup untuk HP', kind:'photos', optional:true, max:8, spec:{ web:'', hp:'1080 × 1350 px (4:5, portrait)', ar:4/5, note:'Bila diisi, tampil menggantikan foto Website di layar HP/tablet (di bawah 900 px).' }, help:'' },
+      { key:'pabrik', title:'Pabrik & Mesin Produksi', sub:'Foto + judul + keterangan tiap tahap', kind:'cards', max:8, spec:{ web:'1000 × 1000 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Urutan di sini = nomor 01, 02, … di website.' }, help:'' },
+      { key:'event', title:'Kebersamaan — Event', sub:'Tab Event', kind:'cards', max:8, spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } },
+      { key:'csr', title:'Kebersamaan — CSR', sub:'Tab CSR', kind:'cards', max:6, spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } },
+      { key:'outing', title:'Kebersamaan — Outing', sub:'Tab Outing: 1 foto besar, 4 foto kecil, 1 kartu video', kind:'outing', spec:{ web:'Bebas (landscape atau portrait), lebar min. 1200 px', hp:'Sama dengan Website', note:'Foto tampil UTUH sesuai bentuk aslinya, tidak dipotong.' } }
     ]
   };
 
   CM_SECTIONS.beranda = [
-    { key:'hero', title:'Foto Utama Beranda', sub:'3 foto yang berganti otomatis di bagian paling atas Beranda', kind:'slots', labels:['Slide 1 — Pria','Slide 2 — Wanita','Slide 3 — Anak'], help:'Pakai foto landscape (lebar), minimal 1600 px. Foto yang sama juga dipakai untuk bulatan kecil di sudut kanan bawah.' }
+    { key:'hero', title:'Foto Utama Beranda', sub:'3 foto yang berganti otomatis di bagian paling atas Beranda', kind:'slots', mobileKey:'heroM', labels:['Slide 1 — Pria','Slide 2 — Wanita','Slide 3 — Anak'], spec:{ web:'1920 × 1080 px (16:9, landscape)', hp:'1080 × 1350 px (4:5, portrait) — opsional', ar:16/9, arHP:4/5, note:'Foto tampil UTUH, tidak terpotong. Pakai rasio yang sama untuk ketiga slide. Bila foto HP kosong, HP memakai foto Website. Foto Website juga dipakai untuk bulatan kecil di sudut kanan bawah.' }, help:'' }
   ];
   CM_SECTIONS.produk = [
-    { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], help:'Foto persegi atau produk di tengah foto lebih bagus, karena ditampilkan dalam bentuk lingkaran.' }
+    { key:'kategori', title:'Foto 3 Kategori Produk', sub:'Tiga lingkaran besar di bagian atas halaman Produk', kind:'slots', labels:['Sepatu','Sandal Pria','Sandal Wanita'], spec:{ web:'900 × 900 px (1:1, persegi)', hp:'Sama dengan Website', ar:1, note:'Ditampilkan dalam bentuk lingkaran, jadi taruh produk di tengah foto.' }, help:'' }
   ];
   CM_SECTIONS.kerjasama = [
     { key:'head', title:'Judul Bagian', sub:'Judul dan kalimat di atas testimoni', kind:'head' },
-    { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video' },
-    { key:'testi', title:'Testimoni Mitra', sub:'Foto profil, nama, kota, kutipan, dan foto toko', kind:'testi', max:6, help:'Foto profil persegi, foto toko landscape.' }
+    { key:'video', title:'Kartu Video Review', sub:'Foto sampul, nama, kutipan, dan link YouTube', kind:'video', spec:{ web:'Sampul 800 × 500 px (16:10)', hp:'Sama dengan Website' } },
+    { key:'testi', title:'Testimoni Mitra', sub:'Foto profil, nama, kota, kutipan, dan foto toko', kind:'testi', max:6, spec:{ web:'Foto profil 300 × 300 px (1:1) · Foto toko 800 × 600 px (4:3)', hp:'Sama dengan Website' }, help:'' }
   ];
   let cmData = null, cmHasRow = false, cmDirty = false, cmUploadCb = null, cmUploadMulti = false;
   const cmPageSel = document.getElementById('cmPage'), cmEditor = document.getElementById('cmEditor');
@@ -2962,7 +2990,14 @@
   cmEditor.addEventListener('toggle', (e) => { const d = e.target; if (d && d.matches && d.matches('details.cm-sec') && d.open) cmpPush(d.dataset.key); }, true);
 
   function cmThumb(url, onPickPath){
+    if (!url) return `<div class="cm-thumb empty" data-pick="${onPickPath}"><b>+</b><span>Tambah foto</span></div>`;
     return `<div class="cm-thumb" data-pick="${onPickPath}"><img src="${escA(url)}" alt=""><span>Ganti foto</span></div>`;
+  }
+  function cmSpec(sec){
+    const sp = sec.spec; if (!sp) return sec.help ? `<div class="cm-help">${sec.help}</div>` : '';
+    return `<div class="cm-spec"><div class="cm-spec-t">Ukuran foto yang disarankan</div>
+      <div class="cm-spec-rows">${sp.web ? `<div><b>Website</b><span>${sp.web}</span></div>` : ''}${sp.hp ? `<div><b>HP</b><span>${sp.hp}</span></div>` : ''}</div>
+      ${sp.note ? `<div class="cm-spec-n">${sp.note}</div>` : ''}<div class="cm-spec-n">Format JPG / PNG / WebP. Ukuran file dikecilkan otomatis saat diunggah.</div></div>`;
   }
 
   function renderContentEditor(){
@@ -2972,18 +3007,23 @@
       let body = '';
       const list = cmData[sec.key];
       if (sec.kind === 'photos'){
-        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((u, i) => `
+        body = cmSpec(sec) + `<div class="cm-list">` + list.map((u, i) => `
           <div class="cm-item" data-i="${i}">
             ${cmThumb(u, sec.key + '.' + i)}
             <div class="cm-fields"><span class="cm-lbl">Foto ${i + 1}</span><span class="hint">Tampil bergantian sesuai urutan.</span></div>
-            ${ctrl(sec.key, i, list.length)}
+            ${ctrl(sec.key, i, list.length, sec.optional ? 0 : 1)}
           </div>`).join('') + `</div>
           <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah foto</button>`;
       } else if (sec.kind === 'slots'){
-        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-slots">` + list.map((u, i) => `
-          <div class="cm-slot">${cmThumb(u, sec.key + '.' + i)}<span class="cm-lbl">${sec.labels[i] || ('Foto ' + (i + 1))}</span></div>`).join('') + `</div>`;
+        const mk = sec.mobileKey, ml = mk ? (cmData[mk] || []) : null;
+        body = cmSpec(sec) + `<div class="cm-slots${mk ? ' has-hp' : ''}">` + list.map((u, i) => `
+          <div class="cm-slot"><span class="cm-lbl">${sec.labels[i] || ('Foto ' + (i + 1))}</span>
+            <div class="cm-slot-pair">
+              <div class="cm-slot-one cm-web"><span class="cm-tag">Website</span>${cmThumb(u, sec.key + '.' + i)}</div>
+              ${mk ? `<div class="cm-slot-one cm-hp"><span class="cm-tag">HP <i>(opsional)</i></span>${cmThumb(ml[i] || '', mk + '.' + i)}${ml[i] ? `<button type="button" class="cm-clear" data-clear="${mk}.${i}">Hapus foto HP</button>` : ''}</div>` : ''}
+            </div></div>`).join('') + `</div>`;
       } else if (sec.kind === 'cards'){
-        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((it, i) => `
+        body = cmSpec(sec) + `<div class="cm-list">` + list.map((it, i) => `
           <div class="cm-item" data-i="${i}">
             ${cmThumb(it.img, sec.key + '.' + i + '.img')}
             <div class="cm-fields">
@@ -2998,7 +3038,7 @@
           <span class="cm-lbl">Kalimat pendek</span><input type="text" value="${escA(list.sub)}" data-f="head.sub" maxlength="160"></div>`;
       } else if (sec.kind === 'video'){
         const v = list;
-        body = `<div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(v.img, 'video.img')}
+        body = cmSpec(sec) + `<div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(v.img, 'video.img')}
           <div class="cm-fields">
             <span class="cm-lbl">Nama toko / mitra</span><input type="text" value="${escA(v.title)}" data-f="video.title" maxlength="80">
             <span class="cm-lbl">Keterangan kecil</span><input type="text" value="${escA(v.loc)}" data-f="video.loc" maxlength="80">
@@ -3007,7 +3047,7 @@
             <span class="hint">Kalau link diisi, tombol putar aktif dan video diputar di pop-up. Kalau kosong, tombol putar disembunyikan.</span>
           </div></div>`;
       } else if (sec.kind === 'testi'){
-        body = `<div class="cm-help">${sec.help || ''}</div><div class="cm-list">` + list.map((it, i) => `
+        body = cmSpec(sec) + `<div class="cm-list">` + list.map((it, i) => `
           <div class="cm-item" data-i="${i}">
             <div style="display:flex;flex-direction:column;gap:8px;">${cmThumb(it.avatar, sec.key + '.' + i + '.avatar')}${cmThumb(it.img, sec.key + '.' + i + '.img')}</div>
             <div class="cm-fields">
@@ -3021,7 +3061,7 @@
           <button class="btn btn-outline cm-add" data-add="${sec.key}" ${list.length >= sec.max ? 'disabled' : ''}>+ Tambah testimoni</button>`;
       } else if (sec.kind === 'outing'){
         const o = list;
-        body = `<div class="cm-sub">Foto besar</div>
+        body = cmSpec(sec) + `<div class="cm-sub">Foto besar</div>
           <div class="cm-item" style="grid-template-columns:96px 1fr;">${cmThumb(o.main, 'outing.main')}<div class="cm-fields"><span class="hint">Foto utama di sisi kiri.</span></div></div>
           <div class="cm-sub">4 foto kecil</div>
           <div class="cm-outing-side">` + o.side.map((u, i) => cmThumb(u, 'outing.side.' + i)).join('') + `</div>
@@ -3036,11 +3076,11 @@
       return `<details class="cm-sec" data-key="${sec.key}" ${open[sec.key] ? 'open' : ''}><summary><span>${sec.title}<br><small>${sec.sub}</small></span></summary><div class="cm-body">${body}</div></details>`;
     }).join('');
   }
-  function ctrl(key, i, n){
+  function ctrl(key, i, n, min = 1){
     return `<div class="cm-ctrl">
       <button type="button" data-mv="${key}.${i}.-1" ${i === 0 ? 'disabled' : ''} title="Naik">↑</button>
       <button type="button" data-mv="${key}.${i}.1" ${i === n - 1 ? 'disabled' : ''} title="Turun">↓</button>
-      <button type="button" class="cm-del" data-rm="${key}.${i}" ${n <= 1 ? 'disabled' : ''} title="Hapus">✕</button></div>`;
+      <button type="button" class="cm-del" data-rm="${key}.${i}" ${n <= min ? 'disabled' : ''} title="Hapus">✕</button></div>`;
   }
   function cmGet(path){ return path.split('.').reduce((o, k) => (o == null ? o : o[k]), cmData); }
   function cmSetPath(path, v){
@@ -3048,8 +3088,26 @@
     const tgt = ks.reduce((o, k) => o[k], cmData); tgt[last] = v;
   }
 
+  function cmDims(file){
+    return new Promise(res => { const u = URL.createObjectURL(file), im = new Image();
+      im.onload = () => { res({ w:im.naturalWidth, h:im.naturalHeight }); URL.revokeObjectURL(u); };
+      im.onerror = () => { res(null); URL.revokeObjectURL(u); }; im.src = u; });
+  }
+  async function cmCheckRatio(file, pickPath){
+    try {
+      const key = String(pickPath || '').split('.')[0];
+      const sec = CM_SECTIONS[cmPageSel.value].find(x => x.key === key || x.mobileKey === key); if (!sec || !sec.spec) return;
+      const isHP = (sec.mobileKey === key) || key === 'bannerM';
+      const want = isHP ? (sec.spec.arHP || sec.spec.ar) : sec.spec.ar; if (!want) return;
+      const d = await cmDims(file); if (!d) return;
+      const got = d.w / d.h, diff = Math.abs(got - want) / want;
+      const need = isHP ? (sec.spec.hp || '') : (sec.spec.web || '');
+      if (d.w < 1000 && want >= 1) showToast('Foto kecil (' + d.w + '×' + d.h + ' px), bisa tampak buram. Disarankan ' + need + '.');
+      else if (diff > 0.12) showToast('Rasio foto ' + d.w + '×' + d.h + ' px berbeda dari saran (' + need + '). Foto tetap dipakai, cek di Pratinjau.');
+    } catch (e) {}
+  }
   async function cmUpload(file){
-    const f = await compressImageFile(file, { maxDim:1600, quality:0.82 });
+    const f = await compressImageFile(file, { maxDim:2000, quality:0.82 });
     const path = `content/${cmPageSel.value}/${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     return await storeUpload(path, f, f.type);
   }
@@ -3061,12 +3119,15 @@
       cmUploadCb = async (files) => {
         pick.classList.add('busy');
         try {
+          cmCheckRatio(files[0], pick.dataset.pick);
           const url = await cmUpload(files[0]);
           cmSetPath(pick.dataset.pick, url); cmSetDirty(true); renderContentEditor();
         } catch (err){ showToast('Gagal upload: ' + (err.message || err)); pick.classList.remove('busy'); }
       };
       cmFile.multiple = false; cmFile.value = ''; cmFile.click(); return;
     }
+    const clr = e.target.closest('[data-clear]');
+    if (clr){ cmSetPath(clr.dataset.clear, ''); cmSetDirty(true); renderContentEditor(); return; }
     const add = e.target.closest('[data-add]');
     if (add){
       const key = add.dataset.add, sec = CM_SECTIONS[cmPageSel.value].find(s => s.key === key);
@@ -3076,6 +3137,7 @@
         try {
           for (const file of Array.from(files)){
             if (cmData[key].length >= sec.max) break;
+            cmCheckRatio(file, key);
             const url = await cmUpload(file);
             if (sec.kind === 'photos') cmData[key].push(url);
             else if (sec.kind === 'testi') cmData[key].push({ avatar:url, name:'Nama mitra', role:'Jenis usaha · Kota', quote:'Tulis kutipan mitra di sini.', img:url });
@@ -3096,7 +3158,8 @@
     const rm = e.target.closest('[data-rm]');
     if (rm){
       const [key, i] = rm.dataset.rm.split('.');
-      if (cmData[key].length <= 1) return;
+      const rsec = CM_SECTIONS[cmPageSel.value].find(x => x.key === key);
+      if (cmData[key].length <= (rsec && rsec.optional ? 0 : 1)) return;
       if (!confirm('Hapus item ini dari daftar?')) return;
       cmData[key].splice(+i, 1); cmSetDirty(true); renderContentEditor();
     }
@@ -3243,12 +3306,41 @@
     renderCities();
   }
 
+  /* ---- zoom & geser peta (supaya menaruh titik lebih presisi) ---- */
+  const mz = { k:1, x:0, y:0 };   // k = zoom, (x,y) = pojok kiri-atas area yang terlihat (satuan peta)
+  function mzClamp(){
+    const M = window.HilosDistMap; if (!M) return;
+    const w = M.width / mz.k, h = M.height / mz.k;
+    mz.x = Math.max(0, Math.min(M.width - w, mz.x)); mz.y = Math.max(0, Math.min(M.height - h, mz.y));
+  }
+  function mzViewBox(){ const M = window.HilosDistMap; mzClamp(); return `${mz.x} ${mz.y} ${M.width / mz.k} ${M.height / mz.k}`; }
+  function mzPins(){
+    const inv = 1 / mz.k;
+    return cityRows.map((c, i) => (c.x == null) ? '' : `
+      <g class="apin${i === citySel ? ' sel' : ''}${c.is_active ? '' : ' off'}" transform="translate(${c.x},${c.y})"><g transform="scale(${inv})"><circle r="${i === citySel ? 13 : 9}"/><text x="20" y="10">${escHtml(c.name || '')}</text></g></g>`).join('');
+  }
+  function mzApply(){
+    const svg = document.getElementById('mapAdminSvg'); if (!svg) return;
+    svg.setAttribute('viewBox', mzViewBox());
+    svg.querySelectorAll('.apins').forEach(n => n.innerHTML = mzPins());
+    const lbl = document.getElementById('mzLabel'); if (lbl) lbl.textContent = Math.round(mz.k * 100) + '%';
+  }
+  function mzZoom(f, cx, cy){
+    const M = window.HilosDistMap; if (!M) return;
+    const nk = Math.max(1, Math.min(8, mz.k * f)); if (nk === mz.k) return;
+    // jaga titik (cx,cy) tetap di bawah kursor
+    const w0 = M.width / mz.k, h0 = M.height / mz.k;
+    const fx = cx == null ? 0.5 : (cx - mz.x) / w0, fy = cy == null ? 0.5 : (cy - mz.y) / h0;
+    const px = mz.x + w0 * fx, py = mz.y + h0 * fy;
+    mz.k = nk; const w1 = M.width / nk, h1 = M.height / nk;
+    mz.x = px - w1 * fx; mz.y = py - h1 * fy; mzApply();
+  }
+
   function renderCities(){
     const M = window.HilosDistMap;
-    const pins = cityRows.map((c, i) => (c.x == null) ? '' : `
-      <g class="apin${i === citySel ? ' sel' : ''}${c.is_active ? '' : ' off'}" transform="translate(${c.x},${c.y})"><circle r="${i === citySel ? 13 : 9}"/><text x="20" y="10">${escHtml(c.name || '')}</text></g>`).join('');
     document.getElementById('mapAdminMap').innerHTML = M
-      ? `<svg viewBox="0 0 ${M.width} ${M.height}" id="mapAdminSvg">${M.shapes}${pins}</svg>`
+      ? `<div class="mz-bar"><button type="button" class="btn btn-outline" data-mz="out" title="Perkecil">−</button><span id="mzLabel">${Math.round(mz.k * 100)}%</span><button type="button" class="btn btn-outline" data-mz="in" title="Perbesar">+</button><button type="button" class="btn btn-outline" data-mz="reset">Atur ulang</button><span class="mz-hint">Scroll / tombol + − untuk zoom, geser dengan menyeret.</span></div>
+         <svg viewBox="${mzViewBox()}" id="mapAdminSvg">${M.shapes}<g class="apins">${mzPins()}</g></svg>`
       : '<p class="hint">Peta tidak termuat. Pastikan file assets/dist-map.js sudah diupload.</p>';
 
     document.getElementById('mapAdminList').innerHTML = cityRows.length ? cityRows.map((c, i) => `
@@ -3269,16 +3361,50 @@
       : 'Pilih kota di daftar, lalu <b>klik lokasinya di peta</b> untuk memindahkan titik.';
   }
 
-  document.getElementById('mapAdminMap').addEventListener('click', (e) => {
-    const svg = document.getElementById('mapAdminSvg');
-    if (!svg || citySel < 0 || !cityRows[citySel]) return;
-    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
-    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-    cityRows[citySel].x = Math.max(0, Math.min(window.HilosDistMap.width, Math.round(p.x)));
-    cityRows[citySel].y = Math.max(0, Math.min(window.HilosDistMap.height, Math.round(p.y)));
-    citySel = -1;
-    renderCities();
-  });
+  (function(){
+    const box = document.getElementById('mapAdminMap');
+    let drag = null, moved = false;
+    const toMap = (svg, cx, cy) => { const pt = svg.createSVGPoint(); pt.x = cx; pt.y = cy; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    box.addEventListener('click', (e) => {
+      const z = e.target.closest('[data-mz]');
+      if (z){
+        if (z.dataset.mz === 'reset'){ mz.k = 1; mz.x = 0; mz.y = 0; mzApply(); }
+        else mzZoom(z.dataset.mz === 'in' ? 1.6 : 1 / 1.6);
+        return;
+      }
+      if (moved){ moved = false; return; }
+      const svg = document.getElementById('mapAdminSvg');
+      if (!svg || citySel < 0 || !cityRows[citySel]) return;
+      const p = toMap(svg, e.clientX, e.clientY);
+      cityRows[citySel].x = Math.max(0, Math.min(window.HilosDistMap.width, Math.round(p.x)));
+      cityRows[citySel].y = Math.max(0, Math.min(window.HilosDistMap.height, Math.round(p.y)));
+      citySel = -1;
+      renderCities();
+    });
+    box.addEventListener('wheel', (e) => {
+      const svg = document.getElementById('mapAdminSvg'); if (!svg || !svg.contains(e.target)) return;
+      e.preventDefault();
+      const p = toMap(svg, e.clientX, e.clientY);
+      mzZoom(e.deltaY < 0 ? 1.25 : 1 / 1.25, p.x, p.y);
+    }, { passive:false });
+    box.addEventListener('pointerdown', (e) => {
+      const svg = document.getElementById('mapAdminSvg'); if (!svg || !svg.contains(e.target) || e.button > 0) return;
+      drag = { sx:e.clientX, sy:e.clientY, ox:mz.x, oy:mz.y, id:e.pointerId }; moved = false;
+    });
+    box.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const svg = document.getElementById('mapAdminSvg'); if (!svg) return;
+      const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      if (!moved && Math.hypot(dx, dy) < 5) return;
+      if (mz.k <= 1) return;
+      moved = true; box.classList.add('panning');
+      const r = svg.getBoundingClientRect(), M = window.HilosDistMap;
+      const sc = (M.width / mz.k) / r.width;
+      mz.x = drag.ox - dx * sc; mz.y = drag.oy - dy * sc; mzApply();
+    });
+    const end = () => { drag = null; box.classList.remove('panning'); setTimeout(() => { moved = false; }, 0); };
+    box.addEventListener('pointerup', end); box.addEventListener('pointerleave', end); box.addEventListener('pointercancel', end);
+  })();
 
   const cityList = document.getElementById('mapAdminList');
   cityList.addEventListener('input', (e) => {
@@ -3291,7 +3417,7 @@
     if (f === 'name' || f === 'is_active'){
       // perbarui label pin tanpa membuat ulang input (agar kursor tidak lompat)
       const svg = document.getElementById('mapAdminSvg');
-      if (svg){ const m = window.HilosDistMap; svg.innerHTML = m.shapes + cityRows.map((c, i) => (c.x == null) ? '' : `<g class="apin${i === citySel ? ' sel' : ''}${c.is_active ? '' : ' off'}" transform="translate(${c.x},${c.y})"><circle r="${i === citySel ? 13 : 9}"/><text x="20" y="10">${escHtml(c.name || '')}</text></g>`).join(''); }
+      if (svg) mzApply();
     }
   });
   cityList.addEventListener('click', (e) => {
