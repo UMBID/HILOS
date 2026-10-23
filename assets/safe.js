@@ -13,12 +13,27 @@
   /* warna hex (#rgb/#rrggbb) saja -> aman dipakai di atribut style */
   function hex(v){ v = String(v == null ? '' : v).trim(); return /^#[0-9a-f]{3,8}$/i.test(v) ? v : '#cccccc'; }
   function youtube(v){ v = String(v == null ? '' : v); var m = v.match(/^https:\/\/(www\.)?(youtube\.com|youtu\.be|youtube-nocookie\.com)\//i); return m ? v : ''; }
-  /* teks dari admin -> elemen bertanda data-t="nama" (textContent, bukan HTML). Kosong = pakai teks bawaan */
+  /* teks dari admin -> elemen bertanda data-t="nama" (textContent, bukan HTML).
+     Kunci tidak ada = pakai teks bawaan halaman. Kunci ada tapi kosong = teks DISEMBUNYIKAN (sengaja dikosongkan admin). */
+  function hide(n, on){
+    if (!n) return;
+    if (on){ if (n.getAttribute('data-th') !== '1'){ n.setAttribute('data-th', '1'); n.setAttribute('data-thd', n.style.display || ''); } n.style.display = 'none'; }
+    else if (n.getAttribute('data-th') === '1'){ n.style.display = n.getAttribute('data-thd') || ''; n.removeAttribute('data-th'); n.removeAttribute('data-thd'); }
+  }
   function teks(obj, root){
     if (!obj || typeof obj !== 'object') return;
     (root || document).querySelectorAll('[data-t]').forEach(function(el){
-      var v = obj[el.getAttribute('data-t')];
-      if (typeof v === 'string' && v.trim()) el.textContent = v.trim().slice(0, 400);
+      var k = el.getAttribute('data-t');
+      if (!Object.prototype.hasOwnProperty.call(obj, k)) return;
+      var v = obj[k];
+      if (typeof v !== 'string') return;
+      v = v.trim();
+      if (v) el.textContent = v.slice(0, 400); else el.textContent = '';
+      var par = el.parentElement, tgt = el;
+      // tombol/link yang isinya hanya teks ini ikut disembunyikan, supaya tidak tersisa kotak kosong
+      if (par && (par.tagName === 'A' || par.tagName === 'BUTTON') && par.children.length === 1 && el.tagName === 'SPAN') tgt = par;
+      hide(tgt, !v);
+      var nx = el.nextElementSibling; if (nx && nx.tagName === 'BR') hide(nx, !v);
     });
   }
   window.HilosSafe = { esc: esc, url: url, hex: hex, youtube: youtube, teks: teks };
