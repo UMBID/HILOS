@@ -865,7 +865,7 @@
       <div class="page-head">
         <div>
           <h1>Teks Halaman</h1>
-          <p>Ubah judul dan kalimat penting di website. Buka tiap halaman, ubah tulisannya, lalu klik Simpan. Kolom yang dikosongkan memakai tulisan bawaan.</p>
+          <p>Ubah judul dan kalimat penting di website. Buka tiap halaman, ubah tulisannya, lalu klik Simpan. <strong>Kolom yang dikosongkan = tulisan itu tidak tampil di website</strong> (judul lain tetap tampil). Untuk kembali ke tulisan awal, klik “Kembalikan Teks ke Bawaan”.</p>
         </div>
       </div>
       <div id="tkEditor"></div>
@@ -2864,7 +2864,12 @@
     const sizes = document.getElementById('fSizes').value
       .split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
 
-    if (!name || !model){ showToast('Nama dan model produk wajib diisi.'); return; }
+    if (!name || !model){ showToast('Nama dan kategori produk wajib diisi.'); return; }
+    if (!currentImages.length && !currentColors.some(c => c && c.image)){
+      showToast('Foto katalog belum ada. Pilih satu foto di langkah 2 (Foto Katalog).');
+      document.getElementById('coverBox').scrollIntoView({ behavior:'smooth', block:'center' });
+      return;
+    }
 
     // HARGA DINONAKTIFKAN: payload asli menyertakan `price,` setelah `category,` — data harga lama di DB tidak akan berubah karena kolom ini tidak disertakan.
     const is_3d = document.getElementById('fIs3d').checked;
@@ -3527,7 +3532,7 @@
         const path = p.page + '.' + k;
         return `<span class="cm-lbl">${escA(label)}</span>` + (opts
           ? `<select data-tp="${path}">${opts.map(o => `<option value="${o[0]}"${(tv[k] || opts[0][0]) === o[0] ? ' selected' : ''}>${escA(o[1])}</option>`).join('')}</select>`
-          : multi ? `<textarea data-tp="${path}" maxlength="${mx}">${escA(tv[k])}</textarea>` : `<input type="text" data-tp="${path}" value="${escA(tv[k])}" maxlength="${mx}">`);
+          : multi ? `<textarea data-tp="${path}" maxlength="${mx}" placeholder="Kosong = tidak tampil">${escA(tv[k])}</textarea>` : `<input type="text" data-tp="${path}" value="${escA(tv[k])}" maxlength="${mx}" placeholder="Kosong = tidak tampil">`);
       }).join('') + `</div>`;
       return `<details class="cm-sec" data-key="${p.page}" ${open[p.page] ? 'open' : ''}><summary><span>${p.title}<br><small>${p.fields.length} tulisan yang bisa diubah${tkDirty[p.page] ? ' · belum disimpan' : ''}</small></span></summary><div class="cm-body">${body}</div></details>`;
     }).join('');
