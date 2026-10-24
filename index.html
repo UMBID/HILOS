@@ -181,11 +181,11 @@
   .hero-slide.active{opacity:1;}
   .hero-bg-scrim{
     position:absolute;inset:0;z-index:1;
-    background:
-      radial-gradient(ellipse 60% 50% at var(--mx,70%) var(--my,40%), rgba(41,192,242,0.16), transparent 60%),
-      linear-gradient(0deg, var(--ink) 4%, rgba(10,62,112,0.35) 42%, rgba(10,62,112,0.55) 100%);
+    /* gradient tipis: hanya sedikit menggelapkan bagian bawah agar teks tetap terbaca */
+    background:linear-gradient(0deg, rgba(10,62,112,0.30) 0%, rgba(10,62,112,0) 42%);
   }
 
+  .hero-copy .eyebrow, .hero-copy h1, .hero-copy p{text-shadow:0 1px 16px rgba(0,20,50,.4);}
   .hero-body{
     position:relative;z-index:5;
     display:grid;
@@ -2023,7 +2023,7 @@
     /* HP/tablet: foto utuh di atas, teks di bawahnya di latar biru */
     .hero{min-height:0;height:auto !important;justify-content:flex-start;background:#1264AC;}
     .hero-bg{position:relative;inset:auto;top:auto;margin-top:var(--navh);width:100%;aspect-ratio:var(--hero-ar);scale:none !important;}
-    .hero-bg-scrim{background:linear-gradient(0deg,#1264AC 0%,rgba(18,100,172,0) 28%) !important;}
+    .hero-bg-scrim{background:linear-gradient(0deg,rgba(18,100,172,.55) 0%,rgba(18,100,172,0) 22%) !important;}
     .hero-body{padding:26px clamp(20px,5vw,64px) 96px !important;}
     .hero-copy{translate:none !important;opacity:1 !important;}
   }
@@ -2031,7 +2031,7 @@
     /* foto HP 9:16: teks menumpuk di bagian bawah foto */
     .hero.hero-hp{justify-content:flex-end;}
     .hero.hero-hp .hero-bg{position:absolute;inset:auto;top:var(--navh);left:0;right:0;bottom:0;margin-top:0;width:auto;aspect-ratio:auto;}
-    .hero.hero-hp .hero-bg-scrim{background:linear-gradient(0deg,rgba(10,62,112,.96) 0%,rgba(10,62,112,.84) 30%,rgba(10,62,112,0) 62%) !important;}
+    .hero.hero-hp .hero-bg-scrim{background:linear-gradient(0deg,rgba(10,62,112,.55) 0%,rgba(10,62,112,.25) 28%,rgba(10,62,112,0) 52%) !important;}
     .hero.hero-hp .hero-body{padding:24px clamp(20px,5vw,64px) 84px !important;}
     .hero.hero-hp .hero-proof{display:none;}
     .hero.hero-hp .hero-copy p{display:none;}
