@@ -653,6 +653,39 @@
   @media (max-width:700px){ .cm-item{ grid-template-columns:80px 1fr; } .cm-thumb{ width:80px; height:80px; } .cm-ctrl{ grid-column:1 / -1; flex-direction:row; } .cm-outing-side{ grid-template-columns:repeat(2,96px); } }
 
   /* ---------- Statistik ---------- */
+
+  /* ===== Statistik gaya Insight: kartu metrik yang bisa dipilih + line chart ===== */
+  .st-seg{ display:inline-flex; background:#e6edf4; border-radius:999px; padding:3px; }
+  .st-seg button{ border:none; background:none; padding:9px 18px; border-radius:999px; font:inherit; font-size:13px; font-weight:700; color:#4a5a6a; cursor:pointer; }
+  .st-seg button.on{ background:var(--ink); color:#fff; box-shadow:0 1px 4px rgba(13,27,42,.25); }
+  .st-range{ font-size:13px; color:#6b6058; margin:-6px 0 14px; }
+  .st-range b{ color:var(--ink); }
+  .st-metrics{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+  .st-m{ text-align:left; background:#fff; border:1.5px solid var(--sand-line); border-radius:12px; padding:14px 16px; font:inherit; cursor:pointer; transition:border-color .15s, box-shadow .15s; }
+  .st-m:hover{ border-color:#9fb3c8; }
+  .st-m.on{ border-color:var(--ink); box-shadow:0 0 0 1px var(--ink) inset; }
+  .st-m.static{ cursor:default; background:#f7fafc; }
+  .st-m.static:hover{ border-color:var(--sand-line); }
+  .st-m small{ display:block; font-size:12px; color:#5b6670; font-weight:600; }
+  .st-m b{ display:block; font-family:'Archivo',sans-serif; font-size:26px; font-weight:800; color:var(--ink); margin:4px 0 2px; font-variant-numeric:tabular-nums; }
+  .st-m .dl{ font-size:12px; font-weight:700; }
+  .st-up{ color:#1f8a4c; } .st-down{ color:#c0392b; } .st-flat{ color:#8a8078; }
+  .st-chartcard{ background:#fff; border:1px solid var(--sand-line); border-radius:12px; padding:20px 22px 12px; margin-bottom:16px; }
+  .st-chead{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+  .st-chead h3{ font-size:15px; text-transform:none; letter-spacing:0; margin:0; }
+  .st-big{ font-family:'Archivo',sans-serif; font-size:34px; font-weight:800; color:var(--ink); line-height:1.1; margin-top:6px; font-variant-numeric:tabular-nums; }
+  .st-sub{ font-size:12.5px; color:#6b6058; margin-top:2px; }
+  .st-lc{ position:relative; width:100%; }
+  .st-lc svg{ display:block; width:100%; overflow:visible; }
+  .st-lc text{ font-size:11px; fill:#7a7068; font-family:'Inter',sans-serif; }
+  .st-lc .grid{ stroke:rgba(13,27,42,.10); stroke-width:1; }
+  .st-lc .ln{ fill:none; stroke-width:2.6; stroke-linejoin:round; stroke-linecap:round; }
+  .st-lc .ar{ opacity:.10; }
+  .st-lc .hv{ stroke:rgba(13,27,42,.25); stroke-width:1; stroke-dasharray:3 3; }
+  .st-tip{ position:absolute; top:0; transform:translate(-50%,-110%); background:var(--ink); color:#fff; font-size:12px; padding:6px 10px; border-radius:8px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .1s; z-index:3; }
+  .st-tip.show{ opacity:1; }
+  .st-tip b{ font-weight:800; }
+  @media (max-width:900px){ .st-metrics{ grid-template-columns:1fr 1fr; } .st-big{ font-size:28px; } }
   .st-kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
   .st-kpi{ background:#fff; border:1px solid var(--sand-line); border-radius:10px; padding:16px 18px; }
   .st-kpi small{ display:block; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:#6b6058; }
@@ -925,12 +958,10 @@
           <p>Kunjungan, produk yang dilihat, dan klik WhatsApp. Tanpa cookie dan tanpa data pribadi pengunjung.</p>
         </div>
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <select id="stDays" style="padding:10px 12px;border:1px solid var(--sand-line);border-radius:6px;background:#fff;font-size:14px;">
-            <option value="7">7 hari terakhir</option>
-            <option value="30" selected>30 hari terakhir</option>
-            <option value="90">90 hari terakhir</option>
-            <option value="365">1 tahun terakhir</option>
-          </select>
+          <div class="st-seg" id="stSeg" role="tablist" aria-label="Periode">
+            <button type="button" class="on" data-days="7" role="tab">Per minggu</button>
+            <button type="button" data-days="30" role="tab">Per bulan</button>
+          </div>
           <button class="btn btn-outline" id="stRefresh">Muat Ulang</button>
           <button class="btn btn-outline" id="stCsv">Unduh CSV Produk</button>
         </div>
@@ -3571,10 +3602,16 @@
   const stBody = document.getElementById('stBody'), stNote = document.getElementById('stNote');
   const fmtN = (n) => Number(n || 0).toLocaleString('id-ID');
 
+  let stDaysVal = 7, stMetric = 'pv', stCur = null, stPrev = null;
+  const BLN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const fmtD = (iso) => parseInt(iso.slice(8), 10) + ' ' + BLN[parseInt(iso.slice(5, 7), 10) - 1];
+  const fmtDY = (iso) => fmtD(iso) + ' ' + iso.slice(0, 4);
+
   async function loadStats(){
     stNote.textContent = 'Memuat…';
-    const days = +document.getElementById('stDays').value;
-    const { data, error } = await sb.rpc('get_site_stats', { p_days:days });
+    const days = stDaysVal;
+    const [cur, prev] = await Promise.all([ sb.rpc('get_site_stats', { p_days:days }), sb.rpc('get_site_stats', { p_days:days * 2 }) ]);
+    const error = cur.error;
     if (error){
       stBody.innerHTML = '';
       stNote.innerHTML = /get_site_stats|site_events|schema cache/i.test(error.message || '')
@@ -3582,8 +3619,8 @@
         : 'Gagal memuat statistik: ' + (error.message || error);
       return;
     }
-    stLast = data; stNote.textContent = '';
-    renderStats(data, days);
+    stLast = cur.data; stCur = cur.data; stPrev = prev.error ? null : prev.data; stNote.textContent = '';
+    renderStats();
   }
 
   function dayRange(days){
@@ -3594,59 +3631,129 @@
     }
     return out;
   }
-  function barChart(labels, vals, cls){
-    const W = 600, H = 150, pl = 30, pb = 18, pt = 8, max = Math.max(1, ...vals), n = vals.length;
-    const bw = (W - pl) / n, step = Math.max(1, Math.ceil(n / 8));
-    const nice = max <= 4 ? max : Math.ceil(max / 4) * 4;
+
+  /* line chart (SVG, ukuran asli sesuai lebar kartu, tanpa distorsi teks) */
+  function lineChart(labels, vals, color, W){
+    const H = 230, pl = 38, pr = 14, pt = 14, pb = 30, n = vals.length;
+    const max = Math.max(1, ...vals);
+    const nice = max <= 4 ? Math.max(max, 2) : Math.ceil(max / 4) * 4;
+    const x = (i) => pl + (n === 1 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (n - 1));
+    const y = (v) => pt + (H - pt - pb) * (1 - v / nice);
     let g = '';
-    [0, .5, 1].forEach(f => { const y = pt + (H - pt - pb) * (1 - f); g += `<line class="grid" x1="${pl}" x2="${W}" y1="${y}" y2="${y}"/><text x="${pl - 5}" y="${y + 3}" text-anchor="end">${Math.round(nice * f)}</text>`; });
-    const bars = vals.map((v, i) => {
-      const h = (H - pt - pb) * (v / nice), x = pl + i * bw + bw * .15;
-      return `<rect class="bar ${cls || ''}" x="${x.toFixed(1)}" y="${(H - pb - h).toFixed(1)}" width="${(bw * .7).toFixed(1)}" height="${Math.max(h, v ? 1 : 0).toFixed(1)}" rx="2"><title>${labels[i]}: ${fmtN(v)}</title></rect>`;
-    }).join('');
-    const ticks = labels.map((l, i) => (i % step === 0 || i === n - 1) ? `<text x="${(pl + i * bw + bw / 2).toFixed(1)}" y="${H - 4}" text-anchor="middle">${l.slice(8)}/${l.slice(5, 7)}</text>` : '').join('');
-    return `<svg class="st-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img">${g}${bars}${ticks}</svg>`;
+    [0, .5, 1].forEach(f => { const yy = y(nice * f); g += `<line class="grid" x1="${pl}" x2="${W - pr}" y1="${yy}" y2="${yy}"/><text x="${pl - 8}" y="${yy + 4}" text-anchor="end">${Math.round(nice * f * 10) / 10}</text>`; });
+    const pts = vals.map((v, i) => [x(i), y(v)]);
+    const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const area = line + ` L${pts[n - 1][0].toFixed(1)} ${y(0)} L${pts[0][0].toFixed(1)} ${y(0)} Z`;
+    // label sumbu X: minggu = semua hari; bulan = 4 titik
+    let idxs = [];
+    if (n <= 8) idxs = labels.map((_, i) => i);
+    else { const k = W < 520 ? 3 : 4; for (let j = 0; j < k; j++) idxs.push(Math.round(j * (n - 1) / (k - 1))); }
+    const ticks = idxs.map((i, j) => `<text x="${x(i).toFixed(1)}" y="${H - 8}" text-anchor="${j === 0 && n > 8 ? 'start' : (i === n - 1 && n > 8 ? 'end' : 'middle')}">${fmtD(labels[i])}</text>`).join('');
+    const dots = n <= 8 ? pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.6" fill="#fff" stroke="${color}" stroke-width="2.2"/>`).join('') : '';
+    return `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" data-w="${W}" data-h="${H}">${g}<path class="ar" d="${area}" fill="${color}"/><path class="ln" d="${line}" stroke="${color}"/>${dots}
+      <line class="hv" id="stHv" x1="0" x2="0" y1="${pt}" y2="${H - pb}" style="display:none"/><circle id="stHd" r="5" fill="${color}" stroke="#fff" stroke-width="2" style="display:none"/>${ticks}</svg><div class="st-tip" id="stTip"></div>`;
   }
+
   function hbars(rows, labelFn){
     if (!rows.length) return '<div class="st-empty">Belum ada data.</div>';
     const max = Math.max(1, ...rows.map(r => r.n));
     return rows.map(r => `<div class="st-hbar"><span class="lbl">${labelFn(r)}</span><span class="trk"><i style="width:${(r.n / max * 100).toFixed(1)}%"></i></span><span class="v">${fmtN(r.n)}</span></div>`).join('');
   }
 
-  function renderStats(d, days){
-    const t = d.totals || {}, rate = t.product_views ? Math.round((t.wa_product || 0) / t.product_views * 100) : 0;
-    const labels = dayRange(Math.min(days, 90)), map = {}; (d.daily || []).forEach(x => { map[x.day] = x; });
-    const series = (k) => labels.map(l => (map[l] ? map[l][k] : 0));
-    // 1 tahun: ringkas per minggu agar tetap terbaca
-    let L = labels, pv = series('pv'), wa = series('wa');
-    if (days > 90){
-      const all = dayRange(days); const m2 = {}; (d.daily || []).forEach(x => { m2[x.day] = x; });
-      L = []; pv = []; wa = [];
-      for (let i = 0; i < all.length; i += 7){ const chunk = all.slice(i, i + 7); L.push(chunk[0]); pv.push(chunk.reduce((a, c) => a + (m2[c] ? m2[c].pv : 0), 0)); wa.push(chunk.reduce((a, c) => a + (m2[c] ? m2[c].wa : 0), 0)); }
+  function deltaHtml(cur, prev, days){
+    if (prev == null) return '<span class="dl st-flat">—</span>';
+    if (!prev) return cur ? '<span class="dl st-up">▲ baru</span>' : '<span class="dl st-flat">sama</span>';
+    const pc = Math.round((cur - prev) / prev * 100);
+    if (!pc) return '<span class="dl st-flat">▬ 0%</span>';
+    return `<span class="dl ${pc > 0 ? 'st-up' : 'st-down'}">${pc > 0 ? '▲ +' : '▼ '}${pc}%</span>`;
+  }
+
+  function renderStats(){
+    const d = stCur; if (!d) return;
+    const days = stDaysVal, t = d.totals || {};
+    const rate = t.product_views ? Math.round((t.wa_product || 0) / t.product_views * 100) : 0;
+    const labels = dayRange(days), map = {}; (d.daily || []).forEach(x => { map[x.day] = x; });
+    const series = (k) => labels.map(l => (map[l] ? (+map[l][k] || 0) : 0));
+    const S = { pv: series('pv'), prv: series('prv'), wa: series('wa') };
+    // periode sebelumnya (untuk perbandingan)
+    let P = null, pLabels = null;
+    if (stPrev){
+      const all = dayRange(days * 2); pLabels = all.slice(0, days);
+      const pm = {}; (stPrev.daily || []).forEach(x => { pm[x.day] = x; });
+      const ps = (k) => pLabels.reduce((a, l) => a + (pm[l] ? (+pm[l][k] || 0) : 0), 0);
+      P = { pv: ps('pv'), prv: ps('prv'), wa: ps('wa') };
     }
+    const sum = (a) => a.reduce((x, y) => x + y, 0);
+    const META = {
+      pv:  { name:'Kunjungan halaman', color:'#2f6fb1', total:t.page_views,    sub:fmtN(t.sessions) + ' sesi pengunjung' },
+      prv: { name:'Produk dilihat',    color:'#0e8f9a', total:t.product_views, sub:'detail produk dibuka' },
+      wa:  { name:'Klik WhatsApp',     color:'#25a55f', total:t.wa_clicks,     sub:fmtN(t.wa_product) + ' dari produk tertentu' }
+    };
+    const M = META[stMetric];
+    const unit = days === 7 ? 'minggu' : 'bulan', prevLbl = days === 7 ? '7 hari sebelumnya' : '30 hari sebelumnya';
+    const rangeTxt = `<b>${fmtD(labels[0])} – ${fmtDY(labels[labels.length - 1])}</b> · ${days} hari terakhir`;
     const tp = d.top_products || [];
+    const card = (k) => `<button type="button" class="st-m${stMetric === k ? ' on' : ''}" data-m="${k}"><small>${META[k].name}</small><b>${fmtN(META[k].total)}</b>${deltaHtml(sum(S[k]), P ? P[k] : null, days)}</button>`;
     stBody.innerHTML = `
-      <div class="st-kpis">
-        <div class="st-kpi"><small>Kunjungan halaman</small><b>${fmtN(t.page_views)}</b><span>${fmtN(t.sessions)} sesi pengunjung</span></div>
-        <div class="st-kpi"><small>Produk dilihat</small><b>${fmtN(t.product_views)}</b><span>detail produk dibuka</span></div>
-        <div class="st-kpi"><small>Klik WhatsApp</small><b>${fmtN(t.wa_clicks)}</b><span>${fmtN(t.wa_product)} dari produk tertentu</span></div>
-        <div class="st-kpi"><small>Rasio klik produk</small><b>${rate}%</b><span>klik WhatsApp produk ÷ produk dilihat</span></div>
+      <p class="st-range">${rangeTxt}</p>
+      <div class="st-metrics">
+        ${card('pv')}${card('prv')}${card('wa')}
+        <div class="st-m static"><small>Rasio klik produk</small><b>${rate}%</b><span class="dl st-flat">klik WhatsApp produk ÷ produk dilihat</span></div>
+      </div>
+      <div class="st-chartcard">
+        <div class="st-chead">
+          <div>
+            <h3>${M.name} per hari</h3>
+            <div class="st-big">${fmtN(sum(S[stMetric]))}</div>
+            <div class="st-sub">${deltaHtml(sum(S[stMetric]), P ? P[stMetric] : null, days)} ${P ? 'dibanding ' + prevLbl + ' (' + fmtD(pLabels[0]) + ' – ' + fmtD(pLabels[pLabels.length - 1]) + ')' : ''}</div>
+            <div class="st-sub">${M.sub}</div>
+          </div>
+        </div>
+        <div class="st-lc" id="stLc"></div>
       </div>
       <div class="st-grid">
-        <div class="st-card"><h3>Kunjungan halaman per hari${days > 90 ? ' (per minggu)' : ''}</h3>${barChart(L, pv)}</div>
-        <div class="st-card"><h3>Klik WhatsApp per hari${days > 90 ? ' (per minggu)' : ''}</h3>${barChart(L, wa, 'wa')}</div>
         <div class="st-card wide"><h3>Produk terpopuler</h3>
           ${tp.length ? `<table class="st-table"><thead><tr><th>Produk</th><th class="n">Dilihat</th><th class="n">Klik WhatsApp</th><th class="n">Rasio</th></tr></thead><tbody>` +
-            tp.map((r, i) => `<tr><td><span class="st-rank">${i + 1}</span>${escA(r.name)}${r.sku ? ` <span class="hint">(${escA(r.sku)})</span>` : ''}</td><td class="n">${fmtN(r.views)}</td><td class="n">${fmtN(r.wa)}</td><td class="n">${r.views ? Math.round(r.wa / r.views * 100) + '%' : '–'}</td></tr>`).join('') + '</tbody></table>'
+            tp.map((r, i) => `<tr><td><span class="st-rank">${i + 1}</span>${escA(r.name)}${r.sku ? ` <span class="hint">(${escA(r.sku)})</span>` : ''}</td><td class="n">${fmtN(r.views)}</td><td class="n">${fmtN(r.wa)}</td><td class="n">${r.views ? Math.round(r.wa / r.views * 100) : 0}%</td></tr>`).join('') + `</tbody></table>`
             : '<div class="st-empty">Belum ada produk yang dilihat atau diklik pada periode ini.</div>'}
           <p class="hint" style="margin-top:10px;">Dipakai sebagai bahan pertimbangan mengisi menu Top 5 Produk.</p>
         </div>
         <div class="st-card"><h3>Halaman paling banyak dikunjungi</h3>${hbars((d.top_pages || []).map(r => ({ n:r.n, p:r.page })), r => escA(PAGE_LABEL[r.p] || r.p || '-'))}</div>
         <div class="st-card"><h3>Dari mana klik WhatsApp</h3>${hbars((d.wa_kinds || []).map(r => ({ n:r.n, k:r.kind })), r => escA(WA_KIND_LABEL[r.k] || r.k))}</div>
       </div>`;
+    // gambar line chart sesuai lebar kartu + tooltip
+    const lc = document.getElementById('stLc');
+    const draw = () => {
+      if (!document.getElementById('stLc')) return;
+      const W = Math.max(280, Math.round(lc.clientWidth || 700));
+      lc.innerHTML = lineChart(labels, S[stMetric], M.color, W);
+      const svg = lc.querySelector('svg'), tip = lc.querySelector('#stTip'), hv = lc.querySelector('#stHv'), hd = lc.querySelector('#stHd');
+      const n = labels.length, pl = 38, pr = 14, H = 230, pt = 14, pb = 30;
+      const nice = (m => m <= 4 ? Math.max(m, 2) : Math.ceil(m / 4) * 4)(Math.max(1, ...S[stMetric]));
+      const move = (ev) => {
+        const r = svg.getBoundingClientRect(), px = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+        let i = Math.round((px / r.width * W - pl) / ((W - pl - pr) / Math.max(1, n - 1)));
+        i = Math.max(0, Math.min(n - 1, i));
+        const cx = pl + (n === 1 ? (W - pl - pr) / 2 : i * (W - pl - pr) / (n - 1)), cy = pt + (H - pt - pb) * (1 - S[stMetric][i] / nice);
+        hv.setAttribute('x1', cx); hv.setAttribute('x2', cx); hv.style.display = ''; hd.setAttribute('cx', cx); hd.setAttribute('cy', cy); hd.style.display = '';
+        tip.innerHTML = `${fmtDY(labels[i])}<br><b>${fmtN(S[stMetric][i])}</b> ${M.name.toLowerCase()}`;
+        tip.style.left = (cx / W * r.width) + 'px'; tip.style.top = (cy / H * r.height) + 'px'; tip.classList.add('show');
+      };
+      const out = () => { hv.style.display = 'none'; hd.style.display = 'none'; tip.classList.remove('show'); };
+      svg.addEventListener('mousemove', move); svg.addEventListener('touchstart', move, { passive:true }); svg.addEventListener('touchmove', move, { passive:true });
+      svg.addEventListener('mouseleave', out); svg.addEventListener('touchend', out);
+    };
+    draw();
+    stBody.querySelectorAll('[data-m]').forEach(b => b.addEventListener('click', () => { stMetric = b.dataset.m; renderStats(); }));
+    if (!window.__stResize){ window.__stResize = true; let tm; window.addEventListener('resize', () => { clearTimeout(tm); tm = setTimeout(() => { if (document.getElementById('statsView').style.display !== 'none' && stCur) renderStats(); }, 150); }); }
   }
 
-  document.getElementById('stDays').addEventListener('change', loadStats);
+  document.getElementById('stSeg').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-days]'); if (!b) return;
+    stDaysVal = +b.dataset.days;
+    document.querySelectorAll('#stSeg button').forEach(x => x.classList.toggle('on', x === b));
+    loadStats();
+  });
   document.getElementById('stRefresh').addEventListener('click', loadStats);
   document.getElementById('stCsv').addEventListener('click', () => {
     const rows = (stLast && stLast.top_products) || [];
