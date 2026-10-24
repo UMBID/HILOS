@@ -168,14 +168,6 @@
   .outing-main .photo{aspect-ratio:4/3;}
   .outing-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .outing-side .photo{aspect-ratio:1/1;}
-  .outing-video{grid-column:1/-1;position:relative;}
-  .outing-video .photo{aspect-ratio:3/1.1;}
-  .outing-video .play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(10,62,112,0.55);border:1px solid var(--on-dark-line);display:flex;align-items:center;justify-content:center;color:var(--sand);z-index:2;transition:background 0.25s ease, transform 0.25s ease;cursor:pointer;}
-  .outing-video .play-btn svg{width:18px;height:18px;margin-left:2px;}
-  .outing-video:hover .play-btn{background:var(--gold);color:var(--text);transform:translate(-50%,-50%) scale(1.08);}
-  .outing-video .vlabel{position:absolute;left:20px;bottom:16px;z-index:2;color:var(--sand);font-family:'Archivo',sans-serif;}
-  .outing-video .vlabel strong{display:block;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;}
-  .outing-video .vlabel span{font-size:11.5px;color:var(--on-dark-muted);}
 
   /* certifications */
   .cert-section{max-width:2400px;margin:0 auto;padding:70px clamp(20px,5vw,64px) 90px;display:grid;grid-template-columns:1fr 320px;gap:36px;align-items:start;}
@@ -332,7 +324,6 @@
   .kb-row.kb-hero .kb-item{--maxh:min(68vh,640px);}
   .kb-item.photo,.kb-item > .photo{aspect-ratio:var(--ar,1.5) !important;height:auto !important;position:relative;overflow:hidden;background:none !important;}
   .kb-item.photo img,.kb-item > .photo img{width:100%;height:100%;object-fit:cover;display:block;}
-  .kb-item.outing-video .photo{aspect-ratio:var(--ar,1.5) !important;}
   @media (max-width:640px){.kb-row{flex-direction:column;gap:16px;}.kb-item{flex:none;width:100%;max-width:100%;}}
 
   /* ===== Hero Tentang: teks menyatu di atas foto (seperti Beranda) ===== */
@@ -622,11 +613,6 @@
         <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7693713/pexels-photo-7693713.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Perayaan tim"></div>
         <div class="photo reveal-scale" data-slot="side"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/7568964/pexels-photo-7568964.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Event tim HILOS"></div>
       </div>
-      <div class="outing-video reveal-scale" id="outingVideo">
-        <div class="photo"><img loading="lazy" decoding="async" src="https://images.pexels.com/photos/1963622/pexels-photo-1963622.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Company outing 2024"></div>
-        <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
-        <div class="vlabel"><strong>Company Outing 2024</strong><span>Watch Video · 02:45</span></div>
-      </div>
     </div>
   </div>
 </div>
@@ -895,11 +881,6 @@
   }
   bindTilt();
 
-  /* outing video placeholder modal (reuse simple alert-style overlay) */
-  document.getElementById('outingVideo').addEventListener('click', () => {
-    alert('Video Company Outing 2024 akan ditampilkan di sini — slot ini siap diisi video asli.');
-  });
-
   /* ---- tab switching: Event / CSR / Outing ---- */
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -988,7 +969,7 @@
       const ev = document.querySelector('#panel-event .grid-4'), cs = document.querySelector('#panel-csr .grid-3'), og = document.querySelector('#panel-outing .outing-grid');
       if (ev) build(ev, '.proc-card');
       if (cs) build(cs, '.proc-card');
-      if (og) build(og, '.outing-main, [data-slot=side]', '.outing-video');
+      if (og) build(og, '.outing-main, [data-slot=side]');
     };
     window.__kbLayout();
   })();
@@ -1048,11 +1029,6 @@
         g.querySelector('.outing-main img').src = U(o.main) || g.querySelector('.outing-main img').src;
         const sides = g.querySelectorAll('[data-slot=side] img');
         o.side.forEach((u, i) => { if (sides[i] && U(u)) sides[i].src = U(u); });
-        if (o.video){
-          if (U(o.video.img)) g.querySelector('.outing-video .photo img').src = U(o.video.img);
-          const vl = g.querySelector('.outing-video .vlabel');
-          if (vl){ vl.querySelector('strong').textContent = o.video.title || ''; vl.querySelector('span').textContent = o.video.label || ''; }
-        }
       }
       window.__kbLayout && window.__kbLayout();
       observeReveal(document.querySelector('.proc-wrap')); observeReveal(document.getElementById('kebersamaanSection'));
