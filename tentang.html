@@ -346,7 +346,7 @@
   .about-hero .page-head .eyebrow{color:#a8e0fa;}
   .about-hero .page-head .eyebrow::before{background:#a8e0fa;}
   .about-hero .page-head p, .about-hero .page-head .eyebrow{text-shadow:0 1px 14px rgba(0,20,50,.45);}
-  .about-hero .page-head h1{color:#fff;font-size:clamp(32px,5.4vw,76px);line-height:1.04;margin-top:16px;max-width:980px;text-shadow:0 2px 24px rgba(0,20,50,.35);}
+  .about-hero .page-head h1{color:#fff;font-size:clamp(32px,5.4vw,76px);line-height:1.04;margin-top:16px;max-width:980px;}
   .about-hero .page-head p{color:rgba(255,255,255,.9);font-size:clamp(15px,1.3vw,19px);line-height:1.65;max-width:640px;margin-top:16px;}
   .about-hero .hero-slide-dots{position:absolute;right:clamp(20px,5vw,64px);bottom:clamp(28px,5vh,52px);margin:0;z-index:5;}
   .about-hero .hero-slide-dots .dot{background:rgba(255,255,255,.5);}
@@ -1007,15 +1007,15 @@
       const im = ss.querySelector('.hero-slide img');
       if (im && im.naturalWidth && im.naturalHeight){
         const r = im.naturalWidth / im.naturalHeight;
-        if (r > 0.4 && r < 3.2) ss.style.setProperty('--ar', r.toFixed(4));
+        if (r > 0.4 && r < 3.2){ ss.style.setProperty('--ar', r.toFixed(4)); ss.style.setProperty('--fith', Math.round(ss.clientWidth / r) + 'px'); }
       }
     }
 
   /* isi latar blur tiap slide dari fotonya sendiri */
   (function(){
-    /* selisih rasio kecil (maks 10 persen): foto diisi penuh (terpotong maksimal sekitar 5 persen di tepi) supaya tidak ada garis tipis; selisih besar: foto tetap utuh */
+    /* foto tidak pernah dipotong: tinggi hero menyesuaikan rasio foto (maks. setinggi layar); cover hanya bila selisih rasio nyaris nol (menghindari garis tipis) */
     function fit(im){ const p = im.parentElement; if (!p || !im.naturalWidth) return; const pw = p.clientWidth, ph = p.clientHeight; if (!pw || !ph) return;
-      const d = Math.abs((pw / ph) / (im.naturalWidth / im.naturalHeight) - 1); im.style.objectFit = d <= 0.10 ? 'cover' : ''; }
+      const d = Math.abs((pw / ph) / (im.naturalWidth / im.naturalHeight) - 1); im.style.objectFit = d <= 0.004 ? 'cover' : ''; }
     window.addEventListener('resize', () => document.querySelectorAll('#heroSlideshow .hero-slide img').forEach(fit));
     function paint(im){ fit(im); const p = im.parentElement, s = im.currentSrc || im.src; if (p && s && p.dataset.bgs !== s){ p.dataset.bgs = s; p.style.backgroundImage = 'url("' + s.replace(/"/g, '%22') + '")'; } }
     document.addEventListener('load', e => { if (e.target && e.target.matches && e.target.matches('#heroSlideshow .hero-slide img')) paint(e.target); }, true);
@@ -1145,7 +1145,7 @@
   }
 
   /* ===== Hero Tentang: foto tampil UTUH (tinggi mengikuti rasio foto) ===== */
-  .about-hero .hero-slideshow{--ar:1.7778;height:var(--availh, calc(100vh - 150px)) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
+  .about-hero .hero-slideshow{--ar:1.7778;height:min(var(--availh, calc(100vh - 150px)), var(--fith, 9999px)) !important;aspect-ratio:auto;min-height:460px;max-height:none;background:var(--ink);transition:height .6s ease;}
   /* latar blur dari foto yang sama: sisi kosong terisi halus, foto tetap UTUH */
   .about-hero .hero-slide{background-size:100% 100%;background-position:center;}
   .about-hero .hero-slide::before{content:"";position:absolute;inset:-6%;background:inherit;filter:blur(28px) saturate(1.08);transform:translateZ(0);z-index:0;}
