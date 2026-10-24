@@ -237,7 +237,7 @@
   @keyframes kenburns{from{transform:scale(1.14);}to{transform:scale(1);}}
   .hero-slide-dots .dot{transition:width .4s ease,background .3s ease;}
   .hero-slide-dots .dot.active{width:28px;border-radius:99px;}
-  .about-hero-banner .hero-slideshow::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,62,112,.28),rgba(10,62,112,0) 45%);pointer-events:none;}
+  .about-hero-banner .hero-slideshow::after{content:"";position:absolute;inset:0;background:none;pointer-events:none;}
 
   .vm-card{position:relative;overflow:hidden;transition:transform .35s ease,box-shadow .35s ease;}
   .vm-card:hover{transform:translateY(-4px);box-shadow:0 18px 36px rgba(10,62,112,.09);}
@@ -339,12 +339,13 @@
   .about-hero{position:relative;overflow:hidden;background:var(--ink);}
   .about-hero .about-hero-banner{max-width:none;margin:0;padding:0;}
   .about-hero .hero-slideshow{aspect-ratio:auto;max-height:none;height:clamp(460px,84vh,860px);}
-  .about-hero .about-hero-banner .hero-slideshow::after{background:linear-gradient(to top,rgba(8,44,88,.9) 0%,rgba(8,44,88,.62) 34%,rgba(8,44,88,.18) 68%,rgba(8,44,88,.28) 100%),linear-gradient(to right,rgba(8,44,88,.45),rgba(8,44,88,0) 60%);}
+  .about-hero .about-hero-banner .hero-slideshow::after{background:none;display:none;}
   .about-hero .ghost-word{display:none;}
   .about-hero .page-head{position:absolute;left:0;right:0;bottom:0;z-index:4;max-width:2400px;margin:0 auto;padding:0 clamp(20px,5vw,64px) clamp(60px,10vh,104px);pointer-events:none;}
   .about-hero .page-head > *{pointer-events:auto;}
   .about-hero .page-head .eyebrow{color:#a8e0fa;}
   .about-hero .page-head .eyebrow::before{background:#a8e0fa;}
+  .about-hero .page-head p, .about-hero .page-head .eyebrow{text-shadow:0 1px 14px rgba(0,20,50,.45);}
   .about-hero .page-head h1{color:#fff;font-size:clamp(32px,5.4vw,76px);line-height:1.04;margin-top:16px;max-width:980px;text-shadow:0 2px 24px rgba(0,20,50,.35);}
   .about-hero .page-head p{color:rgba(255,255,255,.9);font-size:clamp(15px,1.3vw,19px);line-height:1.65;max-width:640px;margin-top:16px;}
   .about-hero .hero-slide-dots{position:absolute;right:clamp(20px,5vw,64px);bottom:clamp(28px,5vh,52px);margin:0;z-index:5;}
@@ -1163,7 +1164,7 @@
   @media (max-width:900px){
     /* foto HP 9:16: judul menumpuk di bagian bawah foto */
     .about-hero.about-hp .page-head{position:absolute;left:0;right:0;bottom:0;padding:0 clamp(20px,5vw,64px) 52px;pointer-events:none;order:0;}
-    .about-hero.about-hp .about-hero-banner .hero-slideshow::after{display:block;background:linear-gradient(0deg,rgba(8,44,88,.94) 0%,rgba(8,44,88,.72) 32%,rgba(8,44,88,0) 64%);}
+    .about-hero.about-hp .about-hero-banner .hero-slideshow::after{display:none;background:none;}
     .about-hero.about-hp .hero-slide-dots{bottom:18px;}
   }
 </style>
